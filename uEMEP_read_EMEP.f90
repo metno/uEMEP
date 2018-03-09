@@ -70,6 +70,19 @@
     write(unit_logfile,'(A,I)') ' Surface level base set to: ',surface_level_nc
     write(unit_logfile,'(A,I)') ' Surface level local_contribution set to: ',surface_level_nc_2
 
+        if (allocated(val_dim_nc)) deallocate (val_dim_nc)
+        if (allocated(unit_dim_nc)) deallocate (unit_dim_nc)
+        if (allocated(var1d_nc)) deallocate (var1d_nc)
+        if (allocated(var2d_nc)) deallocate (var2d_nc)
+        if (allocated(var3d_nc)) deallocate (var3d_nc)
+        if (allocated(var4d_nc)) deallocate (var4d_nc)
+        if (allocated(comp_var3d_nc)) deallocate (comp_var3d_nc)
+        if (allocated(comp_var4d_nc)) deallocate (comp_var4d_nc)
+        if (allocated(var1d_nc_dp)) deallocate (var1d_nc_dp) 
+        if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
+        if (allocated(lc_var3d_nc)) deallocate (lc_var3d_nc)
+        if (allocated(lc_var4d_nc)) deallocate (lc_var4d_nc)
+       
     !Loop through the two EMEP files containing the data
     do i_file=1,2
         
@@ -153,13 +166,13 @@
 
         !Calculate the necessary extent of the EMEP grid region and only read these
         if (reduce_EMEP_region_flag) then
-            !Determine the LLC cordinates of the target grid
-            if (EMEP_projection_type.eq.LCC_projection_index) then
+            !Determine the LL cordinates of the target grid
+            !if (EMEP_projection_type.eq.LCC_projection_index) then
                 !Retrieve the four corners of the target grid in lat and lon
-                call UTM2LL(utm_zone,subgrid_min(y_dim_index),subgrid_min(x_dim_index),temp_lat(1),temp_lon(1))
-                call UTM2LL(utm_zone,subgrid_max(y_dim_index),subgrid_max(x_dim_index),temp_lat(2),temp_lon(2))
-                call UTM2LL(utm_zone,subgrid_max(y_dim_index),subgrid_min(x_dim_index),temp_lat(3),temp_lon(3))
-                call UTM2LL(utm_zone,subgrid_min(y_dim_index),subgrid_max(x_dim_index),temp_lat(4),temp_lon(4))
+                call UTM2LL(utm_zone,init_subgrid_min(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(1),temp_lon(1))
+                call UTM2LL(utm_zone,init_subgrid_max(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(2),temp_lon(2))
+                call UTM2LL(utm_zone,init_subgrid_max(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(3),temp_lon(3))
+                call UTM2LL(utm_zone,init_subgrid_min(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(4),temp_lon(4))
                 !write(*,*) temp_lat
                 !write(*,*) temp_lon
                 temp_x_min=1.e32;temp_y_min=1.e32
@@ -175,10 +188,10 @@
                         temp_x=temp_lon;temp_y=temp_lat
                     else
                         !Otherwise assume the same coordinate system
-                        temp_x(1)=subgrid_min(x_dim_index);temp_y(1)=subgrid_min(y_dim_index)
-                        temp_x(2)=subgrid_max(x_dim_index);temp_y(2)=subgrid_min(y_dim_index)
-                        temp_x(3)=subgrid_min(x_dim_index);temp_y(3)=subgrid_max(y_dim_index)
-                        temp_x(4)=subgrid_max(x_dim_index);temp_y(4)=subgrid_max(y_dim_index)
+                        temp_x(1)=init_subgrid_min(x_dim_index);temp_y(1)=init_subgrid_min(y_dim_index)
+                        temp_x(2)=init_subgrid_max(x_dim_index);temp_y(2)=init_subgrid_min(y_dim_index)
+                        temp_x(3)=init_subgrid_min(x_dim_index);temp_y(3)=init_subgrid_max(y_dim_index)
+                        temp_x(4)=init_subgrid_max(x_dim_index);temp_y(4)=init_subgrid_max(y_dim_index)
                     endif
                     
                 do i=1,4
@@ -207,17 +220,17 @@
                 j_temp_max=1+floor((temp_y_max-temp_var1d_nc_dp(2,1))/temp_delta(2)+0.5)
                 !write(unit_logfile,'(A,2I)') ' Reading EMEP i grids: ',i_temp_min,i_temp_max
                 !write(unit_logfile,'(A,2I)') ' Reading EMEP j grids: ',j_temp_min,j_temp_max
-                i_temp_min=max(1,i_temp_min-int(2*EMEP_grid_interpolation_size))
-                i_temp_max=min(dim_length_nc(x_dim_nc_index),i_temp_max+int(2*EMEP_grid_interpolation_size))
-                j_temp_min=max(1,j_temp_min-int(2*EMEP_grid_interpolation_size))
-                j_temp_max=min(dim_length_nc(y_dim_nc_index),j_temp_max+int(2*EMEP_grid_interpolation_size))
+                i_temp_min=max(1,i_temp_min-ceiling(2*EMEP_grid_interpolation_size))
+                i_temp_max=min(dim_length_nc(x_dim_nc_index),i_temp_max+ceiling(2*EMEP_grid_interpolation_size))
+                j_temp_min=max(1,j_temp_min-ceiling(2*EMEP_grid_interpolation_size))
+                j_temp_max=min(dim_length_nc(y_dim_nc_index),j_temp_max+ceiling(2*EMEP_grid_interpolation_size))
                 dim_length_nc(x_dim_nc_index)=i_temp_max-i_temp_min+1
                 dim_length_nc(y_dim_nc_index)=j_temp_max-j_temp_min+1
                 dim_start_nc(x_dim_nc_index)=i_temp_min
                 dim_start_nc(y_dim_nc_index)=j_temp_min
                 write(unit_logfile,'(A,3I)') ' Reading EMEP i grids: ',i_temp_min,i_temp_max,dim_length_nc(x_dim_nc_index)
                 write(unit_logfile,'(A,3I)') ' Reading EMEP j grids: ',j_temp_min,j_temp_max,dim_length_nc(y_dim_nc_index)
-            endif
+            !endif
             
         endif
         
@@ -248,15 +261,16 @@
             status_nc = NF90_INQ_VARID (id_nc, trim(dim_name_nc(i)), var_id_nc)
             !write(*,*) id_nc, trim(dim_name_nc(i)), var_id_nc(i),dim_length_nc(i)
             var1d_nc_dp=0.
+            !write(*,*) 'HERE',i,dim_start_nc(i),dim_length_nc(i)
             status_nc = NF90_GET_VAR (id_nc, var_id_nc,var1d_nc_dp(1:dim_length_nc(i)),start=(/dim_start_nc(i)/),count=(/dim_length_nc(i)/));var1d_nc(1:dim_length_nc(i),i)=real(var1d_nc_dp(1:dim_length_nc(i)))  
             status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_nc(i))
             val_dim_nc(1:dim_length_nc(i),i)=real(var1d_nc_dp(1:dim_length_nc(i)))
             !write(*,*) val_dim_nc(1:dim_length_nc(i),i),trim(unit_dim_nc(i))
             
             if (i.eq.time_dim_nc_index) then
-                write(unit_logfile,'(3A,2i12)') ' ',trim(dim_name_nc(i)),' (min, max in hours): ' &
-                    ,minval(int((var1d_nc(1:dim_length_nc(i),i)-var1d_nc(dim_start_nc(i),i))/3600.+.5)+1) &
-                    ,maxval(int((var1d_nc(1:dim_length_nc(i),i)-var1d_nc(dim_start_nc(i),i))/3600.+.5)+1)                     
+                !write(unit_logfile,'(3A,2i12)') ' ',trim(dim_name_nc(i)),' (min, max in hours): ' &
+                !    ,minval(int((var1d_nc(1:dim_length_nc(i),i)-var1d_nc(dim_start_nc(i),i))/3600.+.5)+1) &
+                !    ,maxval(int((var1d_nc(1:dim_length_nc(i),i)-var1d_nc(dim_start_nc(i),i))/3600.+.5)+1)                     
             else
                 write(unit_logfile,'(3A,2f12.2)') ' ',trim(dim_name_nc(i)),' (min, max): ' &
                     ,minval(var1d_nc(1:dim_length_nc(i),i)),maxval(var1d_nc(1:dim_length_nc(i),i)) 
@@ -351,10 +365,18 @@
                 status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
 
                 if (temp_num_dims.eq.4) then
+                    if (i_file.eq.1) then
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,:,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     comp_var4d_nc(:,:,:,:,i_conc)=comp_var4d_nc(:,:,:,:,i_conc)*comp_scale_nc(i_conc)
-                    write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading compound: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,:,:,i_conc)),maxval(comp_var4d_nc(:,:,:,:,i_conc))
+                    write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading compound file 1: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,:,:,i_conc)),maxval(comp_var4d_nc(:,:,:,:,i_conc))
+                    elseif (i_file.eq.2) then
+                    !In case the comp data is in the uEMEP file then read it here with no vertical extent
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,1,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),1,temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index)/))
+                    comp_var4d_nc(:,:,1,:,i_conc)=comp_var4d_nc(:,:,1,:,i_conc)*comp_scale_nc(i_conc)
+                    write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading compound file 2: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,1,:,i_conc)),maxval(comp_var4d_nc(:,:,1,:,i_conc))
+                    endif
                 endif
+                
                 
                 
             else
@@ -459,7 +481,7 @@
         !stop
         
         !If no logz0 available. Set to log(0.1)
-        where (var3d_nc(:,:,:,logz0_nc_index,:).eq.0.0) var3d_nc(:,:,:,logz0_nc_index,:)=0.1
+        where (var3d_nc(:,:,:,logz0_nc_index,:).eq.0.0) var3d_nc(:,:,:,logz0_nc_index,:)=log(0.1)
         
     
     end subroutine uEMEP_read_EMEP

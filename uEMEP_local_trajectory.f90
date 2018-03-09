@@ -33,8 +33,10 @@
     !y_r=y_subgrid(i_rec,j_rec)
     
     !Set the distances for the initial emission grid
-    distance_traj(k)=sqrt((x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r))          
-    distance_intercept_traj(k)=distance_traj(k)
+    !distance_traj(k)=sqrt((x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r))          
+    !distance_intercept_traj(k)=distance_traj(k)
+    distance_traj(k)=(x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r)        
+    distance_intercept_traj(k)=distance_traj(k)*distance_traj(k)
     y_loc=0.
     x_loc=0.
     exit_traj=.false.
@@ -65,9 +67,10 @@
             x_traj(k)=x_traj(k-1)+dr_traj*meteo_subgrid(i_integral,j_integral,t,cos_subgrid_index)
             y_traj(k)=y_traj(k-1)+dr_traj*meteo_subgrid(i_integral,j_integral,t,sin_subgrid_index)
             
-            distance_traj(k)=sqrt((x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r))
+            !distance_traj(k)=sqrt((x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r))
+            distance_traj(k)=(x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r)
 
-            call DISTRL(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj(k),y_intercept_traj(k),distance_intercept_traj(k),frac_length_traj(k))
+            call DISTRL_SQR(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj(k),y_intercept_traj(k),distance_intercept_traj(k),frac_length_traj(k))
 
             if (distance_intercept_traj(k).lt.distance_traj(k).and.distance_intercept_traj(k).le.distance_traj(k-1)) then                
                 exit_traj=.true.
@@ -87,6 +90,8 @@
         endif
         
     enddo
+    
+    y_loc=sqrt(y_loc)
     
     end subroutine uEMEP_local_trajectory
     
@@ -134,6 +139,7 @@
     
     end subroutine uEMEP_calculate_all_trajectory
     
+    
     subroutine uEMEP_minimum_distance_trajectory(x_r,y_r,x_emis,y_emis,t,traj_max_index,dr_traj,x_traj,y_traj,x_loc,y_loc,valid_traj)
     
     use uEMEP_definitions
@@ -167,20 +173,30 @@
     !y_r=y_subgrid(i_rec,j_rec)
     
     !Set the distances for the initial emission grid
-    distance_traj(k)=sqrt((x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r))          
-    distance_intercept_traj(k)=distance_traj(k)
+    !distance_traj(k)=sqrt((x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r))
+    distance_traj(k)=(x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r)
+    
+    !Leave the routine because the receptor is the same as the emission grid
+    if (distance_traj(k).eq.0) then
+        y_loc=0.
+        x_loc=0.
+        valid_traj=.true.
+        return
+    endif
+    
+    !distance_intercept_traj(k)=distance_traj(k)
     y_loc=0.
     x_loc=0.
     valid_traj=.false.
     
-    distance_intercept_min=sqrt((x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r)) 
+    distance_intercept_min=distance_traj(k)
     
     do k=2,traj_max_index
         
             if (x_traj(k).ne.NODATA_value) then
-            call DISTRL(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj(k),y_intercept_traj(k),distance_intercept_traj(k),frac_length_traj(k))
+            call DISTRL_SQR(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj(k),y_intercept_traj(k),distance_intercept_traj(k),frac_length_traj(k))
             
-            if (distance_intercept_traj(k).le.distance_intercept_min) then
+            if (distance_intercept_traj(k).lt.distance_intercept_min) then
                 distance_intercept_min=distance_intercept_traj(k)
                 y_loc=distance_intercept_traj(k)
                 x_loc=dr_traj*(k-2)+frac_length_traj(k)*dr_traj
@@ -192,7 +208,8 @@
     !Remove most of the results
     if (x_loc.eq.0.and.y_loc.gt.dr_traj) then
         valid_traj=.false.
-    endif
-    
+    endif    
    
+    y_loc=sqrt(y_loc)
+    
     end subroutine uEMEP_minimum_distance_trajectory

@@ -8,11 +8,12 @@
     character(1) :: slash='\'
 
     !Configuration file name entered in command line
-    character(256) :: name_config_file=''
+    character(256) :: name_config_file(5)=''
     character(256) :: filename_log_file='uEMEP_log.txt'
     character(256) :: pathname_log_file=''
     character(256) :: config_date_str=''
     character(256) :: replacement_date_str='<>'
+    integer :: n_config_files=0
     
     logical :: use_single_time_loop_flag=.false.
     logical :: reduce_EMEP_region_flag=.false.
@@ -28,6 +29,7 @@
     integer :: utm_zone=33
     real :: utm_lon0=15.
     integer :: EMEP_grid_interpolation_flag=0
+    integer :: EMEP_meteo_grid_interpolation_flag=1
     real :: EMEP_grid_interpolation_size=1.
     integer :: local_subgrid_method_flag=1
     logical :: use_emission_positions_for_auto_subgrid_flag=.false.
@@ -207,6 +209,11 @@
     character(256) pathname_receptor
     character(256) pathfilename_receptor  !Combined path and filename
 
+    !Definition of the timeprofilefile to be read.
+    character(256) filename_timeprofile
+    character(256) pathname_timeprofile
+    character(256) pathfilename_timeprofile  !Combined path and filename
+
     !Declaration for all filenames used to save gridded data produced by uEMEP. Up to 200 file names but of course can be more
     integer n_filenames_grid
     parameter (n_filenames_grid=200)
@@ -264,8 +271,11 @@
     !subgrid (i,j,t,type_subgrid,type_source,type_subsource)
     integer subgrid_dim(n_dim_index)
     real subgrid_delta(2),subgrid_min(2),subgrid_max(2)   !Only x and y
+    integer init_subgrid_dim(n_dim_index)
+    real init_subgrid_delta(2),init_subgrid_min(2),init_subgrid_max(2)   !Only x and y
     real, allocatable :: subgrid(:,:,:,:,:,:)
     real, allocatable :: meteo_subgrid(:,:,:,:)
+    real, allocatable :: last_meteo_subgrid(:,:,:)
     real, allocatable :: comp_subgrid(:,:,:,:)
     real, allocatable :: comp_EMEP_subgrid(:,:,:,:)
     real, allocatable :: orig_EMEP_subgrid(:,:,:,:)
@@ -383,6 +393,9 @@
     real sig_y_00(n_source_index,n_possible_subsource),sig_z_00(n_source_index,n_possible_subsource),h_emis(n_source_index,n_possible_subsource)
     integer stability_scheme_flag
     
+    real :: FF_min_dispersion=0.1
+    real :: emission_timeprofile_hour_shift=0.
+    
     real pi
     parameter (pi=3.141592)
 
@@ -442,11 +455,15 @@
     logical :: use_aggregated_shipping_emissions_flag=.true.
     logical :: calculate_aggregated_shipping_emissions_flag=.false.
     
-    integer n_receptor,n_receptor_max
+    integer n_receptor,n_receptor_in,n_receptor_max
     parameter (n_receptor_max=1000)
     real lon_receptor(n_receptor_max),lat_receptor(n_receptor_max),x_receptor(n_receptor_max),y_receptor(n_receptor_max)
+    real lon_receptor_in(n_receptor_max),lat_receptor_in(n_receptor_max),x_receptor_in(n_receptor_max),y_receptor_in(n_receptor_max)
     integer i_receptor_subgrid(n_receptor_max),j_receptor_subgrid(n_receptor_max)
     character(256) name_receptor(n_receptor_max,2)
+    character(256) name_receptor_in(n_receptor_max,2)
+    logical :: use_receptor(n_receptor_max)=.true.
+    integer :: use_receptor_region=1 !Surrounding grid region when just running for receptors
     
     !Indicies for SSB building and population data
     integer dwelling_index,population_index,establishment_index,school_index,home_index,n_population_index
@@ -461,6 +478,14 @@
     logical :: calculate_population_exposure_flag=.false.
     logical :: use_population_positions_for_auto_subgrid_flag=.false.
     integer :: population_data_type=population_index
+    
+    logical :: use_multiple_receptor_grids_flag=.false.
+    integer :: n_receptor_grid
+    integer start_grid_loop_index,end_grid_loop_index
+    integer g_loop
+    
+    logical :: use_last_meteo_in_dispersion=.false.
+    logical :: use_meandering_in_dispersion=.false.
     
     end module uEMEP_definitions
     

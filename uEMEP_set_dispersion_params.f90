@@ -23,15 +23,22 @@
     by(source_index,subsource_index)=0.78
     az(source_index,subsource_index)=0.19
     bz(source_index,subsource_index)=0.77
-    
+
+    !Alternative ASME
+    !ay(source_index,subsource_index)=0.14
+    !by(source_index,subsource_index)=0.9
+    !az(source_index,subsource_index)=0.22
+    !bz(source_index,subsource_index)=0.85
+
     sig_y_0(source_index,subsource_index)=sig_y_00(source_index,subsource_index)+sqrt(emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index))/2.
     sig_z_0(source_index,subsource_index)=sig_z_00(source_index,subsource_index)+az(source_index,subsource_index)*exp(bz(source_index,subsource_index)*log(sig_y_0(source_index,subsource_index)))
     !h_emis(source_index,subsource_index)=1.
     !z_rec(source_index,subsource_index)=2.
     
     !Exceptions
-
-    
+    !ay=ay*3.
+    !az=az*5.
+    !bz=0.95
     
     end subroutine uEMEP_set_dispersion_params_simple
 
@@ -52,7 +59,8 @@
     data by_pg /0.903,0.855,0.855,0.764,0.691,0.594/
     data az_pg /0.017,0.072,0.076,0.140,0.217,0.262/
     data bz_pg /1.38,1.021,0.879,0.727,0.610,0.500/
-    data L_class /-10.,-25.,-200.,200.,25./
+    !data L_class /-10.,-25.,-200.,200.,25./
+    data L_class /-10.,-25.,-100.,50.,5./
     
     invL_class=1./L_class
     

@@ -12,6 +12,7 @@
     integer exists
     
     integer :: unit_in=30
+    integer i_config
     
     !Functions
     character(256) replace_string_char
@@ -20,32 +21,40 @@
 !   uEMEP model setup
 !==========================================================================
 
-    write(unit_logfile,'(A)') ''
-    write(unit_logfile,'(A)') '================================================================'
-	write(unit_logfile,'(A)') 'Reading model run configuration (uEMEP_read_config)'
-	write(unit_logfile,'(A)') '================================================================'
+    write(*,'(A)') ''
+    write(*,'(A)') '================================================================'
+	write(*,'(A)') 'Reading model run configuration (uEMEP_read_config)'
+	write(*,'(A)') '================================================================'
 
  
+    do i_config=1,n_config_files
+        
     !Temporary hardcoding of config file name. Will be read in as command line string
-    if (len(name_config_file).eq.0) name_config_file='C:\uEMEP\Fortran\application\config\uEMEP_config_test.txt'
+    if (len(name_config_file(i_config)).eq.0) then
+        !name_config_file='C:\uEMEP\Fortran\application\config\uEMEP_config_test.txt'
+        write (*,'(a)') 'ERROR: No configuration file available. Stopping.'
+        stop
+    endif
     
-    write (unit_logfile,'(a)') 'Reading configuration file: '//trim(name_config_file)
+
+    write (*,'(a)') 'Reading configuration file: '//trim(name_config_file(i_config))
     
     !Check existence of file
-    inquire(file=trim(name_config_file),exist=exists)
+    inquire(file=trim(name_config_file(i_config)),exist=exists)
     if (.not.exists) then
-        write(unit_logfile,'(A)')'ERROR: Configuration file '//trim(name_config_file)//' does not exist.'
+        write(*,'(A)')'ERROR: Configuration file '//trim(name_config_file(i_config))//' does not exist.'
         stop
     endif
     
     !Open the config file for reading
-    open(unit_in,file=name_config_file,access='sequential',status='old',readonly) 
+    open(unit_in,file=name_config_file(i_config),access='sequential',status='old',readonly) 
  
+        !First read log file name and open it
         filename_log_file=read_name_char('filename_log_file',filename_log_file,unit_in,unit_logfile)
         pathname_log_file=read_name_char('pathname_log_file',pathname_log_file,unit_in,unit_logfile)
         
-        !Open log file
-        if (len(trim(filename_log_file)).gt.0) then
+        !Open log file when reading the first configuration file
+        if (len(trim(filename_log_file)).gt.0.and.i_config.eq.1) then
             unit_logfile=10 
             !Check existence of path
             inquire(directory=trim(pathname_log_file),exist=exists)
@@ -81,8 +90,10 @@
         use_single_time_loop_flag=read_name_logical('use_single_time_loop_flag',use_single_time_loop_flag,unit_in,unit_logfile)
         reduce_EMEP_region_flag=read_name_logical('reduce_EMEP_region_flag',reduce_EMEP_region_flag,unit_in,unit_logfile)
         save_intermediate_files=read_name_logical('save_intermediate_files',save_intermediate_files,unit_in,unit_logfile)
-	
+        use_multiple_receptor_grids_flag=read_name_logical('use_multiple_receptor_grids_flag',use_multiple_receptor_grids_flag,unit_in,unit_logfile)
+        use_receptor_region=read_name_integer('use_receptor_region',use_receptor_region,unit_in,unit_logfile)
 
+        
         !Read in choice of reading existing proxy emission, proxy dispersion, meteorology and use_subgid file data. These will rarely, if ever, be used
         read_existing_grid_data(proxy_emission_file_index(:))=read_name_logical('read_existing_grid_data(proxy_emission_file_index(:))',read_existing_grid_data(proxy_emission_file_index(allsource_index)),unit_in,unit_logfile)
         read_existing_grid_data(proxy_emission_file_index(traffic_index))=read_name_logical('read_existing_grid_data(proxy_emission_file_index(traffic_index))',read_existing_grid_data(proxy_emission_file_index(traffic_index)),unit_in,unit_logfile)
@@ -142,6 +153,7 @@
         utm_lon0=read_name_real('utm_lon0',utm_lon0,unit_in,unit_logfile)
 
         EMEP_grid_interpolation_flag=read_name_integer('EMEP_grid_interpolation_flag',EMEP_grid_interpolation_flag,unit_in,unit_logfile)
+        EMEP_meteo_grid_interpolation_flag=read_name_integer('EMEP_meteo_grid_interpolation_flag',EMEP_meteo_grid_interpolation_flag,unit_in,unit_logfile)
         EMEP_emission_grid_interpolation_flag=read_name_integer('EMEP_emission_grid_interpolation_flag',EMEP_emission_grid_interpolation_flag,unit_in,unit_logfile)
         subgrid_emission_distribution_flag=read_name_logical('subgrid_emission_distribution_flag',subgrid_emission_distribution_flag,unit_in,unit_logfile)
    
@@ -179,6 +191,14 @@
         subgrid_max(x_dim_index)=read_name_real('subgrid_max(x_dim_index)',subgrid_max(x_dim_index),unit_in,unit_logfile)
         subgrid_max(y_dim_index)=read_name_real('subgrid_max(y_dim_index)',subgrid_max(y_dim_index),unit_in,unit_logfile)
 
+        !Save the read in grid data. This will be used to select EMEP region and receptor points
+        init_subgrid_delta(x_dim_index)=subgrid_delta(x_dim_index)
+        init_subgrid_delta(y_dim_index)=subgrid_delta(y_dim_index)
+        init_subgrid_min(x_dim_index)=subgrid_min(x_dim_index)
+        init_subgrid_min(y_dim_index)=subgrid_min(y_dim_index)
+        init_subgrid_max(x_dim_index)=subgrid_max(x_dim_index)
+        init_subgrid_max(y_dim_index)=subgrid_max(y_dim_index)
+        
         !Specifies the number of subsources for each source. Usually not used as default is 1
         n_subsource(:)=read_name_integer('n_subsource(:)',n_subsource(allsource_index),unit_in,unit_logfile)
         n_subsource(traffic_index)=read_name_integer('n_subsource(traffic_index)',n_subsource(traffic_index),unit_in,unit_logfile)
@@ -265,6 +285,9 @@
         pathname_receptor=read_name_char('pathname_receptor','',unit_in,unit_logfile)
         filename_receptor=read_name_char('filename_receptor','',unit_in,unit_logfile)
 
+        pathname_timeprofile=read_name_char('pathname_timeprofile','',unit_in,unit_logfile)
+        filename_timeprofile=read_name_char('filename_timeprofile','',unit_in,unit_logfile)
+
         population_data_type=read_name_integer('population_data_type',population_data_type,unit_in,unit_logfile)
         
         combine_emission_subsources_during_dispersion(:)=read_name_logical('combine_emission_subsources_during_dispersion(:)',combine_emission_subsources_during_dispersion(allsource_index),unit_in,unit_logfile)
@@ -274,6 +297,13 @@
         combine_emission_subsources_during_dispersion(agriculture_index)=read_name_logical('combine_emission_subsources_during_dispersion(agriculture_index)',combine_emission_subsources_during_dispersion(agriculture_index),unit_in,unit_logfile)
         combine_emission_subsources_during_dispersion(industry_index)=read_name_logical('combine_emission_subsources_during_dispersion(industry_index)',combine_emission_subsources_during_dispersion(industry_index),unit_in,unit_logfile)
         
+        FF_min_dispersion=read_name_real('FF_min_dispersion',FF_min_dispersion,unit_in,unit_logfile)
+        emission_timeprofile_hour_shift=read_name_real('emission_timeprofile_hour_shift',emission_timeprofile_hour_shift,unit_in,unit_logfile)
+        
+        use_last_meteo_in_dispersion=read_name_logical('use_last_meteo_in_dispersion',use_last_meteo_in_dispersion,unit_in,unit_logfile)
+        use_meandering_in_dispersion=read_name_logical('use_meandering_in_dispersion',use_meandering_in_dispersion,unit_in,unit_logfile)
+        
+
     close (unit_in)
     
     !Call some error traps
@@ -301,7 +331,7 @@
         pathname_output_grid=replace_string_char(config_date_str,replacement_date_str,pathname_output_grid)
     enddo
     
-    !stop
+    enddo !End configuration file number loop
     
     end subroutine uEMEP_read_config
     

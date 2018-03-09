@@ -77,11 +77,11 @@
 !   Cartesian Gaussian plume function
 !==========================================================================
 
-    function gauss_plume_cartesian_func(x_s,y_s,z_s,cos_val,sin_val,x_r,y_r,z_r,ay,by,az,bz,sig_y_0,sig_z_0)
+    function gauss_plume_cartesian_func(x_s,y_s,z_s,cos_val,sin_val,x_r,y_r,z_r,ay,by,az,bz,sig_y_0,sig_z_0,delta)
 
     implicit none
     real x_s,y_s,z_s,u_s,v_s,x_r,y_r,z_r
-    real r,ay,by,az,bz,sig_y_0,sig_z_0
+    real r,ay,by,az,bz,sig_y_0,sig_z_0,delta
     real gauss_plume_cartesian_func
     real sig_y,sig_z,x,y,th
     real cos_val,sin_val
@@ -98,7 +98,7 @@
     y=-(x_r-x_s)*sin_val+(y_r-y_s)*cos_val
     
     gauss_plume_cartesian_func=0.
-    sig_y=sig_y_0+ay*exp(by*log(x))
+    sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta)
     if (x.ge.0.and.abs(y).lt.sig_y*sig_limit) then
         sig_z=sig_z_0+az*exp(bz*log(x))
 
@@ -118,11 +118,11 @@
 !   Cartesian Gaussian plume function
 !==========================================================================
 
-    function gauss_plume_cartesian_integral_func(x_s,y_s,z_s,cos_val,sin_val,x_r,y_r,z_r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2)
+    function gauss_plume_cartesian_integral_func(x_s,y_s,z_s,cos_val,sin_val,x_r,y_r,z_r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta)
 
     implicit none
     real x_s,y_s,z_s,u_s,v_s,x_r,y_r,z_r
-    real r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2
+    real r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta
     real gauss_plume_cartesian_integral_func
     real sig_y,sig_z,x,y,th
     real cos_val,sin_val
@@ -139,7 +139,7 @@
     y=-(x_r-x_s)*sin_val+(y_r-y_s)*cos_val
     
     gauss_plume_cartesian_integral_func=0.
-    sig_y=sig_y_0+ay*exp(by*log(x))
+    sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta)
     if (x.ge.0.and.abs(y).lt.sig_y*sig_limit) then
         sig_z=sig_z_0+az*exp(bz*log(x))
 
@@ -208,11 +208,11 @@
 !==========================================================================
 
     !function gauss_plume_cartesian_func(x_s,y_s,z_s,u_s,v_s,x_r,y_r,z_r,ay,by,az,bz,sig_y_0,sig_z_0)
-    function gauss_plume_cartesian_trajectory_func(x,y,z_s,z_r,ay,by,az,bz,sig_y_0,sig_z_0)
+    function gauss_plume_cartesian_trajectory_func(x,y,z_s,z_r,ay,by,az,bz,sig_y_0,sig_z_0,delta)
 
     implicit none
     real x,y,z_s,z_r
-    real ay,by,az,bz,sig_y_0,sig_z_0
+    real ay,by,az,bz,sig_y_0,sig_z_0,delta
     real gauss_plume_cartesian_trajectory_func
     real sig_y,sig_z,th
     real pi,sig_limit
@@ -228,7 +228,7 @@
     !y=-(x_r-x_s)*sin_val+(y_r-y_s)*cos_val
     
     gauss_plume_cartesian_trajectory_func=0.
-    sig_y=sig_y_0+ay*exp(by*log(x))
+    sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta)
     if (x.ge.0.and.abs(y).lt.sig_y*sig_limit) then
         sig_z=sig_z_0+az*exp(bz*log(x))
 
@@ -243,11 +243,11 @@
 !   Cartesian Gaussian plume function
 !==========================================================================
 
-    function gauss_plume_cartesian_trajectory_integral_func(x,y,z_s,z_r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2)
+    function gauss_plume_cartesian_trajectory_integral_func(x,y,z_s,z_r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta)
 
     implicit none
     real x,y,z_s,z_r
-    real r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2
+    real r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta
     real gauss_plume_cartesian_trajectory_integral_func
     real sig_y,sig_z,th
     real pi,sig_limit
@@ -263,7 +263,7 @@
     !y=-(x_r-x_s)*sin_val+(y_r-y_s)*cos_val
     
     gauss_plume_cartesian_trajectory_integral_func=0.
-    sig_y=sig_y_0+ay*exp(by*log(x))
+    sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta)
     if (x.ge.0.and.abs(y).lt.sig_y*sig_limit) then
         sig_z=sig_z_0+az*exp(bz*log(x))
 

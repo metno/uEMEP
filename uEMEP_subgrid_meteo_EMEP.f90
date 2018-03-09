@@ -30,7 +30,14 @@
     if (.not.allocated(v_utm)) allocate (v_utm(dim_length_nc(time_dim_nc_index)))
     if (.not.allocated(th)) allocate (th(dim_length_nc(time_dim_nc_index)))
     if (.not.allocated(ff)) allocate (ff(dim_length_nc(time_dim_nc_index)))
-        
+
+    if (use_single_time_loop_flag) then
+        if (t_loop.gt.start_time_loop_index) then
+            last_meteo_subgrid(:,:,:)=meteo_subgrid(:,:,1,:)        
+        endif
+    endif
+    
+
     meteo_subgrid=0.
     
     !If EMEP meteo gridded to subgrid files already exist then read them in and leave the subroutine
@@ -63,8 +70,8 @@
 
     write(unit_logfile,'(A)')'Calculating EMEP subgrid meteo data'
 
-    !Loop through the integral subgrid and find those subgrids within EMEP grids and allocate concentrations directly from EMEP grids. Nearest neighbour
-    if (EMEP_grid_interpolation_flag.eq.0) then
+    !Loop through the integral subgrid and find those subgrids within EMEP grids and allocate values directly from EMEP grids. Nearest neighbour
+    if (EMEP_meteo_grid_interpolation_flag.eq.0) then
         do j=1,integral_subgrid_dim(y_dim_index)
         do i=1,integral_subgrid_dim(x_dim_index)
         
@@ -90,7 +97,7 @@
     endif
     
     !Area weighted interpolation of meteorology to integral grid
-    if (EMEP_grid_interpolation_flag.ge.1) then
+    if (EMEP_meteo_grid_interpolation_flag.ge.1) then
           
         allocate (weighting_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index))) !EMEP grid weighting for interpolation. Does not need a source index for area weighting
  
@@ -194,6 +201,12 @@
             
         enddo
         enddo
+
+    if (use_single_time_loop_flag) then
+        if (t_loop.eq.start_time_loop_index) then
+            last_meteo_subgrid(:,:,:)=meteo_subgrid(:,:,1,:)        
+        endif
+    endif
 
     !Save files in ascii format
     if (save_intermediate_files) then

@@ -85,9 +85,16 @@
     if (read_existing_grid_data(emep_emission_subgrid_file_index(allsource_index))) return
 
 
-                    
+    do i_source=1,n_source_index
+        if (calculate_source(i_source)) then
+            write(unit_logfile,'(A,A,A,ES10.2)') 'Emission source ',trim(source_file_str(i_source)),': Total hourly average emissions before use of EMEP (ug/s)=', &
+                sum(emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),:,i_source,subsource_index))/(t_end-t_start+1)
+        endif
+    enddo
+                
     !Distribute the EMEP emissions evenly over the subgrids within an EMEP grid
     if (EMEP_emission_grid_interpolation_flag.eq.0.or.local_subgrid_method_flag.eq.4) then
+    !if (EMEP_emission_grid_interpolation_flag.eq.0) then
         write(unit_logfile,'(A)')'Distributing EMEP emissions to all subgrids within an EMEP grid'
 
         tt=1
@@ -145,6 +152,7 @@
            
             !Determine subgrid normalised time profile per hour from EMEP grid emissions (average hourly emission conversion)
             !This is not quite right because the entire emission time profile is not available in a short period
+            !Minimum of a day is needed, with the assumption that all days are the same
             if (local_subgrid_method_flag.eq.4) then
                 write(unit_logfile,'(A)')'Calculating EMEP emission time profile'
                 do j=1,emission_subgrid_dim(y_dim_index,i_source)
@@ -158,6 +166,10 @@
                     endif
                     !write(*,'(<emission_subgrid_dim(t_dim_index,i_source)>f6.2)') emission_time_profile_subgrid(i,j,:,i_source,subsource_index)
                     !write(*,*) i,j,subgrid_count_subgrid(i,j,1,i_source),total_proxy_emission_subgrid(i,j,1,i_source,subsource_index),emission_subgrid(i,j,1,i_source,subsource_index)
+                    
+                    !Set emissions to 0 in the case when local_subgrid_method_flag.eq.4 since these are set later
+                    !This way of doing things is not logical as it fills the grid unnecessarilly. Should be fixed and made logical
+                    emission_subgrid(i,j,:,i_source,subsource_index)=0.
                 enddo
                 enddo
             endif
@@ -174,11 +186,12 @@
             endif    
 
             !Apply EMEP time variation to existing subgrid emissions
-            if (local_subgrid_method_flag.eq.4) then
-                write(unit_logfile,'(A)')'Applying EMEP emission time variation to existing subgrid emissions'
-                do t=t_start,t_end
-                    emission_subgrid(:,:,t,i_source,subsource_index)=temp_proxy_emission_subgrid(:,:,i_source)*emission_time_profile_subgrid(:,:,t,i_source,subsource_index)
-                enddo
+            !if (local_subgrid_method_flag.eq.4) then
+                !write(unit_logfile,'(A)')'Applying EMEP emission time variation to existing subgrid emissions'
+                !do t=t_start,t_end
+                    !emission_subgrid(:,:,t,i_source,subsource_index)=temp_proxy_emission_subgrid(:,:,i_source)*emission_time_profile_subgrid(:,:,t,i_source,subsource_index)
+                    !emission_subgrid(:,:,t,i_source,subsource_index)=emission_subgrid(:,:,t,i_source,subsource_index)*emission_time_profile_subgrid(:,:,t,i_source,subsource_index)
+                !enddo
                 
                 !where (total_proxy_emission_subgrid.eq.0.) emission_subgrid=0.
                 !i_source=traffic_index
@@ -187,7 +200,7 @@
                 !write(*,'(<emission_subgrid_dim(t_dim_index,i_source)>f6.2)') emission_subgrid(i,j,:,i_source,subsource_index)
                 !    enddo
                 !    enddo
-            endif    
+            !endif    
 
         endif
         enddo
@@ -501,10 +514,8 @@
     !if (subgrid_emission_distribution_flag) then
     do i_source=1,n_source_index
         if (calculate_source(i_source)) then
-
-            write(unit_logfile,'(A,A,A,ES10.2,ES10.2)') 'Emission source ',trim(source_file_str(i_source)),': Sum of emissions before and after use of EMEP (ug/s)=', &
-                sum(temp_proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),i_source)),sum(emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),:,i_source,subsource_index))/(t_end-t_start+1)
-
+            write(unit_logfile,'(A,A,A,ES10.2)') 'Emission source ',trim(source_file_str(i_source)),': Total hourly average emissions after use of EMEP (ug/s)=', &
+                sum(emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),:,i_source,subsource_index))/(t_end-t_start+1)
         endif
     enddo
     !endif    

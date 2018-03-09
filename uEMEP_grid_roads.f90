@@ -12,6 +12,8 @@
     
     real, allocatable :: f_subgrid(:)
     real, allocatable :: adt_temp(:)
+    real, allocatable :: adt_car_temp(:)
+    real, allocatable :: adt_truck_temp(:)
     real x_subgrid_in(2),y_subgrid_in(2)
     real x_line_in(2),y_line_in(2)
     integer i_traffic_index(2),j_traffic_index(2)
@@ -30,6 +32,8 @@
 
     allocate (f_subgrid(n_roadlinks))
     allocate (adt_temp(n_roadlinks))
+    allocate (adt_car_temp(n_roadlinks))
+    allocate (adt_truck_temp(n_roadlinks))
     !allocate (traffic_emission_subgrid(subgrid_dim(1),subgrid_dim(2)),n_emission_subgrid_index)
     
     source_index=traffic_index
@@ -55,9 +59,13 @@
     proxy_emission_subgrid(:,:,source_index,:)=0.
     
     !Possible to split the traffic source into different subsources at this point if necessary, e.g. light and heavy traffic
-    adt_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*(1.-inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.*(1-ratio_truck_car_emission))
+    !Here we weight the adt by the emission ratio and give an emission factor valid for cars
+    !adt_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*(1.-inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.*(1-ratio_truck_car_emission))
+    adt_car_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*(1.-inputdata_rl(1:n_roadlinks,hdv_rl_index)/100)
+    adt_truck_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.
+    adt_temp=adt_car_temp+adt_truck_temp*ratio_truck_car_emission
     
-    !Calculate the pseudo traffic emissions in each grid           
+    !Calculate the pseudo traffic emissions in each grid
     write(unit_logfile,*)'Gridding traffic emission proxy data'
     
     do ro=1,n_roadlinks
@@ -109,6 +117,8 @@
              
     deallocate (f_subgrid)
     deallocate (adt_temp)
+    deallocate (adt_car_temp)
+    deallocate (adt_truck_temp)
     
     if (save_intermediate_files) then
     do subsource_index=1,n_subsource(source_index)
@@ -316,15 +326,15 @@
 
     line(1,:)=(/.5,.5,1.,2./)!x1,y1,x2,y2
     line(2,:)=(/.5,0.,-2.,-0./)!x1,y1,x2,y2
-    line(3,:)=(/0.,-0.2,-0.,-2/)!x1,y1,x2,y2
-    line(4,:)=(/2.,3.,0.5,2/)!x1,y1,x2,y2
+    line(3,:)=(/0.,-0.2,-0.,-2./)!x1,y1,x2,y2
+    line(4,:)=(/2.,3.,0.5,2./)!x1,y1,x2,y2
     line(5,:)=(/-2.,-3.,1.5,1.5/)!x1,y1,x2,y2
     line(6,:)=(/.7,-.9,.2,.7/)!x1,y1,x2,y2
     line(7,:)=(/-1.,-3.,-1.,+1./)!x1,y1,x2,y2
-    line(8,:)=(/-.5,-1,3,-1/)!x1,y1,x2,y2
-    line(9,:)=(/-.5,1,3,1/)!x1,y1,x2,y2
-    line(10,:)=(/1,-3,1,+0/)!x1,y1,x2,y2
-    line(11,:)=(/-.7,-3,-.7,+2/)!x1,y1,x2,y2
+    line(8,:)=(/-.5,-1.,3.,-1./)!x1,y1,x2,y2
+    line(9,:)=(/-.5,1.,3.,1./)!x1,y1,x2,y2
+    line(10,:)=(/1.,-3.,1.,+0./)!x1,y1,x2,y2
+    line(11,:)=(/-.7,-3.,-.7,+2./)!x1,y1,x2,y2
     line(12,:)=(/.5,1.5,1.5,.6/)!x1,y1,x2,y2
     line(13,:)=(/-1.,1.,1.,-1./)!x1,y1,x2,y2
     line(14,:)=(/-1.,-1.,1.,1./)!x1,y1,x2,y2

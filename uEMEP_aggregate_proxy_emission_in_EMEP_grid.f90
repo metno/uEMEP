@@ -11,6 +11,7 @@
     
     integer i_source
     real, allocatable :: EMEP_aggregated_subgid_emission(:,:)
+    real, allocatable :: EMEP_aggregated_emission(:,:)
     integer, allocatable :: EMEP_aggregated_subgid_emission_count(:,:)
     real, allocatable :: lon_array(:,:),lat_array(:,:)
     integer ii,jj,iii,jjj   
@@ -21,14 +22,10 @@
        
     allocate (EMEP_aggregated_subgid_emission_count(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index)))
     allocate (EMEP_aggregated_subgid_emission(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index)))
+    allocate (EMEP_aggregated_emission(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index)))
     allocate (lon_array(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index)))
     allocate (lat_array(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index)))
             
-    write(unit_logfile,'(A)') ''
-    write(unit_logfile,'(A)') '================================================================'
-	write(unit_logfile,'(A)') 'Aggregating proxy emissions in EMEP grids for diagnostics (uEMEP_aggregate_proxy_emission_in_EMEP_grid)'
-	write(unit_logfile,'(A)') '================================================================'
-
     EMEP_aggregated_subgid_emission=0.
     EMEP_aggregated_subgid_emission_count=0
     
@@ -44,7 +41,12 @@
     if (calculate_source(i_source)) then
         if (make_EMEP_grid_emission_data(i_source)) then
 
-            write(unit_logfile,'(A)') 'Saving proxy subgrid emissions in EMEP grid'
+            write(unit_logfile,'(A)') ''
+            write(unit_logfile,'(A)') '================================================================'
+	        write(unit_logfile,'(A)') 'Aggregating proxy emissions in EMEP grids for diagnostics (uEMEP_aggregate_proxy_emission_in_EMEP_grid)'
+	        write(unit_logfile,'(A)') '================================================================'
+
+            write(unit_logfile,'(A)') 'Saving proxy subgrid emissions in EMEP grid ('//trim(source_file_str(i_source))//')'
             if (i_source.eq.agriculture_index) then
                 i_nc_source=agriculture_nc_index
             elseif (i_source.eq.traffic_index) then
@@ -60,6 +62,7 @@
             
 
             EMEP_aggregated_subgid_emission=0.
+            EMEP_aggregated_emission=0.
             EMEP_aggregated_subgid_emission_count=0
             do j=1,emission_subgrid_dim(y_dim_index,i_source)
             do i=1,emission_subgrid_dim(x_dim_index,i_source)
@@ -71,19 +74,34 @@
                 iii=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,i_source)
                 jjj=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,i_source)
             
-                EMEP_aggregated_subgid_emission(iii,jjj)=EMEP_aggregated_subgid_emission(iii,jjj)+sum(proxy_emission_subgrid(i,j,i_source,:))*unit_conversion(i_source) &
-                    /(emission_subgrid_delta(y_dim_index,i_source)*emission_subgrid_delta(x_dim_index,i_source))*3600./1000. !Conversion from ug/sec/subgrid to mg/m2/hr (EMEP
+                !EMEP_aggregated_subgid_emission(iii,jjj)=EMEP_aggregated_subgid_emission(iii,jjj)+sum(proxy_emission_subgrid(i,j,i_source,:)*emission_factor(compound_index,i_source,:)) &
+                !    /(emission_subgrid_delta(y_dim_index,i_source)*emission_subgrid_delta(x_dim_index,i_source))*3600./1000. !Conversion from ug/sec/subgrid to mg/m2/hr (EMEP)
+                !EMEP_aggregated_emission(iii,jjj)=EMEP_aggregated_emission(iii,jjj)+sum(var3d_nc(iii,jjj,:,emis_nc_index,i_nc_source))/dim_length_nc(time_dim_nc_index)
                 EMEP_aggregated_subgid_emission_count(iii,jjj)=EMEP_aggregated_subgid_emission_count(iii,jjj)+1
- 
+                !Calculate as tonnes per year
+                EMEP_aggregated_subgid_emission(iii,jjj)=EMEP_aggregated_subgid_emission(iii,jjj)+sum(proxy_emission_subgrid(i,j,i_source,:)*emission_factor(compound_index,i_source,:)) &
+                    *1.e-12*3600.*24.*365. !Conversion from ug/sec/subgrid to ton/year 
+                if (hourly_calculations) then
+                    EMEP_aggregated_emission(iii,jjj)=EMEP_aggregated_emission(iii,jjj)+sum(var3d_nc(iii,jjj,:,emis_nc_index,i_nc_source))/dim_length_nc(time_dim_nc_index) &
+                    *(emission_subgrid_delta(y_dim_index,i_source)*emission_subgrid_delta(x_dim_index,i_source))*1.e-9*24.*365. !Conversion from mg/m2/hr to ton/year (EMEP)
+                endif
+                if (annual_calculations) then
+                    EMEP_aggregated_emission(iii,jjj)=EMEP_aggregated_emission(iii,jjj)+sum(var3d_nc(iii,jjj,:,emis_nc_index,i_nc_source))/dim_length_nc(time_dim_nc_index) &
+                    *(emission_subgrid_delta(y_dim_index,i_source)*emission_subgrid_delta(x_dim_index,i_source))*1.e-9 !Conversion from mg/m2/yr to ton/year (EMEP)
+                endif
+                
+                
             enddo
             enddo
             
             do j=1,dim_length_nc(y_dim_nc_index)
             do i=1,dim_length_nc(x_dim_nc_index)
                 if (EMEP_aggregated_subgid_emission_count(i,j).gt.0) then
-                    EMEP_aggregated_subgid_emission(i,j)=EMEP_aggregated_subgid_emission(i,j)/EMEP_aggregated_subgid_emission_count(i,j)
+                    EMEP_aggregated_subgid_emission(i,j)=EMEP_aggregated_subgid_emission(i,j) !/EMEP_aggregated_subgid_emission_count(i,j)
+                    EMEP_aggregated_emission(i,j)=EMEP_aggregated_emission(i,j) !/EMEP_aggregated_subgid_emission_count(i,j)
                 else
-                    EMEP_aggregated_subgid_emission(i,j)=-999.
+                    EMEP_aggregated_subgid_emission(i,j)=0.
+                    EMEP_aggregated_emission(i,j)=0.
                 endif
                 lon_array(i,j)=var1d_nc(i,x_dim_nc_index)
                 lat_array(i,j)=var1d_nc(j,y_dim_nc_index)
@@ -107,12 +125,16 @@
     
             temp_name=trim(pathname_grid(emission_file_index(i_source)))//trim(filename_grid(emission_file_index(i_source)))//'_aggregated_proxy_EMEP_'//trim(file_tag)//'.asc'
             write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
+            write(unit_logfile,'(a,f12.2)')'Total local emissions (ton/year): ',sum(EMEP_aggregated_subgid_emission)
             call write_esri_ascii_file(unit_logfile,temp_name,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dgrid_nc(lat_nc_index), &
-            EMEP_aggregated_subgid_emission,lon_array,lat_array)
+            EMEP_aggregated_subgid_emission(:,:),lon_array,lat_array)
             temp_name=trim(pathname_grid(emission_file_index(i_source)))//trim(filename_grid(emission_file_index(i_source)))//'_EMEP_'//trim(file_tag)//'.asc'
             write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
+            write(unit_logfile,'(a,f12.2)')'Total EMEP emissions (ton/year): ',sum(EMEP_aggregated_emission)
             call write_esri_ascii_file(unit_logfile,temp_name,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dgrid_nc(lat_nc_index), &
-            sum(var3d_nc(:,:,:,emis_nc_index,i_nc_source),3)/dim_length_nc(time_dim_nc_index),lon_array,lat_array)
+            EMEP_aggregated_emission(:,:),lon_array,lat_array)
+            
+            write(unit_logfile,'(a,f12.4)')'Ratio of local to EMEP emissions: ',sum(EMEP_aggregated_subgid_emission)/sum(EMEP_aggregated_emission)
             
         endif    
     endif

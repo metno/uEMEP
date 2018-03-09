@@ -10,6 +10,16 @@
     integer i_source
     real x_temp,y_temp
     
+    !Cross referencing must be done for each new grid when using multiple grids
+    if (allocated(crossreference_target_to_emep_subgrid)) deallocate (crossreference_target_to_emep_subgrid)
+    if (allocated(crossreference_integral_to_emep_subgrid)) deallocate (crossreference_integral_to_emep_subgrid)
+    if (allocated(crossreference_target_to_integral_subgrid)) deallocate (crossreference_target_to_integral_subgrid)
+    if (allocated(crossreference_target_to_emission_subgrid)) deallocate (crossreference_target_to_emission_subgrid)
+    if (allocated(crossreference_emission_to_EMEP_subgrid)) deallocate (crossreference_emission_to_EMEP_subgrid)
+    if (allocated(crossreference_integral_to_emission_subgrid)) deallocate (crossreference_integral_to_emission_subgrid)
+    if (allocated(crossreference_emission_to_integral_subgrid)) deallocate (crossreference_emission_to_integral_subgrid)
+    if (allocated(crossreference_target_to_population_subgrid)) deallocate (crossreference_target_to_population_subgrid)
+    
     allocate (crossreference_target_to_emep_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2))
     allocate (crossreference_integral_to_emep_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),2))
     allocate (crossreference_target_to_integral_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2))

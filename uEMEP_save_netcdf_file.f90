@@ -7,11 +7,15 @@
     implicit none
     
     integer i_comp,i_file,i_meteo
-    character(256) temp_name,unit_str,title_str,var_name_temp, temp_date_str
+    character(256) temp_name,unit_str,title_str,var_name_temp, temp_date_str,station_name_str
     logical create_file
     integer i_source,i_subsource
     integer :: EMEP_subsource=1
     real :: valid_min=0.
+    real, allocatable :: temp_subgrid(:,:,:)
+    integer ii,jj
+    
+    if (.not.allocated(temp_subgrid)) allocate(temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
     
     !Save subgrid calculations
     valid_min=0.   
@@ -26,7 +30,14 @@
         temp_date_str=''
     endif
     
-    temp_name=trim(pathname_grid(i_file))//'uEMEP_output'//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//trim(temp_date_str)//'.nc'
+    if (use_multiple_receptor_grids_flag) then
+        station_name_str=trim(name_receptor_in(g_loop,1))//'_';
+    else
+        station_name_str=''
+    endif
+    
+    
+    temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_output'//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//trim(temp_date_str)//'.nc'
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -66,7 +77,40 @@
     
         endif
     enddo
+
+    !Save the emissions interpolated to the target grid
+    do i_source=1,n_source_index
+        if (calculate_source(i_source)) then
     
+                i_file=emission_file_index(i_source)
+                var_name_temp=trim(var_name_nc(conc_nc_index,compound_loop_index(i_comp),i_source))//'_'//trim(filename_grid(i_file))
+                write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                
+                !Calculate the emissions in the target grid
+                temp_subgrid=0.
+                do j=1,subgrid_dim(y_dim_index)
+                do i=1,subgrid_dim(x_dim_index)
+                
+                    
+                    ii=crossreference_target_to_emission_subgrid(i,j,x_dim_index,i_source)
+                    jj=crossreference_target_to_emission_subgrid(i,j,y_dim_index,i_source)
+            
+                    temp_subgrid(i,j,:)=sum(emission_subgrid(ii,jj,:,i_source,:),2)
+                    !Subgrid emissions, if relevant, are in units ug/sec/subgrid. Convert to g/s. Acount for the difference in subgrid sizes here
+                    temp_subgrid(i,j,:)=1.0e-6*temp_subgrid(i,j,:)*(subgrid_delta(y_dim_index)*subgrid_delta(x_dim_index)) &
+                        /(emission_subgrid_delta(y_dim_index,i_source)*emission_subgrid_delta(x_dim_index,i_source))
+ 
+                enddo
+                enddo
+                
+                unit_str='g/s'
+                call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                    ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                    ,unit_str,title_str,create_file,valid_min)
+    
+        endif
+    enddo
+
     !Save the EMEP data interpolated to the subgrid
     do i_source=1,n_source_index
         if (calculate_source(i_source).or.i_source.eq.allsource_index) then
@@ -98,6 +142,8 @@
                 call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                     ,subgrid(:,:,:,emep_local_subgrid_index,i_source,emep_subsource),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                     ,unit_str,title_str,create_file,valid_min)
+                
+                
             
         endif
     enddo
@@ -131,145 +177,201 @@
             ,traveltime_subgrid(:,:,:,1),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
             ,unit_str,title_str,create_file,valid_min)
 
-    !Save meteo data in seperate file since this can have a different grid
+ 
+    !Save the meteo interpolated to the target grid
     valid_min=-1.e24   
-     
-    !Set the file name and path
-    i_file=subgrid_ugrid_file_index
-    temp_name=trim(pathname_grid(i_file))//'uEMEP_meteo_'//trim(file_tag)//trim(temp_date_str)//'.nc'
-
-    !Save the final result of the meteo subgrid calculation
-    if (t_loop.eq.start_time_loop_index) then
-        create_file=.true.
-        write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-        title_str='uEMEP_meteorology_'//trim(file_tag)//trim(temp_date_str)
-    endif
        
     i_file=subgrid_ugrid_file_index
     i_meteo=ugrid_subgrid_index
     unit_str="m/s"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
 
-    create_file=.false.
-    
     i_file=subgrid_vgrid_file_index
     i_meteo=vgrid_subgrid_index
     unit_str="m/s"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
 
     i_file=subgrid_hmix_file_index
     i_meteo=hmix_subgrid_index
     unit_str="m"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
     
     i_file=subgrid_kz_file_index
     i_meteo=kz_subgrid_index
     unit_str="m2/s"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
  
     i_file=subgrid_FFgrid_file_index
     i_meteo=FFgrid_subgrid_index
     unit_str="m/s"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
 
     i_file=subgrid_FF10_file_index
     i_meteo=FF10_subgrid_index
     unit_str="m/s"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
 
     i_file=subgrid_J_file_index
     i_meteo=J_subgrid_index
     unit_str="1/s"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
 
     i_file=subgrid_invL_file_index
     i_meteo=invL_subgrid_index
     unit_str="1/m"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
 
     i_file=subgrid_logz0_file_index
     i_meteo=logz0_subgrid_index
     unit_str="log(m)"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
 
     i_file=subgrid_ustar_file_index
     i_meteo=ustar_subgrid_index
     unit_str="m/s"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
             
     i_file=subgrid_invFFgrid_file_index
     i_meteo=inv_FFgrid_subgrid_index
     unit_str="s/m"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
             
     i_file=subgrid_invFF10_file_index
     i_meteo=inv_FF10_subgrid_index
     unit_str="s/m"
+    !The same for all--------------------
     var_name_temp=trim(filename_grid(i_file))
     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-            ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min)
-
-    !i_meteo=cos_subgrid_index
-    !unit_str=":"
-    !var_name_temp='cos_wind'
-    !write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    !call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-    !        ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-    !        ,unit_str,title_str,create_file,valid_min)
-    
-    !i_meteo=sin_subgrid_index
-    !unit_str=":"
-    !var_name_temp='sin_wind'
-    !write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-    !call uEMEP_save_netcdf_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index) &
-    !        ,meteo_subgrid(:,:,:,i_meteo),x_integral_subgrid,y_integral_subgrid,lon_integral_subgrid,lat_integral_subgrid,var_name_temp &
-    !        ,unit_str,title_str,create_file,valid_min)
+    temp_subgrid=0.
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+    enddo
+    enddo
+    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min)
+    !The same for all--------------------
 
     end subroutine uEMEP_save_netcdf_control
     

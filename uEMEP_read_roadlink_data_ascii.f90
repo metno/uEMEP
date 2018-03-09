@@ -32,9 +32,9 @@
     endif
     
 
-    min_adt=100.
-    ratio_truck_car_emission=10.
-    min_link_size=50.
+    min_adt=10.
+    ratio_truck_car_emission=4.86/.318 !From excel sheet
+    min_link_size=1.
 
     pathfilename_rl(1)=trim(pathname_rl(1))//trim(filename_rl(1))
     !write(*,*) pathname_rl(2),filename_rl(2),pathfilename_rl(2)
@@ -42,7 +42,7 @@
     !Test existence of the road link filename (2). If does not exist then use default
     inquire(file=trim(pathfilename_rl(1)),exist=exists)
     if (.not.exists) then
-        write(unit_logfile,'(A,A)') ' ERROR: Eoad link file ascii does not exist: ', trim(pathfilename_rl(1))
+        write(unit_logfile,'(A,A)') ' ERROR: Road link file ascii does not exist: ', trim(pathfilename_rl(1))
         stop
     endif
 

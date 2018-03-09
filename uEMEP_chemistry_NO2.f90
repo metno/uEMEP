@@ -42,7 +42,7 @@
     do t=t_start,t_end
         traveltime_subgrid(:,:,t,1)=traveltime_subgrid(:,:,t,1)/traveltime_subgrid(:,:,t,2)
         !Invert it to get the time scale
-        traveltime_subgrid(:,:,t,1)=1./traveltime_subgrid(:,:,t,1)
+        !traveltime_subgrid(:,:,t,1)=1./traveltime_subgrid(:,:,t,1)
         !Set none valid to 12 hours (long time)
         where (traveltime_subgrid(:,:,t,2).eq.0) traveltime_subgrid(:,:,t,1)=3600.*12.
     enddo

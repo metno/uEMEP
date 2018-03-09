@@ -153,7 +153,7 @@
     sig_y_00=0.
     sig_z_00=0.
     h_emis=0.
-    z_rec=2.    
+    z_rec=2.
     
     h_emis(traffic_index,:)=2.
     h_emis(shipping_index,:)=25.

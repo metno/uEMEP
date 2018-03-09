@@ -33,12 +33,14 @@
     real            distance_subgrid_min
     real xpos_subgrid,ypos_subgrid
     real xpos_emission_subgrid,ypos_emission_subgrid
+    real temp_subgrid_internal
     
     !integer ii_temp,jj_temp
     real, allocatable :: temp_emission_subgrid(:,:)
     real, allocatable :: temp_subgrid(:,:)
     real, allocatable :: temp_FF_subgrid(:,:)
     real, allocatable :: trajectory_subgrid(:,:,:,:)
+    real, allocatable :: angle_diff(:,:)
     !real, allocatable :: temp_lat_emission_subgrid(:,:)
     !real, allocatable :: temp_x_emission_subgrid(:,:)
     !real, allocatable :: temp_y_emission_subgrid(:,:)
@@ -83,6 +85,7 @@
     allocate (temp_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
     allocate (temp_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
     allocate (temp_FF_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
+    allocate (angle_diff(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
 
     temp_subgrid=0.
     temp_emission_subgrid=0.
@@ -161,6 +164,14 @@
         temp_subgrid=0.
         temp_FF_subgrid=0.
         
+        if (.not.use_single_time_loop_flag) then
+            if (tt.gt.t_start) then
+                last_meteo_subgrid(:,:,:)=meteo_subgrid(:,:,tt-1,:)
+            else
+                last_meteo_subgrid(:,:,:)=meteo_subgrid(:,:,tt,:)      
+            endif           
+        endif
+
         !Precalculate information for the trajectory model
         !Maxium number of trajectory steps and size of steps based on the integral (meteorology) loop size
         if (use_trajectory_flag) then
@@ -215,11 +226,35 @@
                 stop
             endif
             
+            !Setting a minimum value for wind for dispersion purposes (cannot be zero)
+            temp_FF_subgrid(i_cross,j_cross)=sqrt(temp_FF_subgrid(i_cross,j_cross)*temp_FF_subgrid(i_cross,j_cross)+FF_min_dispersion*FF_min_dispersion)
+            
             if (temp_FF_subgrid(i_cross,j_cross).eq.0) then
                 write(unit_logfile,'(a,2i)') 'Zero wind speed at integral grid (stopping): ',i_cross,j_cross
                 stop
             endif
             
+            !Finds the angle difference between the current and last meteo field for dispersion.
+            !Still need to centre the wind vector, which is not currently done.
+            if (use_last_meteo_in_dispersion) then
+                cos_subgrid_loc=meteo_subgrid(i_cross,j_cross,tt,cos_subgrid_index)
+                sin_subgrid_loc=meteo_subgrid(i_cross,j_cross,tt,sin_subgrid_index)
+                angle_diff(i_cross,j_cross)=abs(asin(meteo_subgrid(i_cross,j_cross,tt,sin_subgrid_index)*last_meteo_subgrid(i_cross,j_cross,cos_subgrid_index) &
+                                           -meteo_subgrid(i_cross,j_cross,tt,cos_subgrid_index)*last_meteo_subgrid(i_cross,j_cross,sin_subgrid_index) ))/2.
+                
+                angle_diff(i_cross,j_cross)=min(angle_diff(i_cross,j_cross),3.14159/4.) !Maximum allowed is 45 degrees
+                !write(*,*) i_cross,j_cross,angle_diff(i_cross,j_cross)*180/3.14159
+                                        
+            else
+                angle_diff(i_cross,j_cross)=0.
+            endif
+
+            !Implement a meandering that is dependent on wind speed. Max 30 degrees at FF_min_dispersion (0.5) and around 10 degrees at 5*FF_min_dispersion (2.5)
+            if (use_meandering_in_dispersion) then
+                angle_diff(i_cross,j_cross)=angle_diff(i_cross,j_cross) &
+                +(30.*3.14159/180.)*exp(-(temp_FF_subgrid(i_cross,j_cross)-FF_min_dispersion)/(FF_min_dispersion*2.))
+            endif
+
         enddo
         enddo
         
@@ -282,9 +317,9 @@
  
     
 
-                time_weight=0.
+                time_weight(tt)=0.
                 !time_count=0
-                time_total=0.
+                time_total(tt)=0.
                 
                 !i_start=1;i_end=emission_subgrid_dim(x_dim_index,source_index);j_start=1;j_end=emission_subgrid_dim(y_dim_index,source_index)
 
@@ -335,14 +370,16 @@
                                     
                                     if (stability_scheme_flag.eq.1) call uEMEP_set_dispersion_params_simple(source_index,subsource_index)
                                     if (stability_scheme_flag.eq.2) call uEMEP_set_dispersion_params_PG(meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index),source_index,subsource_index)
-                                    
-                                    temp_subgrid(i,j)=temp_subgrid(i,j)+temp_emission_subgrid(ii,jj) &
+                                                                        
+                                    temp_subgrid_internal=temp_emission_subgrid(ii,jj) &
                                         *gauss_plume_cartesian_trajectory_func(x_loc,y_loc,h_emis_loc,z_rec_loc, &
                                         ay(source_index,subsource_index),by(source_index,subsource_index),az(source_index,subsource_index),bz(source_index,subsource_index), &
-                                        sig_y_0(source_index,subsource_index),sig_z_0(source_index,subsource_index)) &
+                                        sig_y_0(source_index,subsource_index),sig_z_0(source_index,subsource_index),angle_diff(i_cross_integral,j_cross_integral)) &
                                         /temp_FF_subgrid(i_cross_integral,j_cross_integral)
-                                     
-                                    distance_subgrid=x_loc
+ 
+                                    temp_subgrid(i,j)=temp_subgrid(i,j)+temp_subgrid_internal
+
+                                    !distance_subgrid=x_loc
                                     distance_subgrid=sqrt(x_loc*x_loc+y_loc*y_loc)
                                  
                                     !temp_subgrid(i,j)=temp_subgrid(i,j) &
@@ -359,6 +396,7 @@
                                     !write(*,*) i,j,ii,jj,temp_subgrid(i,j)
                                 else
                                     !write(*,*) 'Not a valid trajectory',i,j,ii,jj
+                                    temp_subgrid_internal=0.
                                 endif
                                 
                             else
@@ -371,19 +409,20 @@
                                     i_cross_integral=crossreference_emission_to_integral_subgrid(ii,jj,x_dim_index,source_index)
                                     j_cross_integral=crossreference_emission_to_integral_subgrid(ii,jj,y_dim_index,source_index)                            
                                     cos_subgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,cos_subgrid_index)
-                                    sin_subgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,sin_subgrid_index)             
+                                    sin_subgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,sin_subgrid_index)                                    
 
                                     if (stability_scheme_flag.eq.1) call uEMEP_set_dispersion_params_simple(source_index,subsource_index)
                                     if (stability_scheme_flag.eq.2) call uEMEP_set_dispersion_params_PG(meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index),source_index,subsource_index)
 
-                                    temp_subgrid(i,j)=temp_subgrid(i,j) &
-                                        +temp_emission_subgrid(ii,jj) &
+                                    temp_subgrid_internal=temp_emission_subgrid(ii,jj) &
                                         *gauss_plume_cartesian_func(x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),h_emis_loc,cos_subgrid_loc,sin_subgrid_loc, &
                                         x_subgrid(i,j),y_subgrid(i,j),z_rec_loc, &
                                         ay(source_index,subsource_index),by(source_index,subsource_index),az(source_index,subsource_index),bz(source_index,subsource_index), &
-                                        sig_y_0(source_index,subsource_index),sig_z_0(source_index,subsource_index)) &
+                                        sig_y_0(source_index,subsource_index),sig_z_0(source_index,subsource_index),angle_diff(i_cross_integral,j_cross_integral)) &
                                         /temp_FF_subgrid(i_cross_integral,j_cross_integral)
                             
+                                    temp_subgrid(i,j)=temp_subgrid(i,j)+temp_subgrid_internal
+
                                     distance_subgrid=sqrt((x_emission_subgrid(ii,jj,source_index)-x_subgrid(i,j))*(x_emission_subgrid(ii,jj,source_index)-x_subgrid(i,j)) &
                                         +(y_emission_subgrid(ii,jj,source_index)-y_subgrid(i,j))*(y_emission_subgrid(ii,jj,source_index)-y_subgrid(i,j)))
                                 
@@ -394,18 +433,22 @@
                             !Calculate weighted time based on the selected temp_FF_subgrid wind level
                             !Minimum distance is half of a grid diagonal weighted so the circle has the same area as the square with that diagonal
                             !if (subgrid(i,j,tt,proxy_subgrid_index,source_index,subsource_index).gt.0) then
-                            if (temp_subgrid(i,j).gt.0) then
+                            if (temp_subgrid_internal.gt.0) then
                                     distance_subgrid=max(distance_subgrid,distance_subgrid_min)
                                     !Take weighted average (weighted by concentration) of the inverse of the time. Inverse because we want to weight the smaller values (I think)
                                     !time_weight(tt)=time_weight(tt)+meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index)/distance_subgrid*subgrid(i,j,tt,proxy_subgrid_index,source_index,subsource_index)
-                                    
+                                    i_cross_integral=crossreference_emission_to_integral_subgrid(ii,jj,x_dim_index,source_index)
+                                    j_cross_integral=crossreference_emission_to_integral_subgrid(ii,jj,y_dim_index,source_index)                            
+
                                     !time_weight(tt)=time_weight(tt)+meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index)/distance_subgrid*temp_subgrid(i,j)
-                                    time_weight(tt)=time_weight(tt)+temp_FF_subgrid(i_cross_integral,j_cross_integral)/distance_subgrid*temp_subgrid(i,j)
+                                    !time_weight(tt)=time_weight(tt)+temp_FF_subgrid(i_cross_integral,j_cross_integral)/distance_subgrid*temp_subgrid_internal
+                                    !Not inverse of the time
+                                    time_weight(tt)=time_weight(tt)+distance_subgrid/temp_FF_subgrid(i_cross_integral,j_cross_integral)*temp_subgrid_internal
                                     
                                     !write(*,*) time_weight(tt),meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index),distance_subgrid,temp_subgrid(i,j)
                                     !Calculate sum of the concentration for normalisation
                                     !time_total(tt)=time_total(tt)+subgrid(i,j,tt,proxy_subgrid_index,source_index,subsource_index)
-                                    time_total(tt)=time_total(tt)+temp_subgrid(i,j)
+                                    time_total(tt)=time_total(tt)+temp_subgrid_internal
                             endif
 
                         else
@@ -546,6 +589,7 @@
     logical valid_traj
     real traj_step_size,x_loc,y_loc
     real, allocatable :: temp_FF_subgrid(:,:)
+    real, allocatable :: angle_diff(:,:)
     real z0_temp,h_temp
    
     !functions
@@ -585,6 +629,7 @@
     endif
     
     allocate (temp_FF_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
+    allocate (angle_diff(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
     
     !Precalculate information for the trajectory model
     !Maxium number of trajectory steps and size of steps based on the integral (meteorology) loop size
@@ -647,6 +692,22 @@
                 write(unit_logfile,'(a)') 'No valid wind_level_integral_flag selected. Stopping (uEMEP_grid_proxy)'
                 stop
             endif
+            !Setting a minimum value for wind for dispersion purposes (cannot be zero)
+            temp_FF_subgrid(i_cross,j_cross)=sqrt(temp_FF_subgrid(i_cross,j_cross)*temp_FF_subgrid(i_cross,j_cross)+FF_min_dispersion*FF_min_dispersion)
+
+            if (use_last_meteo_in_dispersion) then
+                cos_subgrid_loc=meteo_subgrid(i_cross,j_cross,tt,cos_subgrid_index)
+                sin_subgrid_loc=meteo_subgrid(i_cross,j_cross,tt,sin_subgrid_index)
+                angle_diff(i_cross,j_cross)=abs(asin(meteo_subgrid(i_cross,j_cross,tt,sin_subgrid_index)*last_meteo_subgrid(i_cross,j_cross,cos_subgrid_index) &
+                                           -meteo_subgrid(i_cross,j_cross,tt,cos_subgrid_index)*last_meteo_subgrid(i_cross,j_cross,sin_subgrid_index) ))/2.
+                
+                angle_diff(i_cross,j_cross)=min(angle_diff(i_cross,j_cross),3.14159/4.) !Less than 45 degrees
+                !write(*,*) i_cross,j_cross,angle_diff(i_cross,j_cross)*180/3.14159
+                                        
+            else
+                angle_diff(i_cross,j_cross)=0.
+            endif
+
         enddo
         enddo
                            
@@ -754,7 +815,7 @@
                                     if (valid_traj) then
                                         integral_subgrid(i,j,tt,source_index,subsource_index)=integral_subgrid(i,j,tt,source_index,subsource_index) &
                                             +emission_subgrid(ii,jj,tt,source_index,subsource_index) &
-                                            *gauss_plume_cartesian_trajectory_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,0.,H_emep) &
+                                            *gauss_plume_cartesian_trajectory_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,0.,H_emep,angle_diff(i_cross_integral,j_cross_integral)) &
                                             /temp_FF_subgrid(i_cross_integral,j_cross_integral)
                                     endif
                                 
@@ -763,7 +824,7 @@
                                     integral_subgrid(i,j,tt,source_index,subsource_index)=integral_subgrid(i,j,tt,source_index,subsource_index) &
                                         +emission_subgrid(ii,jj,tt,source_index,subsource_index) &
                                         *gauss_plume_cartesian_integral_func(x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),h_emis_loc,cos_subgrid_loc,sin_subgrid_loc, &
-                                        x_integral_subgrid(i,j),y_integral_subgrid(i,j),z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,0.,H_emep) &
+                                        x_integral_subgrid(i,j),y_integral_subgrid(i,j),z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,0.,H_emep,angle_diff(i_cross_integral,j_cross_integral)) &
                                         /temp_FF_subgrid(i_cross_integral,j_cross_integral)
                                                             
                                 endif

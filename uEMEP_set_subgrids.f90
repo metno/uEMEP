@@ -386,8 +386,8 @@
     !Reset min and max with the buffer and calculate dimensions
     !subgrid_min(x_dim_index)=subgrid_min(x_dim_index)-buffer(x_dim_index);subgrid_min(y_dim_index)=subgrid_min(y_dim_index)-buffer(y_dim_index)
     !subgrid_max(x_dim_index)=subgrid_max(x_dim_index)+buffer(x_dim_index);subgrid_max(y_dim_index)=subgrid_max(y_dim_index)+buffer(y_dim_index)
-    subgrid_dim(x_dim_index)=floor((subgrid_max(x_dim_index)-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index))
-    subgrid_dim(y_dim_index)=floor((subgrid_max(y_dim_index)-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index))
+    subgrid_dim(x_dim_index)=floor((subgrid_max(x_dim_index)-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index))+1
+    subgrid_dim(y_dim_index)=floor((subgrid_max(y_dim_index)-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index))+1
  
     !write(*,*) subgrid_dim(x_dim_index),subgrid_max(x_dim_index),subgrid_min(x_dim_index),subgrid_delta(x_dim_index)
     !write(*,*) subgrid_dim(y_dim_index),subgrid_max(y_dim_index),subgrid_min(y_dim_index),subgrid_delta(y_dim_index)
@@ -439,8 +439,8 @@
     
     !Set all the emission subgrid dimmensions after changes
     do i=1,n_source_index
-        emission_subgrid_dim(x_dim_index,i)=floor((emission_subgrid_max(x_dim_index,i)-emission_subgrid_min(x_dim_index,i))/emission_subgrid_delta(x_dim_index,i))
-        emission_subgrid_dim(y_dim_index,i)=floor((emission_subgrid_max(y_dim_index,i)-emission_subgrid_min(y_dim_index,i))/emission_subgrid_delta(y_dim_index,i))
+        emission_subgrid_dim(x_dim_index,i)=floor((emission_subgrid_max(x_dim_index,i)-emission_subgrid_min(x_dim_index,i))/emission_subgrid_delta(x_dim_index,i))+1
+        emission_subgrid_dim(y_dim_index,i)=floor((emission_subgrid_max(y_dim_index,i)-emission_subgrid_min(y_dim_index,i))/emission_subgrid_delta(y_dim_index,i))+1
         write(unit_logfile,'(A,I6,A5,2I6)') 'Emission grid dimensions for source ',i,': ',emission_subgrid_dim(1:2,i)
     enddo
     

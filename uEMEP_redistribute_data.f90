@@ -165,7 +165,7 @@
     enddo
         !write(*,*) 'Redistribution',j,' of ',subgrid_dim(2)
     enddo
-        !write(*,*) 'Redistribution time',tt,' of ',subgrid_dim(t_dim_index)
+        write(*,*) 'Redistribution time ',tt,' of ',subgrid_dim(t_dim_index)
     enddo
 
     !Calculate redistributed subgrid source concentrations
@@ -362,7 +362,12 @@
     
     subgrid(:,:,:,total_subgrid_index,allsource_index,1)=subgrid(:,:,:,local_subgrid_index,allsource_index,1)+subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,emep_subsource)
     
-   
+    !If there is no chemistry then place the results in the compound results
+    if (n_compound_loop.eq.1) then
+        comp_subgrid(:,:,:,compound_index)=subgrid(:,:,:,total_subgrid_index,allsource_index,1)
+       ! orig_EMEP_subgrid(:,:,:,compound_index)=
+    endif
+    
     !Save files
     if (save_intermediate_files) then
     subsource_index=1

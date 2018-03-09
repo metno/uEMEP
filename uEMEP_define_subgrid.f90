@@ -132,19 +132,32 @@
     endif
     enddo
 
+    !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
+    if (allocated(subgrid)) deallocate (subgrid)
+    if (allocated(x_subgrid)) deallocate (x_subgrid)
+    if (allocated(y_subgrid)) deallocate (y_subgrid)
+    if (allocated(lon_subgrid)) deallocate (lon_subgrid)
+    if (allocated(lat_subgrid)) deallocate (lat_subgrid)
+    if (allocated(traveltime_subgrid)) deallocate (traveltime_subgrid)
+    
     !Define target grid
-    allocate (subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_possible_subsource))
-    allocate (x_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
-    allocate (y_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
-    allocate (lon_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
-    allocate (lat_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
-    allocate (traveltime_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),2)) !Last index 1 for weighted time, 2 for sum of weights
+    if (.not.allocated(subgrid)) allocate (subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_possible_subsource))
+    if (.not.allocated(x_subgrid)) allocate (x_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
+    if (.not.allocated(y_subgrid)) allocate (y_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
+    if (.not.allocated(lon_subgrid)) allocate (lon_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
+    if (.not.allocated(lat_subgrid)) allocate (lat_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
+    if (.not.allocated(traveltime_subgrid)) allocate (traveltime_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),2)) !Last index 1 for weighted time, 2 for sum of weights
     traveltime_subgrid=0.
 
+    !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
+    if (allocated(comp_subgrid)) deallocate (comp_subgrid)
+    if (allocated(comp_EMEP_subgrid)) deallocate (comp_EMEP_subgrid)
+    if (allocated(orig_EMEP_subgrid)) deallocate (orig_EMEP_subgrid)
+
     !Define compound subgrid. Same as target in dimensions
-    allocate (comp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
-    allocate (comp_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
-    allocate (orig_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
+    if (.not.allocated(comp_subgrid)) allocate (comp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
+    if (.not.allocated(comp_EMEP_subgrid)) allocate (comp_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
+    if (.not.allocated(orig_EMEP_subgrid)) allocate (orig_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
 
     do j=1,subgrid_dim(y_dim_index)
     do i=1,subgrid_dim(x_dim_index)                   
@@ -158,12 +171,19 @@
     enddo
     enddo
 
+    !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
+    if (allocated(integral_subgrid)) deallocate (integral_subgrid)
+    if (allocated(x_integral_subgrid)) deallocate (x_integral_subgrid)
+    if (allocated(y_integral_subgrid)) deallocate (y_integral_subgrid)
+    if (allocated(lon_integral_subgrid)) deallocate (lon_integral_subgrid)
+    if (allocated(lat_integral_subgrid)) deallocate (lat_integral_subgrid)
+
     !Define integral grid
-    allocate (integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_source_index,n_possible_subsource))
-    allocate (x_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
-    allocate (y_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
-    allocate (lon_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
-    allocate (lat_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
+    if (.not.allocated(integral_subgrid)) allocate (integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_source_index,n_possible_subsource))
+    if (.not.allocated(x_integral_subgrid)) allocate (x_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
+    if (.not.allocated(y_integral_subgrid)) allocate (y_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
+    if (.not.allocated(lon_integral_subgrid)) allocate (lon_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
+    if (.not.allocated(lat_integral_subgrid)) allocate (lat_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
 
     do j=1,integral_subgrid_dim(y_dim_index)
     do i=1,integral_subgrid_dim(x_dim_index)                 
@@ -177,22 +197,37 @@
     enddo
     enddo
 
+    !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
+    if (allocated(meteo_subgrid)) deallocate (meteo_subgrid)   
+    if (allocated(last_meteo_subgrid)) deallocate (last_meteo_subgrid)   
     !Define meteo grid, same positional coordinates as the integral grid (lower resolution)
-    allocate (meteo_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_meteo_subgrid_index))   
+    if (.not.allocated(meteo_subgrid)) allocate (meteo_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_meteo_subgrid_index))   
+    if (.not.allocated(last_meteo_subgrid)) allocate (last_meteo_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),n_meteo_subgrid_index))   
 
-    !Alocate the use_subgrid array and set to true for all subgrids
-    allocate (use_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_source_index))
+    !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
+    if (allocated(use_subgrid)) deallocate (use_subgrid)
+    !Allocate the use_subgrid array and set to true for all subgrids
+    if (.not.allocated(use_subgrid)) allocate (use_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_source_index))
     use_subgrid=.true.
     
+    !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
+    if (allocated(proxy_emission_subgrid)) deallocate (proxy_emission_subgrid) 
+    if (allocated(emission_subgrid)) deallocate (emission_subgrid) 
+    if (allocated(x_emission_subgrid)) deallocate (x_emission_subgrid)
+    if (allocated(y_emission_subgrid)) deallocate (y_emission_subgrid)
+    if (allocated(lon_emission_subgrid)) deallocate (lon_emission_subgrid)
+    if (allocated(lat_emission_subgrid)) deallocate (lat_emission_subgrid)
+    if (allocated(emission_time_profile_subgrid)) deallocate (emission_time_profile_subgrid) 
     !Allocate emission grids with same dimensions as target grid
-    allocate (proxy_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index,n_possible_subsource)) 
-    allocate (emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_possible_subsource)) 
-    allocate (x_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
-    allocate (y_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
-    allocate (lon_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
-    allocate (lat_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
-    allocate (emission_time_profile_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_possible_subsource)) 
-
+    if (.not.allocated(proxy_emission_subgrid)) allocate (proxy_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index,n_possible_subsource)) 
+    if (.not.allocated(emission_subgrid)) allocate (emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_possible_subsource)) 
+    if (.not.allocated(x_emission_subgrid)) allocate (x_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
+    if (.not.allocated(y_emission_subgrid)) allocate (y_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
+    if (.not.allocated(lon_emission_subgrid)) allocate (lon_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
+    if (.not.allocated(lat_emission_subgrid)) allocate (lat_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
+    if (.not.allocated(emission_time_profile_subgrid)) allocate (emission_time_profile_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_possible_subsource)) 
+    emission_time_profile_subgrid=1.
+    
     !Define emission grids
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
@@ -212,12 +247,18 @@
     endif
     enddo
 
+    !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
+    if (allocated(population_subgrid)) deallocate (population_subgrid)
+    if (allocated(x_population_subgrid)) deallocate (x_population_subgrid)
+    if (allocated(y_population_subgrid)) deallocate (y_population_subgrid)
+    if (allocated(lon_population_subgrid)) deallocate (lon_population_subgrid)
+    if (allocated(lat_population_subgrid)) deallocate (lat_population_subgrid)
     !Define population grid
-    allocate (population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index),n_population_index))
-    allocate (x_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
-    allocate (y_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
-    allocate (lon_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
-    allocate (lat_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
+    if (.not.allocated(population_subgrid)) allocate (population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index),n_population_index))
+    if (.not.allocated(x_population_subgrid)) allocate (x_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
+    if (.not.allocated(y_population_subgrid)) allocate (y_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
+    if (.not.allocated(lon_population_subgrid)) allocate (lon_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
+    if (.not.allocated(lat_population_subgrid)) allocate (lat_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
 
     do j=1,population_subgrid_dim(y_dim_index)
     do i=1,population_subgrid_dim(x_dim_index)                 
@@ -231,7 +272,9 @@
     enddo
     enddo
 
+    !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
+    if (allocated(exposure_subgrid)) deallocate (exposure_subgrid)
     !Define exposure subgrid
-    allocate (exposure_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index))
+    if (.not.allocated(exposure_subgrid)) allocate (exposure_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index))
 
     end subroutine uEMEP_define_subgrid

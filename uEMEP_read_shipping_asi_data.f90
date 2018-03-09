@@ -7,7 +7,8 @@
     implicit none
     
     character(256) temp_name
-    character(256) temp_str,temp_str1,temp_str2
+    character(2048) temp_str
+    character(256) temp_str1,temp_str2
     real temp_val
     integer unit_in
     integer exists
@@ -243,7 +244,8 @@
     implicit none
     
     character(256) temp_name
-    character(256) temp_str,temp_str1,temp_str2
+    character(1024) temp_str
+    character(256) temp_str1,temp_str2
     real temp_val
     integer unit_in
     integer exists
@@ -269,6 +271,7 @@
     integer i_ship_dim_min,i_ship_dim_max,j_ship_dim_min,j_ship_dim_max
     parameter (i_ship_dim_min=-400,i_ship_dim_max=4500,j_ship_dim_min=25000,j_ship_dim_max=32000)
     integer ship_array_index(i_ship_dim_min:i_ship_dim_max,j_ship_dim_min:j_ship_dim_max)
+    logical :: havbase_data_type=.false.
     
     if (.not.calculate_aggregated_shipping_emissions_flag) return
 
@@ -305,42 +308,66 @@
     rewind(unit_in)
 
     subsource_index=1
-    
-    !Read header ddlatitude;ddlongitude;totalnoxemission;totalparticulatematteremission;fk_vessellloydstype;fk_ais_norwegianmainvesselcategory;date;time
+    havbase_data_type=.true.
+    !Read header old: ddlatitude;ddlongitude;totalnoxemission;totalparticulatematteremission;fk_vessellloydstype;fk_ais_norwegianmainvesselcategory;date;time
+    !Read header new: mmsi;date_time_utc;lat;lon;lloydstype;norvesselcategory;sizegroupgrosston;vesselname;imonumber;dist_nextpoint;sec_nextpoint;fuelconsumption;me_fuelquality;co2emission;so2emission;particulatematteremission;noxemission;nmvocemission;ch4emission;n2oemission;coemission;blackcarbonemission;organiccarbonemission
     read(unit_in,'(A)') temp_str
-    !write(*,*) trim(temp_str)
+    write(*,*) trim(temp_str)
     count=0
     do while(.not.eof(unit_in))
         read(unit_in,'(A)') temp_str
-        
+        !read(unit_in,*) temp_str
+        !write(*,*) trim(temp_str)
         ddlatitude=0.;ddlongitude=0.;totalnoxemission=0.;totalparticulatematteremission=0.
-        !Extract the values in the temp_str
-        index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
-        read(temp_str1,*) ddlatitude
-        !write (*,*) ddlatitude
-        index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
-        read(temp_str1,*) ddlongitude
-        !write (*,*) ddlongitude
-        index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
-        !write(*,*) index_val,trim(temp_str1),trim(temp_str)
-        if (index_val.gt.1) read(temp_str1,*) totalnoxemission
-        !write (*,*) totalnoxemission
-        index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
-        if (index_val.gt.1) read(temp_str1,*) totalparticulatematteremission
-        !index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
-        !if (index_val.gt.1) read(temp_str1,*) temp_int
-        !index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
-        !if (index_val.gt.1) read(temp_str1,*) temp_int
-        !index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
-        !if (index_val.gt.1) read(temp_str1,*) temp_str2
-        !write (*,*) trim(temp_str1)
-        !temp_str1=temp_str
-        !if (len(temp_str1).gt.0) read(temp_str1,*) temp_str2
-        !write (*,*) trim(temp_str1)
+        if (havbase_data_type) then
+            !Extract the values in the temp_str
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip mmsi
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip date_time_utc
+            index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) ddlatitude !Read an entry
+            index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) ddlongitude !Read an entry
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip lloydstype
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip norvesselcategory
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip sizegroupgrosston
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip vesselname
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip imonumber
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip dist_nextpoint
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip sec_nextpoint
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip fuelconsumption
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip me_fuelquality
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip co2emission
+            index_val=index(temp_str,';',back=.false.);temp_str=temp_str(index_val+1:) !Skip so2emission
+            index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) totalparticulatematteremission !Read an entry
+            index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) totalnoxemission !Read an entry
+        else
+            
+            !Extract the values in the temp_str
+            index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
+            read(temp_str1,*) ddlatitude
+            !write (*,*) ddlatitude
+            index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
+            read(temp_str1,*) ddlongitude
+            !write (*,*) ddlongitude
+            index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
+            !write(*,*) index_val,trim(temp_str1),trim(temp_str)
+            if (index_val.gt.1) read(temp_str1,*) totalnoxemission
+            !write (*,*) totalnoxemission
+            index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
+            if (index_val.gt.1) read(temp_str1,*) totalparticulatematteremission
+            !index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
+            !if (index_val.gt.1) read(temp_str1,*) temp_int
+            !index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
+            !if (index_val.gt.1) read(temp_str1,*) temp_int
+            !index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)
+            !if (index_val.gt.1) read(temp_str1,*) temp_str2
+            !write (*,*) trim(temp_str1)
+            !temp_str1=temp_str
+            !if (len(temp_str1).gt.0) read(temp_str1,*) temp_str2
+            !write (*,*) trim(temp_str1)
+        endif
         
         !write(*,*) count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission
         count=count+1
-        !if (mod(count,10000).eq.0) write(*,'(2i,2f,2e)') count,ship_index_count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission  
+        if (mod(count,10000).eq.0) write(*,'(2i12,2f12.2,2e12.2)') count,ship_index_count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission  
         
         if (totalnoxemission.gt.0.or.totalparticulatematteremission.gt.0) then
             
@@ -379,7 +406,7 @@
             call UTM2LL(utm_zone,ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index))
            
         !if (mod(count,10000).eq.0) write(*,'(2i,2f,2e)') count,ship_index_count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission  
-        if (mod(count,10000).eq.0) write(*,'(3i12,4f14.4,2es14.5)') count,i_count,ship_index(i_count,ship_count_dim_index),ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index),ship_value(i_count,ship_pm_dim_index),ship_value(i_count,ship_nox_dim_index)
+        !if (mod(count,10000).eq.0) write(*,'(3i12,4f14.4,2es14.5)') count,i_count,ship_index(i_count,ship_count_dim_index),ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index),ship_value(i_count,ship_pm_dim_index),ship_value(i_count,ship_nox_dim_index)
         !write(*,*) ship_index_count,x_ship,y_ship
         !write(*,*) i_count,i_ship_index,j_ship_index
         !write(*,*) ship_index(i_count,ship_i_dim_index),ship_index(i_count,ship_j_dim_index),ship_index(i_count,ship_count_dim_index)
