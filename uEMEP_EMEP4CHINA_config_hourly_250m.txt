@@ -1,0 +1,283 @@
+!==================================================================================================
+!	uEMEP configuration file
+!	Sets the name list for uEMEP
+!	
+!	All lines starting with ! are not read
+!	Syntax is as if it was inside the fortran code
+!	Can be copied directly into the code if required
+!==================================================================================================
+
+!==================================================================================================
+!   	Read by uEMEP_read_config
+!	If variable is not found then default value is used
+!	Logical variables in arrays are all by default false
+!	If variables are available more than once then the last one will be used
+!
+!	Example
+!	read_existing_grid_data=.false.
+!	replace_EMEP_local_with_subgrid_local=.false.
+!	calculate_source=.false.
+!==================================================================================================
+
+!==================================================================================================
+!	Control line
+!	uEMEPv2.1 <path and name of config file> <replace_date>
+!	Example
+!	uEMEPv2.1 ../uEMEP_EMEP4NO_config_hourly_Oslo_250m.txt 20180312
+!==================================================================================================
+
+
+!---------------------------------------------------------------------------------------------------
+! Use this template to replace the control line date string in the file names contained here
+!---------------------------------------------------------------------------------------------------
+	replacement_date_str='<replace_date>'
+
+!---------------------------------------------------------------------------------------------------
+! Set the log file path and name
+!---------------------------------------------------------------------------------------------------
+	pathname_log_file='E:\EMEP4NO\uEMEP_data\'
+	!filename_log_file='uEMEP_log_file.txt'
+	filename_log_file=''
+
+!---------------------------------------------------------------------------------------------------
+!Set the name tag of this configuration
+!---------------------------------------------------------------------------------------------------
+    file_tag='China_250m'
+    	
+!---------------------------------------------------------------------------------------------------
+!Compound name
+!---------------------------------------------------------------------------------------------------
+    input_comp_name='nox'
+	!input_comp_name='pm25'
+!---------------------------------------------------------------------------------------------------
+!Choose the time index in the EMEP netcdf file
+!---------------------------------------------------------------------------------------------------
+    start_time_nc_index=1
+    end_time_nc_index=49
+    
+
+	file_tag='China_250m'
+	subgrid_delta(x_dim_index)=250.
+	subgrid_delta(y_dim_index)=250.
+	subgrid_min(x_dim_index)=700000.
+	subgrid_min(y_dim_index)=2520000.
+	subgrid_max(x_dim_index)=750000.
+	subgrid_max(y_dim_index)=2570000.
+
+	!Integral subgrid has a lower resolution given by this factor.
+	!Should not be larger than 500 m for 0.1 EMEP grids
+	integral_subgrid_step=2
+
+    !Specify which source to calculate. Multiple sources can be chosen
+    calculate_source(traffic_index)=.true.
+    calculate_source(shipping_index)=.false. 
+    calculate_source(agriculture_index)=.false.
+    calculate_source(heating_index)=.false.
+    calculate_source(industry_index)=.false.
+
+	!Choose multiple hourly or single average calculations.
+	!Will be changed automatically based on the time dimensions in EMEP
+	hourly_calculations=.true.
+    annual_calculations=.false.
+
+	!EMEP data paths and filenames
+    	
+	pathname_EMEP(1)='E:\EMEP4NO\EMEP_data\'
+	pathname_EMEP(2)='E:\EMEP4NO\EMEP_data\'
+	filename_EMEP(1)='CWF_00AQNO-<replace_date>_hour.nc'
+	filename_EMEP(2)='CWF_00AQNO-<replace_date>_uEMEP.nc'
+
+	!Output directory
+	!pathname_output_grid='E:\EMEP4CAMS\uEMEP_data\'
+	pathname_output_grid='E:\EMEP4NO\uEMEP_data\'
+	
+	!Input proxy data paths and filenames
+	pathname_rl(1)='D:\uEMEP\Data\Road_data\'	
+	filename_rl(1)='Road_data_OSM_China.txt'
+	!filename_rl(1)='SSB_Road_data_Bergen_ascii.txt'
+	pathname_ship(1)='D:\uEMEP\Data\Shipping_data\'
+    	filename_ship(1)='Bruce_201501.csv'
+    	pathname_agriculture(1)='D:\uEMEP\Data\Nederland\'
+    	filename_agriculture(1)='NH3_agriculture_animal_housings_2014.csv'
+    	pathname_agriculture(2)='D:\uEMEP\Data\Nederland\'
+    	filename_agriculture(2)='NH3_agriculture_other_2014_1000x1000.csv'
+    	pathname_heating(dwelling_index)='D:\uEMEP\Data\SSB\NOR0250M_DWE_2017\'
+    	filename_heating(dwelling_index)='SSB0250M_DWE_2017.csv'
+    	pathname_heating(population_index)='D:\uEMEP\Data\SSB\r250m_web_2017\'
+	filename_heating(population_index)='r250m_web_2017.csv'
+    	
+	!Population data (dwelling_index=1,population_index=2,establishment_index=3,school_index=4,kindergaten_index=5)
+    	pathname_population(dwelling_index)='D:\uEMEP\Data\SSB\NOR0250M_DWE_2017\'
+    	filename_population(dwelling_index)='SSB0250M_DWE_2017.csv'
+    	pathname_population(population_index)='D:\uEMEP\Data\SSB\r250m_web_2017\'
+    	filename_population(population_index)='r250m_web_2017.csv'
+    	pathname_population(establishment_index)='D:\uEMEP\Data\SSB\NOR250M_EST_2017\'
+    	filename_population(establishment_index)='NOR250M_EST_2017.csv'
+    	pathname_population(school_index)='D:\uEMEP\Data\GEONORGE\'
+    	filename_population(school_index)='Grunnskoler_norge.csv'
+    	pathname_population(kindergaten_index)='D:\uEMEP\Data\GEONORGE\'
+    	filename_population(kindergaten_index)='Barnehager_norge.csv'
+    	pathname_population(home_index)='D:\uEMEP\Data\Oslo\Population\'
+    	filename_population(home_index)='bygnkoord_010108.csv'
+    
+	!Obs position data
+    	pathname_receptor='D:\uEMEP\Data\Airbase\'
+    	filename_receptor='Station_positions_Norway_api.txt'
+       
+
+	!Time profile data
+    	pathname_timeprofile='D:\uEMEP\Data\Time_variation\'
+    	filename_timeprofile='Time_Variation_v1.csv'
+
+	!Shift the local time emissions to match the model UTC. +1 to shift emissions forwards in time for winter Norwegian time
+	emission_timeprofile_hour_shift=1.
+      
+	!Number of subsources for each source can be specified. Usually not used and set to 1 by default. Max is hardcoded as 2
+	n_subsource(traffic_index)=1
+
+	!Set the emission heights and initial dispersion for each source and subsource. Can specify two subsources
+	h_emis(traffic_index,1)=2.
+	h_emis(shipping_index,1)=25.
+ 	h_emis(heating_index,1)=15.
+	sig_y_00(shipping_index,1)=5.
+ 	sig_y_00(traffic_index,1)=2.
+ 	sig_y_00(heating_index,1)=5.
+	sig_z_00(shipping_index,1)=5.
+	sig_z_00(traffic_index,1)=3.
+ 	sig_z_00(heating_index,1)=10.
+    
+    	!Specify if the proxy data is to be made into EMEP grids for cross checking
+    	!Will create both an EMEP and a proxy grid file in the EMEP grid
+    	make_EMEP_grid_emission_data(traffic_index)=.false.
+    	make_EMEP_grid_emission_data(shipping_index)=.false.
+
+	!Specify if the aggregated EMEP emissions are to be replaced by the aggregated subgrid.
+	!Is used to scale the redistribution method
+    	replace_EMEP_local_with_subgrid_local(traffic_index)=.false.
+    
+    	!Set the projection being used
+	!1 is UTM_projection_index
+	!2 is RDM_projection_index
+	!3 is AROME projection
+	projection_type=1
+
+	!Set the utm zone being used and it's central position
+    !utm_zone=33
+	!utm_lon0=15.
+    !utm_zone=32
+	!utm_lon0=9.
+    utm_zone=49
+	utm_lon0=111.
+
+    !Choose EMEP grid interpolation method (moving window)
+	!0 is none
+	!1 is area weighted
+	!2 is emission subgrid weighted
+	!3 is aggregated to emission integral weighted (recommended)
+	!4 is proxy integral weighted
+    EMEP_grid_interpolation_flag=1
+	EMEP_meteo_grid_interpolation_flag=1
+    
+    !Choose EMEP emission grid interpolation method
+	!0 is none
+	!1 is area weighted (quicker)
+	!2 is emission weighted (recommended, but slower)
+    EMEP_emission_grid_interpolation_flag=1
+    
+    	!If true then distributes the EMEP grid emissions to the existing emission subgrid using the proxy emission data
+    	!If false then distributes the EMEP grid emissions to all subgrids within an EMEP grid evenly.
+	!Should be true when using proxy distributions
+    	subgrid_emission_distribution_flag=.true.
+ 
+    	!Choose the region for interpolation 1.0 is one EMEP grid 2.0 is 2 EMEP grids, etc.
+    	EMEP_grid_interpolation_size=2.0
+    
+    	!Use downwind positioning of subgrids.
+	!Only works properly when area weighting for EMEP_emission_grid_interpolation_flag is chosen
+    	use_downwind_position_flag=.false.
+    
+    	!Choose the way the local contribution is calculated.
+    	!1 is redistribution of EMEP concentrations
+    	!2 is dispersion based on prescribed emission factors and time profiles (if available)
+    	!3 is dispersion based on redistribution of EMEP emissions
+    	!4 is dispersion based on prescribed emission factors but using EMEP time profiles
+    	local_subgrid_method_flag=3
+    
+    	!Choose dispersion parameters and scheme
+    	!1 Neutral scheme
+    	!2 PG scheme using Klug parameters 
+    	stability_scheme_flag=1
+    
+    	!Wind flag
+    	!1 Use gridded wind speed without vertical interpolation
+    	!2 Use gridded wind speed with log interpolation to emission heights
+    	!3 Use 10 m wind speed without interpolation
+    	!4 Use 10 m wind speed with log interpolation to emission heights
+    	wind_level_flag=4
+    	wind_level_integral_flag=1
+    
+	FF_min_dispersion=0.5
+
+    	!Choose no2 chemistry scheme. Only applied when compound requested is 'nox'
+    	!0 no chemistry
+    	!1 photostationary
+    	!2 time scale photo chemistry
+	!3 parameterised Romberg scheme
+    	no2_chemistry_scheme_flag=2
+    
+    	!Choose the use of auto subgridding
+	!Autosubgridding means that calculations are only made at the subgrids chosen
+    	use_emission_positions_for_auto_subgrid_flag=.false.
+    	use_receptor_positions_for_auto_subgrid_flag=.false.
+    	use_population_positions_for_auto_subgrid_flag=.false.
+
+	!---------------------------------------------------------------------------------------------------
+    	!Choose whether to interpolate when using the auto subgridding
+	!Curently a not very good inverse distance interpolation
+	!---------------------------------------------------------------------------------------------------
+	interpolate_subgrids_flag=.false.
+    
+	!---------------------------------------------------------------------------------------------------
+    	!Use trajectory for disperion calculations.
+    	!traj_step_scale indicates the step size of the trajectories in regard to the meteorological subgrid.
+	!---------------------------------------------------------------------------------------------------
+    	use_trajectory_flag=.false.
+    	traj_step_scale=1.
+    
+    	!Set shipping emission aggregation flags. Done for speed
+	!If calculate is true then reads in AIS data and aggregates to 250 m grid
+	!If use aggregated data then uses these aggregated data so that minimum emission subgrid for shipping is 250 m
+    	calculate_aggregated_shipping_emissions_flag=.false.
+    	use_aggregated_shipping_emissions_flag=.true.
+    
+    	!Calculate population exposure
+	!If true then will read in population grids at 250 m and make the exposure calculation
+    	calculate_population_exposure_flag=.false.
+	!Population data (dwelling_index=1,population_index=2,establishment_index=3,school_index=4,kindergaten_index=5,home_index=6)
+	!Specify the data type used in the population exposure
+	population_data_type=2
+
+    	!Can read in existing presaved data to save time. Examples given here. Generally only for testing
+    	read_existing_grid_data(proxy_emission_file_index(traffic_index))=.false.
+	read_existing_grid_data(proxy_file_index(traffic_index))=.false.
+	read_existing_grid_data(emep_subgrid_file_index)=.false.
+    	read_existing_grid_data(subgrid_ugrid_file_index)=.false.
+    	read_existing_grid_data(subgrid_vgrid_file_index)=.false.
+    	read_existing_grid_data(subgrid_hmix_file_index)=.false.
+	read_existing_grid_data(use_subgrid_file_index(traffic_index))=.false.
+
+!---------------------------------------------------------------------------------------------------
+! Programm control flags
+! use_single_time_loop_flag: Specify if to be run as single time loop reduced memory usage
+! reduce_EMEP_region_flag: Selects EMEP grids to be read based on subgrid region to reduce memory usage
+! save_intermediate_files: When debugging intermediate ascii files can be saved. 
+!---------------------------------------------------------------------------------------------------
+	use_single_time_loop_flag=.false.
+	reduce_EMEP_region_flag=.true.
+	save_intermediate_files=.false.
+	use_multiple_receptor_grids_flag=.false.
+	use_receptor_region=1
+	use_last_meteo_in_dispersion=.true.
+	use_meandering_in_dispersion=.true.
+
+!==========================================================================
