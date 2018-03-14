@@ -21,12 +21,14 @@ SRCS =	\
 	uEMEP_local_trajectory.f90 \
 	uEMEP_read_agriculture_rivm_data.f90 \
 	uEMEP_read_config.f90 \
+        uEMEP_read_command_line.f90 \
 	uEMEP_read_EMEP.f90 \
 	uEMEP_read_namefile_routines.f90 \
 	uEMEP_read_receptor_data.f90 \
 	uEMEP_read_roadlink_data_ascii.f90 \
 	uEMEP_read_shipping_asi_data.f90 \
 	uEMEP_read_SSB_data.f90 \
+        uEMEP_read_time_profiles.f90 \
 	uEMEP_redistribute_data.f90 \
 	uEMEP_save_netcdf_file.f90 \
 	uEMEP_set_constants.f90 \
@@ -34,11 +36,11 @@ SRCS =	\
 	uEMEP_set_emission_factors.f90 \
 	uEMEP_set_filenames.f90 \
 	uEMEP_set_subgrids.f90 \
-	uEMEP_setup.f90 \
 	uEMEP_subgrid_EMEP.f90 \
 	uEMEP_subgrid_emission_EMEP.f90 \
-	uEMEP_subgrid_meteo_EMEP.f90 
+	uEMEP_subgrid_meteo_EMEP.f90 \
+        uEMEP_time_functions.f90
 
-FOBJ=lambert_projection.o read_esri_ascii_file.o uEMEP_aggregate_proxy_emission_in_EMEP_grid.o uEMEP_auto_subgrid.o uEMEP_calculate_exposure.o uEMEP_chemistry_NO2.o uEMEP_control_v2.o uEMEP_crossreference_grids.o uEMEP_define_subgrid.o uEMEP_definitions.o uEMEP_dispersion_functions.o uEMEP_grid_proxy.o uEMEP_grid_roads.o uEMEP_local_trajectory.o uEMEP_read_agriculture_rivm_data.o uEMEP_read_config.o uEMEP_read_EMEP.o uEMEP_read_namefile_routines.o uEMEP_read_receptor_data.o uEMEP_read_roadlink_data_ascii.o uEMEP_read_shipping_asi_data.o uEMEP_read_SSB_data.o uEMEP_redistribute_data.o uEMEP_save_netcdf_file.o uEMEP_set_constants.o uEMEP_set_dispersion_params.o uEMEP_set_emission_factors.o uEMEP_set_filenames.o uEMEP_set_subgrids.o uEMEP_setup.o uEMEP_subgrid_EMEP.o uEMEP_subgrid_emission_EMEP.o uEMEP_subgrid_meteo_EMEP.o distrl.o ll2utm.o nxtdat.o utm2ll.o rdm2ll.o 
+FOBJ=lambert_projection.o read_esri_ascii_file.o uEMEP_aggregate_proxy_emission_in_EMEP_grid.o uEMEP_auto_subgrid.o uEMEP_calculate_exposure.o uEMEP_chemistry_NO2.o uEMEP_control_v2.o uEMEP_crossreference_grids.o uEMEP_define_subgrid.o uEMEP_definitions.o uEMEP_dispersion_functions.o uEMEP_grid_proxy.o uEMEP_grid_roads.o uEMEP_local_trajectory.o uEMEP_read_agriculture_rivm_data.o uEMEP_read_config.o uEMEP_read_command_line.o uEMEP_read_EMEP.o uEMEP_read_namefile_routines.o uEMEP_read_receptor_data.o uEMEP_read_roadlink_data_ascii.o uEMEP_read_shipping_asi_data.o uEMEP_read_SSB_data.o uEMEP_read_time_profiles.o uEMEP_redistribute_data.o uEMEP_save_netcdf_file.o uEMEP_set_constants.o uEMEP_set_dispersion_params.o uEMEP_set_emission_factors.o uEMEP_set_filenames.o uEMEP_set_subgrids.o uEMEP_subgrid_EMEP.o uEMEP_subgrid_emission_EMEP.o uEMEP_subgrid_meteo_EMEP.o uEMEP_time_functions.o distrl.o ll2utm.o nxtdat.o utm2ll.o rdm2ll.o 
 
 
