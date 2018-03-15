@@ -19,12 +19,14 @@ uEMEP_grid_roads.o : uEMEP_grid_roads.f90 uEMEP_definitions.o
 uEMEP_local_trajectory.o : uEMEP_local_trajectory.f90 uEMEP_definitions.o 
 uEMEP_read_agriculture_rivm_data.o : uEMEP_read_agriculture_rivm_data.f90 uEMEP_definitions.o 
 uEMEP_read_config.o : uEMEP_read_config.f90 uEMEP_definitions.o 
+uEMEP_read_command_line.o : uEMEP_read_command_line.f90
 uEMEP_read_EMEP.o : uEMEP_read_EMEP.f90 uEMEP_definitions.o 
 uEMEP_read_namefile_routines.o : uEMEP_read_namefile_routines.f90 uEMEP_definitions.o 
 uEMEP_read_receptor_data.o : uEMEP_read_receptor_data.f90 uEMEP_definitions.o 
 uEMEP_read_roadlink_data_ascii.o : uEMEP_read_roadlink_data_ascii.f90 uEMEP_definitions.o 
 uEMEP_read_shipping_asi_data.o : uEMEP_read_shipping_asi_data.f90 uEMEP_definitions.o 
 uEMEP_read_SSB_data.o : uEMEP_read_SSB_data.f90 uEMEP_definitions.o 
+uEMEP_read_time_profiles.o : uEMEP_read_time_profiles.f90
 uEMEP_redistribute_data.o : uEMEP_redistribute_data.f90 uEMEP_definitions.o 
 uEMEP_save_netcdf_file.o : uEMEP_save_netcdf_file.f90 uEMEP_definitions.o 
 uEMEP_set_constants.o : uEMEP_set_constants.f90 uEMEP_definitions.o 
@@ -32,7 +34,7 @@ uEMEP_set_dispersion_params.o : uEMEP_set_dispersion_params.f90 uEMEP_definition
 uEMEP_set_emission_factors.o : uEMEP_set_emission_factors.f90 uEMEP_definitions.o 
 uEMEP_set_filenames.o : uEMEP_set_filenames.f90 uEMEP_definitions.o 
 uEMEP_set_subgrids.o : uEMEP_set_subgrids.f90 uEMEP_definitions.o 
-uEMEP_setup.o : uEMEP_setup.f90 uEMEP_definitions.o 
 uEMEP_subgrid_EMEP.o : uEMEP_subgrid_EMEP.f90 uEMEP_definitions.o 
 uEMEP_subgrid_emission_EMEP.o : uEMEP_subgrid_emission_EMEP.f90 uEMEP_definitions.o 
 uEMEP_subgrid_meteo_EMEP.o : uEMEP_subgrid_meteo_EMEP.f90 uEMEP_definitions.o 
+uEMEP_time_functions.o : uEMEP_time_functions.f90
