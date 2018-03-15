@@ -41,7 +41,11 @@
             crossreference_target_to_emep_subgrid(i,j,y_dim_index)=jj
         elseif (EMEP_projection_type.eq.LCC_projection_index) then
             !When EMEP is read as x,y projection then var1d_nc(:,lon/lat_nc_index) are the x, y projection indexes, actually
-            call lb2lambert_uEMEP(x_temp,y_temp,lon_subgrid(i,j),lat_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            if (use_alternative_LCC_projection_flag) then
+                call lb2lambert2_uEMEP(x_temp,y_temp,lon_subgrid(i,j),lat_subgrid(i,j),real(EMEP_projection_attributes(1)),real(EMEP_projection_attributes(2)),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            else
+                call lb2lambert_uEMEP(x_temp,y_temp,lon_subgrid(i,j),lat_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            endif
             ii=1+floor((x_temp-var1d_nc(1,lon_nc_index))/dgrid_nc(lon_nc_index)+0.5)
             jj=1+floor((y_temp-var1d_nc(1,lat_nc_index))/dgrid_nc(lat_nc_index)+0.5)     
             crossreference_target_to_emep_subgrid(i,j,x_dim_index)=ii
@@ -76,7 +80,12 @@
             crossreference_integral_to_emep_subgrid(i,j,y_dim_index)=jj
         elseif (EMEP_projection_type.eq.LCC_projection_index) then
             !When EMEP is read as x,y projection then var1d_nc(:,lon/lat_nc_index) are the x, y projection indexes, actually
-            call lb2lambert_uEMEP(x_temp,y_temp,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            if (use_alternative_LCC_projection_flag) then
+                call lb2lambert2_uEMEP(x_temp,y_temp,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(1)),real(EMEP_projection_attributes(2)),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            else
+                call lb2lambert_uEMEP(x_temp,y_temp,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            endif
+            !call lb2lambert_uEMEP(x_temp,y_temp,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
             ii=1+floor((x_temp-var1d_nc(1,lon_nc_index))/dgrid_nc(lon_nc_index)+0.5)
             jj=1+floor((y_temp-var1d_nc(1,lat_nc_index))/dgrid_nc(lat_nc_index)+0.5)     
             crossreference_integral_to_emep_subgrid(i,j,x_dim_index)=ii
@@ -105,7 +114,12 @@
             crossreference_emission_to_emep_subgrid(i,j,y_dim_index,i_source)=jj
         elseif (EMEP_projection_type.eq.LCC_projection_index) then
             !When EMEP is read as x,y projection then var1d_nc(:,lon/lat_nc_index) are the x, y projection indexes, actually
-            call lb2lambert_uEMEP(x_temp,y_temp,lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            if (use_alternative_LCC_projection_flag) then
+                call lb2lambert2_uEMEP(x_temp,y_temp,lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),real(EMEP_projection_attributes(1)),real(EMEP_projection_attributes(2)),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            else
+                call lb2lambert_uEMEP(x_temp,y_temp,lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            endif
+            !call lb2lambert_uEMEP(x_temp,y_temp,lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
             ii=1+floor((x_temp-var1d_nc(1,lon_nc_index))/dgrid_nc(lon_nc_index)+0.5)
             jj=1+floor((y_temp-var1d_nc(1,lat_nc_index))/dgrid_nc(lat_nc_index)+0.5)
             !write(*,'(4i12,2es12.2)') i,j,ii,jj,x_temp,y_temp

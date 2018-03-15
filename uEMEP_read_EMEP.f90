@@ -7,6 +7,7 @@
     
     implicit none
     
+    !integer i,j
     logical exists
     character(256) pathfilename_nc
     integer status_nc     !Error message
@@ -123,6 +124,13 @@
             var_name_nc(lon_nc_index,:,allsource_index)='lon'
             var_name_nc(lat_nc_index,:,allsource_index)='lat'
             write(unit_logfile,'(A,5f12.2)') 'Reading lambert_conformal_conic projection. ',EMEP_projection_attributes(1:5)
+            if (EMEP_projection_attributes(1).ne.EMEP_projection_attributes(4).or.EMEP_projection_attributes(2).ne.EMEP_projection_attributes(4)) then
+                use_alternative_LCC_projection_flag=.true.
+                write(unit_logfile,'(A,l)') 'Using alternative lambert_conformal_conic projection: ',use_alternative_LCC_projection_flag
+            else
+                use_alternative_LCC_projection_flag=.false.                
+            endif
+            
         else
             EMEP_projection_type=LL_projection_index
         endif
@@ -181,7 +189,13 @@
                     if (EMEP_projection_type.eq.LCC_projection_index) then
                         !Convert lat lon corners to lambert
                         do i=1,4
-                            call lb2lambert_uEMEP(temp_x(i),temp_y(i),temp_lon(i),temp_lat(i),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                            if (use_alternative_LCC_projection_flag) then
+                                call lb2lambert2_uEMEP(temp_x(i),temp_y(i),temp_lon(i),temp_lat(i),real(EMEP_projection_attributes(1)),real(EMEP_projection_attributes(2)),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                            !write(*,*) 'using'
+                            else
+                                call lb2lambert_uEMEP(temp_x(i),temp_y(i),temp_lon(i),temp_lat(i),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                            endif
+                            !call lb2lambert_uEMEP(temp_x(i),temp_y(i),temp_lon(i),temp_lat(i),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
                         enddo            
                     elseif (EMEP_projection_type.eq.LL_projection_index) then
                         !Set lat lon corners if EMEP is in lat lon
@@ -319,7 +333,9 @@
                     write(unit_logfile,'(A,i3,A,2A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var2d_nc(:,:,i)),maxval(var2d_nc(:,:,i))
                     endif
                 elseif (temp_num_dims.eq.3.and.i_file.eq.1) then
+                    !write(*,'(6i)') dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, var3d_nc(:,:,:,i,i_source),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                    !write(*,*) status_nc
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var3d_nc(:,:,:,i,i_source)),maxval(var3d_nc(:,:,:,i,i_source))
                 elseif (temp_num_dims.eq.4) then
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
@@ -482,7 +498,7 @@
         
         !If no logz0 available. Set to log(0.1)
         where (var3d_nc(:,:,:,logz0_nc_index,:).eq.0.0) var3d_nc(:,:,:,logz0_nc_index,:)=log(0.1)
-        
+        !var3d_nc(:,:,:,logz0_nc_index,:)=log(0.1)
     
     end subroutine uEMEP_read_EMEP
     

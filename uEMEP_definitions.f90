@@ -414,6 +414,7 @@
     integer :: EMEP_projection_type=LL_projection_index
     double precision :: EMEP_projection_attributes(10)
     double precision :: projection_attributes(10)
+    logical :: use_alternative_LCC_projection_flag=.false.
 
     
     !Filename index for files produced by uEMEP

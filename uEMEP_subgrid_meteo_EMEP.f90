@@ -112,7 +112,12 @@
                 xpos_subgrid=lon_integral_subgrid(i,j)
                 ypos_subgrid=lat_integral_subgrid(i,j)
             elseif (EMEP_projection_type.eq.LCC_projection_index) then
-                call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                if (use_alternative_LCC_projection_flag) then
+                    call lb2lambert2_uEMEP(xpos_subgrid,ypos_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(1)),real(EMEP_projection_attributes(2)),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                else
+                    call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                endif
+                !call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
             endif
             
         

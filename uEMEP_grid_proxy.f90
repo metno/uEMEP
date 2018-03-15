@@ -269,7 +269,12 @@
                     xpos_subgrid=lon_subgrid(i,j)
                     ypos_subgrid=lat_subgrid(i,j)
                 elseif (EMEP_projection_type.eq.LCC_projection_index) then
-                    call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_subgrid(i,j),lat_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                    if (use_alternative_LCC_projection_flag) then
+                        call lb2lambert2_uEMEP(xpos_subgrid,ypos_subgrid,lon_subgrid(i,j),lat_subgrid(i,j),real(EMEP_projection_attributes(1)),real(EMEP_projection_attributes(2)),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                    else
+                        call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_subgrid(i,j),lat_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                    endif
+                    !call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_subgrid(i,j),lat_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
                 endif
                 
                 !Use the wind direction to move the target area downwind
@@ -337,7 +342,12 @@
                             xpos_emission_subgrid=lon_emission_subgrid(ii,jj,source_index)
                             ypos_emission_subgrid=lat_emission_subgrid(ii,jj,source_index)
                         elseif (EMEP_projection_type.eq.LCC_projection_index) then
-                            call lb2lambert_uEMEP(xpos_emission_subgrid,ypos_emission_subgrid,lon_emission_subgrid(ii,jj,source_index),lat_emission_subgrid(ii,jj,source_index),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                            if (use_alternative_LCC_projection_flag) then
+                                call lb2lambert2_uEMEP(xpos_emission_subgrid,ypos_emission_subgrid,lon_emission_subgrid(ii,jj,source_index),lat_emission_subgrid(ii,jj,source_index),real(EMEP_projection_attributes(1)),real(EMEP_projection_attributes(2)),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                            else
+                                call lb2lambert_uEMEP(xpos_emission_subgrid,ypos_emission_subgrid,lon_emission_subgrid(ii,jj,source_index),lat_emission_subgrid(ii,jj,source_index),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                            endif
+                            !call lb2lambert_uEMEP(xpos_emission_subgrid,ypos_emission_subgrid,lon_emission_subgrid(ii,jj,source_index),lat_emission_subgrid(ii,jj,source_index),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
                         endif
 
                         !write(*,*) xpos_emission_subgrid,lon_area_min,lon_area_max
@@ -720,7 +730,12 @@
                     xpos_integral_subgrid=lon_integral_subgrid(i,j)
                     ypos_integral_subgrid=lat_integral_subgrid(i,j)
                 elseif (EMEP_projection_type.eq.LCC_projection_index) then
-                    call lb2lambert_uEMEP(xpos_integral_subgrid,ypos_integral_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                    if (use_alternative_LCC_projection_flag) then
+                        call lb2lambert2_uEMEP(xpos_integral_subgrid,ypos_integral_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(1)),real(EMEP_projection_attributes(2)),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                    else
+                        call lb2lambert_uEMEP(xpos_integral_subgrid,ypos_integral_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),lat_emission_subgrid(ii,jj,source_index),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                    endif
+                    !call lb2lambert_uEMEP(xpos_integral_subgrid,ypos_integral_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
                 endif
 
                 !Find the cross reference to the integral grid from the emission grid
@@ -771,7 +786,12 @@
                             xpos_emission_subgrid=lon_emission_subgrid(ii,jj,source_index)
                             ypos_emission_subgrid=lat_emission_subgrid(ii,jj,source_index)
                         elseif (EMEP_projection_type.eq.LCC_projection_index) then
-                            call lb2lambert_uEMEP(xpos_emission_subgrid,ypos_emission_subgrid,lon_emission_subgrid(ii,jj,source_index),lat_emission_subgrid(ii,jj,source_index),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                            if (use_alternative_LCC_projection_flag) then
+                                call lb2lambert2_uEMEP(xpos_emission_subgrid,ypos_emission_subgrid,lon_emission_subgrid(ii,jj,source_index),lat_emission_subgrid(ii,jj,source_index),real(EMEP_projection_attributes(1)),real(EMEP_projection_attributes(2)),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                            else
+                                call lb2lambert_uEMEP(xpos_emission_subgrid,ypos_emission_subgrid,lon_emission_subgrid(ii,jj,source_index),lat_emission_subgrid(ii,jj,source_index),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                            endif
+                            !call lb2lambert_uEMEP(xpos_emission_subgrid,ypos_emission_subgrid,lon_emission_subgrid(ii,jj,source_index),lat_emission_subgrid(ii,jj,source_index),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
                         endif
 
                         !Limit distance to the size of the EMEP grid
