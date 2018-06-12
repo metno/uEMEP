@@ -6,6 +6,7 @@
     
     implicit none
     
+    integer i,j,k
     character(256) temp_name
     character(2048) temp_str
     character(256) temp_str1,temp_str2

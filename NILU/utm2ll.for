@@ -1,11 +1,11 @@
-      SUBROUTINE UTM2LL(ISONE,UTMN,UTME,LAT,LON)
+      SUBROUTINE UTM2LL(ISONE_IN,UTMN_IN,UTME,LAT,LON)
 
 C The subroutine converts UTM north- and east-coordinates to latitude
 C and longitude
 
       INTEGER ISONE
-      REAL UTMN,UTME,LAT,LON
-
+      REAL UTMN,UTMN_IN,UTME,LAT,LON
+      INTEGER ISONE_IN
 C ISONE - UTM sone
 C UTMN  - UTM north-coordinate (X) (meter from equator)
 C UTME  - UTM  east-coordinate (Y) (meter from west border)
@@ -38,6 +38,14 @@ C Define constants
       F     = 1./297.
       PI    = 3.1415927
       SCALE = 0.9996
+
+C Adjust for Southern Hemisphere, specified by negative ISONE
+      IF (ISONE_IN.LT.0) then
+        UTMN=UTMN_IN-10000000.
+      ELSE
+        UTMN=UTMN_IN
+      ENDIF
+      ISONE=ABS(ISONE_IN)
 
 C Scale coordinates
 

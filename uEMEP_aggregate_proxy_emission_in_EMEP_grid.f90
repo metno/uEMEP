@@ -9,6 +9,7 @@
 
     implicit none
     
+    integer i,j,k
     integer i_source
     real, allocatable :: EMEP_aggregated_subgid_emission(:,:)
     real, allocatable :: EMEP_aggregated_emission(:,:)
@@ -74,12 +75,12 @@
                 iii=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,i_source)
                 jjj=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,i_source)
             
-                !EMEP_aggregated_subgid_emission(iii,jjj)=EMEP_aggregated_subgid_emission(iii,jjj)+sum(proxy_emission_subgrid(i,j,i_source,:)*emission_factor(compound_index,i_source,:)) &
+                !EMEP_aggregated_subgid_emission(iii,jjj)=EMEP_aggregated_subgid_emission(iii,jjj)+sum(proxy_emission_subgrid(i,j,i_source,:)*emission_factor_conversion(compound_index,i_source,:)) &
                 !    /(emission_subgrid_delta(y_dim_index,i_source)*emission_subgrid_delta(x_dim_index,i_source))*3600./1000. !Conversion from ug/sec/subgrid to mg/m2/hr (EMEP)
                 !EMEP_aggregated_emission(iii,jjj)=EMEP_aggregated_emission(iii,jjj)+sum(var3d_nc(iii,jjj,:,emis_nc_index,i_nc_source))/dim_length_nc(time_dim_nc_index)
                 EMEP_aggregated_subgid_emission_count(iii,jjj)=EMEP_aggregated_subgid_emission_count(iii,jjj)+1
                 !Calculate as tonnes per year
-                EMEP_aggregated_subgid_emission(iii,jjj)=EMEP_aggregated_subgid_emission(iii,jjj)+sum(proxy_emission_subgrid(i,j,i_source,:)*emission_factor(compound_index,i_source,:)) &
+                EMEP_aggregated_subgid_emission(iii,jjj)=EMEP_aggregated_subgid_emission(iii,jjj)+sum(proxy_emission_subgrid(i,j,i_source,:)*emission_factor_conversion(compound_index,i_source,:)) &
                     *1.e-12*3600.*24.*365. !Conversion from ug/sec/subgrid to ton/year 
                 if (hourly_calculations) then
                     EMEP_aggregated_emission(iii,jjj)=EMEP_aggregated_emission(iii,jjj)+sum(var3d_nc(iii,jjj,:,emis_nc_index,i_nc_source))/dim_length_nc(time_dim_nc_index) &

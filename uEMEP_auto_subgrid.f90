@@ -11,11 +11,12 @@
 
     implicit none
     
+    integer i,j,k
     integer         i_source
     integer         t
     character(256)  temp_name
     logical         exists
-    real, allocatable :: use_subgrid_val(:,:,:)    
+    integer, allocatable :: use_subgrid_val(:,:,:)    
     
     real :: max_use_subgrid_size(n_source_index)
     real :: use_subgrid_range(n_source_index)
@@ -58,7 +59,7 @@
                 return
             endif
             call read_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),1,subgrid_delta(1), &
-                use_subgrid_val(:,:,i_source),x_subgrid,y_subgrid)
+                real(use_subgrid_val(:,:,i_source)),x_subgrid,y_subgrid)
             
             !Convert values to logical
             do j=1,subgrid_dim(y_dim_index)
@@ -79,7 +80,7 @@
     
     
     !Set all subgrids to do not use
-    use_subgrid_val=0.
+    use_subgrid_val=0
     !Set time index used for emissions to 1
     t=1
     !Set the maximum grid size
@@ -113,7 +114,7 @@
                 j_cross=crossreference_target_to_emission_subgrid(i,j,y_dim_index,i_source)
 
                 !If the target grid is inside an emission grid with non zero emissions then include it
-                !if (sum(emission_subgrid(i_cross,j_cross,t,i_source,:)).gt.0) use_subgrid_val(i,j,i_source)=1.
+                !if (sum(emission_subgrid(i_cross,j_cross,t,i_source,:)).gt.0) use_subgrid_val(i,j,i_source)=1
                 
                 !Search in the neighbourhood
                 i_start=max(1,i_cross-use_emission_subgrid_space)
@@ -122,11 +123,11 @@
                 j_end=min(emission_subgrid_dim(y_dim_index,i_source),j_cross+use_emission_subgrid_space)
 
                 sum_emission=sum(proxy_emission_subgrid(i_start:i_end,j_start:j_end,i_source,:))
-                if (sum_emission.gt.0.) use_subgrid_val(i,j,i_source)=1.
+                if (sum_emission.gt.0.) use_subgrid_val(i,j,i_source)=1
                 !write(*,'(6i,f)') i,j,i_start,i_end,j_start,j_end,sum_emission
                 
                 !Always include the coarsest level everywhere
-                if (k.eq.n_use_subgrid_levels(i_source)) use_subgrid_val(i,j,i_source)=1.
+                if (k.eq.n_use_subgrid_levels(i_source)) use_subgrid_val(i,j,i_source)=1
                 
             enddo
             enddo
@@ -136,14 +137,14 @@
             k=n_use_subgrid_levels(i_source)
             use_subgrid_step=2**k
             do j=1,subgrid_dim(y_dim_index),use_subgrid_step
-                use_subgrid_val(1,j,i_source)=1.
-                use_subgrid_val(subgrid_dim(x_dim_index),j,i_source)=1.
+                use_subgrid_val(1,j,i_source)=1
+                use_subgrid_val(subgrid_dim(x_dim_index),j,i_source)=1
             enddo
             do i=1,subgrid_dim(x_dim_index),use_subgrid_step
-                use_subgrid_val(i,1,i_source)=1.
-                use_subgrid_val(i,subgrid_dim(y_dim_index),i_source)=1.
+                use_subgrid_val(i,1,i_source)=1
+                use_subgrid_val(i,subgrid_dim(y_dim_index),i_source)=1
             enddo            
-            use_subgrid_val(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),i_source)=1.
+            use_subgrid_val(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),i_source)=1
 
         
         use_subgrid_val(:,:,allsource_index)=use_subgrid_val(:,:,allsource_index)+use_subgrid_val(:,:,i_source)
@@ -151,7 +152,7 @@
     endif
     enddo
     
-    use_subgrid_val=min(1.,use_subgrid_val)
+    use_subgrid_val=min(1,use_subgrid_val)
  
     
     !Convert values to logical
@@ -176,15 +177,23 @@
     enddo
     endif
 
+    do i_source=1,n_source_index 
+        if (.not.read_existing_grid_data(use_subgrid_file_index(i_source))) then
+            if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+                write(unit_logfile,'(a,2i10,f6.1)') 'Number of calculation subgrids for '//trim(source_file_str(i_source))//' (number, total, percent):',sum(use_subgrid_val(:,:,i_source)),subgrid_dim(1)*subgrid_dim(2),sum(use_subgrid_val(:,:,i_source))*100./(subgrid_dim(1)*subgrid_dim(2))
+            endif
+        endif
+    enddo
+
     if (save_intermediate_files) then
     do i_source=1,n_source_index 
         if (.not.read_existing_grid_data(use_subgrid_file_index(i_source))) then
             if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-                write(unit_logfile,'(a,f10.0,i10,f6.2)') 'Number of calculation subgrids for '//trim(source_file_str(i_source))//' (number, total, fraction):',sum(use_subgrid_val(:,:,i_source)),subgrid_dim(1)*subgrid_dim(2),sum(use_subgrid_val(:,:,i_source))/(subgrid_dim(1)*subgrid_dim(2))
+                !write(unit_logfile,'(a,2i10,f6.1)') 'Number of calculation subgrids for '//trim(source_file_str(i_source))//' (number, total, fraction):',sum(use_subgrid_val(:,:,i_source)),subgrid_dim(1)*subgrid_dim(2),sum(use_subgrid_val(:,:,i_source))*1./(subgrid_dim(1)*subgrid_dim(2))
                 temp_name=trim(pathname_grid(use_subgrid_file_index(i_source)))//trim(filename_grid(use_subgrid_file_index(i_source)))//'_'//trim(file_tag)//'.asc'
                 write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
                 call write_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),1,subgrid_delta(1), &
-                     use_subgrid_val(:,:,i_source),x_subgrid,y_subgrid)
+                     real(use_subgrid_val(:,:,i_source)),x_subgrid,y_subgrid)
             
             endif
         endif

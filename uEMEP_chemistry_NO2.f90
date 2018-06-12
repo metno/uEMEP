@@ -6,6 +6,7 @@
 
     implicit none
     
+    integer i,j,k
     real nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature
     real nox_out,no2_out,o3_out,p_bg_out,p_out
     
@@ -38,13 +39,15 @@
 
     nox_bg=0.;no2_bg=0.;o3_bg=0.;nox_loc=0.;f_no2_loc=0.;J_photo=0.;temperature=0.;
         
-    !Calculate the weighted travel time from the totals calculated in uEMEP_grid_proxy
+    !Calculate the weighted travel time from the totals calculated in uEMEP_subgrid_dispersion
     do t=t_start,t_end
         traveltime_subgrid(:,:,t,1)=traveltime_subgrid(:,:,t,1)/traveltime_subgrid(:,:,t,2)
         !Invert it to get the time scale
         !traveltime_subgrid(:,:,t,1)=1./traveltime_subgrid(:,:,t,1)
         !Set none valid to 12 hours (long time)
         where (traveltime_subgrid(:,:,t,2).eq.0) traveltime_subgrid(:,:,t,1)=3600.*12.
+        !write(*,*) t
+        !write(*,*) traveltime_subgrid(:,:,t,1)
     enddo
     
     do j=1,subgrid_dim(y_dim_index)
@@ -76,7 +79,7 @@
         do i_source=1,n_source_index
         if (calculate_source(i_source)) then
             do i_subsource=1,n_subsource(i_source)
-            f_no2_loc=f_no2_loc+emission_factor(no2_index,i_source,i_subsource)/emission_factor(nox_index,i_source,i_subsource)*subgrid(i,j,t,local_subgrid_index,i_source,i_subsource)
+            f_no2_loc=f_no2_loc+emission_factor_conversion(no2_index,i_source,i_subsource)/emission_factor_conversion(nox_index,i_source,i_subsource)*subgrid(i,j,t,local_subgrid_index,i_source,i_subsource)
             nox_loc=nox_loc+subgrid(i,j,t,local_subgrid_index,i_source,i_subsource)
             enddo         
         endif

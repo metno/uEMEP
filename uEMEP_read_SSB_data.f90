@@ -7,6 +7,7 @@
     
     implicit none
     
+    integer i,j,k
     character(256) temp_name
     character(256) temp_str,temp_str1,temp_str2
     real temp_val
@@ -215,7 +216,7 @@
         
                     !Reduce the number of dwellings when they are in a multiple dwelling by factor of 3. i.e. the proxy is reduced in blocks with the assumption that only 1 in 3 use their wood heater
                     heating_proxy=dwe_todw
-                    heating_proxy=max(0.,dwe_todw-dwe_mult)+dwe_mult/3.
+                    heating_proxy=max(0.,dwe_todw-dwe_mult)+dwe_mult/5.
                     proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,subsource_index)=proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,subsource_index)+heating_proxy
                     count_subgrid(i_ssb_index,j_ssb_index)=count_subgrid(i_ssb_index,j_ssb_index)+1
                     !write(*,*) count,proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,subsource_index)
@@ -241,7 +242,6 @@
                     if (SSB_data_type.eq.population_index) then
                         use_region=floor(population_subgrid_delta(x_dim_index)/subgrid_delta(x_dim_index)/2.)
                     endif
-                    
                     !Find the grid index it belongs to in the target grid
                     i_ssb_index=1+floor((x_ssb-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index)+0.5)
                     j_ssb_index=1+floor((y_ssb-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index)+0.5)

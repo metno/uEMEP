@@ -7,6 +7,7 @@
  
     implicit none
     
+    integer i,j,k
     logical exists
     character(256) temp_str
     integer unit_in
@@ -16,7 +17,7 @@
     
     use_receptor=.true.
     
-    if (use_receptor_positions_for_auto_subgrid_flag.or.use_multiple_receptor_grids_flag) then 
+    if (use_receptor_positions_for_auto_subgrid_flag.or.use_multiple_receptor_grids_flag.or.save_netcdf_receptor_flag) then 
     else
         return
     endif
@@ -32,8 +33,17 @@
     !Test existence of the road link filename (2). If does not exist then use default
     inquire(file=trim(pathfilename_receptor),exist=exists)
     if (.not.exists) then
-        write(unit_logfile,'(A,A)') ' ERROR: Receptor file does not exist: ', trim(pathfilename_receptor)
-        stop
+        if (use_multiple_receptor_grids_flag) then
+            write(unit_logfile,'(A,A)') ' ERROR: Receptor file does not exist. Cannot calculate: ', trim(pathfilename_receptor)
+            stop
+        else
+            write(unit_logfile,'(A,A)') ' WARNING: Receptor file does not exist. Will provide receptor output: ', trim(pathfilename_receptor)
+            n_receptor=0
+            n_receptor_in=n_receptor
+            n_valid_receptor=0
+            n_valid_receptor_in=n_valid_receptor
+            return
+        endif
     endif
 
     !Open the file for reading
@@ -77,12 +87,14 @@
         y_receptor_in=y_receptor        
     endif
     
-    !Identify receptors within the predefined subgrid region and only calculate these
+    !Identify receptors within the initial subgrid region and only calculate these
     init_subgrid_dim(x_dim_index)=floor((init_subgrid_max(x_dim_index)-init_subgrid_min(x_dim_index))/init_subgrid_delta(x_dim_index))+1
     init_subgrid_dim(y_dim_index)=floor((init_subgrid_max(y_dim_index)-init_subgrid_min(y_dim_index))/init_subgrid_delta(y_dim_index))+1
 
-      write(unit_logfile,'(a,2i)') ' Number of subgrids = ', init_subgrid_dim(x_dim_index),init_subgrid_dim(y_dim_index)
-      write(unit_logfile,'(a,2f12.1)') ' Size subgrids = ', init_subgrid_max(x_dim_index)-init_subgrid_min(x_dim_index),init_subgrid_max(y_dim_index)-init_subgrid_min(y_dim_index)
+    write(unit_logfile,'(a,2i)') ' Number of initial subgrid = ', init_subgrid_dim(x_dim_index),init_subgrid_dim(y_dim_index)
+    write(unit_logfile,'(a,2f12.1)') ' Size of initial subgrid = ', init_subgrid_max(x_dim_index)-init_subgrid_min(x_dim_index),init_subgrid_max(y_dim_index)-init_subgrid_min(y_dim_index)
+    
+    !Remove identically named receptors
     count=0
     unique_receptor=.true.
     do k=1,n_receptor
@@ -93,25 +105,30 @@
         enddo
     enddo
 
+    !Select receptors within the initial grid and with unique names
     do k=1,n_receptor
         
         i_receptor_subgrid(k)=1+floor((x_receptor(k)-init_subgrid_min(x_dim_index))/init_subgrid_delta(x_dim_index)+0.5)
         j_receptor_subgrid(k)=1+floor((y_receptor(k)-init_subgrid_min(y_dim_index))/init_subgrid_delta(y_dim_index)+0.5)
-    !write(*,*) trim(name_receptor(k,1)),i_receptor_subgrid(k),j_receptor_subgrid(k)
+        !write(*,*) trim(name_receptor(k,1)),i_receptor_subgrid(k),j_receptor_subgrid(k)
         !Set subgrid use or not. At grid and surrounding grids in case of interpolation later
         if (i_receptor_subgrid(k).gt.1.and.i_receptor_subgrid(k).lt.init_subgrid_dim(x_dim_index).and.j_receptor_subgrid(k).gt.1.and.j_receptor_subgrid(k).lt.init_subgrid_dim(y_dim_index).and.unique_receptor(k)) then
             use_receptor(k)=.true.
             !write(*,*) trim(name_receptor(k,1)),i_receptor_subgrid(k),j_receptor_subgrid(k)
             count=count+1
+            valid_receptor_index(count)=k
+            valid_receptor_inverse_index(k)=count
             write(unit_logfile,'(a,a12,2f12.1)') ' Receptor and grid positions (x,y) = ',trim(name_receptor(k,1)), x_receptor(k)-init_subgrid_min(x_dim_index),y_receptor(k)-init_subgrid_min(y_dim_index)
        else
-            use_receptor(k)=.false.
+            use_receptor(k)=.false.  
+            valid_receptor_inverse_index(k)=0
         endif
     enddo
+    n_valid_receptor=count
+    n_valid_receptor_in=n_valid_receptor
     
-    !Need to remove the double counts as many stations are counted 3 times
     
-    write(unit_logfile,'(a,i)') ' Total number of receptors to be calculated = ', count
+    write(unit_logfile,'(a,i)') ' Total number of receptors to be calculated = ', n_valid_receptor
     
     end subroutine uEMEP_read_receptor_data
     
@@ -122,6 +139,7 @@
  
     implicit none
     
+    integer i,j,k
     integer count
     !integer :: use_region=2 ! +/- number of grids to loop around so that receptor positions can be interpolated linearly
     
@@ -173,6 +191,7 @@
  
     implicit none
     
+    integer i,j,k
     integer count
     !integer :: use_region=2 ! +/- number of grids to loop around so that receptor positions can be interpolated linearly
     real x_ref,y_ref

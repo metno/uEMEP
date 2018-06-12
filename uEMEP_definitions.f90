@@ -19,10 +19,11 @@
     logical :: reduce_EMEP_region_flag=.false.
     
     !Nodata value
-    real :: NODATA_value=-999.
+    real NODATA_value
+    parameter (NODATA_value=-999.)
     
     !often used
-    integer i,j,k,ro
+    !integer i,j,k
     
     integer :: unit_logfile=0
     integer :: n_roadlinks=0
@@ -41,11 +42,16 @@
     
     !Dimensions of the netcdf files that are read
     integer num_dims_nc 
-    parameter (num_dims_nc=6)                  ! number of dimensions is 3 for all 2d fields used
+    parameter (num_dims_nc=6) !(x,y,z,t,xpos,ypos)
+    integer num_dims_meteo_nc 
+    parameter (num_dims_meteo_nc=4) !(x,y,z,t)
     
     integer dim_length_nc(num_dims_nc)
     integer dim_start_nc(num_dims_nc)
     data dim_start_nc /1, 1, 1, 1, 1, 1/                 ! start at first value
+    integer dim_length_meteo_nc(num_dims_meteo_nc)
+    integer dim_start_meteo_nc(num_dims_meteo_nc)
+    data dim_start_meteo_nc /1, 1, 1, 1/                 ! start at first value
 
     !Dimensions of the netcdf files that are used
     integer end_dim_nc(num_dims_nc)
@@ -56,13 +62,17 @@
     integer hmix_nc_index,kz_nc_index,invL_nc_index,ustar_nc_index,logz0_nc_index,J_nc_index
     integer conc_nc_index,frac_nc_index,local_nc_index,emis_nc_index
     integer x_nc_index,y_nc_index,ZTOP_nc_index
+    integer u10_nc_index,v10_nc_index,uw_nc_index,vw_nc_index,Hflux_nc_index
     parameter (lon_nc_index=1,lat_nc_index=2)
     parameter (ugrid_nc_index=3,vgrid_nc_index=4,FF10_nc_index=5,FFgrid_nc_index=6,inv_FFgrid_nc_index=7,inv_FF10_nc_index=8)
     parameter (hmix_nc_index=9,kz_nc_index=10,invL_nc_index=11,ustar_nc_index=12,logz0_nc_index=13,J_nc_index=14)
     parameter (conc_nc_index=15,frac_nc_index=16,local_nc_index=17,emis_nc_index=18)
     parameter (x_nc_index=19,y_nc_index=20,ZTOP_nc_index=21)
+    parameter (u10_nc_index=22,v10_nc_index=23,uw_nc_index=24,vw_nc_index=25,Hflux_nc_index=26)
     integer num_var_nc
-    parameter (num_var_nc=21)                  ! number of readable variables
+    parameter (num_var_nc=26)                  ! number of readable variables
+    integer num_var_meteo_nc
+    parameter (num_var_meteo_nc=num_var_nc)
     
     integer lc_frac_nc_index,lc_local_nc_index
     parameter (lc_frac_nc_index=1,lc_local_nc_index=2)
@@ -83,6 +93,8 @@
    
     character(256) var_name_nc(num_var_nc,n_compound_nc_index,n_source_nc_index)
     character(256) dim_name_nc(num_dims_nc)
+    character(256) var_name_meteo_nc(num_var_meteo_nc)
+    character(256) dim_name_meteo_nc(num_dims_meteo_nc)
     character(256) comp_name_nc(n_compound_nc_index)
     character(256) input_comp_name
     real comp_scale_nc(n_compound_nc_index)
@@ -102,9 +114,18 @@
     real, allocatable :: lc_var4d_nc(:,:,:,:,:,:,:,:)       !Netcdf local contribution array (idist,jdist,i,j,k,t,type,source)
     real, allocatable :: comp_var3d_nc(:,:,:,:)             !Netcdf additional compounds array (i,j,t,compound)
     real, allocatable :: comp_var4d_nc(:,:,:,:,:)           !Netcdf additional compounds array (i,j,k,t,compound)
+    !Alternative meteorological input data netcdf files. No source element
+    real, allocatable :: meteo_var1d_nc(:,:)
+    real, allocatable :: meteo_var2d_nc(:,:,:)  
+    real, allocatable :: meteo_var3d_nc(:,:,:,:)
+    real, allocatable :: meteo_var4d_nc(:,:,:,:,:)
+    
     real dgrid_nc(2)
+    real meteo_dgrid_nc(2)
     double precision, allocatable :: val_dim_nc(:,:)
+    double precision, allocatable :: val_dim_meteo_nc(:,:)
     character(256), allocatable :: unit_dim_nc(:)
+    character(256), allocatable :: unit_dim_meteo_nc(:)
     
     integer surface_level_nc
     
@@ -200,9 +221,9 @@
     !parameter (agriculture_emission_file_index=23,agriculture_proxy_file_index=24,agriculture_proxy_integral_file_index=25)
 
     !Definition of the EMEP file to be read. Two files. 1 is base file and 2 is uEMEP file
-    character(256) filename_EMEP(2)
-    character(256) pathname_EMEP(2)
-    character(256) pathfilename_EMEP(2)  !Combined path and filename
+    character(256) filename_EMEP(4)
+    character(256) pathname_EMEP(4)
+    character(256) pathfilename_EMEP(4)  !Combined path and filename
 
     !Definition of the receptor file to be read.
     character(256) filename_receptor
@@ -240,7 +261,7 @@
     integer n_subgrid_index
     parameter (n_subgrid_index=11)
 
-    !Declare meteo subgrid variables
+    !Declare meteo subgrid variables. Must be the same as the nc version
     integer ugrid_subgrid_index,vgrid_subgrid_index,FF10_subgrid_index,FFgrid_subgrid_index,inv_FFgrid_subgrid_index,inv_FF10_subgrid_index
     integer hmix_subgrid_index,kz_subgrid_index,invL_subgrid_index,ustar_subgrid_index,logz0_subgrid_index,J_subgrid_index,cos_subgrid_index,sin_subgrid_index
     parameter (ugrid_subgrid_index=1,vgrid_subgrid_index=2,FF10_subgrid_index=3,FFgrid_subgrid_index=4,inv_FFgrid_subgrid_index=5,inv_FF10_subgrid_index=6)
@@ -283,6 +304,8 @@
     real, allocatable :: y_subgrid(:,:)
     real, allocatable :: lon_subgrid(:,:)
     real, allocatable :: lat_subgrid(:,:)
+    real, allocatable :: xproj_subgrid(:,:)
+    real, allocatable :: yproj_subgrid(:,:)
     real, allocatable :: traveltime_subgrid(:,:,:,:)
     real, allocatable :: exposure_subgrid(:,:,:,:)
     integer subgrid_loop_index(2)               !Number of target subgrids to loop through, limitted by the size of the EMEP grid
@@ -300,18 +323,24 @@
     integer :: n_subsource(n_source_index)=1 !Initialise the number of actual emission subsources to 1 for all subsources
     character(2) subsource_str(n_possible_subsource)
     
+    integer emission_h_index,emission,emission_sigz00_index,emission_sigy00_index,emission_minFF_index,n_emission_index
+    parameter (emission_h_index=1,emission_sigz00_index=2,emission_sigy00_index=3,emission_minFF_index=4,n_emission_index=4)
+    
     integer emission_subgrid_dim(n_dim_index,n_source_index)
     integer emission_max_subgrid_dim(n_dim_index)
     real emission_subgrid_delta(2,n_source_index),emission_subgrid_min(2,n_source_index),emission_subgrid_max(2,n_source_index)  !Only x and y
     !emission_subgrid (i,j,t,n_source,n_subsource)
     real, allocatable :: emission_subgrid(:,:,:,:,:)
-    real, allocatable :: proxy_emission_subgrid(:,:,:,:)
+    real, allocatable :: proxy_emission_subgrid(:,:,:,:) !No time dependence
     real, allocatable :: emission_time_profile_subgrid(:,:,:,:,:)
+    real, allocatable :: emission_properties_subgrid(:,:,:,:,:) !No time dependence
     !x_emission_subgrid (i,j,n_source)
     real, allocatable :: x_emission_subgrid(:,:,:)
     real, allocatable :: y_emission_subgrid(:,:,:)
     real, allocatable :: lon_emission_subgrid(:,:,:)
     real, allocatable :: lat_emission_subgrid(:,:,:)
+    real, allocatable :: xproj_emission_subgrid(:,:,:)
+    real, allocatable :: yproj_emission_subgrid(:,:,:)
     
     logical :: use_buffer_zone=.true.
     integer buffer_index(2)
@@ -330,6 +359,10 @@
     real, allocatable :: y_integral_subgrid(:,:)
     real, allocatable :: lon_integral_subgrid(:,:)
     real, allocatable :: lat_integral_subgrid(:,:)
+    real, allocatable :: xproj_integral_subgrid(:,:)
+    real, allocatable :: yproj_integral_subgrid(:,:)
+    real, allocatable :: meteo_nc_xproj_integral_subgrid(:,:)
+    real, allocatable :: meteo_nc_yproj_integral_subgrid(:,:)
 
     integer population_subgrid_dim(2)
     real population_subgrid_delta(2),population_subgrid_min(2),population_subgrid_max(2)  !Only x and y
@@ -338,6 +371,8 @@
     real, allocatable :: y_population_subgrid(:,:)
     real, allocatable :: lon_population_subgrid(:,:)
     real, allocatable :: lat_population_subgrid(:,:)
+    real, allocatable :: xproj_population_subgrid(:,:)
+    real, allocatable :: yproj_population_subgrid(:,:)
 
     !Initial emission grid, can be different for different sources so specified individually
     !emission_subgrid(i,j,value_type)
@@ -366,6 +401,7 @@
     !
     integer, allocatable :: crossreference_target_to_emep_subgrid(:,:,:) !(i,j,dim)
     integer, allocatable :: crossreference_integral_to_emep_subgrid(:,:,:) !(i,j,dim)
+    integer, allocatable :: crossreference_integral_to_meteo_nc_subgrid(:,:,:) !(i,j,dim)
     integer, allocatable :: crossreference_target_to_integral_subgrid(:,:,:) !(i,j,dim)
     !integer, allocatable :: crossreference_emission_to_target_subgrid(:,:,:,:) !(i,j,dim,n_source)
     integer, allocatable :: crossreference_target_to_emission_subgrid(:,:,:,:) !(i,j,dim,n_source)
@@ -377,10 +413,10 @@
     !integer, allocatable :: crossreference_agriculture_emission_subgrid(:,:,:)
     !integer, allocatable :: crossreference_heating_emission_subgrid(:,:,:)
     
-    real :: ratio_truck_car_emission=10.
     real :: min_link_size=50.
     real :: min_adt=1000.
-    real :: H_emep=95. !Height of lowest level in EMEP
+    real :: H_emep=90. !Height of lowest level in EMEP
+    real :: H_meteo=45. !Height of the gridded meteo values 
     
     logical :: hourly_calculations=.false.
     logical :: annual_calculations=.false.
@@ -414,6 +450,8 @@
     integer :: EMEP_projection_type=LL_projection_index
     double precision :: EMEP_projection_attributes(10)
     double precision :: projection_attributes(10)
+    integer :: meteo_nc_projection_type=LCC_projection_index
+    double precision :: meteo_nc_projection_attributes(10)
     logical :: use_alternative_LCC_projection_flag=.false.
 
     
@@ -431,10 +469,12 @@
     character(256) source_file_str(n_source_index)
     real :: unit_conversion(n_source_index)=1.
     
-    real emission_factor(n_compound_nc_index,n_source_index,n_possible_subsource)
+    real :: emission_factor_conversion(n_compound_nc_index,n_source_index,n_possible_subsource)=0.
+    real :: emission_factor(n_compound_nc_index,n_source_index,n_possible_subsource)=1.
+    real :: ratio_truck_car_emission(n_compound_nc_index)=10.
     
     integer :: integral_subgrid_step=1
-    integer :: weighting_step=1      
+    integer :: weighting_step=1
 
     real :: limit_shipping_delta=250.
     real :: limit_heating_delta=250.
@@ -443,6 +483,10 @@
     
     integer :: start_time_nc_index=1
     integer :: end_time_nc_index=1
+    integer :: start_time_meteo_nc_index=1
+    integer :: end_time_meteo_nc_index=1
+    integer :: ref_year_EMEP=1900
+    integer :: ref_year_meteo=1970
 
     integer :: EMEP_emission_grid_interpolation_flag=0
     logical :: subgrid_emission_distribution_flag=.false.  !If true then distributes the EMEP emissions to the existing emission subgrid
@@ -455,8 +499,10 @@
     logical :: interpolate_subgrids_flag=.false.
     logical :: use_aggregated_shipping_emissions_flag=.true.
     logical :: calculate_aggregated_shipping_emissions_flag=.false.
+    logical :: average_zc_h_in_Kz_flag=.true.
+
     
-    integer n_receptor,n_receptor_in,n_receptor_max
+    integer n_receptor,n_receptor_in,n_receptor_max,n_valid_receptor,n_valid_receptor_in
     parameter (n_receptor_max=1000)
     real lon_receptor(n_receptor_max),lat_receptor(n_receptor_max),x_receptor(n_receptor_max),y_receptor(n_receptor_max)
     real lon_receptor_in(n_receptor_max),lat_receptor_in(n_receptor_max),x_receptor_in(n_receptor_max),y_receptor_in(n_receptor_max)
@@ -465,6 +511,8 @@
     character(256) name_receptor_in(n_receptor_max,2)
     logical :: use_receptor(n_receptor_max)=.true.
     integer :: use_receptor_region=1 !Surrounding grid region when just running for receptors
+    integer valid_receptor_index(n_receptor_max)
+    integer valid_receptor_inverse_index(n_receptor_max)
     
     !Indicies for SSB building and population data
     integer dwelling_index,population_index,establishment_index,school_index,home_index,n_population_index
@@ -487,6 +535,25 @@
     
     logical :: use_last_meteo_in_dispersion=.false.
     logical :: use_meandering_in_dispersion=.false.
+    logical :: use_traffic_for_sigma0_flag=.false.
+!    logical :: use_traffic_for_minFF_flag=.false.
+    logical :: use_emission_grid_gradient_flag=.false.
+    logical :: use_alternative_meteorology_flag=.false.
+    logical :: use_alternative_z0_flag=.false.
+    logical :: 	save_netcdf_file_flag=.false.
+    logical ::	save_netcdf_receptor_flag=.false.
+    
+    !Some testing and scaling values
+    real :: replace_z0=NODATA_value  !Will not replace z0 when it has a NODATA value
+    real :: replace_invL=NODATA_value  !Will not replace invL when it has a NODATA value
+    real :: replace_hmix=NODATA_value  !Will not replace mix when it has a NODATA value
+	real :: FF_scale=NODATA_value
+	real :: FF10_offset=NODATA_value
+	real :: DD_offset=NODATA_value
+    
+    real :: hmix_max=2000.
+    real :: hmix_min=25.
+    real :: ustar_min=0.001
     
     end module uEMEP_definitions
     

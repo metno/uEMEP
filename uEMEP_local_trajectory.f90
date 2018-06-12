@@ -7,6 +7,7 @@
     
     implicit none
     
+    integer i,j,k
     real x_loc,y_loc
     
     !integer i_rec,j_rec,i_emis,j_emis
@@ -102,6 +103,7 @@
     
     implicit none
     
+    integer i,j,k
     !integer i_rec,j_rec,i_emis,j_emis
     integer t,traj_max_index
     !integer i_source
@@ -148,6 +150,7 @@
     
     real x_loc,y_loc
     
+    integer i,j,k
     !integer i_rec,j_rec,i_emis,j_emis
     integer t,traj_max_index
     !integer i_source
@@ -193,7 +196,7 @@
     
     do k=2,traj_max_index
         
-            if (x_traj(k).ne.NODATA_value) then
+        if (x_traj(k).ne.NODATA_value) then
             call DISTRL_SQR(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj(k),y_intercept_traj(k),distance_intercept_traj(k),frac_length_traj(k))
             
             if (distance_intercept_traj(k).lt.distance_intercept_min) then
@@ -202,10 +205,10 @@
                 x_loc=dr_traj*(k-2)+frac_length_traj(k)*dr_traj
                 valid_traj=.true.
             endif
-            endif
+        endif
     enddo
     
-    !Remove most of the results
+    !Remove most of the results because they are upwind
     if (x_loc.eq.0.and.y_loc.gt.dr_traj) then
         valid_traj=.false.
     endif    

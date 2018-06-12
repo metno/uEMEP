@@ -1,8 +1,6 @@
-!NORTRIP_grid_roads.f90
-    
 !==========================================================================
-!   uEMEP model save_gridded_lines
-!   Places line source proxy emissions in the traffic grid
+!   NORTRIP_grid_roads.f90
+!   Places line source proxy emissions in the traffic subgrid
 !==========================================================================
     subroutine uEMEP_grid_roads
     
@@ -10,6 +8,8 @@
 
     implicit none
     
+    integer i,j,k
+    integer ro
     real, allocatable :: f_subgrid(:)
     real, allocatable :: adt_temp(:)
     real, allocatable :: adt_car_temp(:)
@@ -24,6 +24,8 @@
     
     !functions
     real line_fraction_in_grid_func
+    real sigma0_traffic_func
+    real minFF_traffic_func
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -58,12 +60,20 @@
     
     proxy_emission_subgrid(:,:,source_index,:)=0.
     
+    if (use_traffic_for_sigma0_flag) then
+        emission_properties_subgrid(:,:,emission_sigy00_index,source_index,:)=0.
+        emission_properties_subgrid(:,:,emission_sigz00_index,source_index,:)=0.
+    endif
+ !   emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)=0.
+ !   if (use_traffic_for_minFF_flag) then
+ !       emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)=0.
+ !   endif
+    
     !Possible to split the traffic source into different subsources at this point if necessary, e.g. light and heavy traffic
     !Here we weight the adt by the emission ratio and give an emission factor valid for cars
-    !adt_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*(1.-inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.*(1-ratio_truck_car_emission))
     adt_car_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*(1.-inputdata_rl(1:n_roadlinks,hdv_rl_index)/100)
     adt_truck_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.
-    adt_temp=adt_car_temp+adt_truck_temp*ratio_truck_car_emission
+    adt_temp=adt_car_temp+adt_truck_temp*ratio_truck_car_emission(compound_index)
     
     !Calculate the pseudo traffic emissions in each grid
     write(unit_logfile,*)'Gridding traffic emission proxy data'
@@ -102,6 +112,20 @@
                 do subsource_index=1,n_subsource(source_index)
                     proxy_emission_subgrid(i,j,source_index,subsource_index)=proxy_emission_subgrid(i,j,source_index,subsource_index) &
                         +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro)
+                    
+                    !Set the sigma values according to traffic speed and road width using proxy weighting
+                    if (use_traffic_for_sigma0_flag) then
+                        emission_properties_subgrid(i,j,emission_sigy00_index,source_index,subsource_index)=emission_properties_subgrid(i,j,emission_sigy00_index,source_index,subsource_index) &
+                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro)*sqrt((inputdata_rl(ro,width_rl_index)/2.)**2+sigma0_traffic_func(inputdata_rl(ro,speed_rl_index))**2)
+                        emission_properties_subgrid(i,j,emission_sigz00_index,source_index,subsource_index)=emission_properties_subgrid(i,j,emission_sigz00_index,source_index,subsource_index) &
+                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro)*sigma0_traffic_func(inputdata_rl(ro,speed_rl_index))
+                    endif
+                    !Should not be used
+!                    if (use_traffic_for_minFF_flag) then
+!                        emission_properties_subgrid(i,j,emission_minFF_index,source_index,subsource_index)=emission_properties_subgrid(i,j,emission_minFF_index,source_index,subsource_index) &
+!                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro)*minFF_traffic_func(inputdata_rl(ro,speed_rl_index),adt_temp(ro),inputdata_rl(ro,width_rl_index))
+!                    endif
+                    
                 enddo
                 !write(*,*) ro,i,j,f_subgrid(ro)
                 !write(*,*) ro,f_subgrid(ro),traffic_emission_subgrid(i,j,x_emission_subgrid_index),traffic_emission_subgrid(i,j,y_emission_subgrid_index),x_line_in,y_line_in
@@ -114,7 +138,16 @@
            
         !if (mod(ro,10000).eq.0) write(*,*) 'Gridding traffic emission',ro,' of ',n_roadlinks    
     enddo
-             
+    
+    !Set the road properties based on ADT weighting
+    if (use_traffic_for_sigma0_flag) then
+        emission_properties_subgrid(:,:,emission_sigy00_index,source_index,:)=emission_properties_subgrid(:,:,emission_sigy00_index,source_index,:)/proxy_emission_subgrid(:,:,source_index,:)
+        emission_properties_subgrid(:,:,emission_sigz00_index,source_index,:)=emission_properties_subgrid(:,:,emission_sigz00_index,source_index,:)/proxy_emission_subgrid(:,:,source_index,:)
+    endif
+!    if (use_traffic_for_minFF_flag) then
+!        emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)=emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)/proxy_emission_subgrid(:,:,source_index,:)
+!     endif
+    
     deallocate (f_subgrid)
     deallocate (adt_temp)
     deallocate (adt_car_temp)
@@ -135,6 +168,38 @@
     endif
 
     end subroutine uEMEP_grid_roads
+    
+    function sigma0_traffic_func(speed)
+    implicit none
+    real:: speed
+    real:: sigma0_traffic_func
+    real :: min_sigma=0.5
+    real :: max_sigma=3.
+    real :: min_speed=40.
+    real :: max_speed=100.
+    real :: gradient
+    
+        gradient=(max_sigma-min_sigma)/(max_speed-min_speed)
+        sigma0_traffic_func=min(max(min_sigma+(speed-min_speed)*gradient,min_sigma),max_sigma)
+        
+    end function sigma0_traffic_func
+    
+    function minFF_traffic_func(speed,adt,width)
+    implicit none
+    real:: speed,adt,width
+    real:: minFF_traffic_func
+    real :: min_FF=0.0
+    real :: max_FF=2.
+    real :: min_speed=40.
+    real :: max_speed=100.
+    real :: gradient
+    
+       ! gradient=(max_FF-min_FF)/((max_speed-min_speed)*100000./25.)
+       ! minFF_traffic_func=min(max(speed*adt/width*gradient,min_FF),max_FF)
+        gradient=(max_FF-min_FF)/((max_speed-min_speed))
+        minFF_traffic_func=min(max(speed*gradient,min_FF),max_FF)
+        
+    end function minFF_traffic_func
     
 !==========================================================================
 !   NORTRIP model line_fraction_in_grid_func
@@ -302,6 +367,8 @@
 
 !==========================================================================
 !   NORTRIP model save_gridded_lines_test_routine
+!   THis routine used only for testing of gridding for line source
+!   Not used in modelling
 !==========================================================================
     subroutine save_gridded_lines_test_routine
     

@@ -6,6 +6,7 @@
 
     implicit none
 
+    integer i,j,k
     logical :: use_preset_grids=.false.
     
     

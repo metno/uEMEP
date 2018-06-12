@@ -6,35 +6,7 @@
 
     implicit none
     
-    !Set all the input data here that is to be read
-    !pathname_rl(1)='C:\uEMEP\Data\Road_data\'
-    !filename_rl(1)='Road_data_ascii_ERFK_large_Oslo.txt'
-    !filename_rl(1)='Road_data_ascii_ERFK_Bergen.txt'
-    !filename_rl(1)='Road_data_ascii_ERFK_Stavanger.txt'
-    !pathname_ship(1)='C:\uEMEP\Data\Shipping_data\'
-    !filename_ship(1)='Bruce_201501.csv'
-    !pathname_agriculture(1)='C:\uEMEP\Data\Nederland\'
-    !filename_agriculture(1)='NH3_agriculture_animal_housings_2014.csv'
-    !pathname_agriculture(2)='C:\uEMEP\Data\Nederland\'
-    !filename_agriculture(2)='NH3_agriculture_other_2014_1000x1000.csv'
-    !pathname_heating(dwelling_index)='C:\uEMEP\Data\SSB\NOR0250M_DWE_2017\'
-    !filename_heating(dwelling_index)='SSB0250M_DWE_2017.csv'
-    !pathname_heating(population_index)='C:\uEMEP\Data\SSB\r250m_web_2017\'
-    !filename_heating(population_index)='r250m_web_2017.csv'
-    
-    !filename_receptor='Station_positions_Norway.txt'
-    !pathname_receptor='C:\uEMEP\Data\Airbase\'
-
-    
-    !EMEP input files
-    !if (hourly_calculations) then
-    !    pathname_EMEP='C:\uEMEP\EMEP_data\Hourly\'
-    !    filename_EMEP='Save_Base_hour.nc'
-    ! endif
-    !if (annual_calculations) then
-     !   pathname_EMEP='C:\uEMEP\EMEP_data\nh3\'
-     !   filename_EMEP='uEMEP_nh3_RIVM_EMIS_fullrun.nc'
-    !endif
+    integer i,j,k
     
     !Set pathname for all gridded data to be saved
     pathname_grid(:)=pathname_output_grid

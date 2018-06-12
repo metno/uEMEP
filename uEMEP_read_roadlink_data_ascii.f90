@@ -4,6 +4,7 @@
     
     implicit none
     
+    integer i,j,k
     character(256) search_str,temp_str
     real temp
     integer unit_in
@@ -33,7 +34,6 @@
     
 
     min_adt=10.
-    ratio_truck_car_emission=4.86/.318 !From excel sheet
     min_link_size=1.
 
     pathfilename_rl(1)=trim(pathname_rl(1))//trim(filename_rl(1))
@@ -72,7 +72,7 @@
     do i=1,n_roadlinks_major
         !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
         read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
-        !write(*,*) i,temp_adt
+        !write(*,*) temp_id,temp_adt,n_subnodes
         read(unit_in,*) sub_nodes_x(1:n_subnodes)
         read(unit_in,*) sub_nodes_y(1:n_subnodes)
         !write(*,*) sub_nodes_x(1:n_subnodes),sub_nodes_y(1:n_subnodes)

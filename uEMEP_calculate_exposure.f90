@@ -6,6 +6,7 @@
     
     implicit none
     
+    integer i,j,k
     integer i_source, i_subsource
     integer i_cross,j_cross
     real weighted_concentration(n_source_index)

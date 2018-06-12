@@ -19,19 +19,21 @@
     !by(source_index,subsource_index)=0.46!From Liu
     !az(source_index,subsource_index)=0.088!From Liu
     !bz(source_index,subsource_index)=0.72!From Liu 0.72
-    ay(source_index,subsource_index)=0.32
-    by(source_index,subsource_index)=0.78
-    az(source_index,subsource_index)=0.19
-    bz(source_index,subsource_index)=0.77
+    !ay(source_index,subsource_index)=0.32
+    !by(source_index,subsource_index)=0.78
+    !az(source_index,subsource_index)=0.19
+    !bz(source_index,subsource_index)=0.77
 
-    !Alternative ASME
+    !Alternative to ASME
     !ay(source_index,subsource_index)=0.14
     !by(source_index,subsource_index)=0.9
     !az(source_index,subsource_index)=0.22
     !bz(source_index,subsource_index)=0.85
 
-    sig_y_0(source_index,subsource_index)=sig_y_00(source_index,subsource_index)+sqrt(emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index))/2.
-    sig_z_0(source_index,subsource_index)=sig_z_00(source_index,subsource_index)+az(source_index,subsource_index)*exp(bz(source_index,subsource_index)*log(sig_y_0(source_index,subsource_index)))
+    !sig_y_0(source_index,subsource_index)=sig_y_00(source_index,subsource_index)
+    !sig_z_0(source_index,subsource_index)=sig_z_00(source_index,subsource_index)
+    !sig_y_0(source_index,subsource_index)=sig_y_00(source_index,subsource_index)+sqrt(emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index))/2.
+    !sig_z_0(source_index,subsource_index)=sig_z_00(source_index,subsource_index)+az(source_index,subsource_index)*exp(bz(source_index,subsource_index)*log(sig_y_0(source_index,subsource_index)))
     !h_emis(source_index,subsource_index)=1.
     !z_rec(source_index,subsource_index)=2.
     
@@ -101,5 +103,204 @@
     sig_z_0(source_index,subsource_index)=sig_z_00(source_index,subsource_index)+az(source_index,subsource_index)*exp(bz(source_index,subsource_index)*log(sig_y_0(source_index,subsource_index)))
     
     
-    end subroutine uEMEP_set_dispersion_params_PG     
+    end subroutine uEMEP_set_dispersion_params_PG
     
+    
+    subroutine delta_wind_direction (i_cross,j_cross,tt,temp_FF_subgrid,angle_diff)
+    
+    use uEMEP_definitions
+    
+    implicit none
+
+    integer, intent(in) :: i_cross,j_cross,tt
+    real, intent(in) :: temp_FF_subgrid
+    real, intent(out) :: angle_diff
+    real :: meandering_degree_max=20.
+    real cos_subgrid_loc,sin_subgrid_loc
+    
+    if (use_last_meteo_in_dispersion) then
+        
+        cos_subgrid_loc=meteo_subgrid(i_cross,j_cross,tt,cos_subgrid_index)
+        sin_subgrid_loc=meteo_subgrid(i_cross,j_cross,tt,sin_subgrid_index)
+        angle_diff=abs(asin(meteo_subgrid(i_cross,j_cross,tt,sin_subgrid_index)*last_meteo_subgrid(i_cross,j_cross,cos_subgrid_index) &
+                            -meteo_subgrid(i_cross,j_cross,tt,cos_subgrid_index)*last_meteo_subgrid(i_cross,j_cross,sin_subgrid_index) ))/2.
+                
+        angle_diff=min(angle_diff,3.14159/4.) !Less than 45 degrees
+        !write(*,*) i_cross,j_cross,angle_diff(i_cross,j_cross)*180/3.14159
+                                        
+    else
+        
+        angle_diff=0.
+    
+    endif
+
+    if (use_meandering_in_dispersion) then
+        angle_diff=angle_diff+(meandering_degree_max*3.14159/180.)*exp(-(temp_FF_subgrid-FF_min_dispersion)/(FF_min_dispersion*2.))
+    endif
+    
+    end subroutine delta_wind_direction
+    
+    subroutine uEMEP_set_dispersion_sigma_simple(sig_z_00,sig_y_00,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
+    
+    implicit none
+
+    real, intent(in) :: sig_z_00,sig_y_00,subgrid_delta(2),delta_wind,x
+    real, intent(out) :: sig_z,sig_y,sig_z_0,sig_y_0
+    
+    real ay,by,az,bz
+    
+    !Set the psedo dispersion parameters for neutral conditions
+    
+    !From Klug
+    !ay=0.32
+    !by=0.78
+    !az=0.22
+    !bz=0.78
+    
+    !From Liu
+    !ay=0.64
+    !by=0.46!From Liu
+    !az=0.088!From Liu
+    !bz=0.72!From Liu 0.72
+    
+    !Alternative ASME
+    !ay=0.14
+    !by=0.9
+    !az=0.22
+    !bz=0.85
+
+    !Update from K_z fitting
+    ay=0.32
+    by=0.78
+    !az=0.19
+    !bz=0.77
+    az=0.125
+    bz=0.85 !For z0=0.1, corresponding to the same as K_z for wind height at emission source of 1 m
+    az=0.245
+    bz=0.711 !For z0=0.3, corresponding to the same as K_z for wind height at average of emission source of 1 m and zc
+    az=0.21
+    bz=0.79 !For z0=0.3, corresponding to the same as K_z for wind height at emission source of 1 m
+
+
+    !Set sig_y_0 to be half of the average x,y grid size
+    sig_y_0=sig_y_00+(subgrid_delta(1)+subgrid_delta(2))/4.
+    !Set sig_z_0 to be the size of the plume after travelling half of the grid size
+    sig_z_0=sig_z_00+az*exp(bz*log(sig_y_0-sig_y_00))
+
+    !Set sig_y and sig_z = sig_0 + a*x^b +x*delata_wind
+    sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta_wind)
+    sig_z=sig_z_0+az*exp(bz*log(x))
+
+    end subroutine uEMEP_set_dispersion_sigma_simple
+    
+    subroutine uEMEP_set_dispersion_sigma_PG(L,logz0,sig_z_00,sig_y_00,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
+    
+    implicit none
+
+    real, intent(in) :: L,logz0,sig_z_00,sig_y_00,subgrid_delta(2),delta_wind,x
+    real, intent(out) :: sig_z,sig_y,sig_z_0,sig_y_0
+    
+    integer i_bot,i_top,i
+    real weight,invL_in
+    real ay,by,az,bz
+    real ay_pg(6),by_pg(6),az_pg(6),bz_pg(6)
+    real a_invL(6),b_invL(6),invL(6)
+    !Use ASME parameters
+    data ay_pg /0.40,0.36,0.34,0.32,0.315,0.31/
+    data by_pg /0.91,0.86,0.82,0.78,0.75,0.71/
+    data az_pg /0.40,0.33,0.27,0.22,0.14,0.06/
+    data bz_pg /0.91,0.86,0.82,0.78,0.75,0.71/
+    !Conversion of classes to L
+    data a_invL /-0.096,-0.037,-0.002,0.0,0.004,0.035/
+    data b_invL /0.029,0.029,0.018,0.0,-0.018,-0.036/
+    
+    invL_in=1./L
+    invL=a_invL+b_invL*logz0
+
+    !Find and interpolate the stability class based on input invL
+    if (invL_in.le.invL(1)) then
+        i_bot=1
+        i_top=1
+        weight=0.
+    elseif (invL_in.gt.invL(6)) then
+        i_bot=6
+        i_top=6
+        weight=1.
+    else
+        do i=1,5
+            if (invL_in.gt.invL(i).and.invL_in.le.invL(i+1)) then
+                i_bot=i
+                i_top=i+1
+                weight=(invL_in-invL(i))/(invL(i+1)-invL(i))
+                exit
+            endif
+        enddo
+    endif
+    
+    ay=ay_pg(i_bot)*(1.-weight)+ay_pg(i_top)*weight
+    by=by_pg(i_bot)*(1.-weight)+by_pg(i_top)*weight
+    az=az_pg(i_bot)*(1.-weight)+az_pg(i_top)*weight
+    bz=bz_pg(i_bot)*(1.-weight)+bz_pg(i_top)*weight
+    
+    !Set sig_y_0 to be half of the average x,y grid size
+    sig_y_0=sig_y_00+(subgrid_delta(1)+subgrid_delta(2))/4.
+    !Set sig_z_0 to be the size of the plume after travelling half of the grid size
+    sig_z_0=sig_z_00+az*exp(bz*log(sig_y_0-sig_y_00))
+
+    !Set sig_y and sig_z = sig_0 + a*x^b +x*delata_wind
+    sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta_wind)
+    sig_z=sig_z_0+az*exp(bz*log(x))
+
+    !write(*,'(i,6f)') i,weight,sig_y,sig_z,az,bz,x
+    
+    end subroutine uEMEP_set_dispersion_sigma_PG
+    
+    subroutine uEMEP_set_dispersion_sigma_Kz_emulator(z_emis,L,logz0,z_pbl,sig_z_00,sig_y_00,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
+    
+    implicit none
+
+    real, intent(in) :: z_emis,L,logz0,z_pbl,sig_z_00,sig_y_00,subgrid_delta(2),delta_wind,x
+    real, intent(out) :: sig_z,sig_y,sig_z_0,sig_y_0
+    
+    real invL_in,zz_pbl,z0
+    real ay,by,az,bz
+    
+    invL_in=1./L
+    
+    !Remove the stable cases as these are not normally done in the full K_z formulation
+    !invL_in=min(invL_in,1./100.)
+    invL_in=min(invL_in,0.)
+    !invL_in=0.
+    
+    zz_pbl=z_emis/z_pbl
+    z0=exp(logz0)
+    
+    az=0.15+0.52*(z0-0.02)-0.15*(1.-EXP(-zz_pbl/0.03))+0.16*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/5.))
+    bz=0.77-0.15*(1.-EXP(-z0/0.3))+0.2*(1.-EXP(-zz_pbl/0.03))-0.4*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/8.))
+
+    az=min(max(az,0.02),0.7)
+    bz=min(max(bz,0.4),1.2)
+    
+    zz_pbl=0.25
+    ay=0.15+0.52*(z0-0.02)-0.15*(1.-EXP(-zz_pbl/0.03))+0.16*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/5.))
+    by=0.77-0.15*(1.-EXP(-z0/0.3))+0.2*(1.-EXP(-zz_pbl/0.03))-0.4*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/8.))
+
+    ay=min(max(ay,0.02),0.7)
+    by=min(max(by,0.4),1.2)
+    
+    !Set sig_y_0 to be half of the average x,y grid size
+    sig_y_0=sig_y_00+(subgrid_delta(1)+subgrid_delta(2))/4.
+    !Set sig_z_0 to be the size of the plume after travelling half of the grid size
+    sig_z_0=sig_z_00+az*exp(bz*log(sig_y_0-sig_y_00))
+
+    !Set sig_y and sig_z = sig_0 + a*x^b +x*delata_wind
+    sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta_wind)
+    sig_z=sig_z_0+az*exp(bz*log(x))
+
+    !if (zz_pbl.le.0.or.sig_z.le.0.or.sig_y.le.0) then
+    !    write(*,'(7f)') az,bz,ay,by,sig_z,sig_y,x
+    !    stop
+    !endif
+    
+    
+    end subroutine uEMEP_set_dispersion_sigma_Kz_emulator

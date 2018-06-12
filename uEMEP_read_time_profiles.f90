@@ -6,6 +6,7 @@
     
     implicit none
     
+    integer i,j,k
     character(256) temp_str
     integer unit_in
     integer exists
@@ -110,13 +111,13 @@
         date_num_temp=dble(ceiling(val_dim_nc(t,time_dim_nc_index)*24.))/24.
         !write(*,*) real(ceiling(val_dim_nc(t,time_dim_nc_index)*24.)),date_num_temp
         
-        call number_to_date(date_num_temp,date_array)
+        call number_to_date(date_num_temp,date_array,ref_year_EMEP)
         if (t.eq.1) write(unit_logfile,'(a,6i6)') 'Date array start = ',date_array
         if (t.eq.dim_length_nc(time_dim_nc_index)) write(unit_logfile,'(a,6i6)') 'Date array end = ',date_array
         week_day_temp= day_of_week(date_array)
         !write(unit_logfile,*) 'Day of week = ',week_day_temp
         
-        hour_of_week_index=(week_day_temp-1)*24+date_array(4)+1-int(emission_timeprofile_hour_shift)
+        hour_of_week_index=(week_day_temp-1)*24+date_array(4)+1+int(emission_timeprofile_hour_shift)
         if (hour_of_week_index.gt.n_hours_in_week) hour_of_week_index=hour_of_week_index-n_hours_in_week
         if (hour_of_week_index.lt.1) hour_of_week_index=hour_of_week_index+n_hours_in_week
         emission_time_profile_subgrid(:,:,t,:,:)=1.

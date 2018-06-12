@@ -1,7 +1,8 @@
-      SUBROUTINE LL2UTM(IUTM,ISONE,LAT,LON,UTMN,UTME)
+      SUBROUTINE LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
 
       INTEGER IUTM
       INTEGER ISONE
+      INTEGER ISONE_IN
       !DOUBLE PRECISION LAT
       !DOUBLE PRECISION LON
       !DOUBLE PRECISION UTMN
@@ -81,7 +82,7 @@ C UTM ED50
       SCALE = 0.9996
 
 C Scale coordinates
-
+      ISONE=ABS(ISONE_IN)
       LATV = LAT*PI/180.0
       LON0 = (ISONE - 30)*6. - 3.
       LONV = (LON - LON0)*PI/180.
@@ -110,6 +111,10 @@ C Calculate UTM North coordinate
      .        (61.0 - 58.0*DTAN(LATV)*DTAN(LATV) +
      .        DTAN(LATV)*DTAN(LATV)*DTAN(LATV)*DTAN(LATV))/
      .        720.0)*SCALE
+
+      IF (LAT.LT.0) then
+        UTMN=UTMN+10000000.
+      ENDIF
 
 C Calculate UTM East coordinate
        

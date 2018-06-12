@@ -6,6 +6,7 @@
 
     implicit none   
     
+    integer i,j,k
     real read_name_real
     real default_val
     character(*) name_str
@@ -78,6 +79,7 @@
 
     implicit none   
     
+    integer i,j,k
     integer read_name_integer
     integer default_val
     character(*) name_str
@@ -150,6 +152,7 @@
 
     implicit none   
     
+    integer i,j,k
     character(256) read_name_char
     character(*) default_val
     character(*) name_str
@@ -182,7 +185,7 @@
         !If not a comment
         if (trim(temp_str(1:1)).ne.'!') then
             
-            !write(*,'(a)') trim(temp_str)
+            !write(*,'(2a)') 'CHECK: ',trim(temp_str)
             
             !Find the position of the equals sign if there is one
             index_val=index(temp_str,'=',back=.false.)
@@ -226,6 +229,7 @@
 
     implicit none   
     
+    integer i,j,k
     logical read_name_logical
     logical default_val
     character(*) name_str

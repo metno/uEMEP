@@ -3,7 +3,7 @@
 !----------------------------------------------------------------------
 
 !----------------------------------------------------------------------
-    subroutine number_to_date(date_num,date_array)
+    subroutine number_to_date(date_num,date_array,ref_year)
     
     implicit none
     
@@ -18,7 +18,7 @@
     integer daysinmonth(12)
     data (daysinmonth(i),i=1,12) /31,28,31,30,31,30,31,31,30,31,30,31/ 
     
-    ref_year=1900
+    !ref_year=1900
     !Set day fraction to the nearest second. Avoiding round off errors
     day_int=idint(date_num)
     day_fraction=(date_num-day_int)
@@ -69,7 +69,7 @@
 !----------------------------------------------------------------------
 
 !----------------------------------------------------------------------
-    function date_to_number(a)
+    function date_to_number(a,ref_year)
     
     implicit none
     
@@ -81,7 +81,7 @@
     integer daysinmonth(12)
     data (daysinmonth(i),i=1,12) /31,28,31,30,31,30,31,31,30,31,30,31/ 
     
-    ref_year=1900
+    !ref_year=1900
     date_to_number=0.
     daysinmonth(2)=28
     if (a(1).gt.ref_year) then
@@ -119,13 +119,14 @@
 !----------------------------------------------------------------------
 
 !----------------------------------------------------------------------
-    function date_to_julian(a)
+    function date_to_julian(a,ref_year)
     
     implicit none
     
     double precision date_to_number
     real date_to_julian
     integer a(6),b(6)
+    integer ref_year
     
     b(1)=a(1)
     b(2)=1
@@ -134,7 +135,7 @@
     b(5)=0
     b(6)=0
     
-    date_to_julian=date_to_number(a)-date_to_number(b)+1
+    date_to_julian=date_to_number(a,ref_year)-date_to_number(b,ref_year)+1
     
     end function date_to_julian
 !----------------------------------------------------------------------

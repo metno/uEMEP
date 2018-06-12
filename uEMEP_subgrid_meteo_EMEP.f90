@@ -1,8 +1,12 @@
 !==========================================================================
-!   uEMEP model subgrid_meteo_EMEP
-!==========================================================================
+!   uEMEP_subgrid_meteo_EMEP
+!   Bruce Rolstad Denby
+!   MET Norway
+!
 !   This routine interpolates EMEP meteo data to the integral subgrid 
-!   using either nearest neighbour or area weighted interpolation
+!   using either nearest neighbour EMEP_meteo_grid_interpolation_flag=0
+!   or area weighted interpolation EMEP_meteo_grid_interpolation_flag=1
+!   It also generates cos and sin wind field data for dispersion modelling
 !==========================================================================
     
     subroutine uEMEP_subgrid_meteo_EMEP
@@ -11,6 +15,7 @@
 
     implicit none
     
+    integer i,j,k
     character(256) temp_name
     logical exists
     integer ii,jj,tt
@@ -19,25 +24,34 @@
     real, allocatable :: weighting_nc(:,:)
     integer i_nc_start,i_nc_end,j_nc_start,j_nc_end
     integer i_start,i_end,j_start,j_end,t_start,t_end
-    real lon_min,lon_max,lat_min,lat_max
+    real xpos_min,xpos_max,ypos_min,ypos_max
+    real xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
     integer i_nc,j_nc
     real angle_utm,angle_lcc,angle_utm2
     real, allocatable :: u_utm(:),v_utm(:),th(:),ff(:)
     real dlatx,dlaty
-    real xpos_subgrid,ypos_subgrid
+   ! real xpos_subgrid,ypos_subgrid
+    real xpos_limit,ypos_limit
+    real xpos_integral_subgrid,ypos_integral_subgrid
     
+    write(unit_logfile,'(A)') ''
+    write(unit_logfile,'(A)') '================================================================'
+	write(unit_logfile,'(A)') 'Interpolating meteo data to subgrids (uEMEP_subgrid_meteo_EMEP)'
+	write(unit_logfile,'(A)') '================================================================'
+
     if (.not.allocated(u_utm)) allocate (u_utm(dim_length_nc(time_dim_nc_index)))
     if (.not.allocated(v_utm)) allocate (v_utm(dim_length_nc(time_dim_nc_index)))
     if (.not.allocated(th)) allocate (th(dim_length_nc(time_dim_nc_index)))
     if (.not.allocated(ff)) allocate (ff(dim_length_nc(time_dim_nc_index)))
 
+    !Set the last meteo data to be the previous for the external time loop before updating
     if (use_single_time_loop_flag) then
         if (t_loop.gt.start_time_loop_index) then
             last_meteo_subgrid(:,:,:)=meteo_subgrid(:,:,1,:)        
         endif
     endif
     
-
+    !Initialise all meteo subgrid fields
     meteo_subgrid=0.
     
     !If EMEP meteo gridded to subgrid files already exist then read them in and leave the subroutine
@@ -68,7 +82,7 @@
         return
     endif
 
-    write(unit_logfile,'(A)')'Calculating EMEP subgrid meteo data'
+    write(unit_logfile,'(A,I4)')'Setting EMEP subgrid meteo data using method ',EMEP_meteo_grid_interpolation_flag
 
     !Loop through the integral subgrid and find those subgrids within EMEP grids and allocate values directly from EMEP grids. Nearest neighbour
     if (EMEP_meteo_grid_interpolation_flag.eq.0) then
@@ -92,55 +106,63 @@
             meteo_subgrid(i,j,:,ustar_subgrid_index)=var3d_nc(i_nc,j_nc,:,ustar_nc_index,allsource_index)
             meteo_subgrid(i,j,:,J_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,J_nc_index,allsource_index)
                   
+            if (use_alternative_meteorology_flag) then
+            i_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,x_dim_index)
+            j_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,y_dim_index)
+            meteo_subgrid(i,j,:,ugrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,ugrid_nc_index)
+            meteo_subgrid(i,j,:,vgrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,vgrid_nc_index)
+            meteo_subgrid(i,j,:,FFgrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,FFgrid_nc_index)
+            meteo_subgrid(i,j,:,FF10_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,FF10_nc_index)
+            meteo_subgrid(i,j,:,hmix_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,hmix_nc_index)
+            meteo_subgrid(i,j,:,logz0_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,logz0_nc_index)
+            meteo_subgrid(i,j,:,invL_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,invL_nc_index)
+            !meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,,:,inv_FFgrid_nc_index)
+            !meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,inv_FF10_nc_index)
+            meteo_subgrid(i,j,:,ustar_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,ustar_nc_index)
+            endif
+                    
         enddo
         enddo
     endif
     
     !Area weighted interpolation of meteorology to integral grid
     if (EMEP_meteo_grid_interpolation_flag.ge.1) then
-          
-        allocate (weighting_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index))) !EMEP grid weighting for interpolation. Does not need a source index for area weighting
- 
+
+        xpos_limit=dgrid_nc(lon_nc_index)/2.
+        ypos_limit=dgrid_nc(lat_nc_index)/2.
+
+        allocate (weighting_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index)))
+        
         do j=1,integral_subgrid_dim(y_dim_index)
         do i=1,integral_subgrid_dim(x_dim_index)
         
             !Assumes it is never on the edge of the EMEP grid, not limitted
             i_nc=crossreference_integral_to_emep_subgrid(i,j,x_dim_index)
             j_nc=crossreference_integral_to_emep_subgrid(i,j,y_dim_index)
-            
-            if (EMEP_projection_type.eq.LL_projection_index) then
-                xpos_subgrid=lon_integral_subgrid(i,j)
-                ypos_subgrid=lat_integral_subgrid(i,j)
-            elseif (EMEP_projection_type.eq.LCC_projection_index) then
-                if (use_alternative_LCC_projection_flag) then
-                    call lb2lambert2_uEMEP(xpos_subgrid,ypos_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(1)),real(EMEP_projection_attributes(2)),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
-                else
-                    call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
-                endif
-                !call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
-            endif
-            
-        
+
+            xpos_integral_subgrid=xproj_integral_subgrid(i,j)
+            ypos_integral_subgrid=yproj_integral_subgrid(i,j)
+
+            xpos_area_max=xpos_integral_subgrid+xpos_limit
+            xpos_area_min=xpos_integral_subgrid-xpos_limit
+            ypos_area_max=ypos_integral_subgrid+ypos_limit
+            ypos_area_min=ypos_integral_subgrid-ypos_limit
+                  
             do jj=j_nc-1,j_nc+1
-            do ii=i_nc-1,i_nc+1
-                
-                lon_min=max(xpos_subgrid-dgrid_nc(lon_nc_index)/2.,var1d_nc(ii,lon_nc_index)-dgrid_nc(lon_nc_index)/2.)
-                lon_max=min(xpos_subgrid+dgrid_nc(lon_nc_index)/2.,var1d_nc(ii,lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
-                lat_min=max(ypos_subgrid-dgrid_nc(lat_nc_index)/2.,var1d_nc(jj,lat_nc_index)-dgrid_nc(lat_nc_index)/2.)
-                lat_max=min(ypos_subgrid+dgrid_nc(lat_nc_index)/2.,var1d_nc(jj,lat_nc_index)+dgrid_nc(lat_nc_index)/2.)
+            do ii=i_nc-1,i_nc+1             
             
-                !write(*,*) lon_min,lon_max,lat_min,lat_max
-                !write(*,*) xpos_subgrid,var1d_nc(ii,lon_nc_index),dgrid_nc(lon_nc_index)
-                
+                xpos_min=max(xpos_area_min,var1d_nc(ii,lon_nc_index)-dgrid_nc(lon_nc_index)/2.)
+                xpos_max=min(xpos_area_max,var1d_nc(ii,lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
+                ypos_min=max(ypos_area_min,var1d_nc(jj,lat_nc_index)-dgrid_nc(lat_nc_index)/2.)
+                ypos_max=min(ypos_area_max,var1d_nc(jj,lat_nc_index)+dgrid_nc(lat_nc_index)/2.)
+               
                 !Determine the area intersection of the EMEP grid and an EMEP grid size centred on the integral subgrid
-                if (lon_max.gt.lon_min.and.lat_max.gt.lat_min) then
-                    weighting_nc(ii,jj)=(lat_max-lat_min)*(lon_max-lon_min)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)
+                if (xpos_max.gt.xpos_min.and.ypos_max.gt.ypos_min) then
+                    weighting_nc(ii,jj)=(ypos_max-ypos_min)*(xpos_max-xpos_min)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)
                 else
                     weighting_nc(ii,jj)=0.
                 endif                
 
-                !write(*,*) i,j,ii-i_nc,jj-j_nc,weighting_nc(ii,jj)
-                
                 meteo_subgrid(i,j,:,ugrid_subgrid_index)=meteo_subgrid(i,j,:,ugrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,ugrid_nc_index,allsource_index)*weighting_nc(ii,jj)
                 meteo_subgrid(i,j,:,vgrid_subgrid_index)=meteo_subgrid(i,j,:,vgrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,vgrid_nc_index,allsource_index)*weighting_nc(ii,jj)
                 meteo_subgrid(i,j,:,FFgrid_subgrid_index)=meteo_subgrid(i,j,:,FFgrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,FFgrid_nc_index,allsource_index)*weighting_nc(ii,jj)
@@ -160,6 +182,74 @@
         enddo
         enddo
         
+        if (use_alternative_meteorology_flag) then
+
+            if (allocated(weighting_nc)) deallocate(weighting_nc)
+            allocate (weighting_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index)))
+
+        xpos_limit=meteo_dgrid_nc(lon_nc_index)/2.
+        ypos_limit=meteo_dgrid_nc(lat_nc_index)/2.
+
+        meteo_subgrid(:,:,:,ugrid_subgrid_index)=0.
+        meteo_subgrid(:,:,:,vgrid_subgrid_index)=0.
+        meteo_subgrid(:,:,:,FFgrid_subgrid_index)=0.
+        meteo_subgrid(:,:,:,hmix_subgrid_index)=0.
+        meteo_subgrid(:,:,:,FF10_subgrid_index)=0.
+        meteo_subgrid(:,:,:,logz0_subgrid_index)=0.
+        meteo_subgrid(:,:,:,invL_subgrid_index)=0.
+        !meteo_subgrid(:,:,:,inv_FFgrid_subgrid_index)=0.
+        !meteo_subgrid(:,:,:,inv_FF10_subgrid_index)=0.
+        meteo_subgrid(:,:,:,ustar_subgrid_index)=0.
+        
+        do j=1,integral_subgrid_dim(y_dim_index)
+        do i=1,integral_subgrid_dim(x_dim_index)
+        
+            !Assumes it is never on the edge of the EMEP grid, not limitted
+            i_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,x_dim_index)
+            j_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,y_dim_index)
+
+            !write(*,*) i,i_nc,j,j_nc
+            xpos_integral_subgrid=meteo_nc_xproj_integral_subgrid(i,j)
+            ypos_integral_subgrid=meteo_nc_yproj_integral_subgrid(i,j)
+
+            xpos_area_max=xpos_integral_subgrid+xpos_limit
+            xpos_area_min=xpos_integral_subgrid-xpos_limit
+            ypos_area_max=ypos_integral_subgrid+ypos_limit
+            ypos_area_min=ypos_integral_subgrid-ypos_limit
+                  
+            do jj=j_nc-1,j_nc+1
+            do ii=i_nc-1,i_nc+1             
+            
+                xpos_min=max(xpos_area_min,meteo_var1d_nc(ii,lon_nc_index)-dgrid_nc(lon_nc_index)/2.)
+                xpos_max=min(xpos_area_max,meteo_var1d_nc(ii,lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
+                ypos_min=max(ypos_area_min,meteo_var1d_nc(jj,lat_nc_index)-dgrid_nc(lat_nc_index)/2.)
+                ypos_max=min(ypos_area_max,meteo_var1d_nc(jj,lat_nc_index)+dgrid_nc(lat_nc_index)/2.)
+               
+                !Determine the area intersection of the EMEP grid and an EMEP grid size centred on the integral subgrid
+                if (xpos_max.gt.xpos_min.and.ypos_max.gt.ypos_min) then
+                    weighting_nc(ii,jj)=(ypos_max-ypos_min)*(xpos_max-xpos_min)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)
+                else
+                    weighting_nc(ii,jj)=0.
+                endif                
+
+                meteo_subgrid(i,j,:,ugrid_subgrid_index)=meteo_subgrid(i,j,:,ugrid_subgrid_index)+meteo_var3d_nc(ii,jj,:,ugrid_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,vgrid_subgrid_index)=meteo_subgrid(i,j,:,vgrid_subgrid_index)+meteo_var3d_nc(ii,jj,:,vgrid_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,FFgrid_subgrid_index)=meteo_subgrid(i,j,:,FFgrid_subgrid_index)+meteo_var3d_nc(ii,jj,:,FFgrid_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,hmix_subgrid_index)=meteo_subgrid(i,j,:,hmix_subgrid_index)+meteo_var3d_nc(ii,jj,:,hmix_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,FF10_subgrid_index)=meteo_subgrid(i,j,:,FF10_subgrid_index)+meteo_var3d_nc(ii,jj,:,FF10_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,logz0_subgrid_index)=meteo_subgrid(i,j,:,logz0_subgrid_index)+meteo_var3d_nc(ii,jj,:,logz0_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,invL_subgrid_index)=meteo_subgrid(i,j,:,invL_subgrid_index)+meteo_var3d_nc(ii,jj,:,invL_nc_index)*weighting_nc(ii,jj)
+                !meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)=meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)+meteo_var3d_nc(ii,jj,:,inv_FFgrid_nc_index)*weighting_nc(ii,jj)
+                !meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=meteo_subgrid(i,j,:,inv_FF10_subgrid_index)+meteo_var3d_nc(ii,jj,:,inv_FF10_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,ustar_subgrid_index)=meteo_subgrid(i,j,:,ustar_subgrid_index)+meteo_var3d_nc(ii,jj,:,ustar_nc_index)*weighting_nc(ii,jj)
+
+            enddo
+            enddo
+            
+        enddo
+        enddo
+        endif
+        
     endif
 
     !Rotate wind fields if necessary and define cos and sin of the wind direction
@@ -171,34 +261,57 @@
             j_nc=crossreference_integral_to_emep_subgrid(i,j,y_dim_index)
                         
             !Adjust wind direction to utm projection.
-            !First determine rotation from LCC to latlon
-            if (EMEP_projection_type.eq.LCC_projection_index) then
+            !First determine rotation for grids that are not lat lon
+            !Will fail for 90 degree rotations though this should never be the case
+            if (EMEP_projection_type.ne.LL_projection_index) then
                 dlatx=var2d_nc(i_nc+1,j_nc,lat_nc_index)-var2d_nc(i_nc-1,j_nc,lat_nc_index)
                 dlaty=var2d_nc(i_nc,j_nc+1,lat_nc_index)-var2d_nc(i_nc,j_nc-1,lat_nc_index)
-                angle_lcc=atan(dlatx/dlaty)              
+                angle_lcc=atan(dlatx/dlaty)    
             else
                 angle_lcc=0.
             endif
             
+            if (use_alternative_meteorology_flag) then
+            !Assumes it is never on the edge of the EMEP grid, not limitted
+            i_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,x_dim_index)
+            j_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,y_dim_index)
+                        
+            !Adjust wind direction to utm projection.
+            !First determine rotation for grids that are not lat lon
+            !Will fail for 90 degree rotations though this should never be the case
+            if (meteo_nc_projection_type.ne.LL_projection_index) then
+                dlatx=meteo_var2d_nc(i_nc+1,j_nc,lat_nc_index)-meteo_var2d_nc(i_nc-1,j_nc,lat_nc_index)
+                dlaty=meteo_var2d_nc(i_nc,j_nc+1,lat_nc_index)-meteo_var2d_nc(i_nc,j_nc-1,lat_nc_index)
+                angle_lcc=atan(dlatx/dlaty)    
+            else
+                angle_lcc=0.
+            endif
+
+            endif
+     
+            !Rotation from lat lon grid to UTM grid. No alternatives
             if (projection_type.eq.UTM_projection_index) then
-                angle_utm2 = atan(tan((lon_integral_subgrid(i,j)-utm_lon0)/180.*pi)*sin(lat_integral_subgrid(i,j)/180.*pi)) !lon is longitude relative to middle of utm zone: lon=gl-Lambda0  
+                angle_utm2 = atan(tan((lon_integral_subgrid(i,j)-utm_lon0)/180.*pi)*sin(lat_integral_subgrid(i,j)/180.*pi))
             else
                 angle_utm2 = 0.
             endif
             
+            !Sum the angles (Triple check this is correct in regard to signs)
             angle_utm=angle_utm2+angle_lcc
                 
             !write(*,*) i,j,angle_lcc*180./pi,angle_utm2*180./pi,angle_utm*180./pi
             
+            !Rotate
             u_utm = meteo_subgrid(i,j,:,ugrid_subgrid_index)*cos(angle_utm)+meteo_subgrid(i,j,:,vgrid_subgrid_index)*sin(angle_utm)                                       
             v_utm =-meteo_subgrid(i,j,:,ugrid_subgrid_index)*sin(angle_utm)+meteo_subgrid(i,j,:,vgrid_subgrid_index)*cos(angle_utm)                                       
             meteo_subgrid(i,j,:,ugrid_subgrid_index)=u_utm
             meteo_subgrid(i,j,:,vgrid_subgrid_index)=v_utm
             
             !Create cos and sin's of the lowest level wind direction  for efficient use in the dispersion equations
-            ff=sqrt(meteo_subgrid(i,j,:,vgrid_subgrid_index)*meteo_subgrid(i,j,:,vgrid_subgrid_index)+meteo_subgrid(i,j,:,ugrid_subgrid_index)*+meteo_subgrid(i,j,:,ugrid_subgrid_index))
+            ff=sqrt(meteo_subgrid(i,j,:,vgrid_subgrid_index)*meteo_subgrid(i,j,:,vgrid_subgrid_index)+meteo_subgrid(i,j,:,ugrid_subgrid_index)*meteo_subgrid(i,j,:,ugrid_subgrid_index))
             meteo_subgrid(i,j,:,sin_subgrid_index)=meteo_subgrid(i,j,:,vgrid_subgrid_index)/ff
             meteo_subgrid(i,j,:,cos_subgrid_index)=meteo_subgrid(i,j,:,ugrid_subgrid_index)/ff
+            !In case where no wind. Hopefully this never happens
             where (ff.eq.0.)
                 meteo_subgrid(i,j,:,sin_subgrid_index)=0.
                 meteo_subgrid(i,j,:,cos_subgrid_index)=0.
@@ -207,6 +320,7 @@
         enddo
         enddo
 
+    !Set the last meteo data to be the current for the first value of the external time loop
     if (use_single_time_loop_flag) then
         if (t_loop.eq.start_time_loop_index) then
             last_meteo_subgrid(:,:,:)=meteo_subgrid(:,:,1,:)        

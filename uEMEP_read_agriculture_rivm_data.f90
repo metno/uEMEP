@@ -6,6 +6,7 @@
     
     implicit none
     
+    integer i,j,k
     character(256) temp_name
     character(256) temp_str,temp_str1,temp_str2
     real temp_val

@@ -5,6 +5,7 @@
 
     implicit none
     
+    integer i,j,k
     real read_name_real
     logical read_name_logical
     integer read_name_integer
@@ -86,6 +87,8 @@
         
         start_time_nc_index=read_name_integer('start_time_nc_index',start_time_nc_index,unit_in,unit_logfile)
         end_time_nc_index=read_name_integer('end_time_nc_index',end_time_nc_index,unit_in,unit_logfile)
+        start_time_meteo_nc_index=read_name_integer('start_time_meteo_nc_index',start_time_meteo_nc_index,unit_in,unit_logfile)
+        end_time_meteo_nc_index=read_name_integer('end_time_meteo_nc_index',end_time_meteo_nc_index,unit_in,unit_logfile)
 
         use_single_time_loop_flag=read_name_logical('use_single_time_loop_flag',use_single_time_loop_flag,unit_in,unit_logfile)
         reduce_EMEP_region_flag=read_name_logical('reduce_EMEP_region_flag',reduce_EMEP_region_flag,unit_in,unit_logfile)
@@ -150,6 +153,8 @@
 
         projection_type=read_name_integer('projection_type',projection_type,unit_in,unit_logfile)
         utm_zone=read_name_integer('utm_zone',utm_zone,unit_in,unit_logfile)
+        !Present UTM central lon position if not overridden by input
+        utm_lon0=abs(utm_zone)*6-180-3
         utm_lon0=read_name_real('utm_lon0',utm_lon0,unit_in,unit_logfile)
 
         EMEP_grid_interpolation_flag=read_name_integer('EMEP_grid_interpolation_flag',EMEP_grid_interpolation_flag,unit_in,unit_logfile)
@@ -162,6 +167,8 @@
         local_subgrid_method_flag=read_name_integer('local_subgrid_method_flag',local_subgrid_method_flag,unit_in,unit_logfile)
         
         stability_scheme_flag=read_name_integer('stability_scheme_flag',stability_scheme_flag,unit_in,unit_logfile)
+        average_zc_h_in_Kz_flag=read_name_logical('average_zc_h_in_Kz_flag',average_zc_h_in_Kz_flag,unit_in,unit_logfile)
+        
         wind_level_flag=read_name_integer('wind_level_flag',wind_level_flag,unit_in,unit_logfile)
         wind_level_integral_flag=read_name_integer('wind_level_integral_flag',wind_level_flag,unit_in,unit_logfile) !Default is wind_level_flag
         no2_chemistry_scheme_flag=read_name_integer('no2_chemistry_scheme_flag',no2_chemistry_scheme_flag,unit_in,unit_logfile)
@@ -251,8 +258,12 @@
 
         pathname_EMEP(1)=read_name_char('pathname_EMEP(1)','',unit_in,unit_logfile)
         pathname_EMEP(2)=read_name_char('pathname_EMEP(2)','',unit_in,unit_logfile)
+        pathname_EMEP(3)=read_name_char('pathname_EMEP(3)','',unit_in,unit_logfile)
+        pathname_EMEP(4)=read_name_char('pathname_EMEP(4)','',unit_in,unit_logfile)
         filename_EMEP(1)=read_name_char('filename_EMEP(1)','',unit_in,unit_logfile)
         filename_EMEP(2)=read_name_char('filename_EMEP(2)','',unit_in,unit_logfile)
+        filename_EMEP(3)=read_name_char('filename_EMEP(3)','',unit_in,unit_logfile)
+        filename_EMEP(4)=read_name_char('filename_EMEP(4)','',unit_in,unit_logfile)
 
         pathname_ship(1)=read_name_char('pathname_ship(1)','',unit_in,unit_logfile)
         pathname_ship(2)=read_name_char('pathname_ship(2)','',unit_in,unit_logfile)
@@ -303,6 +314,48 @@
         use_last_meteo_in_dispersion=read_name_logical('use_last_meteo_in_dispersion',use_last_meteo_in_dispersion,unit_in,unit_logfile)
         use_meandering_in_dispersion=read_name_logical('use_meandering_in_dispersion',use_meandering_in_dispersion,unit_in,unit_logfile)
         
+        use_traffic_for_sigma0_flag=read_name_logical('use_traffic_for_sigma0_flag',use_traffic_for_sigma0_flag,unit_in,unit_logfile)
+!        use_traffic_for_minFF_flag=read_name_logical('use_traffic_for_minFF_flag',use_traffic_for_minFF_flag,unit_in,unit_logfile)
+        use_emission_grid_gradient_flag=read_name_logical('use_emission_grid_gradient_flag',use_emission_grid_gradient_flag,unit_in,unit_logfile)
+
+        use_alternative_meteorology_flag=read_name_logical('use_alternative_meteorology_flag',use_alternative_meteorology_flag,unit_in,unit_logfile)
+        ustar_min=read_name_real('ustar_min',ustar_min,unit_in,unit_logfile)
+        hmix_min=read_name_real('hmix_min',hmix_min,unit_in,unit_logfile)
+        hmix_max=read_name_real('hmix_max',hmix_max,unit_in,unit_logfile)
+        !use_alternative_z0_flag=read_name_logical('use_alternative_z0_flag',use_alternative_z0_flag,unit_in,unit_logfile)
+       
+        
+        !Read emission factors
+        emission_factor(nox_index,traffic_index,:)=read_name_real('emission_factor(nox_index,traffic_index,:)',emission_factor(nox_index,traffic_index,1),unit_in,unit_logfile)
+        emission_factor(nox_index,traffic_index,1)=read_name_real('emission_factor(nox_index,traffic_index,1)',emission_factor(nox_index,traffic_index,1),unit_in,unit_logfile)
+        emission_factor(nox_index,traffic_index,2)=read_name_real('emission_factor(nox_index,traffic_index,2)',emission_factor(nox_index,traffic_index,2),unit_in,unit_logfile)
+        emission_factor(no2_index,traffic_index,:)=read_name_real('emission_factor(no2_index,traffic_index,:)',emission_factor(no2_index,traffic_index,1),unit_in,unit_logfile)
+        emission_factor(no2_index,traffic_index,1)=read_name_real('emission_factor(no2_index,traffic_index,1)',emission_factor(no2_index,traffic_index,1),unit_in,unit_logfile)
+        emission_factor(no2_index,traffic_index,2)=read_name_real('emission_factor(no2_index,traffic_index,2)',emission_factor(no2_index,traffic_index,2),unit_in,unit_logfile)
+        emission_factor(pm25_index,traffic_index,:)=read_name_real('emission_factor(pm25_index,traffic_index,:)',emission_factor(pm25_index,traffic_index,1),unit_in,unit_logfile)
+        emission_factor(pm25_index,traffic_index,1)=read_name_real('emission_factor(pm25_index,traffic_index,1)',emission_factor(pm25_index,traffic_index,1),unit_in,unit_logfile)
+        emission_factor(pm25_index,traffic_index,2)=read_name_real('emission_factor(pm25_index,traffic_index,2)',emission_factor(pm25_index,traffic_index,2),unit_in,unit_logfile)
+        emission_factor(pm10_index,traffic_index,:)=read_name_real('emission_factor(pm10_index,traffic_index,:)',emission_factor(pm10_index,traffic_index,1),unit_in,unit_logfile)
+        emission_factor(pm10_index,traffic_index,1)=read_name_real('emission_factor(pm10_index,traffic_index,1)',emission_factor(pm10_index,traffic_index,1),unit_in,unit_logfile)
+        emission_factor(pm10_index,traffic_index,2)=read_name_real('emission_factor(pm10_index,traffic_index,2)',emission_factor(pm10_index,traffic_index,2),unit_in,unit_logfile)
+
+        ratio_truck_car_emission(nox_index)=read_name_real('ratio_truck_car_emission(nox_index)',ratio_truck_car_emission(nox_index),unit_in,unit_logfile)
+        ratio_truck_car_emission(pm25_index)=read_name_real('ratio_truck_car_emission(pm25_index)',ratio_truck_car_emission(pm25_index),unit_in,unit_logfile)
+        ratio_truck_car_emission(pm10_index)=read_name_real('ratio_truck_car_emission(pm10_index)',ratio_truck_car_emission(pm10_index),unit_in,unit_logfile)
+        !NO2 ratio does not do anything but is included for possible future changes
+        ratio_truck_car_emission(no2_index)=read_name_real('ratio_truck_car_emission(no2_index)',ratio_truck_car_emission(no2_index),unit_in,unit_logfile)
+        
+        z_rec=read_name_real('z_rec',z_rec(allsource_index,1),unit_in,unit_logfile)
+        
+        replace_z0=read_name_real('replace_z0',replace_z0,unit_in,unit_logfile)
+        replace_invL=read_name_real('replace_invL',replace_invL,unit_in,unit_logfile)
+        replace_hmix=read_name_real('replace_hmix',replace_hmix,unit_in,unit_logfile)
+        FF_scale=read_name_real('FF_scale',FF_scale,unit_in,unit_logfile)
+        FF10_offset=read_name_real('FF10_offset',FF10_offset,unit_in,unit_logfile)
+        DD_offset=read_name_real('DD_offset',DD_offset,unit_in,unit_logfile)
+        
+        save_netcdf_file_flag=read_name_logical('save_netcdf_file_flag',save_netcdf_file_flag,unit_in,unit_logfile)
+        save_netcdf_receptor_flag=read_name_logical('save_netcdf_receptor_flag',save_netcdf_receptor_flag,unit_in,unit_logfile)
 
     close (unit_in)
     
@@ -311,7 +364,7 @@
         write (unit_logfile,'(A)') 'ERROR: No output path given in configuration file. Stopping'
         stop
     endif
-    
+
     !Find the correct compound index based on the compound string
     do i=1,n_compound_nc_index
         if (trim(var_name_nc(conc_nc_index,i,allsource_index)).eq.trim(input_comp_name)) then
@@ -326,13 +379,18 @@
     do i=1,2
         pathname_EMEP(1)=replace_string_char(config_date_str,replacement_date_str,pathname_EMEP(1))
         pathname_EMEP(2)=replace_string_char(config_date_str,replacement_date_str,pathname_EMEP(2))
+        pathname_EMEP(3)=replace_string_char(config_date_str,replacement_date_str,pathname_EMEP(3))
+        pathname_EMEP(4)=replace_string_char(config_date_str,replacement_date_str,pathname_EMEP(4))
         filename_EMEP(1)=replace_string_char(config_date_str,replacement_date_str,filename_EMEP(1))
         filename_EMEP(2)=replace_string_char(config_date_str,replacement_date_str,filename_EMEP(2))
+        filename_EMEP(3)=replace_string_char(config_date_str,replacement_date_str,filename_EMEP(3))
+        filename_EMEP(4)=replace_string_char(config_date_str,replacement_date_str,filename_EMEP(4))
         pathname_output_grid=replace_string_char(config_date_str,replacement_date_str,pathname_output_grid)
     enddo
     
     enddo !End configuration file number loop
     
+
     end subroutine uEMEP_read_config
     
     
