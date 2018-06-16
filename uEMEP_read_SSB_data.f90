@@ -207,8 +207,8 @@
             if (SSB_data_type.eq.dwelling_index) then
                 
                 !Find the grid index it belongs to
-                i_ssb_index=1+floor((x_ssb-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index)+0.5)
-                j_ssb_index=1+floor((y_ssb-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index)+0.5)
+                i_ssb_index=1+floor((x_ssb-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
+                j_ssb_index=1+floor((y_ssb-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
 
                 if (i_ssb_index.ge.1.and.i_ssb_index.le.emission_subgrid_dim(x_dim_index,source_index) &
                     .and.j_ssb_index.ge.1.and.j_ssb_index.le.emission_subgrid_dim(y_dim_index,source_index)) then
@@ -225,8 +225,8 @@
             else
                 
                 !Find the grid index it belongs to in the population grid
-                i_ssb_index=1+floor((x_ssb-population_subgrid_min(x_dim_index))/population_subgrid_delta(x_dim_index)+0.5)
-                j_ssb_index=1+floor((y_ssb-population_subgrid_min(y_dim_index))/population_subgrid_delta(y_dim_index)+0.5)
+                i_ssb_index=1+floor((x_ssb-population_subgrid_min(x_dim_index))/population_subgrid_delta(x_dim_index))
+                j_ssb_index=1+floor((y_ssb-population_subgrid_min(y_dim_index))/population_subgrid_delta(y_dim_index))
 
                 if (i_ssb_index.ge.1.and.i_ssb_index.le.population_subgrid_dim(x_dim_index) &
                     .and.j_ssb_index.ge.1.and.j_ssb_index.le.population_subgrid_dim(y_dim_index).and.pop_tot.gt.0) then
@@ -243,8 +243,8 @@
                         use_region=floor(population_subgrid_delta(x_dim_index)/subgrid_delta(x_dim_index)/2.)
                     endif
                     !Find the grid index it belongs to in the target grid
-                    i_ssb_index=1+floor((x_ssb-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index)+0.5)
-                    j_ssb_index=1+floor((y_ssb-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index)+0.5)
+                    i_ssb_index=1+floor((x_ssb-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index))
+                    j_ssb_index=1+floor((y_ssb-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index))
                     if (i_ssb_index-use_region.ge.1.and.i_ssb_index+use_region.le.subgrid_dim(x_dim_index) &
                         .and.j_ssb_index-use_region.ge.1.and.j_ssb_index+use_region.le.subgrid_dim(y_dim_index).and.pop_tot.gt.0) then
                          use_subgrid(i_ssb_index-use_region:i_ssb_index+use_region,j_ssb_index-use_region:j_ssb_index+use_region,:)=.true.

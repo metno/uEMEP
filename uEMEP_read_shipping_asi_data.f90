@@ -122,8 +122,8 @@
         call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
         
         !Find the grid index it belongs to
-        i_ship_index=1+floor((x_ship-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index)+0.5)
-        j_ship_index=1+floor((y_ship-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index)+0.5)
+        i_ship_index=1+floor((x_ship-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
+        j_ship_index=1+floor((y_ship-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
         !(x_subgrid(i,j)-subgrid_min(1))/+subgrid_delta(1)+1=i
         
         !Add to subgrid

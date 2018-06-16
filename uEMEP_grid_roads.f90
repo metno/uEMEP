@@ -83,8 +83,8 @@
         x_line_in=inputdata_rl(ro,x1_rl_index:x2_rl_index)
         y_line_in=inputdata_rl(ro,y1_rl_index:y2_rl_index)
         
-        i_traffic_index=1+floor((x_line_in-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index)+0.5)
-        j_traffic_index=1+floor((y_line_in-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index)+0.5)
+        i_traffic_index=1+floor((x_line_in-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
+        j_traffic_index=1+floor((y_line_in-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
 
         if ((i_traffic_index(1).ge.1.or.i_traffic_index(2).ge.1).and.(j_traffic_index(1).ge.1.or.j_traffic_index(2).ge.1).and. &
             (i_traffic_index(1).le.emission_subgrid_dim(x_dim_index,source_index).or.i_traffic_index(2).le.emission_subgrid_dim(x_dim_index,source_index)).and. &

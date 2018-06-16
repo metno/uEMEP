@@ -15,7 +15,7 @@
     real :: valid_min=0.
     real, allocatable :: temp_subgrid(:,:,:)
     integer ii,jj
-    logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.true.,save_other_meteo=.false.
+    logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.true.,save_other_meteo=.true.
     logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
     
     if (.not.allocated(temp_subgrid)) allocate(temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
@@ -650,12 +650,12 @@
     character(256) filename_netcdf,name_array,unit_array,title_str,temp_name,temp_name3(3)
     integer unit_logfile_in
     integer nx,ny,nt
-    real val_array(nx,ny,nt),val_array_temp(nx,ny,nt)
+    real val_array(nx,ny,nt)!,val_array_temp(nx,ny,nt)
     real x_array(nx,ny)
     real y_array(nx,ny)
     real lon_array(nx,ny)
-    real lat_array(nx,ny),lat_array_temp(nx,ny)
-    real time_array(nt)
+    real lat_array(nx,ny) !,lat_array_temp(nx,ny)
+    !real time_array(nt)
     real x_vector(nx)
     real y_vector(ny)
     logical create_file

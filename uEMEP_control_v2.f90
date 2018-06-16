@@ -160,6 +160,11 @@
     
                 !Specify the subgrids sizes to be calculated using use_receptor_region
                 call uEMEP_grid_receptor_data
+                
+                !Carry out tiling. Programme will stop here
+                if (calculate_tiling_flag) then
+                    call uEMEP_set_tile_grids
+                endif
 
             endif
     

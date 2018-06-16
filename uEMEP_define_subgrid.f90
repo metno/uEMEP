@@ -171,8 +171,8 @@
 
     do j=1,subgrid_dim(y_dim_index)
     do i=1,subgrid_dim(x_dim_index)                   
-        x_subgrid(i,j)=subgrid_min(x_dim_index)+subgrid_delta(x_dim_index)*(i-1)
-        y_subgrid(i,j)=subgrid_min(y_dim_index)+subgrid_delta(y_dim_index)*(j-1)
+        x_subgrid(i,j)=subgrid_min(x_dim_index)+subgrid_delta(x_dim_index)*(i-0.5)
+        y_subgrid(i,j)=subgrid_min(y_dim_index)+subgrid_delta(y_dim_index)*(j-0.5)
         if (projection_type.eq.RDM_projection_index) then
             call RDM2LL(y_subgrid(i,j),x_subgrid(i,j),lat_subgrid(i,j),lon_subgrid(i,j))
         elseif (projection_type.eq.UTM_projection_index) then
@@ -214,8 +214,8 @@
     
     do j=1,integral_subgrid_dim(y_dim_index)
     do i=1,integral_subgrid_dim(x_dim_index)                 
-        x_integral_subgrid(i,j)=integral_subgrid_min(x_dim_index)+integral_subgrid_delta(x_dim_index)*(i-1)
-        y_integral_subgrid(i,j)=integral_subgrid_min(y_dim_index)+integral_subgrid_delta(y_dim_index)*(j-1)
+        x_integral_subgrid(i,j)=integral_subgrid_min(x_dim_index)+integral_subgrid_delta(x_dim_index)*(i-0.5)
+        y_integral_subgrid(i,j)=integral_subgrid_min(y_dim_index)+integral_subgrid_delta(y_dim_index)*(j-0.5)
         if (projection_type.eq.RDM_projection_index) then
             call RDM2LL(y_integral_subgrid(i,j),x_integral_subgrid(i,j),lat_integral_subgrid(i,j),lon_integral_subgrid(i,j))
         elseif (projection_type.eq.UTM_projection_index) then
@@ -283,8 +283,8 @@
     do j=1,emission_subgrid_dim(y_dim_index,i_source)
     do i=1,emission_subgrid_dim(x_dim_index,i_source)
         
-        x_emission_subgrid(i,j,i_source)=emission_subgrid_min(x_dim_index,i_source)+emission_subgrid_delta(x_dim_index,i_source)*(i-1)
-        y_emission_subgrid(i,j,i_source)=emission_subgrid_min(y_dim_index,i_source)+emission_subgrid_delta(y_dim_index,i_source)*(j-1)
+        x_emission_subgrid(i,j,i_source)=emission_subgrid_min(x_dim_index,i_source)+emission_subgrid_delta(x_dim_index,i_source)*(i-0.5)
+        y_emission_subgrid(i,j,i_source)=emission_subgrid_min(y_dim_index,i_source)+emission_subgrid_delta(y_dim_index,i_source)*(j-0.5)
         if (projection_type.eq.UTM_projection_index) then
             call UTM2LL(utm_zone,y_emission_subgrid(i,j,i_source),x_emission_subgrid(i,j,i_source), &
             lat_emission_subgrid(i,j,i_source),lon_emission_subgrid(i,j,i_source))
@@ -326,8 +326,8 @@
     do j=1,population_subgrid_dim(y_dim_index)
     do i=1,population_subgrid_dim(x_dim_index)                 
 
-        x_population_subgrid(i,j)=population_subgrid_min(x_dim_index)+population_subgrid_delta(x_dim_index)*(i-1)
-        y_population_subgrid(i,j)=population_subgrid_min(y_dim_index)+population_subgrid_delta(y_dim_index)*(j-1)
+        x_population_subgrid(i,j)=population_subgrid_min(x_dim_index)+population_subgrid_delta(x_dim_index)*(i-0.5)
+        y_population_subgrid(i,j)=population_subgrid_min(y_dim_index)+population_subgrid_delta(y_dim_index)*(j-0.5)
         !Set the lat-lon coordinates of the population
         if (projection_type.eq.RDM_projection_index) then
             call RDM2LL(y_population_subgrid(i,j),x_population_subgrid(i,j),lat_population_subgrid(i,j),lon_population_subgrid(i,j))

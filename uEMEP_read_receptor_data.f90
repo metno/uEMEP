@@ -108,8 +108,8 @@
     !Select receptors within the initial grid and with unique names
     do k=1,n_receptor
         
-        i_receptor_subgrid(k)=1+floor((x_receptor(k)-init_subgrid_min(x_dim_index))/init_subgrid_delta(x_dim_index)+0.5)
-        j_receptor_subgrid(k)=1+floor((y_receptor(k)-init_subgrid_min(y_dim_index))/init_subgrid_delta(y_dim_index)+0.5)
+        i_receptor_subgrid(k)=1+floor((x_receptor(k)-init_subgrid_min(x_dim_index))/init_subgrid_delta(x_dim_index))
+        j_receptor_subgrid(k)=1+floor((y_receptor(k)-init_subgrid_min(y_dim_index))/init_subgrid_delta(y_dim_index))
         !write(*,*) trim(name_receptor(k,1)),i_receptor_subgrid(k),j_receptor_subgrid(k)
         !Set subgrid use or not. At grid and surrounding grids in case of interpolation later
         if (i_receptor_subgrid(k).gt.1.and.i_receptor_subgrid(k).lt.init_subgrid_dim(x_dim_index).and.j_receptor_subgrid(k).gt.1.and.j_receptor_subgrid(k).lt.init_subgrid_dim(y_dim_index).and.unique_receptor(k)) then
@@ -160,8 +160,8 @@
 
     do k=1,n_receptor
     if (use_receptor(k)) then    
-        i_receptor_subgrid(k)=1+floor((x_receptor(k)-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index)+0.5)
-        j_receptor_subgrid(k)=1+floor((y_receptor(k)-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index)+0.5)
+        i_receptor_subgrid(k)=1+floor((x_receptor(k)-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index))
+        j_receptor_subgrid(k)=1+floor((y_receptor(k)-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index))
 
         !Set subgrid use or not. At grid and surrounding grids in case of interpolation later
         if (i_receptor_subgrid(k).gt.use_receptor_region.and.i_receptor_subgrid(k).lt.subgrid_dim(x_dim_index)-use_receptor_region+1.and.j_receptor_subgrid(k).gt.use_receptor_region.and.j_receptor_subgrid(k).lt.subgrid_dim(y_dim_index)-use_receptor_region+1) then
@@ -219,10 +219,10 @@
     
     x_ref=(floor((x_receptor(k))/subgrid_delta(x_dim_index)+0.5))*subgrid_delta(x_dim_index)
     y_ref=(floor((y_receptor(k))/subgrid_delta(y_dim_index)+0.5))*subgrid_delta(y_dim_index)
-    subgrid_min(x_dim_index)=x_ref-subgrid_delta(x_dim_index)*(use_receptor_region)
-	subgrid_min(y_dim_index)=y_ref-subgrid_delta(y_dim_index)*(use_receptor_region)
-	subgrid_max(x_dim_index)=x_ref+subgrid_delta(x_dim_index)*(use_receptor_region)
-	subgrid_max(y_dim_index)=y_ref+subgrid_delta(y_dim_index)*(use_receptor_region)
+    subgrid_min(x_dim_index)=x_ref-subgrid_delta(x_dim_index)*(use_receptor_region)*1.5
+	subgrid_min(y_dim_index)=y_ref-subgrid_delta(y_dim_index)*(use_receptor_region)*1.5
+	subgrid_max(x_dim_index)=x_ref+subgrid_delta(x_dim_index)*(use_receptor_region)*1.5
+	subgrid_max(y_dim_index)=y_ref+subgrid_delta(y_dim_index)*(use_receptor_region)*1.5
 
     subgrid_dim(x_dim_index)=floor((subgrid_max(x_dim_index)-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index))+1
     subgrid_dim(y_dim_index)=floor((subgrid_max(y_dim_index)-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index))+1
@@ -235,8 +235,8 @@
     count=0
     !do k=1,n_receptor
         
-        i_receptor_subgrid(k)=1+floor((x_receptor(k)-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index)+0.5)
-        j_receptor_subgrid(k)=1+floor((y_receptor(k)-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index)+0.5)
+        i_receptor_subgrid(k)=1+floor((x_receptor(k)-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index))
+        j_receptor_subgrid(k)=1+floor((y_receptor(k)-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index))
         write(unit_logfile,'(a,2i)') ' Receptor subgrid index = ', i_receptor_subgrid(k),j_receptor_subgrid(k)
 
         !Set subgrid use or not. At grid and surrounding grids in case of interpolation later

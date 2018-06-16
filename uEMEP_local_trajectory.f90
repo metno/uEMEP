@@ -48,8 +48,8 @@
         !Find what meteorological grid the trajectory point is in
         !i_integral=1+floor((x_traj(k)-integral_subgrid_min(x_dim_index))/(integral_subgrid_max(x_dim_index)-integral_subgrid_min(x_dim_index))*integral_subgrid_dim(x_dim_index))
         !j_integral=1+floor((y_traj(k)-integral_subgrid_min(y_dim_index))/(integral_subgrid_max(y_dim_index)-integral_subgrid_min(y_dim_index))*integral_subgrid_dim(y_dim_index))
-        i_integral=1+floor((x_traj(k)-integral_subgrid_min(x_dim_index))/integral_subgrid_delta(x_dim_index)+0.5)
-        j_integral=1+floor((y_traj(k)-integral_subgrid_min(y_dim_index))/integral_subgrid_delta(y_dim_index)+0.5)
+        i_integral=1+floor((x_traj(k)-integral_subgrid_min(x_dim_index))/integral_subgrid_delta(x_dim_index))
+        j_integral=1+floor((y_traj(k)-integral_subgrid_min(y_dim_index))/integral_subgrid_delta(y_dim_index))
         
        
         !Test to see if it is still in the grid
@@ -123,8 +123,8 @@
     do while (.not.exit_traj.and.k.lt.traj_max_index)
         
         !Find what meteorological grid the trajectory point is in
-        i_integral=1+floor((x_traj(k)-integral_subgrid_min(x_dim_index))/integral_subgrid_delta(x_dim_index)+0.5)
-        j_integral=1+floor((y_traj(k)-integral_subgrid_min(y_dim_index))/integral_subgrid_delta(y_dim_index)+0.5)
+        i_integral=1+floor((x_traj(k)-integral_subgrid_min(x_dim_index))/integral_subgrid_delta(x_dim_index))
+        j_integral=1+floor((y_traj(k)-integral_subgrid_min(y_dim_index))/integral_subgrid_delta(y_dim_index))
         
         !Test to see if it is still in the grid
         if (i_integral.ge.1.and.i_integral.le.integral_subgrid_dim(x_dim_index).and.j_integral.ge.1.and.j_integral.le.integral_subgrid_dim(y_dim_index)) then

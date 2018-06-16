@@ -126,8 +126,8 @@
         
         
         !Find the grid index it belongs to
-        i_agriculture_index=1+floor((x_agriculture-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index)+0.5)
-        j_agriculture_index=1+floor((y_agriculture-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index)+0.5)
+        i_agriculture_index=1+floor((x_agriculture-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
+        j_agriculture_index=1+floor((y_agriculture-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
         !(x_subgrid(i,j)-subgrid_min(1))/+subgrid_delta(1)+1=i
         
         !Add to subgrid

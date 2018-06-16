@@ -11,14 +11,14 @@
     character(256) filename_netcdf,name_array,unit_array,title_str,temp_name,temp_name3(3)
     integer unit_logfile_in
     integer nx,ny,nt,nr
-    real val_array(nx,ny,nt),val_array_temp(nx,ny,nt)
+    real val_array(nx,ny,nt)!,val_array_temp(nx,ny,nt)
     real x_array(nx,ny)
     real y_array(nx,ny)
     real lon_array(nx,ny)
-    real lat_array(nx,ny),lat_array_temp(nx,ny)
-    real time_array(nt)
-    real x_vector(nx)
-    real y_vector(ny)
+    real lat_array(nx,ny)!,lat_array_temp(nx,ny)
+    !real time_array(nt)
+    !real x_vector(nx)
+    !real y_vector(ny)
     logical create_file
     real valid_min
     

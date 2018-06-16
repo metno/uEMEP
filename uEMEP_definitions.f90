@@ -516,7 +516,7 @@
     
     !Indicies for SSB building and population data
     integer dwelling_index,population_index,establishment_index,school_index,home_index,n_population_index
-    parameter(dwelling_index=1,population_index=2,establishment_index=3,school_index=4,kindergaten_index=5,home_index=6,n_population_index=6)
+    parameter(dwelling_index=1,population_index=2,establishment_index=3,school_index=4,kindergaten_index=5,home_index=6,municipality_index=7,n_population_index=7)
     integer population_file_index(n_population_index)
     
     character(256) filename_population(n_population_index),pathname_population(n_population_index),pathfilename_population(n_population_index)
@@ -542,6 +542,7 @@
     logical :: use_alternative_z0_flag=.false.
     logical :: 	save_netcdf_file_flag=.false.
     logical ::	save_netcdf_receptor_flag=.false.
+    logical :: calculate_tiling_flag=.false.
     
     !Some testing and scaling values
     real :: replace_z0=NODATA_value  !Will not replace z0 when it has a NODATA value
@@ -554,7 +555,11 @@
     real :: hmix_max=2000.
     real :: hmix_min=25.
     real :: ustar_min=0.001
-    
+
+    character(256) :: pathname_tiles=''
+    character(256) :: filename_tiles=''
+    character(256) :: tile_tag=''
+
     end module uEMEP_definitions
     
     

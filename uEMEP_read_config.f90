@@ -76,11 +76,11 @@
             unit_logfile=0
         endif
               
-        file_tag=read_name_char('file_tag','',unit_in,unit_logfile)
+        file_tag=read_name_char('file_tag',file_tag,unit_in,unit_logfile)
         
         replacement_date_str=read_name_char('replacement_date_str',replacement_date_str,unit_in,unit_logfile)
         
-        input_comp_name=read_name_char('input_comp_name','',unit_in,unit_logfile)
+        input_comp_name=read_name_char('input_comp_name',input_comp_name,unit_in,unit_logfile)
         
         hourly_calculations=read_name_logical('hourly_calculations',hourly_calculations,unit_in,unit_logfile)
         annual_calculations=read_name_logical('annual_calculations',annual_calculations,unit_in,unit_logfile)
@@ -129,7 +129,7 @@
         read_existing_grid_data(use_subgrid_file_index(industry_index))=read_name_logical('read_existing_grid_data(use_subgrid_file_index(industry_index))',read_existing_grid_data(use_subgrid_file_index(industry_index)),unit_in,unit_logfile)
 
         !Choose which sources to calculate
-        calculate_source(:)=read_name_logical('calculate_source(:)',calculate_source(allsource_index),unit_in,unit_logfile)
+        !calculate_source(:)=read_name_logical('calculate_source(:)',calculate_source(allsource_index),unit_in,unit_logfile)
         calculate_source(traffic_index)=read_name_logical('calculate_source(traffic_index)',calculate_source(traffic_index),unit_in,unit_logfile)
         calculate_source(shipping_index)=read_name_logical('calculate_source(shipping_index)',calculate_source(shipping_index),unit_in,unit_logfile)
         calculate_source(heating_index)=read_name_logical('calculate_source(heating_index)',calculate_source(heating_index),unit_in,unit_logfile)
@@ -137,7 +137,7 @@
         calculate_source(industry_index)=read_name_logical('calculate_source(industry_index)',calculate_source(industry_index),unit_in,unit_logfile)
 
         !For aggregating proxy emission data to EMEP grids
-        make_EMEP_grid_emission_data(:)=read_name_logical('make_EMEP_grid_emission_data(:)',make_EMEP_grid_emission_data(allsource_index),unit_in,unit_logfile)
+        !make_EMEP_grid_emission_data(:)=read_name_logical('make_EMEP_grid_emission_data(:)',make_EMEP_grid_emission_data(allsource_index),unit_in,unit_logfile)
         make_EMEP_grid_emission_data(traffic_index)=read_name_logical('make_EMEP_grid_emission_data(traffic_index)',make_EMEP_grid_emission_data(traffic_index),unit_in,unit_logfile)
         make_EMEP_grid_emission_data(shipping_index)=read_name_logical('make_EMEP_grid_emission_data(shipping_index)',make_EMEP_grid_emission_data(shipping_index),unit_in,unit_logfile)
         make_EMEP_grid_emission_data(heating_index)=read_name_logical('make_EMEP_grid_emission_data(heating_index)',make_EMEP_grid_emission_data(heating_index),unit_in,unit_logfile)
@@ -248,56 +248,58 @@
         sig_z_00(industry_index,2)=read_name_real('sig_z_00(industry_index,2)',sig_z_00(industry_index,2),unit_in,unit_logfile)
         
         !Read output grid path for all data
-        pathname_output_grid=read_name_char('pathname_output_grid','',unit_in,unit_logfile)
+        pathname_output_grid=read_name_char('pathname_output_grid',pathname_output_grid,unit_in,unit_logfile)
         
         !Read in file names. Only 2 choices for most file types
-        pathname_rl(1)=read_name_char('pathname_rl(1)','',unit_in,unit_logfile)
-        pathname_rl(2)=read_name_char('pathname_rl(2)','',unit_in,unit_logfile)
-        filename_rl(1)=read_name_char('filename_rl(1)','',unit_in,unit_logfile)
-        filename_rl(2)=read_name_char('filename_rl(2)','',unit_in,unit_logfile)
+        pathname_rl(1)=read_name_char('pathname_rl(1)',pathname_rl(1),unit_in,unit_logfile)
+        pathname_rl(2)=read_name_char('pathname_rl(2)',pathname_rl(2),unit_in,unit_logfile)
+        filename_rl(1)=read_name_char('filename_rl(1)',filename_rl(1),unit_in,unit_logfile)
+        filename_rl(2)=read_name_char('filename_rl(2)',filename_rl(2),unit_in,unit_logfile)
 
-        pathname_EMEP(1)=read_name_char('pathname_EMEP(1)','',unit_in,unit_logfile)
-        pathname_EMEP(2)=read_name_char('pathname_EMEP(2)','',unit_in,unit_logfile)
-        pathname_EMEP(3)=read_name_char('pathname_EMEP(3)','',unit_in,unit_logfile)
-        pathname_EMEP(4)=read_name_char('pathname_EMEP(4)','',unit_in,unit_logfile)
-        filename_EMEP(1)=read_name_char('filename_EMEP(1)','',unit_in,unit_logfile)
-        filename_EMEP(2)=read_name_char('filename_EMEP(2)','',unit_in,unit_logfile)
-        filename_EMEP(3)=read_name_char('filename_EMEP(3)','',unit_in,unit_logfile)
-        filename_EMEP(4)=read_name_char('filename_EMEP(4)','',unit_in,unit_logfile)
+        pathname_EMEP(1)=read_name_char('pathname_EMEP(1)',pathname_EMEP(1),unit_in,unit_logfile)
+        pathname_EMEP(2)=read_name_char('pathname_EMEP(2)',pathname_EMEP(2),unit_in,unit_logfile)
+        pathname_EMEP(3)=read_name_char('pathname_EMEP(3)',pathname_EMEP(3),unit_in,unit_logfile)
+        pathname_EMEP(4)=read_name_char('pathname_EMEP(4)',pathname_EMEP(4),unit_in,unit_logfile)
+        filename_EMEP(1)=read_name_char('filename_EMEP(1)',filename_EMEP(1),unit_in,unit_logfile)
+        filename_EMEP(2)=read_name_char('filename_EMEP(2)',filename_EMEP(2),unit_in,unit_logfile)
+        filename_EMEP(3)=read_name_char('filename_EMEP(3)',filename_EMEP(3),unit_in,unit_logfile)
+        filename_EMEP(4)=read_name_char('filename_EMEP(4)',filename_EMEP(4),unit_in,unit_logfile)
 
-        pathname_ship(1)=read_name_char('pathname_ship(1)','',unit_in,unit_logfile)
-        pathname_ship(2)=read_name_char('pathname_ship(2)','',unit_in,unit_logfile)
-        filename_ship(1)=read_name_char('filename_ship(1)','',unit_in,unit_logfile)
-        filename_ship(2)=read_name_char('filename_ship(2)','',unit_in,unit_logfile)
+        pathname_ship(1)=read_name_char('pathname_ship(1)',pathname_ship(1),unit_in,unit_logfile)
+        pathname_ship(2)=read_name_char('pathname_ship(2)',pathname_ship(2),unit_in,unit_logfile)
+        filename_ship(1)=read_name_char('filename_ship(1)',filename_ship(1),unit_in,unit_logfile)
+        filename_ship(2)=read_name_char('filename_ship(2)',filename_ship(2),unit_in,unit_logfile)
 
-        pathname_agriculture(1)=read_name_char('pathname_agriculture(1)','',unit_in,unit_logfile)
-        pathname_agriculture(2)=read_name_char('pathname_agriculture(2)','',unit_in,unit_logfile)
-        filename_agriculture(1)=read_name_char('filename_agriculture(1)','',unit_in,unit_logfile)
-        filename_agriculture(2)=read_name_char('filename_agriculture(2)','',unit_in,unit_logfile)
+        pathname_agriculture(1)=read_name_char('pathname_agriculture(1)',pathname_agriculture(1),unit_in,unit_logfile)
+        pathname_agriculture(2)=read_name_char('pathname_agriculture(2)',pathname_agriculture(2),unit_in,unit_logfile)
+        filename_agriculture(1)=read_name_char('filename_agriculture(1)',filename_agriculture(1),unit_in,unit_logfile)
+        filename_agriculture(2)=read_name_char('filename_agriculture(2)',filename_agriculture(2),unit_in,unit_logfile)
         
-        pathname_heating(dwelling_index)=read_name_char('pathname_heating(dwelling_index)','',unit_in,unit_logfile)
-        pathname_heating(population_index)=read_name_char('pathname_heating(population_index)','',unit_in,unit_logfile)
-        filename_heating(dwelling_index)=read_name_char('filename_heating(dwelling_index)','',unit_in,unit_logfile)
-        filename_heating(population_index)=read_name_char('filename_heating(population_index)','',unit_in,unit_logfile)
+        pathname_heating(dwelling_index)=read_name_char('pathname_heating(dwelling_index)',pathname_heating(dwelling_index),unit_in,unit_logfile)
+        pathname_heating(population_index)=read_name_char('pathname_heating(population_index)',pathname_heating(population_index),unit_in,unit_logfile)
+        filename_heating(dwelling_index)=read_name_char('filename_heating(dwelling_index)',filename_heating(dwelling_index),unit_in,unit_logfile)
+        filename_heating(population_index)=read_name_char('filename_heating(population_index)',filename_heating(population_index),unit_in,unit_logfile)
 
-        pathname_population(dwelling_index)=read_name_char('pathname_population(dwelling_index)','',unit_in,unit_logfile)
-        pathname_population(population_index)=read_name_char('pathname_population(population_index)','',unit_in,unit_logfile)
-        pathname_population(establishment_index)=read_name_char('pathname_population(establishment_index)','',unit_in,unit_logfile)
-        pathname_population(school_index)=read_name_char('pathname_population(school_index)','',unit_in,unit_logfile)
-        pathname_population(kindergaten_index)=read_name_char('pathname_population(kindergaten_index)','',unit_in,unit_logfile)
-        pathname_population(home_index)=read_name_char('pathname_population(home_index)','',unit_in,unit_logfile)
-        filename_population(dwelling_index)=read_name_char('filename_population(dwelling_index)','',unit_in,unit_logfile)
-        filename_population(population_index)=read_name_char('filename_population(population_index)','',unit_in,unit_logfile)
-        filename_population(establishment_index)=read_name_char('filename_population(establishment_index)','',unit_in,unit_logfile)
-        filename_population(school_index)=read_name_char('filename_population(school_index)','',unit_in,unit_logfile)
-        filename_population(kindergaten_index)=read_name_char('filename_population(kindergaten_index)','',unit_in,unit_logfile)
-        filename_population(home_index)=read_name_char('filename_population(home_index)','',unit_in,unit_logfile)
+        pathname_population(dwelling_index)=read_name_char('pathname_population(dwelling_index)',pathname_population(dwelling_index),unit_in,unit_logfile)
+        pathname_population(population_index)=read_name_char('pathname_population(population_index)',pathname_population(population_index),unit_in,unit_logfile)
+        pathname_population(establishment_index)=read_name_char('pathname_population(establishment_index)',pathname_population(establishment_index),unit_in,unit_logfile)
+        pathname_population(school_index)=read_name_char('pathname_population(school_index)',pathname_population(school_index),unit_in,unit_logfile)
+        pathname_population(kindergaten_index)=read_name_char('pathname_population(kindergaten_index)',pathname_population(kindergaten_index),unit_in,unit_logfile)
+        pathname_population(home_index)=read_name_char('pathname_population(home_index)',pathname_population(home_index),unit_in,unit_logfile)
+        pathname_population(municipality_index)=read_name_char('pathname_population(municipality_index)',pathname_population(municipality_index),unit_in,unit_logfile)
+        filename_population(dwelling_index)=read_name_char('filename_population(dwelling_index)',filename_population(dwelling_index),unit_in,unit_logfile)
+        filename_population(population_index)=read_name_char('filename_population(population_index)',filename_population(population_index),unit_in,unit_logfile)
+        filename_population(establishment_index)=read_name_char('filename_population(establishment_index)',filename_population(establishment_index),unit_in,unit_logfile)
+        filename_population(school_index)=read_name_char('filename_population(school_index)',filename_population(school_index),unit_in,unit_logfile)
+        filename_population(kindergaten_index)=read_name_char('filename_population(kindergaten_index)',filename_population(kindergaten_index),unit_in,unit_logfile)
+        filename_population(home_index)=read_name_char('filename_population(home_index)',filename_population(home_index),unit_in,unit_logfile)
+        filename_population(municipality_index)=read_name_char('filename_population(municipality_index)',filename_population(municipality_index),unit_in,unit_logfile)
 
-        pathname_receptor=read_name_char('pathname_receptor','',unit_in,unit_logfile)
-        filename_receptor=read_name_char('filename_receptor','',unit_in,unit_logfile)
+        pathname_receptor=read_name_char('pathname_receptor',pathname_receptor,unit_in,unit_logfile)
+        filename_receptor=read_name_char('filename_receptor',filename_receptor,unit_in,unit_logfile)
 
-        pathname_timeprofile=read_name_char('pathname_timeprofile','',unit_in,unit_logfile)
-        filename_timeprofile=read_name_char('filename_timeprofile','',unit_in,unit_logfile)
+        pathname_timeprofile=read_name_char('pathname_timeprofile',pathname_timeprofile,unit_in,unit_logfile)
+        filename_timeprofile=read_name_char('filename_timeprofile',filename_timeprofile,unit_in,unit_logfile)
 
         population_data_type=read_name_integer('population_data_type',population_data_type,unit_in,unit_logfile)
         
@@ -356,13 +358,17 @@
         
         save_netcdf_file_flag=read_name_logical('save_netcdf_file_flag',save_netcdf_file_flag,unit_in,unit_logfile)
         save_netcdf_receptor_flag=read_name_logical('save_netcdf_receptor_flag',save_netcdf_receptor_flag,unit_in,unit_logfile)
+        
+        calculate_tiling_flag=read_name_logical('calculate_tiling_flag',calculate_tiling_flag,unit_in,unit_logfile)        
+        pathname_tiles=read_name_char('pathname_tiles','',unit_in,unit_logfile)
+        filename_tiles=read_name_char('filename_tiles','',unit_in,unit_logfile)
+        tile_tag=read_name_char('tile_tag','',unit_in,unit_logfile)
 
     close (unit_in)
     
     !Call some error traps
     if (len(trim(pathname_output_grid)).eq.0) then
-        write (unit_logfile,'(A)') 'ERROR: No output path given in configuration file. Stopping'
-        stop
+        write (unit_logfile,'(A)') 'WARNING: No output path given in configuration file. Stopping'
     endif
 
     !Find the correct compound index based on the compound string
@@ -387,6 +393,11 @@
         filename_EMEP(4)=replace_string_char(config_date_str,replacement_date_str,filename_EMEP(4))
         pathname_output_grid=replace_string_char(config_date_str,replacement_date_str,pathname_output_grid)
     enddo
+
+    !Place tile_tag in front of file_tag if it has been read
+    if (tile_tag.ne.'') then
+        file_tag=trim(tile_tag)//'_'//trim(file_tag)
+    endif
     
     enddo !End configuration file number loop
     

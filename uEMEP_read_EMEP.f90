@@ -41,7 +41,7 @@
     integer date_array(6)
     double precision scale_factor_nc
 
-    !Temporary reading rvariables
+    !Temporary reading variables
     double precision, allocatable :: var1d_nc_dp(:)
     double precision, allocatable :: var2d_nc_dp(:,:)
     double precision, allocatable :: var3d_nc_dp(:,:,:)
@@ -51,6 +51,9 @@
     
     !Temporary files for roatating wind field
     real, allocatable :: temp_var4d_nc(:,:,:,:,:)
+    
+    !Functions
+    double precision date_to_number
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -309,10 +312,10 @@
                 !write(*,*) id_nc, trim(dim_name_nc(i)), var_id_nc,dim_length_nc(i),status_nc
                 !Use the first file to give valid time stamps
                 if (i_file.eq.1.and.i.eq.time_dim_nc_index) then
-                    val_dim_nc(1:dim_length_nc(i),i)=real(var1d_nc_dp(1:dim_length_nc(i)))
+                    val_dim_nc(1:dim_length_nc(i),i)=(var1d_nc_dp(1:dim_length_nc(i)))
                     valid_dim_length_nc(i)=dim_length_nc(i)
                 elseif (i_file.ne.1.and.i.ne.time_dim_nc_index) then 
-                    val_dim_nc(1:dim_length_nc(i),i)=real(var1d_nc_dp(1:dim_length_nc(i)))
+                    val_dim_nc(1:dim_length_nc(i),i)=(var1d_nc_dp(1:dim_length_nc(i)))
                     valid_dim_length_nc(i)=dim_length_nc(i)
                 endif
             !write(*,*) val_dim_nc(1:dim_length_nc(i),i),trim(unit_dim_nc(i))
@@ -613,12 +616,28 @@
         date_num_temp=dble(ceiling(val_dim_nc(dim_length_nc(time_dim_nc_index),time_dim_nc_index)*24.))/24.
         call number_to_date(date_num_temp,date_array,ref_year_EMEP)
         write(unit_logfile,'(a,6i6)') ' Date end EMEP =    ',date_array
-        !do t=1,dim_length_nc(time_dim_nc_index)
-        !    date_num_temp=dble(ceiling(val_dim_nc(t,time_dim_nc_index)*24.))/24.
-        !    call number_to_date(date_num_temp,date_array,ref_year_EMEP)
-        !    write(unit_logfile,'(a,i4,6i6)') ' Date end EMEP =   ',t,date_array
-        !enddo
-    
+        
+        !Test and correct dates
+        if (1.eq.1) then
+        do t=1,dim_length_nc(time_dim_nc_index)
+            date_num_temp=dble(ceiling(val_dim_nc(t,time_dim_nc_index)*24.))/24.
+            date_num_temp=val_dim_nc(t,time_dim_nc_index)+0.55/24. !Add a bit over half an hour to compensate for average of time
+            call number_to_date(date_num_temp,date_array,ref_year_EMEP)
+            !write(unit_logfile,'(a,i4,6i6,d)') ' Date EMEP =   ',t,date_array,date_num_temp
+            
+            date_array(5:6)=0 !Set minutes and hours to 0
+            date_num_temp=date_to_number(date_array,ref_year_EMEP)
+            call number_to_date(date_num_temp,date_array,ref_year_EMEP)
+            !write(unit_logfile,'(a,i4,6i6,d)') ' Date EMEP =   ',t,date_array,date_num_temp
+            !val_dim_nc(t,time_dim_nc_index)=ceiling(date_num_temp*dble(24.)*dble(3600.))/dble(24.)/dble(3600.)
+            date_num_temp=date_num_temp+dble(0.01)/dble(24.)/dble(3600.) !Add 0.01 of a second to avoid any rounding off errors
+            call number_to_date(date_num_temp,date_array,ref_year_EMEP)
+            !write(unit_logfile,'(a,i4,6i6,d)') ' Date EMEP =   ',t,date_array,date_num_temp
+            val_dim_nc(t,time_dim_nc_index)=date_num_temp
+        enddo
+        !stop
+        endif
+        
         if (allocated(var1d_nc_dp)) deallocate (var1d_nc_dp)
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
         if (allocated(var3d_nc_dp)) deallocate (var3d_nc_dp)
