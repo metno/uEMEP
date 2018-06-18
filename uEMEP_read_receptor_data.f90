@@ -141,6 +141,7 @@
     
     integer i,j,k
     integer count
+    logical use_receptor_temp
     !integer :: use_region=2 ! +/- number of grids to loop around so that receptor positions can be interpolated linearly
     
     if (use_receptor_positions_for_auto_subgrid_flag.or.use_multiple_receptor_grids_flag) then 
@@ -157,12 +158,19 @@
     !Find the target grid positions of the receptor points
     use_subgrid=.false.
     count=0
-
+     
     do k=1,n_receptor
-    if (use_receptor(k)) then    
+        !Always true when using use_multiple_receptor_grids_flag as this is inside the use_receptor loop
+        if (use_multiple_receptor_grids_flag) then
+            use_receptor_temp=.true.
+        else
+            use_receptor_temp=use_receptor(k)
+        endif
+    if (use_receptor_temp) then    
         i_receptor_subgrid(k)=1+floor((x_receptor(k)-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index))
         j_receptor_subgrid(k)=1+floor((y_receptor(k)-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index))
 
+        !write(*,*) 'HERE2: ',i_receptor_subgrid(k),j_receptor_subgrid(k)
         !Set subgrid use or not. At grid and surrounding grids in case of interpolation later
         if (i_receptor_subgrid(k).gt.use_receptor_region.and.i_receptor_subgrid(k).lt.subgrid_dim(x_dim_index)-use_receptor_region+1.and.j_receptor_subgrid(k).gt.use_receptor_region.and.j_receptor_subgrid(k).lt.subgrid_dim(y_dim_index)-use_receptor_region+1) then
             use_subgrid(i_receptor_subgrid(k)-use_receptor_region:i_receptor_subgrid(k)+use_receptor_region,j_receptor_subgrid(k)-use_receptor_region:j_receptor_subgrid(k)+use_receptor_region,:)=.true.
@@ -173,7 +181,7 @@
      endif  
      enddo
      write(unit_logfile,'(a,i)') ' Number of receptor points available in region = ', count
-
+ 
      count=0
      do j=1,subgrid_dim(y_dim_index)
      do i=1,subgrid_dim(x_dim_index)

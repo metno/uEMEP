@@ -8,8 +8,8 @@
     
     integer i,j,k
     integer i_comp,i_file,i_meteo
-    character(256) temp_name,unit_str,title_str,var_name_temp, temp_date_str,station_name_str,temp_name_rec
-    logical create_file
+    character(256) temp_name,unit_str,title_str,title_str_rec,var_name_temp, temp_date_str,station_name_str,temp_name_rec
+    logical create_file,create_file_rec
     integer i_source,i_subsource
     integer :: EMEP_subsource=1
     real :: valid_min=0.
@@ -41,7 +41,7 @@
     
     
     temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_output'//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//trim(temp_date_str)//'.nc'
-    temp_name_rec=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_receptor'//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//trim(temp_date_str)//'.nc'
+    temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_receptor'//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//trim(temp_date_str)//'.nc'
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -65,6 +65,14 @@
         else
             create_file=.false.
         endif
+
+        if (i_comp.eq.1.and.t_loop.eq.start_time_loop_index.and.g_loop.eq.start_grid_loop_index) then
+            create_file_rec=.true.
+            title_str_rec='uEMEP_receptor_'//trim(file_tag)//temp_date_str
+            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name_rec)
+        else
+            create_file_rec=.false.
+        endif
         
         var_name_temp=trim(var_name_nc(conc_nc_index,compound_loop_index(i_comp),allsource_index))//'_concentration'
         if (save_netcdf_file_flag) then
@@ -77,7 +85,7 @@
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
             ,comp_subgrid(:,:,:,compound_loop_index(i_comp)),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-            ,unit_str,title_str,create_file,valid_min &
+            ,unit_str,title_str_rec,create_file_rec,valid_min &
             ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
             ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
             ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -87,6 +95,7 @@
     endif
     
     create_file=.false.
+    create_file_rec=.false.
     i_comp=1
     
     !Save the different local source contributions, not the total though
@@ -107,7 +116,7 @@
                 write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
                 call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                     ,subgrid(:,:,:,local_subgrid_index,i_source,emep_subsource),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                    ,unit_str,title_str,create_file,valid_min &
+                    ,unit_str,title_str_rec,create_file_rec,valid_min &
                     ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                     ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                     ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -130,7 +139,7 @@
                     write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
                     call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,emep_subsource),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                        ,unit_str,title_str,create_file,valid_min &
+                        ,unit_str,title_str_rec,create_file_rec,valid_min &
                         ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -176,7 +185,7 @@
                     write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
                     call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                        ,unit_str,title_str,create_file,valid_min &
+                        ,unit_str,title_str_rec,create_file_rec,valid_min &
                         ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -209,7 +218,7 @@
                     write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
                     call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,subgrid(:,:,:,emep_subgrid_index,i_source,emep_subsource),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                        ,unit_str,title_str,create_file,valid_min &
+                        ,unit_str,title_str_rec,create_file_rec,valid_min &
                         ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -229,7 +238,7 @@
                     write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
                     call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,subgrid(:,:,:,emep_local_subgrid_index,i_source,emep_subsource),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                        ,unit_str,title_str,create_file,valid_min &
+                        ,unit_str,title_str_rec,create_file_rec,valid_min &
                         ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -255,7 +264,7 @@
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,comp_EMEP_subgrid(:,:,:,compound_loop_index(i_comp)),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                ,unit_str,title_str,create_file,valid_min &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -278,7 +287,7 @@
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,orig_EMEP_subgrid(:,:,:,compound_loop_index(i_comp)),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                ,unit_str,title_str,create_file,valid_min &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -300,7 +309,7 @@
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,traveltime_subgrid(:,:,:,1),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                ,unit_str,title_str,create_file,valid_min &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -330,7 +339,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -356,7 +365,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -384,7 +393,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -412,7 +421,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -438,7 +447,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -466,7 +475,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -492,7 +501,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -520,7 +529,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -546,7 +555,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -572,7 +581,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -600,7 +609,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
@@ -626,7 +635,7 @@
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
             write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          

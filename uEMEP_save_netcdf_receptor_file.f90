@@ -56,6 +56,10 @@
     do tr=1,nt
         val_rec(rr,tr)=area_weighted_interpolation_function(x_array,y_array,val_array(:,:,tr),nx,ny,delta,x_rec(rr),y_rec(rr))
     enddo
+    enddo
+    
+    !Make the receptor name to fit to netcdf requirements
+    do rr=1,nr
     temp_char=name_rec_in(rr)
     do tr=1,n_char
         name_rec(tr,rr)=temp_char(tr:tr)
@@ -136,7 +140,7 @@
         !call check( nf90_put_var(ncid, station_varid, name_rec(:,1:n_char) )
         !call check( nf90_put_var(ncid, lat_varid, lat_array) )
         !call check( nf90_put_var(ncid, lon_varid, lon_array) )
-
+        
         call check( nf90_close(ncid) )
     
     endif
@@ -204,8 +208,10 @@
         !call check( nf90_inq_varid(ncid, "station", station_varid) )
         !call check( nf90_inquire_dimension(ncid, time_dimid, temp_name, n_dims(3)) )
         !n_dims(3)=n_dims(3)+1
+        
         n_dims_start(1)=valid_receptor_inverse_index(g_loop)
         n_dims_length(1)=1
+        id_rec(1)=valid_receptor_inverse_index(g_loop)
         !write(*,*) n_dims(3),val_dim_nc(1,time_dim_nc_index)
         !write(*,*) n_dims
         
