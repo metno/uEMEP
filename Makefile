@@ -3,7 +3,7 @@ include Makefile.SRCS
 
 ###################################################
 
-F90 = mpiifort
+F90 = ifort
 DEBUG_FLAGS = -init=snan,arrays -check all -check noarg_temp_created -debug-parameters all \
               -traceback -ftrapuv -g -fpe0 -O0
 F90FLAGS = -qopenmp -O3  -r8 -g -ftz
