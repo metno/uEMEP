@@ -81,6 +81,7 @@
         var_name_nc(invL_nc_index,:,allsource_nc_index)='inv_L'
         var_name_nc(J_nc_index,:,allsource_nc_index)='J(NO2)'
         var_name_nc(ZTOP_nc_index,:,allsource_nc_index)='Z_TOP'
+        var_name_nc(t2m_nc_index,:,allsource_nc_index)='met2d_t2m'
         surface_level_nc=7 !Will be reset as length of 'lev' dimension
 
         !Alternative meteorology.
@@ -105,6 +106,7 @@
         var_name_meteo_nc(invL_nc_index)='invL' !!Doesn't exist but name is used. Will be calculated
         var_name_meteo_nc(J_nc_index)=''
         var_name_meteo_nc(ZTOP_nc_index)=''
+        var_name_meteo_nc(t2m_nc_index)='air_temperature_2m'
         !Additional     parameter (u10_nc_subgrid_index=22,v10_nc_subgrid_index=23,uw_nc_subgrid_index=24,vw_nc_subgrid_index=25,Hflux_nc_subgrid_index=26)
         var_name_meteo_nc(u10_nc_index)='x_wind_10m' !10 m wind not grid. Replaces ugrid. Used for direction
         var_name_meteo_nc(v10_nc_index)='y_wind_10m' !10 m wind not grid. Replaces vgrid. Used for direction

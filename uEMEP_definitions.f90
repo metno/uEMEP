@@ -62,15 +62,15 @@
     integer hmix_nc_index,kz_nc_index,invL_nc_index,ustar_nc_index,logz0_nc_index,J_nc_index
     integer conc_nc_index,frac_nc_index,local_nc_index,emis_nc_index
     integer x_nc_index,y_nc_index,ZTOP_nc_index
-    integer u10_nc_index,v10_nc_index,uw_nc_index,vw_nc_index,Hflux_nc_index
+    integer u10_nc_index,v10_nc_index,uw_nc_index,vw_nc_index,Hflux_nc_index,t2m_nc_index
     parameter (lon_nc_index=1,lat_nc_index=2)
     parameter (ugrid_nc_index=3,vgrid_nc_index=4,FF10_nc_index=5,FFgrid_nc_index=6,inv_FFgrid_nc_index=7,inv_FF10_nc_index=8)
     parameter (hmix_nc_index=9,kz_nc_index=10,invL_nc_index=11,ustar_nc_index=12,logz0_nc_index=13,J_nc_index=14)
     parameter (conc_nc_index=15,frac_nc_index=16,local_nc_index=17,emis_nc_index=18)
     parameter (x_nc_index=19,y_nc_index=20,ZTOP_nc_index=21)
-    parameter (u10_nc_index=22,v10_nc_index=23,uw_nc_index=24,vw_nc_index=25,Hflux_nc_index=26)
+    parameter (u10_nc_index=22,v10_nc_index=23,uw_nc_index=24,vw_nc_index=25,Hflux_nc_index=26,t2m_nc_index=27)
     integer num_var_nc
-    parameter (num_var_nc=26)                  ! number of readable variables
+    parameter (num_var_nc=27)                  ! number of readable variables
     integer num_var_meteo_nc
     parameter (num_var_meteo_nc=num_var_nc)
     
