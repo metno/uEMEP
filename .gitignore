@@ -1,3 +1,7 @@
 netcdf
 Not_used
 NILU/Not_used
+
+*.o
+*.mod
+uEMEPv2
