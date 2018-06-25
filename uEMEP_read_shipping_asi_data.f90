@@ -114,7 +114,7 @@
         
         !write(*,*) count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission
         count=count+1
-        if (mod(count,100000).eq.0) write(*,*) count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission
+        !if (mod(count,100000).eq.0) write(*,*) count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission
         
         if  (totalnoxemission.gt.0.or.totalparticulatematteremission.gt.0) then
             

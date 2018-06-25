@@ -101,7 +101,7 @@
     
     !Read header SSBID0250M;dwe_todw;dwe_det;dwe_2dw;dwe_row;dwe_mult;dwe_com;dwe_oth;dwe_area
     read(unit_in,'(A)') temp_str
-    write(*,'(A)') 'Header: '//trim(temp_str)
+    write(unit_logfile,'(A)') 'Header: '//trim(temp_str)
     !read(unit_in,'(A)') temp_str
     !write(*,*) trim(temp_str)
     count=0
@@ -189,7 +189,7 @@
         endif
 
         count=count+1
-        if (mod(count,100000).eq.0) write(*,*) count,ssb_id,dwe_todw,dwe_mult,pop_tot
+        !if (mod(count,100000).eq.0) write(*,*) count,ssb_id,dwe_todw,dwe_mult,pop_tot
         
         if  (dwe_todw.gt.0.or.pop_tot.gt.0) then
             

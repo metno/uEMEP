@@ -55,25 +55,29 @@
         pathname_log_file=read_name_char('pathname_log_file',pathname_log_file,unit_in,unit_logfile)
         
         !Open log file when reading the first configuration file
-        if (len(trim(filename_log_file)).gt.0.and.i_config.eq.1) then
-            unit_logfile=10 
-            !Check existence of path
-            inquire(directory=trim(pathname_log_file),exist=exists)
-            if (.not.exists) then
-                write(unit_logfile,'(A)')'ERROR: Log file directory path '//trim(pathname_log_file)//' does not exist.'
-                stop
+        if (i_config.eq.1) then
+            if (len(trim(filename_log_file)).gt.0) then
+                unit_logfile=10 
+                !Check existence of path
+                inquire(directory=trim(pathname_log_file),exist=exists)
+                if (.not.exists) then
+                    write(unit_logfile,'(A)')'ERROR: Log file directory path '//trim(pathname_log_file)//' does not exist.'
+                    stop
+                endif
+                !Write to screen if writing to log file
+                pathfilename_log_file=trim(pathname_log_file)//trim(filename_log_file)
+                write(*,'(A,A)') 'Writing to log file: ', trim(pathfilename_log_file)
+                write(*,'(A)') '================================================================'
+                open(unit_logfile,file=trim(pathfilename_log_file),access='sequential',form='formatted',status='unknown')
+                if (unit_logfile.ne.0) then 
+                write(unit_logfile,*) '------------------------------------------------------------------------'
+                write(unit_logfile,*) 'Starting programm uEMEP_v2.1'
+                write(unit_logfile,*) '------------------------------------------------------------------------'
+                endif
+            else
+                unit_logfile=0
             endif
-            !Write to screen if writing to log file
-            pathfilename_log_file=trim(pathname_log_file)//trim(filename_log_file)
-            write(*,'(A,A)') 'Writing to log file: ', trim(pathfilename_log_file)
-            write(*,'(A)') '================================================================'
-            open(unit_logfile,file=trim(pathfilename_log_file),access='sequential',form='formatted',status='unknown')
-            write(unit_logfile,'(A)') ''
-            write(unit_logfile,'(A)') '================================================================'
-            write(unit_logfile,'(A)') 'Starting program uEMEP v2.1' 
-  	        write(unit_logfile,'(A)') '================================================================'
-        else
-            unit_logfile=0
+            
         endif
               
         file_tag=read_name_char('file_tag',file_tag,unit_in,unit_logfile)

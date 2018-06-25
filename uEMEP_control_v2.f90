@@ -31,7 +31,7 @@
     !Set constants and variable names to be read from EMEP and meteo files
     call uEMEP_set_constants
     
-    !Read the configuration files. Hard coded to be up to 5 files
+    !Read the configuration files. Hard coded to be up to 5 files. Log file opened in this routine
     call uEMEP_read_config
     
     !Set the names of files to be written to when saving intermediate files
@@ -88,13 +88,13 @@
         do t_loop=start_time_loop_index,end_time_loop_index
    
             !Write progress in time and receptor grid loop to screen
-            write(*,*) 'REC=',g_loop,' OF ',end_grid_loop_index
+            write(*,*) 'REC LOOP= ',g_loop,' OF ',end_grid_loop_index
             if (unit_logfile.ne.0) then 
-                write(unit_logfile,*) 'REC=',g_loop,' OF ',end_grid_loop_index
+                write(unit_logfile,*) 'REC LOOP= ',g_loop,' OF ',end_grid_loop_index
             endif
-            write(*,*) 'TIME=',t_loop,' OF ',end_time_loop_index
+            write(*,*) 'TIME LOOP=',t_loop,' OF ',end_time_loop_index
             if (unit_logfile.ne.0) then 
-                write(unit_logfile,*) 'TIME=',t_loop,' OF ',end_time_loop_index
+                write(unit_logfile,*) 'TIME LOOP=',t_loop,' OF ',end_time_loop_index
             endif
         
             
@@ -239,17 +239,26 @@
     
     endif !use_receptor
     enddo !g_loop
+
+    call CPU_TIME(end_time_cpu)
+
+    if (unit_logfile.ne.0) then 
+    write(unit_logfile,*) ''
+    write(unit_logfile,*) '------------------------------------------------------------------------'
+    write(unit_logfile,*) 'Ending programm uEMEP'
+    write(unit_logfile,'(a,i3,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
+    write(unit_logfile,*) '------------------------------------------------------------------------'
+    endif
     
     if (unit_logfile.gt.0) then
          close(unit_logfile,status='keep')
     endif
 
-    call CPU_TIME(end_time_cpu)
 
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
     write(*,*) 'Ending programm uEMEP'
-    write(*,'(a,i3,a,i2)') 'CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
+    write(*,'(a,i3,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
     write(*,*) '------------------------------------------------------------------------'
 
     end program uEMEP_v2

@@ -116,7 +116,7 @@
     rewind(unit_in)    
     !Read header SSBID0250M;kommunenum
     read(unit_in,'(A)') temp_str
-    write(*,'(A)') 'Header: '//trim(temp_str)
+    write(unit_logfile,'(A)') 'Header: '//trim(temp_str)
     count=0
     do while(.not.eof(unit_in))
         ssb_id=0;municipality_id=0
@@ -125,7 +125,7 @@
         index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) ssb_id
         read(temp_str,*) municipality_id
         count=count+1
-        if (mod(count,100000).eq.0) write(*,*) count,ssb_id,municipality_id
+        !if (mod(count,100000).eq.0) write(*,*) count,ssb_id,municipality_id
         !Convert id to grid centre coordinates that are already in UTM33 for SSB data
         x_ssb=floor(ssb_id/10000000.)-f_easting+ssb_dx/2.
         y_ssb=mod(ssb_id,10000000)+ssb_dy/2.
