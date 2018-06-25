@@ -51,6 +51,7 @@
     real resolution_tile_classes(10)
     character(8) count_str
     integer :: unit_tile=21
+    real population_tile_scale
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -64,12 +65,16 @@
     !tile_class_index=n_source_index+3
     
     !Specify the tiling region to cover all of Norway
+    population_tile_scale=1. !For 10 km
+    !population_tile_scale=4. !For 20 km
 	tile_subgrid_delta(x_dim_index)=10000.
 	tile_subgrid_delta(y_dim_index)=10000.
-    tile_subgrid_min(x_dim_index)=-70000.-30000
-    tile_subgrid_min(y_dim_index)=6440000.-20000
-    tile_subgrid_max(x_dim_index)=1110000.+20000.
-    tile_subgrid_max(y_dim_index)=7950000.+20000.
+    tile_subgrid_min(x_dim_index)=-70000.-40000
+    tile_subgrid_min(y_dim_index)=6440000.-40000
+    tile_subgrid_max(x_dim_index)=1110000.+40000.
+    tile_subgrid_max(y_dim_index)=7950000.+40000.
+    
+    limit_val_tile_population=limit_val_tile_population*population_tile_scale
     
     !Set all tile subgrids relative to the target subgrid
     tile_subgrid_dim(x_dim_index)=floor((tile_subgrid_max(x_dim_index)-tile_subgrid_min(x_dim_index))/tile_subgrid_delta(x_dim_index)) !New definition
@@ -281,11 +286,11 @@
                 tile_subgrid(i_tile,j_tile,tile_population_index).ge.limit_val_tile_population(1)) then
                     tile_class_subgrid(i_tile,j_tile)=2 !Little traffic but any shipping and any population
             elseif ((tile_subgrid(i_tile,j_tile,tile_population_index).gt.limit_val_tile_population(3).and. &
-                tile_subgrid(i_tile,j_tile,tile_population_index).le.limit_val_tile_population(4)).or. &
+                tile_subgrid(i_tile,j_tile,tile_population_index).le.limit_val_tile_population(5)).or. &
                 (tile_subgrid(i_tile,j_tile,traffic_index).ge.limit_val_tile_traffic(2).and. &
-                tile_subgrid(i_tile,j_tile,tile_population_index).le.limit_val_tile_population(4))) then
+                tile_subgrid(i_tile,j_tile,tile_population_index).le.limit_val_tile_population(5))) then
                     tile_class_subgrid(i_tile,j_tile)=3 !Population from 1000 to 5000 or road traffic
-            elseif (tile_subgrid(i_tile,j_tile,tile_population_index).gt.limit_val_tile_population(4)) then
+            elseif (tile_subgrid(i_tile,j_tile,tile_population_index).gt.limit_val_tile_population(5)) then
                     tile_class_subgrid(i_tile,j_tile)=4 !Population > 5000
             endif
            

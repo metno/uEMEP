@@ -213,13 +213,19 @@
     !Preset all initial emission factors 
     emission_factor(nox_index,traffic_index,:)=0.4 !(g/km/veh)
     emission_factor(nox_index,shipping_index,:)=1. !Shipping data is in emissions [tonne/month]
+    emission_factor(nox_index,heating_index,:)=3./15. !(kg/dwelling/year) Estimate only
 
     emission_factor(no2_index,traffic_index,:)=0.15*emission_factor(nox_index,traffic_index,:)
     emission_factor(no2_index,shipping_index,:)=0.10*emission_factor(nox_index,shipping_index,:)
+    emission_factor(no2_index,heating_index,:)=0.1*emission_factor(nox_index,heating_index,:)!(kg/dwelling/year) Estimate only
 
     emission_factor(pm25_index,traffic_index,:)=0.01 !(g/km/veh)
     emission_factor(pm25_index,shipping_index,:)=1. !Shipping data is in emissions [tonne/month]
     emission_factor(pm25_index,heating_index,:)=3. !(kg/dwelling/year) SSB number is 6
+
+    emission_factor(pm10_index,traffic_index,:)=0.01 !(g/km/veh)
+    emission_factor(pm10_index,shipping_index,:)=1. !Shipping data is in emissions [tonne/month]
+    emission_factor(pm10_index,heating_index,:)=3. !(kg/dwelling/year) SSB number is 6
 
     emission_factor(nh3_index,agriculture_index,:)=1. !Agriculture data is in emissions [kg/yr]
 

@@ -37,7 +37,7 @@
             write(unit_logfile,'(A,A)') ' ERROR: Receptor file does not exist. Cannot calculate: ', trim(pathfilename_receptor)
             stop
         else
-            write(unit_logfile,'(A,A)') ' WARNING: Receptor file does not exist. Will provide receptor output: ', trim(pathfilename_receptor)
+            write(unit_logfile,'(A,A)') ' WARNING: Receptor file does not exist. Will not provide receptor output: ', trim(pathfilename_receptor)
             n_receptor=0
             n_receptor_in=n_receptor
             n_valid_receptor=0

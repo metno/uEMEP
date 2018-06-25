@@ -14,13 +14,19 @@
     !Converts the emission units of the input data to a standard ug/s/subgrid
     emission_factor_conversion(nox_index,traffic_index,:)=emission_factor(nox_index,traffic_index,:)*(1.e-3)*(1.e+6)/(3600.*24.) ![veh*m/day]*(g/km/veh)*(km/m)*(ug/g)*(day/sec)=ug/sec
     emission_factor_conversion(nox_index,shipping_index,:)=emission_factor(nox_index,shipping_index,:)*(1.e+12)/(3600.*24.*365./12.) ![tonne/month]*(ug/ton)*(month/sec)=ug/sec. Only valid for the current AIS data which is a total. Should change
+    emission_factor_conversion(nox_index,heating_index,:)=emission_factor(nox_index,heating_index,:)*(1.e+9)/(3600.*24.*365.) ![dwellings]*(kg/dwelling/year)*(ug/kg)*(year/sec)=ug/sec
 
     emission_factor_conversion(no2_index,traffic_index,:)=emission_factor(no2_index,traffic_index,:)*(1.e-3)*(1.e+6)/(3600.*24.) 
     emission_factor_conversion(no2_index,shipping_index,:)=emission_factor(no2_index,shipping_index,:)*(1.e+12)/(3600.*24.*365./12.)
+    emission_factor_conversion(no2_index,heating_index,:)=emission_factor(no2_index,heating_index,:)*(1.e+9)/(3600.*24.*365.) ![dwellings]*(kg/dwelling/year)*(ug/kg)*(year/sec)=ug/sec
 
     emission_factor_conversion(pm25_index,traffic_index,:)=emission_factor(pm25_index,traffic_index,:)*(1.e-3)*(1.e+6)/(3600.*24.) ![veh*m/day]*(g/km/veh)*(km/m)*(ug/g)*(day/sec)=ug/sec
     emission_factor_conversion(pm25_index,shipping_index,:)=emission_factor(pm25_index,shipping_index,:)*(1.e+12)/(3600.*24.*365./12.) ![tonne/month]*(ug/kg)*(month/sec)=ug/sec
     emission_factor_conversion(pm25_index,heating_index,:)=emission_factor(pm25_index,heating_index,:)*(1.e+9)/(3600.*24.*365.) ![dwellings]*(kg/dwelling/year)*(ug/kg)*(year/sec)=ug/sec
+
+    emission_factor_conversion(pm10_index,traffic_index,:)=emission_factor(pm10_index,traffic_index,:)*(1.e-3)*(1.e+6)/(3600.*24.) ![veh*m/day]*(g/km/veh)*(km/m)*(ug/g)*(day/sec)=ug/sec
+    emission_factor_conversion(pm10_index,shipping_index,:)=emission_factor(pm10_index,shipping_index,:)*(1.e+12)/(3600.*24.*365./12.) ![tonne/month]*(ug/kg)*(month/sec)=ug/sec
+    emission_factor_conversion(pm10_index,heating_index,:)=emission_factor(pm10_index,heating_index,:)*(1.e+9)/(3600.*24.*365.) ![dwellings]*(kg/dwelling/year)*(ug/kg)*(year/sec)=ug/sec
 
     emission_factor_conversion(nh3_index,agriculture_index,:)=emission_factor(nh3_index,agriculture_index,:)*(1.e+9)/(3600.*24.*365.)   ![kg/yr]*(ug/kg)*(yr/sec)=ug/sec
     
