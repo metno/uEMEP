@@ -413,7 +413,6 @@
         call date_to_datestr_bracket(a,pathname_output_grid,pathname_output_grid)
         write(*,*) trim(pathname_output_grid)
     enddo
-    stop
     
     !Place tile_tag in front of file_tag if it has been read
     if (tile_tag.ne.'') then
