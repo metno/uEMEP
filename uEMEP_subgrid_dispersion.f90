@@ -362,8 +362,9 @@
                                     traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                     
                                     !Set the starting point of the dispersion to be at (near) the edge of an emission subgrid
-                                    if (x_loc.le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
-                                        x_loc=x_loc+distance_emission_subgrid_min
+                                    if (abs(x_loc).le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
+                                        !x_loc=x_loc+distance_emission_subgrid_min
+                                        x_loc=distance_emission_subgrid_min
                                     endif
                                 
                                 else
@@ -378,8 +379,9 @@
                                     !write(*,*) x_loc,x_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index),y_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index)
                                    
                                     !Set the starting point of the dispersion to be at (near) the edge of an emission subgrid for calculations within the emission grid
-                                    if (x_loc.le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
-                                        x_loc=x_loc+distance_emission_subgrid_min
+                                    if (abs(x_loc).le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
+                                        !x_loc=x_loc+distance_emission_subgrid_min
+                                        x_loc=distance_emission_subgrid_min
                                     endif
                                     
                                     !If x is downwind then it is valid
@@ -897,7 +899,7 @@
                                     traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                 
                                     !Set the starting point of the dispersion to be at (near) the edge of an emission subgrid for calculations within the emission grid
-                                    if (x_loc.le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
+                                    if (abs(x_loc).le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
                                         x_loc=x_loc+distance_emission_subgrid_min
                                     endif
 
@@ -912,7 +914,7 @@
                                     y_loc=-(x_integral_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index))*sin_subgrid_loc+(y_integral_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index))*cos_subgrid_loc
                                     
                                    !Set the starting point of the dispersion to be at (near) the edge of an emission subgrid for calculations within the emission grid
-                                    if (x_loc.le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
+                                    if (abs(x_loc).le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
                                         x_loc=x_loc+distance_emission_subgrid_min
                                     endif
                                     

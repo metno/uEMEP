@@ -11,6 +11,7 @@
     integer read_name_integer
     character(256) read_name_char,pathfilename_log_file
     integer exists
+    integer a(6)
     
     integer :: unit_in=30
     integer i_config
@@ -368,6 +369,9 @@
         filename_tiles=read_name_char('filename_tiles','',unit_in,unit_logfile)
         tile_tag=read_name_char('tile_tag','',unit_in,unit_logfile)
 
+        use_NORTRIP_emission_data=read_name_logical('use_NORTRIP_emission_data',use_NORTRIP_emission_data,unit_in,unit_logfile) 
+        
+        
     close (unit_in)
     
     !Call some error traps
@@ -379,7 +383,9 @@
     do i=1,n_compound_nc_index
         if (trim(var_name_nc(conc_nc_index,i,allsource_index)).eq.trim(input_comp_name)) then
             compound_index=i
+            !write(*,*) trim(input_comp_name),i
         endif
+        !Not used anymore
         if (trim(var_name_nc(frac_nc_index,i,allsource_index)).eq.trim(input_comp_name)) then
             compound_frac_index=i
         endif
@@ -396,8 +402,19 @@
         filename_EMEP(3)=replace_string_char(config_date_str,replacement_date_str,filename_EMEP(3))
         filename_EMEP(4)=replace_string_char(config_date_str,replacement_date_str,filename_EMEP(4))
         pathname_output_grid=replace_string_char(config_date_str,replacement_date_str,pathname_output_grid)
+        !NORTRIP file and path name
+        pathname_rl(2)=replace_string_char(config_date_str,replacement_date_str,pathname_rl(2))
+        filename_rl(2)=replace_string_char(config_date_str,replacement_date_str,filename_rl(2))
     enddo
 
+    !Replace date in the output file if required, 3 time for yyyy mm dd
+    call datestr_to_date(config_date_str,'yyyymmdd',a)
+    do i=1,3
+        call date_to_datestr_bracket(a,pathname_output_grid,pathname_output_grid)
+        write(*,*) trim(pathname_output_grid)
+    enddo
+    stop
+    
     !Place tile_tag in front of file_tag if it has been read
     if (tile_tag.ne.'') then
         file_tag=trim(tile_tag)//'_'//trim(file_tag)

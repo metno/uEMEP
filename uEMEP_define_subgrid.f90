@@ -134,7 +134,10 @@
     write(unit_logfile,'(A,2I5)')'Max number of emission grids:',emission_max_subgrid_dim(1:2)
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
-    write(unit_logfile,'(A,A,2I5)')'Number of emission grids: ',trim(source_file_str(i_source)),emission_subgrid_dim(1:2,i_source)        
+    write(unit_logfile,'(A,A,2I5)')   'Number of emission grids:',trim(source_file_str(i_source)),emission_subgrid_dim(1:2,i_source)        
+    write(unit_logfile,'(A,A,2f12.1)')'Min of emission grids:   ',trim(source_file_str(i_source)),emission_subgrid_min(1:2,i_source)     
+    write(unit_logfile,'(A,A,2f12.1)')'Max of emission grids:   ',trim(source_file_str(i_source)),emission_subgrid_max(1:2,i_source)     
+    write(unit_logfile,'(A,A,2f12.1)')'Delta of emission grids: ',trim(source_file_str(i_source)),emission_subgrid_delta(1:2,i_source)     
     endif
     enddo
 

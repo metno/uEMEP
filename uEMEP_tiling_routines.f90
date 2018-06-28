@@ -11,7 +11,8 @@
     integer n_tiles_population_classes,n_tiles_traffic_classes,n_tiles_shipping_classes
     parameter (n_tiles_population_classes=5,n_tiles_traffic_classes=5,n_tiles_shipping_classes=1)
     real limit_val_tile_population(n_tiles_population_classes)
-    data limit_val_tile_population /0.,100.,1000.,5000.,10000./
+   ! data limit_val_tile_population /0.,100.,1000.,5000.,10000./
+    data limit_val_tile_population /0.,100.,1000.,10000.,100000./
     integer :: num_tiles_with_population(n_tiles_population_classes)=0
     real limit_val_tile_traffic(n_tiles_traffic_classes)
     data limit_val_tile_traffic /0.,1000.,10000.,100000.,1000000./
@@ -285,13 +286,16 @@
                 tile_subgrid(i_tile,j_tile,traffic_index).le.limit_val_tile_traffic(2).and. &
                 tile_subgrid(i_tile,j_tile,tile_population_index).ge.limit_val_tile_population(1)) then
                     tile_class_subgrid(i_tile,j_tile)=2 !Little traffic but any shipping and any population
-            elseif ((tile_subgrid(i_tile,j_tile,tile_population_index).gt.limit_val_tile_population(3).and. &
-                tile_subgrid(i_tile,j_tile,tile_population_index).le.limit_val_tile_population(5)).or. &
+            elseif ((tile_subgrid(i_tile,j_tile,tile_population_index).gt.limit_val_tile_population(2).and. &
+                tile_subgrid(i_tile,j_tile,tile_population_index).le.limit_val_tile_population(4)).or. &
                 (tile_subgrid(i_tile,j_tile,traffic_index).ge.limit_val_tile_traffic(2).and. &
-                tile_subgrid(i_tile,j_tile,tile_population_index).le.limit_val_tile_population(5))) then
+                tile_subgrid(i_tile,j_tile,tile_population_index).le.limit_val_tile_population(4))) then
                     tile_class_subgrid(i_tile,j_tile)=3 !Population from 1000 to 5000 or road traffic
+            elseif (tile_subgrid(i_tile,j_tile,tile_population_index).gt.limit_val_tile_population(4).and. &
+                tile_subgrid(i_tile,j_tile,tile_population_index).le.limit_val_tile_population(5)) then
+                    tile_class_subgrid(i_tile,j_tile)=4 !Population > 10000
             elseif (tile_subgrid(i_tile,j_tile,tile_population_index).gt.limit_val_tile_population(5)) then
-                    tile_class_subgrid(i_tile,j_tile)=4 !Population > 5000
+                    tile_class_subgrid(i_tile,j_tile)=5 !Population > 100000
             endif
            
             num_tile_classes(tile_class_subgrid(i_tile,j_tile))=num_tile_classes(tile_class_subgrid(i_tile,j_tile))+1
@@ -303,12 +307,13 @@
     write(unit_logfile,'(a,i)') 'TILES OF CLASS 2 (250m): ',num_tile_classes(2)
     write(unit_logfile,'(a,i)') 'TILES OF CLASS 3 (125m): ',num_tile_classes(3)
     write(unit_logfile,'(a,i)') 'TILES OF CLASS 4 ( 50m): ',num_tile_classes(4)
-   ! write(unit_logfile,'(a,i)') 'TILES OF CLASS 5 ( 25m): ',num_tile_classes(5)
+    write(unit_logfile,'(a,i)') 'TILES OF CLASS 5 ( 25m): ',num_tile_classes(5)
 
     resolution_tile_classes(1)=500.
     resolution_tile_classes(2)=250.
     resolution_tile_classes(3)=125.
     resolution_tile_classes(4)=50.
+    resolution_tile_classes(5)=25.
     
     !Save results in a single file
     temp_name=trim(pathname_tiles)//trim(filename_tiles)
@@ -317,14 +322,30 @@
     do j_tile=1,tile_subgrid_dim(y_dim_index)
     do i_tile=1,tile_subgrid_dim(x_dim_index)
         if (num_tile_classes(tile_class_subgrid(i_tile,j_tile)).gt.0) then
-            count=count+1
-            write(unit_tile,'(a,i)') 'tile_tag=',count
-	        write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
-	        write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
-	        write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.
-	        write(unit_tile,'(a,f12.2)') 'subgrid_min(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(y_dim_index)/2.
-	        write(unit_tile,'(a,f12.2)') 'subgrid_max(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(x_dim_index)/2.
-	        write(unit_tile,'(a,f12.2)') 'subgrid_max(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(y_dim_index)/2.
+            if (tile_class_subgrid(i_tile,j_tile).lt.5) then
+                count=count+1
+                write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
+	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
+	            write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_min(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(y_dim_index)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_max(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(x_dim_index)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_max(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(y_dim_index)/2.
+            else
+                !Divide into 4 lesser grids
+                do j=0,1
+                do i=0,1
+                    count=count+1
+                    write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+	                write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
+	                write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
+	                write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.+tile_subgrid_delta(x_dim_index)/2.*i
+	                write(unit_tile,'(a,f12.2)') 'subgrid_min(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(y_dim_index)/2.+tile_subgrid_delta(y_dim_index)/2.*j
+	                write(unit_tile,'(a,f12.2)') 'subgrid_max(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(x_dim_index)/2.+tile_subgrid_delta(x_dim_index)/2.*(i-1.)
+	                write(unit_tile,'(a,f12.2)') 'subgrid_max(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(y_dim_index)/2.+tile_subgrid_delta(y_dim_index)/2.*(j-1.)                   
+                enddo
+                enddo
+            endif
         endif
     enddo
     enddo
@@ -335,18 +356,39 @@
     do j_tile=1,tile_subgrid_dim(y_dim_index)
     do i_tile=1,tile_subgrid_dim(x_dim_index)
         if (num_tile_classes(tile_class_subgrid(i_tile,j_tile)).gt.0) then
-            count=count+1
-            write(count_str,'(i8)') count
-            temp_name=trim(pathname_tiles)//trim(ADJUSTL(count_str))//'_'//trim(filename_tiles)
-            open(unit_tile,file=temp_name,access='sequential',status='unknown')
-            write(unit_tile,'(a,i)') 'tile_tag=',count
-	        write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
-	        write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
-	        write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.
-	        write(unit_tile,'(a,f12.2)') 'subgrid_min(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(y_dim_index)/2.
-	        write(unit_tile,'(a,f12.2)') 'subgrid_max(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(x_dim_index)/2.
-	        write(unit_tile,'(a,f12.2)') 'subgrid_max(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(y_dim_index)/2.
-            close(unit_tile)
+            if (tile_class_subgrid(i_tile,j_tile).lt.5) then
+                count=count+1
+                write(count_str,'(i8)') count
+                temp_name=trim(pathname_tiles)//trim(ADJUSTL(count_str))//'_'//trim(filename_tiles)
+                open(unit_tile,file=temp_name,access='sequential',status='unknown')
+                write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
+	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
+	            write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_min(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(y_dim_index)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_max(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(x_dim_index)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_max(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(y_dim_index)/2.
+                close(unit_tile)
+            else
+                !Divide into 4 lesser grids
+                do j=0,1
+                do i=0,1
+                    count=count+1
+                    write(count_str,'(i8)') count
+                    temp_name=trim(pathname_tiles)//trim(ADJUSTL(count_str))//'_'//trim(filename_tiles)
+                    open(unit_tile,file=temp_name,access='sequential',status='unknown')
+                    write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+	                write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
+	                write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
+	                write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.+tile_subgrid_delta(x_dim_index)/2.*i
+	                write(unit_tile,'(a,f12.2)') 'subgrid_min(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(y_dim_index)/2.+tile_subgrid_delta(y_dim_index)/2.*j
+	                write(unit_tile,'(a,f12.2)') 'subgrid_max(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(x_dim_index)/2.+tile_subgrid_delta(x_dim_index)/2.*(i-1.)
+	                write(unit_tile,'(a,f12.2)') 'subgrid_max(y_dim_index)=',y_tile_subgrid(i_tile,j_tile)+tile_subgrid_delta(y_dim_index)/2.+tile_subgrid_delta(y_dim_index)/2.*(j-1.)                   
+                    close(unit_tile)
+                enddo
+                enddo
+            endif
+
         endif
     enddo
     enddo

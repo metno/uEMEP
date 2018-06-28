@@ -32,40 +32,41 @@
         var_name_nc(conc_nc_index,nh3_nc_index,allsource_nc_index)='nh3'
         var_name_nc(conc_nc_index,pm25_nc_index,allsource_nc_index)='pm25'
         var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)='pm10'
+        var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)='pmco'
         
         !Local fractions
         var_name_nc(frac_nc_index,nox_nc_index,traffic_nc_index)='nox_sec07_local_fraction'
-        var_name_nc(frac_nc_index,pm10_nc_index,traffic_nc_index)='pm10_sec07_local_fraction'
+        var_name_nc(frac_nc_index,pmco_nc_index,traffic_nc_index)='pmco_sec07_local_fraction'
         var_name_nc(frac_nc_index,pm25_nc_index,traffic_nc_index)='pm25_sec07_local_fraction'
  
         var_name_nc(frac_nc_index,nox_nc_index,shipping_nc_index)='nox_sec08_local_fraction'
         var_name_nc(frac_nc_index,pm25_nc_index,shipping_nc_index)='pm25_sec08_local_fraction'
-        var_name_nc(frac_nc_index,pm10_nc_index,shipping_nc_index)='pm10_sec08_local_fraction'
+        var_name_nc(frac_nc_index,pmco_nc_index,shipping_nc_index)='pmco_sec08_local_fraction'
 
         var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)='nh3_sec10_local_fraction'
 
         var_name_nc(frac_nc_index,nox_nc_index,heating_nc_index)='nox_sec02_local_fraction'
         var_name_nc(frac_nc_index,pm25_nc_index,heating_nc_index)='pm25_sec02_local_fraction'
-        var_name_nc(frac_nc_index,pm10_nc_index,heating_nc_index)='pm10_sec02_local_fraction'
+        var_name_nc(frac_nc_index,pmco_nc_index,heating_nc_index)='pmco_sec02_local_fraction'
 
         !Total emissions
         var_name_nc(emis_nc_index,nh3_nc_index,allsource_nc_index)='Emis_mgm2_nh3'
         var_name_nc(emis_nc_index,nox_nc_index,allsource_nc_index)='Emis_mgm2_nox'
-        var_name_nc(emis_nc_index,pm10_nc_index,allsource_nc_index)='Emis_mgm2_pm10'
+        var_name_nc(emis_nc_index,pmco_nc_index,allsource_nc_index)='Emis_mgm2_pmco'
         var_name_nc(emis_nc_index,pm25_nc_index,allsource_nc_index)='Emis_mgm2_pm25'
         
         !Sector emissions
         var_name_nc(emis_nc_index,nox_nc_index,traffic_nc_index)='Emis_mgm2_sec7nox'
         var_name_nc(emis_nc_index,pm25_nc_index,traffic_nc_index)='Emis_mgm2_sec7pm25'
-        var_name_nc(emis_nc_index,pm10_nc_index,traffic_nc_index)='Emis_mgm2_sec7pm10'
+        var_name_nc(emis_nc_index,pmco_nc_index,traffic_nc_index)='Emis_mgm2_sec7pmco'
 
         var_name_nc(emis_nc_index,nox_nc_index,shipping_nc_index)='Emis_mgm2_sec8nox'
         var_name_nc(emis_nc_index,pm25_nc_index,shipping_nc_index)='Emis_mgm2_sec8pm25'
-        var_name_nc(emis_nc_index,pm10_nc_index,shipping_nc_index)='Emis_mgm2_sec8pm10'
+        var_name_nc(emis_nc_index,pmco_nc_index,shipping_nc_index)='Emis_mgm2_sec8pmco'
         
         var_name_nc(emis_nc_index,nox_nc_index,heating_nc_index)='Emis_mgm2_sec2nox'
         var_name_nc(emis_nc_index,pm25_nc_index,heating_nc_index)='Emis_mgm2_sec2pm25'
-        var_name_nc(emis_nc_index,pm10_nc_index,heating_nc_index)='Emis_mgm2_sec2pm10'
+        var_name_nc(emis_nc_index,pmco_nc_index,heating_nc_index)='Emis_mgm2_sec2pmco'
               
         !Meteorology
         var_name_nc(ugrid_nc_index,:,allsource_nc_index)='u_wind'
@@ -120,8 +121,9 @@
         comp_name_nc(no2_nc_index)='D3_ug_NO2'
         comp_name_nc(nox_nc_index)='D3_ugN_NOX'
         comp_name_nc(nh3_nc_index)='D3_ug_NH3'
-        comp_name_nc(pm25_nc_index)='pm25'
-        comp_name_nc(pm10_nc_index)='pm10'
+        !comp_name_nc(pm25_nc_index)='pm25'
+        comp_name_nc(pmco_nc_index)='D3_ug_PMCO'
+        comp_name_nc(pm10_nc_index)='D3_ug_PM10'
         comp_name_nc(pm25_nc_index)='D3_ug_PMFINE'
         !comp_name_nc(pm25_nc_index)='SURF_ug_PM25_rh50'
 
@@ -229,8 +231,8 @@
 
     emission_factor(nh3_index,agriculture_index,:)=1. !Agriculture data is in emissions [kg/yr]
 
-    ratio_truck_car_emission(nox_index)=4.86/.318 !From excel sheet for NOx
-    ratio_truck_car_emission(no2_index)=4.86/.318 !Should perhaps be different
+    ratio_truck_car_emission(nox_index)=12.5 !4.86/.318 !From excel sheet for NOx. 12.5 matches the values used in NORTRIP
+    ratio_truck_car_emission(no2_index)=12.5 !4.86/.318 !Should perhaps be different but 
     ratio_truck_car_emission(pm25_index)=10.
     ratio_truck_car_emission(pm10_index)=10.
    

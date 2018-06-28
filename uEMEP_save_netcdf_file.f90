@@ -6,7 +6,7 @@
 
     implicit none
     
-    integer i,j,k
+    integer i,j,k,t
     integer i_comp,i_file,i_meteo
     character(256) temp_name,unit_str,title_str,title_str_rec,var_name_temp, temp_date_str,station_name_str,temp_name_rec
     logical create_file,create_file_rec
@@ -14,11 +14,15 @@
     integer :: EMEP_subsource=1
     real :: valid_min=0.
     real, allocatable :: temp_subgrid(:,:,:)
+    real, allocatable :: aqi_subgrid(:,:,:)
     integer ii,jj
     logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.true.,save_other_meteo=.true.
     logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
+    logical :: save_aqi=.true.
+    real aqi_limits(5),max_aqi
     
     if (.not.allocated(temp_subgrid)) allocate(temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
+    if (.not.allocated(aqi_subgrid).and.save_aqi) allocate(aqi_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
     
     !Save subgrid calculations
     valid_min=0.   
@@ -295,6 +299,47 @@
     enddo
     endif
     
+    !Save AQI
+    if (save_aqi) then
+        !Temporary creation of AQI for testing
+        aqi_limits(1)=0.;aqi_limits(2)=100.;aqi_limits(3)=200.;aqi_limits(4)=400.;aqi_limits(5)=800.
+        aqi_subgrid=5.
+        max_aqi=0.
+        do t=1,subgrid_dim(t_dim_index)
+        do j=1,subgrid_dim(y_dim_index)
+        do i=1,subgrid_dim(x_dim_index)
+            do k=1,4
+                if (comp_subgrid(i,j,t,no2_index).ge.aqi_limits(k).and.comp_subgrid(i,j,t,no2_index).lt.aqi_limits(k+1)) then
+                    aqi_subgrid(i,j,t)=k+(comp_subgrid(i,j,t,no2_index)-aqi_limits(k))/(aqi_limits(k+1)-aqi_limits(k))
+                endif
+            enddo
+            aqi_subgrid(i,j,t)=min(aqi_subgrid(i,j,t),4.99)
+            if (aqi_subgrid(i,j,t).gt.max_aqi) max_aqi=aqi_subgrid(i,j,t)
+            !write(*,*)  aqi_subgrid(i,j,t),comp_subgrid(i,j,t,no2_index),comp_subgrid(i,j,t,nox_index)
+        enddo
+        enddo
+        enddo
+        write(unit_logfile,*)  'MAX AQI: ',max_aqi
+       
+        var_name_temp='AQI'
+        unit_str='1'
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,aqi_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,aqi_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
+        endif
+    endif
+
     !Save weighted travel time
     if (save_for_chemistry) then
         var_name_temp='Weighted_travel_time'

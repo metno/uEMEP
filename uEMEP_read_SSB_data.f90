@@ -198,8 +198,7 @@
                 x_ssb=ssb_id/10000000-f_easting+ssb_dx/2.
                 y_ssb=mod(ssb_id,10000000)+ssb_dy/2.
             endif
-            
-            !write(*,*) x_ssb,y_ssb
+
             !Convert lat lon to utm coords
             !call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
         
@@ -213,7 +212,8 @@
                 if (i_ssb_index.ge.1.and.i_ssb_index.le.emission_subgrid_dim(x_dim_index,source_index) &
                     .and.j_ssb_index.ge.1.and.j_ssb_index.le.emission_subgrid_dim(y_dim_index,source_index)) then
 
-        
+                    !write(*,*) x_ssb,y_ssb,emission_subgrid_delta(x_dim_index,source_index),i_ssb_index,j_ssb_index
+
                     !Reduce the number of dwellings when they are in a multiple dwelling by factor of 3. i.e. the proxy is reduced in blocks with the assumption that only 1 in 3 use their wood heater
                     heating_proxy=dwe_todw
                     heating_proxy=max(0.,dwe_todw-dwe_mult)+dwe_mult/5.

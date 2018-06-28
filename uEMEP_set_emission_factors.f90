@@ -55,6 +55,8 @@
     !Set all emissions to the same constant emission value with emissions in ug/sec for all sources
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
+        !Do not calculate for traffic if use_NORTRIP_emission_data=.true. This is done in uEMEP_grid_roads
+        if (i_source.ne.traffic_index.or.(i_source.eq.traffic_index.and..not.use_NORTRIP_emission_data)) then
         do i_subsource=1,n_subsource(i_source)
             do tt=1,subgrid_dim(t_dim_index)
 
@@ -64,6 +66,7 @@
 
             enddo
         enddo
+        endif
     endif
     enddo
     

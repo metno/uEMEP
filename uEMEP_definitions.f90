@@ -27,6 +27,7 @@
     
     integer :: unit_logfile=0
     integer :: n_roadlinks=0
+    integer :: n_roadlinks_major=0
     integer :: utm_zone=33
     real :: utm_lon0=15.
     integer :: EMEP_grid_interpolation_flag=0
@@ -81,10 +82,10 @@
     
     integer compound_index,compound_frac_index
 
-    integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index
-    parameter (no2_nc_index=1,nox_nc_index=2,pm25_nc_index=3,pm10_nc_index=4,nh3_nc_index=5,o3_nc_index=6)
+    integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index,pmco_nc_index
+    parameter (no2_nc_index=1,nox_nc_index=2,pm25_nc_index=3,pm10_nc_index=4,nh3_nc_index=5,o3_nc_index=6,pmco_nc_index=7)
     integer n_compound_nc_index
-    parameter (n_compound_nc_index=6)
+    parameter (n_compound_nc_index=7)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
     integer allsource_nc_index,traffic_nc_index,shipping_nc_index,heating_nc_index,agriculture_nc_index,industry_nc_index
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
@@ -132,6 +133,8 @@
     !Declare road link data arrays
     real, allocatable :: inputdata_rl(:,:)
     integer, allocatable :: inputdata_int_rl(:,:)
+    real, allocatable :: inputdata_rl_emissions(:,:,:)
+    logical :: use_NORTRIP_emission_data=.false.
     
     !Road link (rl) indexes
     integer x1_rl_index,x2_rl_index,y1_rl_index,y2_rl_index,x0_rl_index,y0_rl_index
@@ -146,9 +149,9 @@
     parameter(num_var_rl=18)
 
     integer id_rl_index,roadtype_rl_index,nlanes_rl_index
-    parameter (id_rl_index=1,roadtype_rl_index=2,nlanes_rl_index=3)
+    parameter (id_rl_index=1,roadtype_rl_index=2,nlanes_rl_index=3,major_index_rl_index=4)
     integer num_int_rl
-    parameter(num_int_rl=3)
+    parameter(num_int_rl=4)
 
     !Declare file and path names for input roadlink files
     character(256) filename_rl(2)
@@ -270,13 +273,13 @@
     parameter (n_meteo_subgrid_index=14)
 
     !Declare compund indexes
-    integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,no_index,traveltime_index
-    parameter (no2_index=1,nox_index=2,pm25_index=3,pm10_index=4,nh3_index=5,o3_index=6,no_index=7,traveltime_index=8)
+    integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,pmco_index,no_index,traveltime_index
+    parameter (no2_index=1,nox_index=2,pm25_index=3,pm10_index=4,nh3_index=5,o3_index=6,pmco_index=7,no_index=8,traveltime_index=9)
     !Declare source indexes (type_source)
     integer allsource_index,traffic_index,shipping_index,heating_index,agriculture_index,industry_index
     parameter (allsource_index=1,traffic_index=2,shipping_index=3,heating_index=4,agriculture_index=5,industry_index=6)
     integer n_compound_index,n_source_index
-    parameter (n_compound_index=8,n_source_index=6)
+    parameter (n_compound_index=9,n_source_index=6)
     integer compound_source_index(n_compound_index,n_source_index)
     
     character(256) source_file_postfix(n_source_index)

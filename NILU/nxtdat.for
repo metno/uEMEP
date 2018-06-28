@@ -26,7 +26,8 @@ C Read lines from file
 
   100 CONTINUE
       READ (UN,1000,END=999) TXTSTR
-      IF (TXTSTR(1:1) .EQ. '*'.OR.TXTSTR(1:1) .EQ. '{') GOTO 100
+      IF (TXTSTR(1:1).EQ.'*'.OR.TXTSTR(1:1).EQ.'{') GOTO 100
+      IF (TXTSTR(1:1).EQ.'#') GOTO 100
       BACKSPACE(UN)
 
       RETURN

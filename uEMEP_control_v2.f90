@@ -122,7 +122,11 @@
                     !Do this only for the first receptor grid loop
                     if (first_g_loop) then
                         call uEMEP_read_roadlink_data_ascii
-                    endif       
+                        !Read in the emission data for traffic in the first g_loop if required
+                        if (use_NORTRIP_emission_data) then
+                            call uEMEP_read_roadlink_emission_data
+                        endif       
+                    endif
                     !Sub-grid traffic data for every receptor grid loop   
                     call uEMEP_grid_roads
                 endif
@@ -217,18 +221,13 @@
                 call uEMEP_calculate_exposure
             endif
     
-            if (t_loop.eq.end_time_loop_index.and.g_loop.eq.end_grid_loop_index) then
-                call CPU_TIME(end_time_cpu)
-                write(*,*) ''
-                write(*,'(a,i3,a,i2)') 'CPU time taken until saving (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
-            endif
+            !if (t_loop.eq.end_time_loop_index.and.g_loop.eq.end_grid_loop_index) then
+            !    call CPU_TIME(end_time_cpu)
+            !    write(*,*) ''
+            !    write(*,'(a,i3,a,i2)') 'CPU time taken until saving (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
+            !endif
             
             if (save_netcdf_file_flag.or.save_netcdf_receptor_flag) then
-                !Save results as receptor values
-                !write(unit_logfile,'(a)')' Interpolating to receptor point '
-                !temp_val=area_weighted_interpolation_function(x_subgrid,y_subgrid,comp_subgrid(:,:,t_loop,no2_nc_index),subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_delta,x_receptor(g_loop),y_receptor(g_loop))
-            !else
-                !Save results to netcdf file
                 call uEMEP_save_netcdf_control
             endif
             

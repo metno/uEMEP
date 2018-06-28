@@ -21,7 +21,7 @@
     if (allocated(crossreference_emission_to_integral_subgrid)) deallocate (crossreference_emission_to_integral_subgrid)
     if (allocated(crossreference_target_to_population_subgrid)) deallocate (crossreference_target_to_population_subgrid)
     if (use_alternative_meteorology_flag) then
-            if (allocated(crossreference_integral_to_meteo_nc_subgrid)) deallocate (crossreference_integral_to_meteo_nc_subgrid)
+        if (allocated(crossreference_integral_to_meteo_nc_subgrid)) deallocate (crossreference_integral_to_meteo_nc_subgrid)
     endif
     
     allocate (crossreference_target_to_emep_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2))

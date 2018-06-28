@@ -107,8 +107,9 @@
     do t=1,dim_length_nc(time_dim_nc_index)
         !EMEP date is days since 1900
         !write(*,*) val_dim_nc(t,time_dim_nc_index)
-        !Round up the hour
-        date_num_temp=dble(ceiling(val_dim_nc(t,time_dim_nc_index)*24.))/24.
+        !Round up the hour. Not here, is done earlier now
+        !date_num_temp=dble(ceiling(val_dim_nc(t,time_dim_nc_index)*24.))/24.
+        date_num_temp=val_dim_nc(t,time_dim_nc_index)
         !write(*,*) real(ceiling(val_dim_nc(t,time_dim_nc_index)*24.)),date_num_temp
         
         call number_to_date(date_num_temp,date_array,ref_year_EMEP)
@@ -116,8 +117,9 @@
         if (t.eq.dim_length_nc(time_dim_nc_index)) write(unit_logfile,'(a,6i6)') 'Date array end = ',date_array
         week_day_temp= day_of_week(date_array)
         !write(unit_logfile,*) 'Day of week = ',week_day_temp
+        !write(*,*) t,date_array
         
-        hour_of_week_index=(week_day_temp-1)*24+date_array(4)+1+int(emission_timeprofile_hour_shift)
+        hour_of_week_index=(week_day_temp-1)*24+date_array(4)+int(emission_timeprofile_hour_shift)
         if (hour_of_week_index.gt.n_hours_in_week) hour_of_week_index=hour_of_week_index-n_hours_in_week
         if (hour_of_week_index.lt.1) hour_of_week_index=hour_of_week_index+n_hours_in_week
         emission_time_profile_subgrid(:,:,t,:,:)=1.

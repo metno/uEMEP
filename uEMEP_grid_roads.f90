@@ -22,6 +22,11 @@
     integer i_start,i_end,j_start,j_end
     integer source_index,subsource_index,t
     
+    integer i_roadlink_emission_compound
+    integer tt
+    integer major_ro
+    integer t_start_temp,t_end_temp
+    
     !functions
     real line_fraction_in_grid_func
     real sigma0_traffic_func
@@ -78,6 +83,24 @@
     !Calculate the pseudo traffic emissions in each grid
     write(unit_logfile,*)'Gridding traffic emission proxy data'
     
+    !Convert from uEMEP to NORTRIP
+    if (use_NORTRIP_emission_data) then
+        if (compound_index.eq.nox_index) i_roadlink_emission_compound=4
+        if (compound_index.eq.pm10_index) i_roadlink_emission_compound=1
+        if (compound_index.eq.pm25_index) i_roadlink_emission_compound=2
+        !if (compound_index.eq.ep_index) i_roadlink_emission_compound=3
+        emission_subgrid(:,:,:,traffic_index,:)=0.
+        !Set the time to be used based on the time loop flag
+        if (use_single_time_loop_flag) then
+            t_start_temp=t_loop
+            t_end_temp=t_loop
+        else
+            t_start_temp=1
+            t_end_temp=subgrid_dim(t_dim_index)
+        endif
+        
+    endif
+    
     do ro=1,n_roadlinks
 
         x_line_in=inputdata_rl(ro,x1_rl_index:x2_rl_index)
@@ -113,6 +136,18 @@
                     proxy_emission_subgrid(i,j,source_index,subsource_index)=proxy_emission_subgrid(i,j,source_index,subsource_index) &
                         +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro)
                     
+                    !Put the temporally changing emissions straight into the emission subgrid
+                    !Will not be overwritten in uEMEP_convert_proxy_to_emissions if use_NORTRIP_emission_data=true
+                    if (use_NORTRIP_emission_data) then
+                        major_ro=inputdata_int_rl(ro,major_index_rl_index)
+                        do tt=t_start_temp,t_end_temp
+                            !Convert from g/km/hour to ug/s/subgrid
+                            emission_subgrid(i,j,tt,source_index,subsource_index)=emission_subgrid(i,j,tt,source_index,subsource_index)+ &
+                               +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*inputdata_rl_emissions(major_ro,tt,i_roadlink_emission_compound) &
+                                *1.e6/1.e3/3600.
+                        enddo
+                    endif
+
                     !Set the sigma values according to traffic speed and road width using proxy weighting
                     if (use_traffic_for_sigma0_flag) then
                         emission_properties_subgrid(i,j,emission_sigy00_index,source_index,subsource_index)=emission_properties_subgrid(i,j,emission_sigy00_index,source_index,subsource_index) &
