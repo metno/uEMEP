@@ -417,7 +417,6 @@
 
     do i=1,3
         call date_to_datestr_bracket(a,pathname_output_grid,pathname_output_grid)
-        !write(*,*) trim(pathname_output_grid)
     enddo
     write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_output_grid)
     

@@ -240,7 +240,8 @@
     write(unit_logfile,*) 'Number of road links with 0 length: ',rl_length_short,'  Setting to 1 m' 
     write(unit_logfile,*) 'Max road link x and y: ',maxval(inputdata_rl(:,x0_rl_index)),maxval(inputdata_rl(:,y0_rl_index))
     write(unit_logfile,*) 'Min road link x and y: ',minval(inputdata_rl(:,x0_rl_index)),minval(inputdata_rl(:,y0_rl_index))
-        
+    
+    if (n_roadlinks.gt.0) then
     write(unit_logfile,'(a14,12a10)') ' LINK ','ID','X1','X2','Y1','Y2','WIDTH','LENGTH','ADT','LON','LAT','N_LANES','TYPE'
     i=1
     write(unit_logfile,'(a14,i10,7f10.1,2f10.4,2i10)') ' First link = ',inputdata_int_rl(i,id_rl_index),inputdata_rl(i,x1_rl_index),inputdata_rl(i,x2_rl_index) &
@@ -254,6 +255,9 @@
         ,inputdata_rl(i,length_rl_index),inputdata_rl(i,adt_rl_index) &
         ,inputdata_rl(i,lon0_rl_index),inputdata_rl(i,lat0_rl_index) &
         ,inputdata_int_rl(i,nlanes_rl_index),inputdata_int_rl(i,roadtype_rl_index)
+    else
+        write(unit_logfile,'(a)') 'No road links available in this region'
+    endif
     
     return
 20  write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
