@@ -17,7 +17,9 @@
     integer counter
     real size_major(3)
     integer n_loop,loop_step
-
+    real x_grid_min,x_grid_max,y_grid_min,y_grid_max
+    integer counter_major,counter_sub
+    
     real, allocatable :: inputdata_rl_temp(:,:)
     integer, allocatable :: inputdata_int_rl_temp(:,:)
     
@@ -45,6 +47,64 @@
         stop
     endif
 
+   !Open the file for reading to test the available links in the region
+    if (reduce_roadlink_region_flag) then
+        unit_in=20
+        open(unit_in,file=pathfilename_rl(1),access='sequential',status='old',readonly)  
+        write(unit_logfile,'(a)') ' Opening road link file(ascii) '//trim(pathfilename_rl(1))
+    
+        rewind(unit_in)
+        call NXTDAT(unit_in,nxtdat_flag)
+        !read the header to find out how many links there are
+        !read(unit_in,'(a)',ERR=20) temp_str
+        read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
+        write(unit_logfile,'(a,i)') ' Number of major road links= ', n_roadlinks_major
+        write(unit_logfile,'(a,i)') ' Number of sub road links= ', n_roadlinks
+             
+        !Allocate the arrays after reading in the number of roads
+        !allocate (inputdata_rl_temp(n_roadlinks,num_var_rl))
+        !allocate (inputdata_int_rl_temp(n_roadlinks,num_int_rl))
+        allocate (valid_link_flag(n_roadlinks_major))
+    
+        valid_link_flag=.false.
+   
+        !Initialise
+        !inputdata_rl_temp=0.
+        !inputdata_int_rl_temp=0
+
+        counter_major=0
+        counter_sub=0
+        !Read the data to find roads in the tile
+        x_grid_min=emission_subgrid_min(x_dim_index,traffic_index)
+        x_grid_max=emission_subgrid_min(x_dim_index,traffic_index)+(emission_subgrid_dim(x_dim_index,traffic_index)+1)*emission_subgrid_delta(x_dim_index,traffic_index)
+        y_grid_min=emission_subgrid_min(y_dim_index,traffic_index)
+        y_grid_max=emission_subgrid_min(y_dim_index,traffic_index)+(emission_subgrid_dim(y_dim_index,traffic_index)+1)*emission_subgrid_delta(y_dim_index,traffic_index)
+    
+        do i=1,n_roadlinks_major
+            !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
+            read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+            !read(unit_in,*,ERR=20) !temp_id
+            !write(*,*) temp_id,temp_adt,n_subnodes
+            read(unit_in,*) sub_nodes_x(1)
+            read(unit_in,*) sub_nodes_y(1)
+    
+            !Test position within emission region
+            if (sub_nodes_x(1).ge.x_grid_min.and.sub_nodes_x(1).le.x_grid_max &
+                .and.sub_nodes_y(1).ge.y_grid_min.and.sub_nodes_y(1).le.y_grid_max) then
+                counter_major=counter_major+1
+                counter_sub=counter_sub+n_subnodes-1
+                valid_link_flag(i)=.true.
+            endif
+            
+        enddo
+        close(unit_in,status='keep')
+           
+        write(unit_logfile,'(a,i,i)') ' Number of major and sub road links within the region = ', counter_major,counter_sub
+    else
+        allocate (valid_link_flag(n_roadlinks_major))
+        valid_link_flag=.true.
+    endif
+
     !Open the file for reading
     unit_in=20
     open(unit_in,file=pathfilename_rl(1),access='sequential',status='old',readonly)  
@@ -59,16 +119,28 @@
     write(unit_logfile,'(a,i)') ' Number of sub road links= ', n_roadlinks
              
     !Allocate the arrays after reading in the number of roads
+    if (reduce_roadlink_region_flag) then
+        n_roadlinks=counter_sub
+        n_roadlinks_major_selected=counter_major
+    endif
     allocate (inputdata_rl_temp(n_roadlinks,num_var_rl))
     allocate (inputdata_int_rl_temp(n_roadlinks,num_int_rl))
     
     !Initialise
     inputdata_rl_temp=0.
     inputdata_int_rl_temp=0
-
+    
     counter=0
+    counter_major=0
+
     !Read the data
     do i=1,n_roadlinks_major
+    if (.not.valid_link_flag(i)) then
+        read(unit_in,*,ERR=20) 
+        !write(*,*) temp_id,temp_adt,n_subnodes
+        read(unit_in,*) 
+        read(unit_in,*) 
+    else
         !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
         read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
         !write(*,*) temp_id,temp_adt,n_subnodes
@@ -90,10 +162,12 @@
             !write(*,*) size_major(3)
         endif
         
+        counter_major=counter_major+1
+
         if (temp_adt.ge.min_adt) then
         do j=1,n_loop
             counter=counter+1          
-            inputdata_int_rl_temp(counter,major_index_rl_index)=i
+            inputdata_int_rl_temp(counter,major_index_rl_index)=counter_major
             inputdata_int_rl_temp(counter,id_rl_index)=temp_id
             inputdata_rl_temp(counter,adt_rl_index)=temp_adt
             inputdata_rl_temp(counter,hdv_rl_index)=temp_hdv
@@ -108,7 +182,8 @@
             !write(*,*) inputdata_int_rl(counter,id_rl_index),inputdata_rl(counter,x1_rl_index),inputdata_rl(counter,y2_rl_index)
         enddo
         endif
-        
+    
+    endif    
     enddo
     n_roadlinks=counter
     write(unit_logfile,'(a,i)') ' Number of road links used = ', n_roadlinks
@@ -215,11 +290,12 @@
     integer n_roadlink_emission_compound
     character(16) n_roadlink_emission_compound_str(10)
     character(256) n_roadlink_emission_unit_str
-    character(16) n_roadlink_emission_date_str
+    character(256) n_roadlink_emission_date_str
     integer n_roadlink_emission,n_roadlink_emission_time
     integer time_index_temp,t_match_index,t
     integer date_array_temp(6)
-    
+    integer n_roadlink_emission_selected
+    character(256) format_temp
     
     write(unit_logfile,'(A)') ''
 	write(unit_logfile,'(A)') '================================================================'
@@ -263,40 +339,49 @@
     write(unit_logfile,'(a,i)') ' Number of time steps= ', n_roadlink_emission_time
 
     if (n_roadlink_emission.ne.n_roadlinks_major) then
-        write(unit_logfile,'(A,2i12)') 'ERROR: Number of emission road links is not the same as the statis road links: ',n_roadlink_emission,n_roadlinks_major
+        write(unit_logfile,'(A,2i12)') 'ERROR: Number of emission road links is not the same as the static road links: ',n_roadlink_emission,n_roadlinks_major
         stop
     endif
     
     !Check that start time and end time are covered in the emission data before progessing further
-    call datestr_to_date(trim(n_roadlink_emission_date_str),'yyyymmddHH',emission_date_array)
-        if (use_single_time_loop_flag) then
-            time_index_temp=end_time_loop_index
-        else
-            time_index_temp=subgrid_dim(t_dim_index)
-        endif
-    t_match_index=0
-    do t=1,time_index_temp
-        call number_to_date(val_dim_nc(t,time_dim_nc_index),date_array_temp,ref_year_EMEP)
-        if (date_array_temp(1).eq.emission_date_array(1).and.date_array_temp(2).eq.emission_date_array(2).and. &
-            date_array_temp(3).eq.emission_date_array(3).and.date_array_temp(4).eq.emission_date_array(4)) then
-            t_match_index=t
-        endif
-    enddo
-    if (t_match_index.eq.0) then
-        write(unit_logfile,'(A,6i6)') 'ERROR: No starting date found in road emission data: ',emission_date_array
-        stop
+    !DOES NOT WORK WITH SINGLE TIME LOOP. FIX!!!
+    format_temp='yyyymmddHH'
+    call datestr_to_date(n_roadlink_emission_date_str,format_temp,emission_date_array)
+    if (use_single_time_loop_flag) then
+        !Does not check for t_match but assumes it is 1
+        time_index_temp=end_time_loop_index
+        t_match_index=1
     else
-        write(unit_logfile,'(A,6i6)') ' Road link emission starting date found. Index: ',t_match_index
+        time_index_temp=subgrid_dim(t_dim_index)
+        t_match_index=0
+        !write(*,*) shape(val_dim_nc)
+        do t=1,time_index_temp
+            call number_to_date(val_dim_nc(t,time_dim_nc_index),date_array_temp,ref_year_EMEP)
+            if (date_array_temp(1).eq.emission_date_array(1).and.date_array_temp(2).eq.emission_date_array(2).and. &
+                date_array_temp(3).eq.emission_date_array(3).and.date_array_temp(4).eq.emission_date_array(4)) then
+                t_match_index=t
+            endif
+        enddo
+        if (t_match_index.eq.0) then
+            write(unit_logfile,'(A,6i6)') 'ERROR: No starting date found in road emission data: ',emission_date_array
+            stop
+        else
+            write(unit_logfile,'(A,6i6)') ' Road link emission starting date found. Index: ',t_match_index
+        endif
+        if (n_roadlink_emission_time-t_match_index+1.lt.time_index_temp) then
+            write(unit_logfile,'(A,2i6)') 'ERROR: Not enough time data in road link emission files: ',n_roadlink_emission_time-t_match_index+1,time_index_temp
+            stop
+        endif 
     endif
-    if (n_roadlink_emission_time-t_match_index+1.lt.time_index_temp) then
-        write(unit_logfile,'(A,2i6)') 'ERROR: Not enough time data in road link emission files: ',n_roadlink_emission_time-t_match_index+1,time_index_temp
-        stop
-    endif 
     
     !Allocate the arrays after reading in the number of roads
-    allocate (inputdata_rl_emissions(n_roadlink_emission,n_roadlink_emission_time,n_roadlink_emission_compound))
+    n_roadlink_emission_selected=n_roadlink_emission
+    if (reduce_roadlink_region_flag) then
+        n_roadlink_emission_selected=n_roadlinks_major_selected
+    endif
+    allocate (inputdata_rl_emissions(n_roadlink_emission_selected,n_roadlink_emission_time,n_roadlink_emission_compound))
     allocate (inputdata_rl_temp(n_roadlink_emission_time))
-    allocate (inputdata_int_rl_id(n_roadlink_emission))
+    allocate (inputdata_int_rl_id(n_roadlink_emission_selected))
     
     !Initialise
     inputdata_rl_temp=0.
@@ -305,14 +390,24 @@
     !Read the data
     call NXTDAT(unit_in,nxtdat_flag)
     do i=1,n_roadlink_emission
-        read(unit_in,*,ERR=20) inputdata_int_rl_id(i)
-        !write(*,*) i,inputdata_int_rl_id(i)
-        do j=1,n_roadlink_emission_compound
-            read(unit_in,*) inputdata_rl_temp(1:n_roadlink_emission_time)
-            inputdata_rl_emissions(i,1:time_index_temp,j)=inputdata_rl_temp(t_match_index:t_match_index+time_index_temp-1)
-        enddo
+        if (valid_link_flag(i)) then
+            counter=counter+1
+            read(unit_in,*,ERR=20) inputdata_int_rl_id(counter)
+            !write(*,*) i,inputdata_int_rl_id(i)
+            do j=1,n_roadlink_emission_compound
+                read(unit_in,*) inputdata_rl_temp(1:n_roadlink_emission_time)
+                inputdata_rl_emissions(counter,1:time_index_temp,j)=inputdata_rl_temp(t_match_index:t_match_index+time_index_temp-1)
+            enddo
+        else
+            read(unit_in,*,ERR=20) 
+            do j=1,n_roadlink_emission_compound
+                read(unit_in,*) 
+            enddo           
+        endif
+        
     enddo
-    !write(unit_logfile,'(a,i)') ' Number of road links used = ', n_roadlinks
+    write(unit_logfile,'(a,i)') ' Number of road links that should be read = ', n_roadlink_emission_selected
+    write(unit_logfile,'(a,i)') ' Number of road links read = ', counter
  
     close(unit_in,status='keep')
 
@@ -324,6 +419,8 @@
         endif
     enddo
     
+    if (allocated(inputdata_rl_temp)) deallocate(inputdata_rl_temp)
+    if (allocated(inputdata_int_rl_id)) deallocate(inputdata_int_rl_id)
     
     return
 20  write(unit_logfile,'(2A)') 'ERROR reading road link emission file: ',trim(pathfilename_rl(2))

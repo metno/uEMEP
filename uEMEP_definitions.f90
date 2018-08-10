@@ -17,6 +17,7 @@
     
     logical :: use_single_time_loop_flag=.false.
     logical :: reduce_EMEP_region_flag=.false.
+    logical :: reduce_roadlink_region_flag=.true.
     
     !Nodata value
     real NODATA_value
@@ -28,6 +29,7 @@
     integer :: unit_logfile=0
     integer :: n_roadlinks=0
     integer :: n_roadlinks_major=0
+    integer :: n_roadlinks_major_selected=0
     integer :: utm_zone=33
     real :: utm_lon0=15.
     integer :: EMEP_grid_interpolation_flag=0
@@ -135,6 +137,7 @@
     integer, allocatable :: inputdata_int_rl(:,:)
     real, allocatable :: inputdata_rl_emissions(:,:,:)
     logical :: use_NORTRIP_emission_data=.false.
+    logical, allocatable :: valid_link_flag(:)
     
     !Road link (rl) indexes
     integer x1_rl_index,x2_rl_index,y1_rl_index,y2_rl_index,x0_rl_index,y0_rl_index
@@ -197,9 +200,10 @@
     character(256) pathfilename_agriculture(2)
 
     !Declare file and path names for SSB building and population files
-    character(256) filename_heating(2)
-    character(256) pathname_heating(2)
-    character(256) pathfilename_heating(2)
+    !Check this, should be limitted by n_population_index=8 but really not necessary
+    character(256) filename_heating(10)
+    character(256) pathname_heating(10)
+    character(256) pathfilename_heating(10)
     
     
     !integer traffic_emission_file_index,traffic_proxy_file_index,traffic_proxy_integral_file_index
@@ -322,7 +326,7 @@
     !Each source type has its own x and y and dim
     !Each source may be of lesser dimmensions than the total array size (which is the same as the target grid)
     integer n_possible_subsource
-    parameter (n_possible_subsource=2)
+    parameter (n_possible_subsource=3)
     integer :: n_subsource(n_source_index)=1 !Initialise the number of actual emission subsources to 1 for all subsources
     character(2) subsource_str(n_possible_subsource)
     
@@ -518,8 +522,8 @@
     integer valid_receptor_inverse_index(n_receptor_max)
     
     !Indicies for SSB building and population data
-    integer dwelling_index,population_index,establishment_index,school_index,home_index,n_population_index
-    parameter(dwelling_index=1,population_index=2,establishment_index=3,school_index=4,kindergaten_index=5,home_index=6,municipality_index=7,n_population_index=7)
+    integer dwelling_index,population_index,establishment_index,school_index,home_index,municipality_index,RWC_heating_index,n_population_index
+    parameter(dwelling_index=1,population_index=2,establishment_index=3,school_index=4,kindergaten_index=5,home_index=6,municipality_index=7,RWC_heating_index=8,n_population_index=8)
     integer population_file_index(n_population_index)
     
     character(256) filename_population(n_population_index),pathname_population(n_population_index),pathfilename_population(n_population_index)
@@ -563,6 +567,9 @@
     character(256) :: filename_tiles=''
     character(256) :: tile_tag=''
 
+    !Correction output time array converting days 1900 to seconds 2000
+    integer(4), allocatable :: time_seconds_output(:)
+    
     end module uEMEP_definitions
     
     

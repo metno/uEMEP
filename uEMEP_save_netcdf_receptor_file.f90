@@ -104,7 +104,8 @@
      
         !Define the dimmension variables
         call check(  nf90_def_var(ncid, "station_id", NF90_INT, station_dimid, station_varid) )
-        call check(  nf90_def_var(ncid, "time", NF90_DOUBLE, time_dimid, time_varid) )
+        !call check(  nf90_def_var(ncid, "time", NF90_DOUBLE, time_dimid, time_varid) )
+        call check(  nf90_def_var(ncid, "time", NF90_INT, time_dimid, time_varid) )
     
         !Define the values
         dimids2 = (/ station_dimid, time_dimid /)
@@ -236,7 +237,9 @@
         call check( nf90_inq_varid(ncid, "lat", lat_varid) )
       
         !Write time to the file
-        call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )
+
+        !call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )
+        call check( nf90_put_var(ncid, time_varid, time_seconds_output(1:dim_length_nc(time_dim_nc_index)), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )
         !call check( nf90_put_var(ncid, station_varid, name_rec(:), start = (/1,1/), count=(/n_dims(1),n_char/)) )
         
         !Write station index and name

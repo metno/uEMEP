@@ -13,7 +13,7 @@
     real subgrid_area_scaling
     real population_total
     real max_val
-    integer i_max,j_max
+    integer i_max,j_max,i_cross_max,j_cross_max
     real val_limit
     real pop_over_limit(subgrid_dim(t_dim_index))
     real grids_over_limit(subgrid_dim(t_dim_index))
@@ -41,10 +41,11 @@
     
     population_total=0
     
-    max_val=0.
+    max_val=-1.
     pop_over_limit=0.
     grids_over_limit=0.
     val_limit=40.
+    i_max=0;j_max=0
     
     do j=1,subgrid_dim(y_dim_index)
     do i=1,subgrid_dim(x_dim_index)
@@ -91,9 +92,12 @@
     enddo
     enddo
 
+    i_cross_max=crossreference_target_to_population_subgrid(i_max,j_max,x_dim_index)
+    j_cross_max=crossreference_target_to_population_subgrid(i_max,j_max,y_dim_index)
+
     write(unit_logfile,'(A)') 'Population weighted concentration and max time average concentration (with population) by source per period for '//trim(input_comp_name)
     weighted_concentration(allsource_index)=sum(exposure_subgrid(:,:,:,allsource_index))/population_total/subgrid_dim(t_dim_index)
-    write(unit_logfile,'(A24,2f12.2,2f12.0)') 'Total: ',weighted_concentration(allsource_index),max_val,population_total,population_subgrid(i_max,j_max,population_data_type)
+    write(unit_logfile,'(A24,2f12.2,2f12.0)') 'Total: ',weighted_concentration(allsource_index),max_val,population_total,population_subgrid(i_cross_max,j_cross_max,population_data_type)
     
     !Calculate population weighted values for each source
         do i_source=1,n_source_index

@@ -128,7 +128,7 @@
                         endif       
                     endif
                     !Sub-grid traffic data for every receptor grid loop   
-                    call uEMEP_grid_roads
+                    !call uEMEP_grid_roads
                 endif
  
                 !Read and subgrid shipping data
@@ -139,11 +139,12 @@
                     call uEMEP_read_shipping_asi_data
                 endif
 
-                !REad in proxy data fro home heating. Currently dwelling density
+                !Read in proxy data fro home heating. Currently dwelling density
                 if (calculate_source(heating_index)) then
                     !Read and subgrid SSB dwelling data
                     SSB_data_type=dwelling_index
                     call uEMEP_read_SSB_data
+                    !call uEMEP_read_RWC_heating_data
                 endif
 
                 !Read and subgrid agriculture data
@@ -172,15 +173,18 @@
 
             endif
     
+            !Read time profiles for emissions
+            call uEMEP_read_time_profiles
+
+            !Call grid_roads again to include the time variation from NORTRIP
+            call uEMEP_grid_roads
+
             !Interpolate meteo data to subgrid. Placed on the integral subgrid
             call uEMEP_subgrid_meteo_EMEP
         
             !Replaces proxy emissions with distributed EMEP emissions
             call uEMEP_subgrid_emission_EMEP  
-            
-            !Read time profiles for emissions
-            call uEMEP_read_time_profiles
-                
+               
             !Convert proxies to emissions including time profiles
             call uEMEP_convert_proxy_to_emissions
     

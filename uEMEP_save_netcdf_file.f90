@@ -759,7 +759,8 @@
         call check(  nf90_def_dim(ncid, "x", nx, x_dimid) )
      
         !Define the dimmension variables
-        call check(  nf90_def_var(ncid, "time", NF90_DOUBLE, time_dimid, time_varid) )
+        !call check(  nf90_def_var(ncid, "time", NF90_DOUBLE, time_dimid, time_varid) )
+        call check(  nf90_def_var(ncid, "time", NF90_INT, time_dimid, time_varid) )
         call check(  nf90_def_var(ncid, "y", NF90_REAL, y_dimid, y_varid) )
         call check(  nf90_def_var(ncid, "x", NF90_REAL, x_dimid, x_varid) )
     
@@ -784,8 +785,9 @@
   
         !Close the definitions
         call check( nf90_enddef(ncid) )
-
-        call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index)) )
+        
+        !call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index)) )
+        call check( nf90_put_var(ncid, time_varid, time_seconds_output(1:dim_length_nc(time_dim_nc_index))) )
         call check( nf90_put_var(ncid, y_varid, y_vector) )
         call check( nf90_put_var(ncid, x_varid, x_vector) )
         call check( nf90_put_var(ncid, lat_varid, lat_array) )
@@ -839,7 +841,7 @@
         !call check( nf90_inquire_dimension(ncid, time_dimid, temp_name, n_dims(3)) )
         !n_dims(3)=n_dims(3)+1
         n_dims(3)=t_loop
-        call check( nf90_put_var(ncid, time_varid, val_dim_nc(1,time_dim_nc_index), start = (/n_dims(3)/) ) )
+        call check( nf90_put_var(ncid, time_varid, time_seconds_output(1), start = (/n_dims(3)/) ) )
         !write(*,*) n_dims(3),val_dim_nc(1,time_dim_nc_index)
         !write(*,*) n_dims
         

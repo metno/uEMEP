@@ -23,6 +23,7 @@
     real, allocatable :: val_month_of_year_input(:,:),val_hour_of_week_input(:,:)
     integer date_array(6)
     integer i_source,t,hour_of_week_index
+    integer t_profile_loop
     
     !Functions
     integer day_of_week
@@ -103,8 +104,16 @@
     enddo
     
     !Get time information for the current calculation
+    !    if (use_single_time_loop_flag) then
+    !        t_profile_loop=end_time_loop_index
+    !    else
+    !        t_profile_loop=dim_length_nc(time_dim_nc_index)
+    !    endif
     
-    do t=1,dim_length_nc(time_dim_nc_index)
+    t_profile_loop=dim_length_nc(time_dim_nc_index)
+   
+    do t=1,t_profile_loop
+        !if (t.eq.t_loop) then
         !EMEP date is days since 1900
         !write(*,*) val_dim_nc(t,time_dim_nc_index)
         !Round up the hour. Not here, is done earlier now
@@ -114,7 +123,7 @@
         
         call number_to_date(date_num_temp,date_array,ref_year_EMEP)
         if (t.eq.1) write(unit_logfile,'(a,6i6)') 'Date array start = ',date_array
-        if (t.eq.dim_length_nc(time_dim_nc_index)) write(unit_logfile,'(a,6i6)') 'Date array end = ',date_array
+        if (t.eq.t_profile_loop) write(unit_logfile,'(a,6i6)') 'Date array end = ',date_array
         week_day_temp= day_of_week(date_array)
         !write(unit_logfile,*) 'Day of week = ',week_day_temp
         !write(*,*) t,date_array

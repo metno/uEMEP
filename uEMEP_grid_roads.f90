@@ -23,7 +23,7 @@
     integer source_index,subsource_index,t
     
     integer i_roadlink_emission_compound
-    integer tt
+    integer tt,ttt
     integer major_ro
     integer t_start_temp,t_end_temp
     
@@ -73,10 +73,14 @@
  !   if (use_traffic_for_minFF_flag) then
  !       emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)=0.
  !   endif
+    !write(*,*) n_roadlinks
+    !write(*,*) shape(inputdata_rl)
     
     !Possible to split the traffic source into different subsources at this point if necessary, e.g. light and heavy traffic
     !Here we weight the adt by the emission ratio and give an emission factor valid for cars
-    adt_car_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*(1.-inputdata_rl(1:n_roadlinks,hdv_rl_index)/100)
+    
+    !WRONG HERE!!! when called a second time
+    adt_car_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*(1.-inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.)
     adt_truck_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.
     adt_temp=adt_car_temp+adt_truck_temp*ratio_truck_car_emission(compound_index)
     
@@ -142,8 +146,20 @@
                         major_ro=inputdata_int_rl(ro,major_index_rl_index)
                         do tt=t_start_temp,t_end_temp
                             !Convert from g/km/hour to ug/s/subgrid
-                            emission_subgrid(i,j,tt,source_index,subsource_index)=emission_subgrid(i,j,tt,source_index,subsource_index)+ &
-                               +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*inputdata_rl_emissions(major_ro,tt,i_roadlink_emission_compound) &
+                            if (use_single_time_loop_flag) then
+                                ttt=t_loop
+                                t=1
+                            else
+                                t=tt
+                                ttt=tt
+                            endif
+                            !write(*,*) 'ro,major_ro,tt,t,ttt',ro,major_ro,tt,t,ttt
+                            !write(*,*) 'emission_grid',shape(emission_subgrid)
+                            !write(*,*) 'inputdata_rl_emissions',shape(inputdata_rl_emissions)
+
+                            !if (t_loop.eq.2) stop
+                            emission_subgrid(i,j,t,source_index,subsource_index)=emission_subgrid(i,j,t,source_index,subsource_index)+ &
+                               +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*inputdata_rl_emissions(major_ro,ttt,i_roadlink_emission_compound) &
                                 *1.e6/1.e3/3600.
                         enddo
                     endif
@@ -202,6 +218,13 @@
     enddo
     endif
 
+    !Deallocate road link arrays after gridding but not when the external time step is used because gridding roads is called again
+    if (.not.use_single_time_loop_flag) then
+        if (allocated(inputdata_rl)) deallocate(inputdata_rl)
+        if (allocated(inputdata_int_rl)) deallocate(inputdata_int_rl)
+        if (allocated(inputdata_rl_emissions)) deallocate(inputdata_rl_emissions)
+    endif
+    
     end subroutine uEMEP_grid_roads
     
     function sigma0_traffic_func(speed)

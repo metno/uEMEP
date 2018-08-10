@@ -12,6 +12,7 @@
     character(256) read_name_char,pathfilename_log_file
     integer exists
     integer a(6)
+    character(256) format_temp
     
     integer :: unit_in=30
     integer i_config
@@ -100,6 +101,7 @@
         save_intermediate_files=read_name_logical('save_intermediate_files',save_intermediate_files,unit_in,unit_logfile)
         use_multiple_receptor_grids_flag=read_name_logical('use_multiple_receptor_grids_flag',use_multiple_receptor_grids_flag,unit_in,unit_logfile)
         use_receptor_region=read_name_integer('use_receptor_region',use_receptor_region,unit_in,unit_logfile)
+        reduce_roadlink_region_flag=read_name_logical('reduce_roadlink_region_flag',reduce_roadlink_region_flag,unit_in,unit_logfile)
 
         
         !Read in choice of reading existing proxy emission, proxy dispersion, meteorology and use_subgid file data. These will rarely, if ever, be used
@@ -377,6 +379,7 @@
     !Call some error traps
     if (len(trim(pathname_output_grid)).eq.0) then
         write (unit_logfile,'(A)') 'WARNING: No output path given in configuration file. Stopping'
+        stop
     endif
 
     !Find the correct compound index based on the compound string
@@ -407,12 +410,16 @@
         filename_rl(2)=replace_string_char(config_date_str,replacement_date_str,filename_rl(2))
     enddo
 
-    !Replace date in the output file if required, 3 time for yyyy mm dd
-    call datestr_to_date(config_date_str,'yyyymmdd',a)
+    !Replace date in the output file if required, 3 times for yyyy mm dd
+    format_temp='yyyymmdd'
+    call datestr_to_date(config_date_str,format_temp,a)
+    write (unit_logfile,'(2A)') ' Updating output path from: ',trim(pathname_output_grid)
+
     do i=1,3
         call date_to_datestr_bracket(a,pathname_output_grid,pathname_output_grid)
-        write(*,*) trim(pathname_output_grid)
+        !write(*,*) trim(pathname_output_grid)
     enddo
+    write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_output_grid)
     
     !Place tile_tag in front of file_tag if it has been read
     if (tile_tag.ne.'') then

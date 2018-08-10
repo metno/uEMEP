@@ -46,7 +46,7 @@
         use_subgrid=.false.
     endif
     
-    !If dwellings are read then allocate the emission heating arrays. Other wise allocate the population arrays
+    !If dwellings are read then allocate the emission heating arrays. Otherwise allocate the population arrays
     if (SSB_data_type.eq.dwelling_index) then
         proxy_emission_subgrid(:,:,source_index,:)=0.
         allocate (count_subgrid(emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index)))
@@ -67,7 +67,7 @@
     if (SSB_data_type.eq.dwelling_index) then
         pathfilename_heating(SSB_file_index)=trim(pathname_heating(SSB_file_index))//trim(filename_heating(SSB_file_index))
  
-        !Test existence of the heating filename. If does not exist then use default
+        !Test existence of the heating filename. If does not exist then stop
         inquire(file=trim(pathfilename_heating(SSB_file_index)),exist=exists)
         if (.not.exists) then
             write(unit_logfile,'(A,A)') ' ERROR: SSB file does not exist: ', trim(pathfilename_heating(SSB_file_index))

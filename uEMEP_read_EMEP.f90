@@ -37,7 +37,7 @@
     real H_emep_temp
     
     integer n_file
-    double precision date_num_temp
+    double precision date_num_temp,date_num_2000
     integer date_array(6)
     double precision scale_factor_nc
 
@@ -667,6 +667,7 @@
         
         !Test and correct dates
         if (1.eq.1) then
+        if (.not.allocated(time_seconds_output)) allocate(time_seconds_output(dim_length_nc(time_dim_nc_index)))
         do t=1,dim_length_nc(time_dim_nc_index)
             date_num_temp=dble(ceiling(val_dim_nc(t,time_dim_nc_index)*24.))/24.
             date_num_temp=val_dim_nc(t,time_dim_nc_index)+0.55/24. !Add a bit over half an hour to compensate for average of time
@@ -682,6 +683,14 @@
             call number_to_date(date_num_temp,date_array,ref_year_EMEP)
             !write(unit_logfile,'(a,i4,6i6,d)') ' Date EMEP =   ',t,date_array,date_num_temp
             val_dim_nc(t,time_dim_nc_index)=date_num_temp
+            
+            !Convert to seconds since 2000
+            date_array=0
+            date_array(1)=2000;date_array(2)=1;date_array(3)=1
+            date_num_2000=date_to_number(date_array,ref_year_EMEP)
+            time_seconds_output(t)=int4((date_num_temp-date_num_2000)*24*3600)
+            unit_dim_nc(time_dim_nc_index)="seconds since 2000-1-1 0:0:0";;
+
         enddo
         !stop
         endif

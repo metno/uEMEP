@@ -35,8 +35,12 @@
     real, allocatable :: crossreference_population_to_tile_subgrid(:,:,:)
     integer, allocatable :: tile_class_subgrid(:,:)
     integer, allocatable :: tile_municipality_subgrid(:,:)
-    
-    integer i,j,i_class,i_tile,j_tile,i_source
+    real, allocatable :: aggregated_tile_subgrid(:,:,:)
+    real, allocatable :: aggregated_x_tile_subgrid(:,:,:)
+    real, allocatable :: aggregated_y_tile_subgrid(:,:,:)
+    integer, allocatable :: aggregated_tile_class_subgrid(:,:,:)
+   
+    integer i,j,i_class,i_tile,j_tile,i_source,k,l
     integer n_tile_index
     integer tile_population_index !,tile_municipality_index,tile_class_index
     
@@ -53,7 +57,25 @@
     character(8) count_str
     integer :: unit_tile=21
     real population_tile_scale
+    integer reduce_grid_class
+    real aggregation_tile_scale(10)
+    integer n_aggregated_tiles
+    parameter (n_aggregated_tiles=4)
     
+    real aggregated_tile_subgrid_delta(n_dim_index,n_aggregated_tiles)
+    real aggregated_tile_subgrid_min(n_dim_index,n_aggregated_tiles)
+    real aggregated_tile_subgrid_max(n_dim_index,n_aggregated_tiles)
+    integer aggregated_tile_subgrid_dim(n_dim_index,n_aggregated_tiles)
+    integer count_tile_class(4)
+    integer i_tile_class(4)
+    integer j_tile_class(4)
+    logical :: use_aggregated_tiling=.true.
+    logical :: save_as_seperate_files=.true.
+    integer sum_count,max_count
+    integer count_class(n_aggregated_tiles,10)
+    logical OK
+    integer max_counter,zero_counter
+
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Calculating tile distribution and resolution (uEMEP_set_tile_grids)'
@@ -65,11 +87,16 @@
     !tile_municipality_index=n_source_index+2
     !tile_class_index=n_source_index+3
     
+    !Reduce size of grids at and above this value
+    reduce_grid_class=6 !Set to 6 does not reduce
+    
     !Specify the tiling region to cover all of Norway
     population_tile_scale=1. !For 10 km
-    !population_tile_scale=4. !For 20 km
-	tile_subgrid_delta(x_dim_index)=10000.
-	tile_subgrid_delta(y_dim_index)=10000.
+    !population_tile_scale=3. !For 20 km
+    population_tile_scale=0.625 !For 5 km, to give 250 people /km^2
+    population_tile_scale=0.5 !For 5 km, to give 200 people /km^2
+	tile_subgrid_delta(x_dim_index)=5000.
+	tile_subgrid_delta(y_dim_index)=5000.
     tile_subgrid_min(x_dim_index)=-70000.-40000
     tile_subgrid_min(y_dim_index)=6440000.-40000
     tile_subgrid_max(x_dim_index)=1110000.+40000.
@@ -81,6 +108,28 @@
     tile_subgrid_dim(x_dim_index)=floor((tile_subgrid_max(x_dim_index)-tile_subgrid_min(x_dim_index))/tile_subgrid_delta(x_dim_index)) !New definition
     tile_subgrid_dim(y_dim_index)=floor((tile_subgrid_max(y_dim_index)-tile_subgrid_min(y_dim_index))/tile_subgrid_delta(y_dim_index)) !New definition
     tile_subgrid_dim(t_dim_index)=1 !Not used
+
+    
+    !aggregation_tile_scale
+    if (n_aggregated_tiles.eq.4) then
+        aggregation_tile_scale(1)=8.
+        aggregation_tile_scale(2)=4.
+        aggregation_tile_scale(3)=2.
+        aggregation_tile_scale(4)=1.
+    elseif (n_aggregated_tiles.eq.3) then
+        aggregation_tile_scale(1)=4.
+        aggregation_tile_scale(2)=2.
+        aggregation_tile_scale(3)=1.
+    endif
+    
+    do k=1,n_aggregated_tiles
+        aggregated_tile_subgrid_min(:,k)=tile_subgrid_min(:)
+        aggregated_tile_subgrid_max(:,k)=tile_subgrid_max(:)
+        aggregated_tile_subgrid_delta(:,k)=tile_subgrid_delta(:)*aggregation_tile_scale(k)
+        aggregated_tile_subgrid_dim(x_dim_index,k)=floor((aggregated_tile_subgrid_max(x_dim_index,k)-aggregated_tile_subgrid_min(x_dim_index,k))/aggregated_tile_subgrid_delta(x_dim_index,k))
+        aggregated_tile_subgrid_dim(y_dim_index,k)=floor((aggregated_tile_subgrid_max(y_dim_index,k)-aggregated_tile_subgrid_min(y_dim_index,k))/aggregated_tile_subgrid_delta(y_dim_index,k))
+    enddo
+    
     
     !Allocate tile subgrids
     if (.not.allocated(tile_subgrid)) allocate (tile_subgrid(tile_subgrid_dim(x_dim_index),tile_subgrid_dim(y_dim_index),n_tile_index)) 
@@ -92,6 +141,10 @@
     if (.not.allocated(crossreference_population_to_tile_subgrid)) allocate (crossreference_population_to_tile_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index),2)) 
     if (.not.allocated(tile_class_subgrid)) allocate (tile_class_subgrid(tile_subgrid_dim(x_dim_index),tile_subgrid_dim(y_dim_index)))
     if (.not.allocated(tile_municipality_subgrid)) allocate (tile_municipality_subgrid(tile_subgrid_dim(x_dim_index),tile_subgrid_dim(y_dim_index)))
+    if (.not.allocated(aggregated_tile_subgrid)) allocate (aggregated_tile_subgrid(tile_subgrid_dim(x_dim_index),tile_subgrid_dim(y_dim_index),n_aggregated_tiles)) 
+    if (.not.allocated(aggregated_x_tile_subgrid)) allocate (aggregated_x_tile_subgrid(tile_subgrid_dim(x_dim_index),tile_subgrid_dim(y_dim_index),n_aggregated_tiles))
+    if (.not.allocated(aggregated_y_tile_subgrid)) allocate (aggregated_y_tile_subgrid(tile_subgrid_dim(x_dim_index),tile_subgrid_dim(y_dim_index),n_aggregated_tiles))
+    if (.not.allocated(aggregated_tile_class_subgrid)) allocate (aggregated_tile_class_subgrid(tile_subgrid_dim(x_dim_index),tile_subgrid_dim(y_dim_index),n_aggregated_tiles))
 
     !Set to 0 all tile values
     tile_subgrid=0.
@@ -160,6 +213,16 @@
     enddo
     enddo
 
+    !Determine the aggregated tile subgrids, in UTM only   
+    do k=1,n_aggregated_tiles
+    do j=1,aggregated_tile_subgrid_dim(y_dim_index,k)
+    do i=1,aggregated_tile_subgrid_dim(x_dim_index,k)                 
+        aggregated_x_tile_subgrid(i,j,k)=aggregated_tile_subgrid_min(x_dim_index,k)+aggregated_tile_subgrid_delta(x_dim_index,k)*(i-0.5)
+        aggregated_y_tile_subgrid(i,j,k)=aggregated_tile_subgrid_min(y_dim_index,k)+aggregated_tile_subgrid_delta(y_dim_index,k)*(j-0.5)
+    enddo
+    enddo
+    enddo
+    
     !Create a cross reference grid
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
@@ -295,34 +358,119 @@
                 tile_subgrid(i_tile,j_tile,tile_population_index).le.limit_val_tile_population(5)) then
                     tile_class_subgrid(i_tile,j_tile)=4 !Population > 10000
             elseif (tile_subgrid(i_tile,j_tile,tile_population_index).gt.limit_val_tile_population(5)) then
-                    tile_class_subgrid(i_tile,j_tile)=5 !Population > 100000
+                    tile_class_subgrid(i_tile,j_tile)=4 !Population > 100000
             endif
-           
+            !if (tile_class_subgrid(i_tile,j_tile).eq.2) tile_class_subgrid(i_tile,j_tile)=3
             num_tile_classes(tile_class_subgrid(i_tile,j_tile))=num_tile_classes(tile_class_subgrid(i_tile,j_tile))+1
             
         endif
     enddo
     enddo
+   
     write(unit_logfile,'(a,i)') 'TILES OF CLASS 1 (500m): ',num_tile_classes(1)
     write(unit_logfile,'(a,i)') 'TILES OF CLASS 2 (250m): ',num_tile_classes(2)
     write(unit_logfile,'(a,i)') 'TILES OF CLASS 3 (125m): ',num_tile_classes(3)
-    write(unit_logfile,'(a,i)') 'TILES OF CLASS 4 ( 50m): ',num_tile_classes(4)
-    write(unit_logfile,'(a,i)') 'TILES OF CLASS 5 ( 25m): ',num_tile_classes(5)
+    if (reduce_grid_class.eq.4) then
+        write(unit_logfile,'(a,i)') 'TILES OF CLASS 4 ( 50m): ',num_tile_classes(4)*4
+    else
+        write(unit_logfile,'(a,i)') 'TILES OF CLASS 4 ( 50m): ',num_tile_classes(4)
+    endif
+    if (reduce_grid_class.eq.5) then
+        write(unit_logfile,'(a,i)') 'TILES OF CLASS 5 ( 25m): ',num_tile_classes(5)*4
+    else
+        write(unit_logfile,'(a,i)') 'TILES OF CLASS 5 ( 25m): ',num_tile_classes(5)
+    endif
 
     resolution_tile_classes(1)=500.
     resolution_tile_classes(2)=250.
     resolution_tile_classes(3)=125.
     resolution_tile_classes(4)=50.
     resolution_tile_classes(5)=25.
+   
+    !Preallocate the smallest aggregated tiles with the calculated tile value
+    aggregated_tile_class_subgrid=0
+    aggregated_tile_class_subgrid(:,:,n_aggregated_tiles)=tile_class_subgrid
+    !Aggregate tiles. Using classes of 2, 3 and 4 only
+    do k=n_aggregated_tiles-1,1,-1
+    do j_tile=1,aggregated_tile_subgrid_dim(y_dim_index,k)
+    do i_tile=1,aggregated_tile_subgrid_dim(x_dim_index,k)
+        
+        count=0
+        do j=1,aggregated_tile_subgrid_dim(y_dim_index,k+1)
+        do i=1,aggregated_tile_subgrid_dim(x_dim_index,k+1)
+            if (aggregated_x_tile_subgrid(i,j,k+1).ge.aggregated_x_tile_subgrid(i_tile,j_tile,k)-aggregated_tile_subgrid_delta(x_dim_index,k)/2. &
+                .and.aggregated_x_tile_subgrid(i,j,k+1).lt.aggregated_x_tile_subgrid(i_tile,j_tile,k)+aggregated_tile_subgrid_delta(x_dim_index,k)/2. &
+                .and.aggregated_y_tile_subgrid(i,j,k+1).ge.aggregated_y_tile_subgrid(i_tile,j_tile,k)-aggregated_tile_subgrid_delta(y_dim_index,k)/2. &
+                .and.aggregated_y_tile_subgrid(i,j,k+1).lt.aggregated_y_tile_subgrid(i_tile,j_tile,k)+aggregated_tile_subgrid_delta(y_dim_index,k)/2.) then
+                !.and.aggregated_tile_class_subgrid(i,j,k+1).ne.-1) then
+                !This k+1 aggregated tile is within the k tile. Give it a class
+                count=count+1
+                count_tile_class(count)=aggregated_tile_class_subgrid(i,j,k+1)
+                i_tile_class(count)=i
+                j_tile_class(count)=j
+                endif
+        enddo
+        enddo
+             
+        if (count.eq.4) then
+            !4 x k+1 tiles have been found. Check if they are the same and not equal to the last tile value
+            sum_count=sum(count_tile_class(1:count))
+            max_count=maxval(count_tile_class(1:count))
+            !if (count_tile_class(1)*count.le.sum_count.and.count_tile_class(2)*count.le.sum_count &
+            !    .and.count_tile_class(3)*count.le.sum_count.and.count_tile_class(4)*count.le.sum_count.and.maxval(count_tile_class).lt.4) then
+            OK=.true.
+            max_counter=0
+            zero_counter=0
+            do l=1,count
+                if (count_tile_class(l).eq.max_count) max_counter=max_counter+1
+                if (count_tile_class(l).eq.0) zero_counter=zero_counter+1
+            enddo
+            
+            do l=1,count
+                if (((count_tile_class(l).le.max_count.and.count_tile_class(l).ge.0)).and.OK.and.max_count.lt.4 &
+                    .and.((max_counter+zero_counter.ge.1.and.k.eq.3).or.(max_counter+zero_counter.ge.1.and.k.eq.2).or.(max_counter+zero_counter.ge.3.and.k.eq.1)) &
+                    .and..not.(k.eq.1.and.max_count.eq.3)) then
+                    OK=.true.
+                else 
+                    OK=.false.
+                endif
+            enddo
+            
+            if (OK) then
+                
+            !if (count_tile_class(1).le.max_count.and.count_tile_class(2).le.max_count &
+            !    .and.count_tile_class(3).le.max_count.and.count_tile_class(4).le.max_count.and.max_count.lt.4) then
+                
+                !Allocate the class to the k tile
+                aggregated_tile_class_subgrid(i_tile,j_tile,k)=max_count !sum_count/count
+                !Remove the class from the k+1 tiles
+                do l=1,count
+                    aggregated_tile_class_subgrid(i_tile_class(l),j_tile_class(l),k+1)=-1
+                enddo
+                !write(*,*)  'Count is 4 and using'
+            else
+                !write(*,*)  'Count is 4 and not using'
+                aggregated_tile_class_subgrid(i_tile,j_tile,k)=-1
+            endif
+            
+        else
+            !write(*,*) 'Can not find k+1 tiles',count
+        endif
+               
+    enddo
+    enddo
+    enddo
     
     !Save results in a single file
+    if (.not.use_aggregated_tiling) then
     temp_name=trim(pathname_tiles)//trim(filename_tiles)
+    write(unit_logfile,'(a,2a)') 'Saving to: ', trim(temp_name)
     open(unit_tile,file=temp_name,access='sequential',status='unknown')
     count=0
     do j_tile=1,tile_subgrid_dim(y_dim_index)
     do i_tile=1,tile_subgrid_dim(x_dim_index)
         if (num_tile_classes(tile_class_subgrid(i_tile,j_tile)).gt.0) then
-            if (tile_class_subgrid(i_tile,j_tile).lt.5) then
+            if (tile_class_subgrid(i_tile,j_tile).lt.reduce_grid_class) then
                 count=count+1
                 write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
@@ -352,11 +500,13 @@
     close(unit_tile)
  
     !Save results in multiple files
+    if (save_as_seperate_files) then
+
     count=0
     do j_tile=1,tile_subgrid_dim(y_dim_index)
     do i_tile=1,tile_subgrid_dim(x_dim_index)
         if (num_tile_classes(tile_class_subgrid(i_tile,j_tile)).gt.0) then
-            if (tile_class_subgrid(i_tile,j_tile).lt.5) then
+            if (tile_class_subgrid(i_tile,j_tile).lt.reduce_grid_class) then
                 count=count+1
                 write(count_str,'(i8)') count
                 temp_name=trim(pathname_tiles)//trim(ADJUSTL(count_str))//'_'//trim(filename_tiles)
@@ -392,9 +542,76 @@
         endif
     enddo
     enddo
-
-    write(unit_logfile,'(a,i)') 'Tiles saved: ',count
     
+    endif
+    
+    write(unit_logfile,'(a,i)') 'Tiles before aggregation: ',count 
+
+    endif
+    
+    if (use_aggregated_tiling) then
+    temp_name=trim(pathname_tiles)//trim(filename_tiles)
+    write(unit_logfile,'(a,2a)') 'Saving to: ', trim(temp_name)
+    open(unit_tile,file=temp_name,access='sequential',status='unknown')
+    count=0
+    do k=1,n_aggregated_tiles
+        count_class(k,:)=0
+    do j_tile=1,aggregated_tile_subgrid_dim(y_dim_index,k)
+    do i_tile=1,aggregated_tile_subgrid_dim(x_dim_index,k)
+        !if (num_tile_classes(tile_class_subgrid(i_tile,j_tile)).gt.0) then
+            if (aggregated_tile_class_subgrid(i_tile,j_tile,k).gt.0) then
+                count=count+1
+                write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(aggregated_tile_class_subgrid(i_tile,j_tile,k))
+	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(aggregated_tile_class_subgrid(i_tile,j_tile,k))
+	            write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',aggregated_x_tile_subgrid(i_tile,j_tile,k)-aggregated_tile_subgrid_delta(x_dim_index,k)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_min(y_dim_index)=',aggregated_y_tile_subgrid(i_tile,j_tile,k)-aggregated_tile_subgrid_delta(y_dim_index,k)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_max(x_dim_index)=',aggregated_x_tile_subgrid(i_tile,j_tile,k)+aggregated_tile_subgrid_delta(x_dim_index,k)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_max(y_dim_index)=',aggregated_y_tile_subgrid(i_tile,j_tile,k)+aggregated_tile_subgrid_delta(y_dim_index,k)/2.
+                count_class(k,aggregated_tile_class_subgrid(i_tile,j_tile,k))=count_class(k,aggregated_tile_class_subgrid(i_tile,j_tile,k))+1
+            endif
+        !endif
+    enddo
+    enddo
+        write(unit_logfile,'(a,i,f12.2)') 'TILE SIZE: ',k,aggregated_tile_subgrid_delta(x_dim_index,k)/1000.
+        write(unit_logfile,'(a,i)') 'TILES OF CLASS 1 (500m): ',count_class(k,1)
+        write(unit_logfile,'(a,i)') 'TILES OF CLASS 2 (250m): ',count_class(k,2)
+        write(unit_logfile,'(a,i)') 'TILES OF CLASS 3 (125m): ',count_class(k,3)
+        write(unit_logfile,'(a,i)') 'TILES OF CLASS 4 ( 50m): ',count_class(k,4)
+        write(unit_logfile,'(a,i)') 'TILES OF CLASS 5 ( 25m): ',count_class(k,5)
+    enddo
+    close(unit_tile)
+    
+    !Save results in multiple files
+    if (save_as_seperate_files) then
+    
+    count=0
+    do k=1,n_aggregated_tiles
+    do j_tile=1,tile_subgrid_dim(y_dim_index)
+    do i_tile=1,tile_subgrid_dim(x_dim_index)
+            if (aggregated_tile_class_subgrid(i_tile,j_tile,k).gt.0) then
+                count=count+1
+                write(count_str,'(i8)') count
+                temp_name=trim(pathname_tiles)//trim(ADJUSTL(count_str))//'_'//trim(filename_tiles)
+                open(unit_tile,file=temp_name,access='sequential',status='unknown')
+                write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(aggregated_tile_class_subgrid(i_tile,j_tile,k))
+	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(aggregated_tile_class_subgrid(i_tile,j_tile,k))
+	            write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',aggregated_x_tile_subgrid(i_tile,j_tile,k)-aggregated_tile_subgrid_delta(x_dim_index,k)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_min(y_dim_index)=',aggregated_y_tile_subgrid(i_tile,j_tile,k)-aggregated_tile_subgrid_delta(y_dim_index,k)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_max(x_dim_index)=',aggregated_x_tile_subgrid(i_tile,j_tile,k)+aggregated_tile_subgrid_delta(x_dim_index,k)/2.
+	            write(unit_tile,'(a,f12.2)') 'subgrid_max(y_dim_index)=',aggregated_y_tile_subgrid(i_tile,j_tile,k)+aggregated_tile_subgrid_delta(y_dim_index,k)/2.
+                close(unit_tile)
+             endif
+    enddo
+    enddo
+    enddo
+
+    endif
+    
+    endif
+    
+    write(unit_logfile,'(a,i)') 'Tiles saved: ',count 
    
     write(unit_logfile,'(a)') ' Stopping after calculating tiles'
     stop

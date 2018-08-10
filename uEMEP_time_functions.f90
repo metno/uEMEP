@@ -145,7 +145,7 @@
     
     implicit none
     
-    character(24) a_str,format_str
+    character(256) a_str,format_str
     integer a(6)
     integer pos
     
