@@ -58,7 +58,7 @@
     k=0
     do while(.not.eof(unit_in))
         k=k+1
-        read(unit_in,*,ERR=20) name_receptor(k,1),lon_receptor(k),lat_receptor(k)!,name_receptor(k,2)
+        read(unit_in,*,ERR=20) name_receptor(k,1),lon_receptor(k),lat_receptor(k),height_receptor(k)!,name_receptor(k,2)
         !write(*,*) trim(name_receptor(k,1)),lon_receptor(k),lat_receptor(k),trim(name_receptor(k,2))
     enddo
     
@@ -84,7 +84,8 @@
         lon_receptor_in=lon_receptor
         lat_receptor_in=lat_receptor
         x_receptor_in=x_receptor
-        y_receptor_in=y_receptor        
+        y_receptor_in=y_receptor
+        height_receptor_in=height_receptor
     endif
     
     !Identify receptors within the initial subgrid region and only calculate these
@@ -118,7 +119,7 @@
             count=count+1
             valid_receptor_index(count)=k
             valid_receptor_inverse_index(k)=count
-            write(unit_logfile,'(a,a12,2f12.1)') ' Receptor and grid positions (x,y) = ',trim(name_receptor(k,1)), x_receptor(k)-init_subgrid_min(x_dim_index),y_receptor(k)-init_subgrid_min(y_dim_index)
+            write(unit_logfile,'(a,a12,3f12.1)') ' Receptor and grid positions (x,y,h) = ',trim(name_receptor(k,1)), x_receptor(k)-init_subgrid_min(x_dim_index),y_receptor(k)-init_subgrid_min(y_dim_index),height_receptor(k)
        else
             use_receptor(k)=.false.  
             valid_receptor_inverse_index(k)=0
@@ -208,12 +209,12 @@
         return
     endif
 
-    if (g_loop.eq.start_grid_loop_index) then
+    !if (g_loop.eq.start_grid_loop_index) then
         write(unit_logfile,'(A)') ''
 	    write(unit_logfile,'(A)') '================================================================'
-	    write(unit_logfile,'(A)') 'Setting receptor loop data (uEMEP_set_loop_receptor_grid)'
+	    write(unit_logfile,'(A)') 'Starting receptor loop (uEMEP_set_loop_receptor_grid)'
 	    write(unit_logfile,'(A)') '================================================================'
-    endif
+   ! endif
 
     k=1
     
@@ -223,21 +224,27 @@
         lat_receptor(k)=lat_receptor_in(g_loop)
         x_receptor(k)=x_receptor_in(g_loop)
         y_receptor(k)=y_receptor_in(g_loop)
+        height_receptor(k)=height_receptor_in(g_loop)
     endif
     
-    x_ref=(floor((x_receptor(k))/subgrid_delta(x_dim_index)+0.5))*subgrid_delta(x_dim_index)
-    y_ref=(floor((y_receptor(k))/subgrid_delta(y_dim_index)+0.5))*subgrid_delta(y_dim_index)
-    subgrid_min(x_dim_index)=x_ref-subgrid_delta(x_dim_index)*(use_receptor_region)*1.5
-	subgrid_min(y_dim_index)=y_ref-subgrid_delta(y_dim_index)*(use_receptor_region)*1.5
-	subgrid_max(x_dim_index)=x_ref+subgrid_delta(x_dim_index)*(use_receptor_region)*1.5
-	subgrid_max(y_dim_index)=y_ref+subgrid_delta(y_dim_index)*(use_receptor_region)*1.5
+    !Set lowest left edge of subgrid receptor position would be in
+    x_ref=(floor((x_receptor(k))/subgrid_delta(x_dim_index)+0.0))*subgrid_delta(x_dim_index)
+    y_ref=(floor((y_receptor(k))/subgrid_delta(y_dim_index)+0.0))*subgrid_delta(y_dim_index)
+    !Set limits
+    subgrid_min(x_dim_index)=x_ref-subgrid_delta(x_dim_index)*(use_receptor_region)*1.0
+	subgrid_min(y_dim_index)=y_ref-subgrid_delta(y_dim_index)*(use_receptor_region)*1.0
+	subgrid_max(x_dim_index)=x_ref+subgrid_delta(x_dim_index)*(use_receptor_region+1)*1.0
+	subgrid_max(y_dim_index)=y_ref+subgrid_delta(y_dim_index)*(use_receptor_region+1)*1.0
 
     subgrid_dim(x_dim_index)=floor((subgrid_max(x_dim_index)-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index))+1
     subgrid_dim(y_dim_index)=floor((subgrid_max(y_dim_index)-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index))+1
 
-     write(unit_logfile,'(a,i12,a)') ' Receptor loop number = ', g_loop,' '//trim(name_receptor(k,1))
-     write(unit_logfile,'(a,4f12.1)') ' Receptor and grid positions (x,y) = ', x_receptor(k),x_ref,y_receptor(k),y_ref
-     write(unit_logfile,'(a,2i)') ' Number of receptor subgrids = ', subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)
+    z_rec=height_receptor(k)
+    
+    write(unit_logfile,'(a,i12,a)') ' Receptor loop number = ', g_loop,' '//trim(name_receptor(k,1))
+    write(unit_logfile,'(a,4f12.1)') ' Receptor and grid positions (x,y) = ', x_receptor(k),x_ref,y_receptor(k),y_ref
+    write(unit_logfile,'(a,2i)') ' Number of receptor subgrids = ', subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)
+    write(unit_logfile,'(a,f12.1)') ' Receptor height (m) = ', z_rec(allsource_index,1)
     
     !Find the target grid positions of the receptor points
     count=0

@@ -47,6 +47,7 @@
         n_receptor=1
         n_valid_receptor=1
         valid_receptor_index(1)=1
+        reduce_roadlink_region_flag=.false. !Multiple receptor flags reads in all road links and allocates to the different receptor grids. Only reads once
     else
         start_grid_loop_index=1
         end_grid_loop_index=1
@@ -142,9 +143,15 @@
                 !Read in proxy data fro home heating. Currently dwelling density
                 if (calculate_source(heating_index)) then
                     !Read and subgrid SSB dwelling data
-                    SSB_data_type=dwelling_index
-                    call uEMEP_read_SSB_data
-                    !call uEMEP_read_RWC_heating_data
+                    !SSB_data_type=dwelling_index
+                    !call uEMEP_read_SSB_data
+                    if (use_RWC_emission_data) then
+                        call uEMEP_read_RWC_heating_data
+                    else
+                        SSB_data_type=dwelling_index
+                        call uEMEP_read_SSB_data
+                    endif
+                    
                 endif
 
                 !Read and subgrid agriculture data

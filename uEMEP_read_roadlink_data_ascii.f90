@@ -100,9 +100,6 @@
         close(unit_in,status='keep')
            
         write(unit_logfile,'(a,i,i)') ' Number of major and sub road links within the region = ', counter_major,counter_sub
-    else
-        allocate (valid_link_flag(n_roadlinks_major))
-        valid_link_flag=.true.
     endif
 
     !Open the file for reading
@@ -122,6 +119,10 @@
     if (reduce_roadlink_region_flag) then
         n_roadlinks=counter_sub
         n_roadlinks_major_selected=counter_major
+    else
+        !Set all road links to valid when not regionally selecting
+        allocate (valid_link_flag(n_roadlinks_major))
+        valid_link_flag=.true.
     endif
     allocate (inputdata_rl_temp(n_roadlinks,num_var_rl))
     allocate (inputdata_int_rl_temp(n_roadlinks,num_int_rl))

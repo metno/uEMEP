@@ -30,6 +30,11 @@
 
     emission_factor_conversion(nh3_index,agriculture_index,:)=emission_factor(nh3_index,agriculture_index,:)*(1.e+9)/(3600.*24.*365.)   ![kg/yr]*(ug/kg)*(yr/sec)=ug/sec
     
+    if (use_RWC_emission_data) then
+        !Convert from g/h/subgrid to ug/s/subgrid 
+        emission_factor_conversion(:,heating_index,:)=1.e6/3600.
+    endif
+    
     
     end subroutine uEMEP_set_emission_factors
 
@@ -43,6 +48,7 @@
     
     integer i_source,i_subsource
     integer tt
+    real sum_emission_subgrid
     
     !Do not calculate emissions if EMEP emissions are to be used
     if (local_subgrid_method_flag.eq.3) return
@@ -57,15 +63,18 @@
     if (calculate_source(i_source)) then
         !Do not calculate for traffic if use_NORTRIP_emission_data=.true. This is done in uEMEP_grid_roads
         if (i_source.ne.traffic_index.or.(i_source.eq.traffic_index.and..not.use_NORTRIP_emission_data)) then
-        do i_subsource=1,n_subsource(i_source)
-            do tt=1,subgrid_dim(t_dim_index)
+            do i_subsource=1,n_subsource(i_source)
+                do tt=1,subgrid_dim(t_dim_index)
 
-                emission_subgrid(:,:,tt,i_source,i_subsource)=proxy_emission_subgrid(:,:,i_source,i_subsource) &
-                    *emission_factor_conversion(compound_index,i_source,i_subsource) &
-                    *emission_time_profile_subgrid(:,:,tt,i_source,i_subsource)
-
+                    emission_subgrid(:,:,tt,i_source,i_subsource)=proxy_emission_subgrid(:,:,i_source,i_subsource) &
+                        *emission_factor_conversion(compound_index,i_source,i_subsource) &
+                        *emission_time_profile_subgrid(:,:,tt,i_source,i_subsource)
+                    
+                    !write(*,*) sum(proxy_emission_subgrid(:,:,i_source,i_subsource)),emission_factor_conversion(compound_index,i_source,i_subsource),sum(emission_time_profile_subgrid(:,:,tt,i_source,i_subsource))
+                enddo
             enddo
-        enddo
+            sum_emission_subgrid=sum(emission_subgrid(:,:,:,i_source,:))
+            write(unit_logfile,'(A,es12.2)') 'Sum of emissions for '//trim(source_file_str(i_source))//' over period (kg)=',sum_emission_subgrid*3600./1.e9
         endif
     endif
     enddo

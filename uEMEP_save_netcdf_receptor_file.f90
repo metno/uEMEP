@@ -1,7 +1,7 @@
 !Saves receptor data in netcdf format
     
     subroutine uEMEP_save_netcdf_receptor_file(unit_logfile_in,filename_netcdf,nx,ny,nt,val_array,x_array,y_array,lon_array,lat_array,name_array,unit_array,title_str,create_file,valid_min &
-        ,x_rec,y_rec,lon_rec,lat_rec,name_rec_in,nr)
+        ,x_rec,y_rec,lon_rec,lat_rec,height_rec,name_rec_in,nr)
     
     use uEMEP_definitions
     use netcdf
@@ -24,12 +24,12 @@
     
     integer ncid
     integer station_dimid,lat_dimid,lon_dimid,val_dimid,time_dimid,charlen_dimid
-    integer station_varid,station_name_varid,lat_varid,lon_varid,val_varid,time_varid,proj_varid,x_varid,y_varid
+    integer station_varid,station_name_varid,lat_varid,lon_varid,val_varid,time_varid,proj_varid,x_varid,y_varid,height_varid
     integer dimids3(3),dimids2(2)
     integer n_dims_length(3),n_dims_start(3)
     integer status
     integer tr,rr
-    real x_rec(nr),y_rec(nr)
+    real x_rec(nr),y_rec(nr),height_rec(nr)
     real lon_rec(nr),lat_rec(nr)
     character(256) name_rec_in(nr)
     character(256) temp_char
@@ -115,6 +115,7 @@
         call check(  nf90_def_var(ncid, "y", NF90_REAL, station_dimid, y_varid) )
         call check(  nf90_def_var(ncid, "x", NF90_REAL, station_dimid, x_varid) )
         call check(  nf90_def_var(ncid, "station_name", NF90_CHAR, (/charlen_dimid,station_dimid/), station_name_varid) )
+        call check(  nf90_def_var(ncid, "station_height", NF90_REAL, station_dimid, height_varid) )
         !call check(  nf90_def_var(ncid, "station_name", NF90_CHAR, (/station_dimid/), station_name_varid) )
         !call check(  nf90_def_var(ncid, "station_name", NF90_CHAR, (/charlen_dimid,station_dimid/), station_name_varid) )
 
@@ -123,6 +124,7 @@
         call check(  nf90_put_att(ncid, lon_varid, "units", "degrees_east") )
         call check(  nf90_put_att(ncid, y_varid, "units", "m") )
         call check(  nf90_put_att(ncid, x_varid, "units", "m") )
+        call check(  nf90_put_att(ncid, height_varid, "units", "m") )
         call check(  nf90_put_att(ncid, time_varid, "units", trim(unit_dim_nc(time_dim_nc_index))) )
         call check(  nf90_put_att(ncid, station_varid, "long_name", "station index" ) )
         call check(  nf90_put_att(ncid, station_name_varid, "long_name", "station name" ) )
@@ -235,6 +237,7 @@
         call check( nf90_inq_varid(ncid, "y", y_varid) )
         call check( nf90_inq_varid(ncid, "lon", lon_varid) )
         call check( nf90_inq_varid(ncid, "lat", lat_varid) )
+        call check( nf90_inq_varid(ncid, "station_height", height_varid) )
       
         !Write time to the file
 
@@ -256,6 +259,7 @@
         call check( nf90_put_var(ncid, y_varid, y_rec, start = (/n_dims_start(1)/), count=(/n_dims_length(1)/)) )
         call check( nf90_put_var(ncid, lon_varid, lon_rec, start = (/n_dims_start(1)/), count=(/n_dims_length(1)/)) )
         call check( nf90_put_var(ncid, lat_varid, lat_rec, start = (/n_dims_start(1)/), count=(/n_dims_length(1)/)) )
+        call check( nf90_put_var(ncid, height_varid, height_rec, start = (/n_dims_start(1)/), count=(/n_dims_length(1)/)) )
 
 
     

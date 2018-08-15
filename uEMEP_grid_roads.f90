@@ -78,8 +78,6 @@
     
     !Possible to split the traffic source into different subsources at this point if necessary, e.g. light and heavy traffic
     !Here we weight the adt by the emission ratio and give an emission factor valid for cars
-    
-    !WRONG HERE!!! when called a second time
     adt_car_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*(1.-inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.)
     adt_truck_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.
     adt_temp=adt_car_temp+adt_truck_temp*ratio_truck_car_emission(compound_index)
@@ -218,8 +216,11 @@
     enddo
     endif
 
-    !Deallocate road link arrays after gridding but not when the external time step is used because gridding roads is called again
-    if (.not.use_single_time_loop_flag) then
+    !Deallocate road link arrays after gridding but not when the external time step is used and not when the multiple receptor grids are used
+    !because gridding roads is called again
+    if (use_single_time_loop_flag.or.use_multiple_receptor_grids_flag) then
+        !Do not deallocate because they will be used again
+    else
         if (allocated(inputdata_rl)) deallocate(inputdata_rl)
         if (allocated(inputdata_int_rl)) deallocate(inputdata_int_rl)
         if (allocated(inputdata_rl_emissions)) deallocate(inputdata_rl_emissions)

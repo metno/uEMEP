@@ -2,7 +2,7 @@
 
 C The subroutine prepares for reading the next uncommented 
 C line of data from file.
-C Adapted by Bruce Rolstad Denby to include '{' to skip
+C Adapted by Bruce Rolstad Denby to include '{' and '#' to skip
 
 C Scalar arguments
 

@@ -40,6 +40,9 @@
     double precision date_num_temp,date_num_2000
     integer date_array(6)
     double precision scale_factor_nc
+    
+    integer dmt_start_time_nc_index,dmt_end_time_nc_index,dmt_dim_length_nc
+
 
     !Temporary reading variables
     double precision, allocatable :: var1d_nc_dp(:)
@@ -76,7 +79,7 @@
      
     if (use_single_time_loop_flag) then
         temp_start_time_nc_index=start_time_nc_index+t_loop-1
-        temp_end_time_nc_index=temp_start_time_nc_index       
+        temp_end_time_nc_index=temp_start_time_nc_index
     endif
 
     !Presettng the surface level to 1. Valid when there is no inverting of layers
@@ -97,7 +100,8 @@
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
         if (allocated(lc_var3d_nc)) deallocate (lc_var3d_nc)
         if (allocated(lc_var4d_nc)) deallocate (lc_var4d_nc)
-
+        if (allocated(dmt_EMEP_grid_nc)) deallocate (dmt_EMEP_grid_nc)
+        
     !Loop through the EMEP files containing the data
 
     n_file=2
@@ -347,6 +351,21 @@
             endif       
         enddo
 
+        !Set the pollutant index (could also be looped if required)
+        if (pollutant_index.eq.all_nc_index) then
+            n_pollutant_loop=3
+            pollutant_loop_index(1)=nox_nc_index
+            pollutant_loop_index(2)=pm25_nc_index
+            pollutant_loop_index(3)=pm10_nc_index
+        elseif (pollutant_index.eq.pm_nc_index) then
+            n_pollutant_loop=2
+            pollutant_loop_index(1)=pm25_nc_index
+            pollutant_loop_index(2)=pm10_nc_index
+        else
+            n_pollutant_loop=1
+            pollutant_loop_index(1)=compound_index
+        endif
+
         !Set the compound index (could also be looped if required)
         if (compound_index.eq.nox_nc_index) then
             n_compound_loop=3
@@ -493,9 +512,7 @@
                     comp_var4d_nc(:,:,1,:,i_conc)=comp_var4d_nc(:,:,1,:,i_conc)*comp_scale_nc(i_conc)
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading compound file 2: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,1,:,i_conc)),maxval(comp_var4d_nc(:,:,1,:,i_conc))
                     endif
-                endif
-                
-                
+                endif              
                 
             else
                  write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
@@ -504,6 +521,26 @@
         enddo !compound loop
         !endif
             
+        !Read in 2m temperature completely to get the daily average for home heating
+        if (use_RWC_emission_data) then
+            dmt_start_time_nc_index=start_time_nc_index
+            dmt_end_time_nc_index=end_time_nc_index
+            dmt_dim_length_nc=dmt_end_time_nc_index-dmt_start_time_nc_index+1
+            if (.not.allocated(dmt_EMEP_grid_nc)) allocate (dmt_EMEP_grid_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dmt_dim_length_nc))
+            
+            if (calculate_source(heating_index).and.i_file.eq.1) then
+                var_name_nc_temp=var_name_nc(t2m_nc_index,compound_index,allsource_nc_index)
+                status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                status_nc = NF90_GET_VAR (id_nc, var_id_nc, dmt_EMEP_grid_nc,start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dmt_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dmt_dim_length_nc/))
+                write(unit_logfile,'(3A,2f16.4)') ' Reading: ',trim(var_name_nc_temp),' (min, max): ',minval(dmt_EMEP_grid_nc),maxval(dmt_EMEP_grid_nc)
+                dmt_EMEP_grid_nc(:,:,1)=sum(dmt_EMEP_grid_nc,3)/dmt_dim_length_nc-273.13
+                write(unit_logfile,'(3A,2f16.4)') ' Calculating mean: ',trim(var_name_nc_temp),' (min, max): ',minval(dmt_EMEP_grid_nc(:,:,1)),maxval(dmt_EMEP_grid_nc(:,:,1))
+            
+            endif
+        
+        endif
+
+        
         status_nc = NF90_CLOSE (id_nc)
         
         !Invert the base file arrays in the z direction to be compatible with the uEMEP files
@@ -524,7 +561,8 @@
             if (allocated(swop_comp_var4d_nc)) deallocate (swop_comp_var4d_nc)
         endif
         
-            
+        
+        
     enddo !End file loop
     
     !Set the correct time dimmensions tot he first file value

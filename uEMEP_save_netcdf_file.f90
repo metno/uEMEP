@@ -17,7 +17,7 @@
     real, allocatable :: aqi_subgrid(:,:,:)
     integer ii,jj
     logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.true.,save_other_meteo=.true.
-    logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
+    logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.true.
     logical :: save_aqi=.true.
     real aqi_limits(5),max_aqi
     
@@ -45,7 +45,7 @@
     
     
     temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_output'//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//trim(temp_date_str)//'.nc'
-    temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_receptor'//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//trim(temp_date_str)//'.nc'
+    temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_station'//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//trim(temp_date_str)//'.nc'
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -62,7 +62,7 @@
     if (save_compounds) then
     do i_comp=1,n_compound_loop
         
-        if (i_comp.eq.1.and.t_loop.eq.start_time_loop_index) then
+        if (i_comp.eq.1.and.t_loop.eq.start_time_loop_index.and.save_netcdf_file_flag) then
             create_file=.true.
             title_str='uEMEP_concentration_'//trim(file_tag)//temp_date_str
             write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
@@ -70,7 +70,7 @@
             create_file=.false.
         endif
 
-        if (i_comp.eq.1.and.t_loop.eq.start_time_loop_index.and.g_loop.eq.start_grid_loop_index) then
+        if (i_comp.eq.1.and.t_loop.eq.start_time_loop_index.and.g_loop.eq.start_grid_loop_index.and.save_netcdf_receptor_flag) then
             create_file_rec=.true.
             title_str_rec='uEMEP_receptor_'//trim(file_tag)//temp_date_str
             write(unit_logfile,'(a)')'Writing to: '//trim(temp_name_rec)
@@ -92,6 +92,7 @@
             ,unit_str,title_str_rec,create_file_rec,valid_min &
             ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
             ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+            ,z_rec(allsource_index,1) &
             ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         
@@ -123,6 +124,7 @@
                     ,unit_str,title_str_rec,create_file_rec,valid_min &
                     ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                     ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                    ,z_rec(allsource_index,1) &
                     ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
             endif
             
@@ -146,6 +148,7 @@
                         ,unit_str,title_str_rec,create_file_rec,valid_min &
                         ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,z_rec(allsource_index,1) &
                         ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
                 endif
                 
@@ -192,6 +195,7 @@
                         ,unit_str,title_str_rec,create_file_rec,valid_min &
                         ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,z_rec(allsource_index,1) &
                         ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
                 endif
     
@@ -225,6 +229,7 @@
                         ,unit_str,title_str_rec,create_file_rec,valid_min &
                         ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,z_rec(allsource_index,1) &
                         ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
                 endif
                 
@@ -245,6 +250,7 @@
                         ,unit_str,title_str_rec,create_file_rec,valid_min &
                         ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                         ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,z_rec(allsource_index,1) &
                         ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
                 endif
                 
@@ -271,6 +277,7 @@
                 ,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
     enddo
@@ -294,6 +301,7 @@
                 ,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
     enddo
@@ -315,7 +323,7 @@
             enddo
             aqi_subgrid(i,j,t)=min(aqi_subgrid(i,j,t),4.99)
             if (aqi_subgrid(i,j,t).gt.max_aqi) max_aqi=aqi_subgrid(i,j,t)
-            !write(*,*)  aqi_subgrid(i,j,t),comp_subgrid(i,j,t,no2_index),comp_subgrid(i,j,t,nox_index)
+            !write(*,*)  i,j,t,aqi_subgrid(i,j,t),comp_subgrid(i,j,t,no2_index)
         enddo
         enddo
         enddo
@@ -336,6 +344,7 @@
                 ,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
     endif
@@ -357,6 +366,7 @@
                 ,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
     endif
@@ -387,6 +397,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -413,6 +424,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -441,6 +453,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -469,6 +482,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -495,6 +509,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -523,6 +538,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -549,6 +565,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -577,6 +594,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -603,6 +621,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -629,6 +648,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -657,6 +677,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -683,6 +704,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor)          
         endif
         !The same for all--------------------
@@ -753,12 +775,12 @@
         !call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", 6378140.0 ) )
         !call check(  nf90_put_att(ncid, proj_varid, "semi_minor_axis", 6356750.0 ) )
   
-        !Define the dimmensions
+        !Define the dimensions
         call check(  nf90_def_dim(ncid,"time",NF90_UNLIMITED, time_dimid) )
         call check(  nf90_def_dim(ncid, "y", ny, y_dimid) )
         call check(  nf90_def_dim(ncid, "x", nx, x_dimid) )
      
-        !Define the dimmension variables
+        !Define the dimension variables
         !call check(  nf90_def_var(ncid, "time", NF90_DOUBLE, time_dimid, time_varid) )
         call check(  nf90_def_var(ncid, "time", NF90_INT, time_dimid, time_varid) )
         call check(  nf90_def_var(ncid, "y", NF90_REAL, y_dimid, y_varid) )

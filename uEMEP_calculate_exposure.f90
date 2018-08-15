@@ -59,7 +59,7 @@
         endif
         enddo
 
-        !Calculate number over limit. Does nto work for hourly data properly yet
+        !Calculate number over limit. Does not work for hourly data properly yet
         i_source=allsource_index
         i_subsource=1
         do t=1,subgrid_dim(t_dim_index)

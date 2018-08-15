@@ -82,10 +82,10 @@
     integer num_lc_var_nc
     parameter (num_lc_var_nc=2)                  ! number of readable local contribution variables
     
-    integer compound_index,compound_frac_index
+    integer compound_index
 
-    integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index,pmco_nc_index
-    parameter (no2_nc_index=1,nox_nc_index=2,pm25_nc_index=3,pm10_nc_index=4,nh3_nc_index=5,o3_nc_index=6,pmco_nc_index=7)
+    integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index,pmco_nc_index,all_nc_index,pm_nc_index
+    parameter (no2_nc_index=1,nox_nc_index=2,pm25_nc_index=3,pm10_nc_index=4,nh3_nc_index=5,o3_nc_index=6,pmco_nc_index=7,all_nc_index=8,pm_nc_index=9)
     integer n_compound_nc_index
     parameter (n_compound_nc_index=7)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
@@ -101,8 +101,17 @@
     character(256) comp_name_nc(n_compound_nc_index)
     character(256) input_comp_name
     real comp_scale_nc(n_compound_nc_index)
+    
+    !Compound loop for nox chemistry
     integer :: n_compound_loop = 1
     integer compound_loop_index(n_compound_nc_index)
+
+    !Loop for all pollutants to be calculated
+    integer pollutant_index
+    integer n_pollutant_nc_index
+    parameter (n_pollutant_nc_index=9) !Includes the two addition all and pm index
+    integer :: n_pollutant_loop = 1
+    integer pollutant_loop_index(n_pollutant_nc_index)
 
     !dimension netcdf fields
     integer x_dim_nc_index,y_dim_nc_index,z_dim_nc_index,time_dim_nc_index,xdist_dim_nc_index,ydist_dim_nc_index
@@ -358,7 +367,9 @@
     real    integral_buffer_size(2)
 
     integer integral_subgrid_dim(n_dim_index)
-    real integral_subgrid_delta(2),integral_subgrid_min(2),integral_subgrid_max(2)  !Only x and y
+    real :: integral_subgrid_delta_ref=0.
+    real :: integral_subgrid_delta(2)=0.
+    real integral_subgrid_min(2),integral_subgrid_max(2)  !Only x and y
     !emission_subgrid (i,j,t,n_source,n_subsource)
     real, allocatable :: integral_subgrid(:,:,:,:,:)
     !x_emission_subgrid (i,j,n_source)
@@ -511,8 +522,8 @@
     
     integer n_receptor,n_receptor_in,n_receptor_max,n_valid_receptor,n_valid_receptor_in
     parameter (n_receptor_max=1000)
-    real lon_receptor(n_receptor_max),lat_receptor(n_receptor_max),x_receptor(n_receptor_max),y_receptor(n_receptor_max)
-    real lon_receptor_in(n_receptor_max),lat_receptor_in(n_receptor_max),x_receptor_in(n_receptor_max),y_receptor_in(n_receptor_max)
+    real lon_receptor(n_receptor_max),lat_receptor(n_receptor_max),x_receptor(n_receptor_max),y_receptor(n_receptor_max),height_receptor(n_receptor_max)
+    real lon_receptor_in(n_receptor_max),lat_receptor_in(n_receptor_max),x_receptor_in(n_receptor_max),y_receptor_in(n_receptor_max),height_receptor_in(n_receptor_max)
     integer i_receptor_subgrid(n_receptor_max),j_receptor_subgrid(n_receptor_max)
     character(256) name_receptor(n_receptor_max,2)
     character(256) name_receptor_in(n_receptor_max,2)
@@ -569,6 +580,15 @@
 
     !Correction output time array converting days 1900 to seconds 2000
     integer(4), allocatable :: time_seconds_output(:)
+    
+    !Residential wood combustion variables
+    integer n_RWC_grids
+    real, allocatable :: RWC_grid_emission(:,:)
+    real, allocatable :: RWC_grid_HDD(:,:)
+    integer*8, allocatable :: RWC_grid_id(:)
+    real, allocatable :: dmt_EMEP_grid_nc(:,:,:)
+    real :: hdd_threshold_value=15.
+    logical :: use_RWC_emission_data=.false.
     
     end module uEMEP_definitions
     

@@ -286,6 +286,8 @@
         pathname_heating(population_index)=read_name_char('pathname_heating(population_index)',pathname_heating(population_index),unit_in,unit_logfile)
         filename_heating(dwelling_index)=read_name_char('filename_heating(dwelling_index)',filename_heating(dwelling_index),unit_in,unit_logfile)
         filename_heating(population_index)=read_name_char('filename_heating(population_index)',filename_heating(population_index),unit_in,unit_logfile)
+        pathname_heating(RWC_heating_index)=read_name_char('pathname_heating(RWC_heating_index)',pathname_heating(RWC_heating_index),unit_in,unit_logfile)
+        filename_heating(RWC_heating_index)=read_name_char('filename_heating(RWC_heating_index)',filename_heating(RWC_heating_index),unit_in,unit_logfile)
 
         pathname_population(dwelling_index)=read_name_char('pathname_population(dwelling_index)',pathname_population(dwelling_index),unit_in,unit_logfile)
         pathname_population(population_index)=read_name_char('pathname_population(population_index)',pathname_population(population_index),unit_in,unit_logfile)
@@ -372,6 +374,9 @@
         tile_tag=read_name_char('tile_tag','',unit_in,unit_logfile)
 
         use_NORTRIP_emission_data=read_name_logical('use_NORTRIP_emission_data',use_NORTRIP_emission_data,unit_in,unit_logfile) 
+        use_RWC_emission_data=read_name_logical('use_RWC_emission_data',use_RWC_emission_data,unit_in,unit_logfile) 
+        
+        integral_subgrid_delta_ref=read_name_real('integral_subgrid_delta_ref',integral_subgrid_delta_ref,unit_in,unit_logfile)
         
         
     close (unit_in)
@@ -387,10 +392,6 @@
         if (trim(var_name_nc(conc_nc_index,i,allsource_index)).eq.trim(input_comp_name)) then
             compound_index=i
             !write(*,*) trim(input_comp_name),i
-        endif
-        !Not used anymore
-        if (trim(var_name_nc(frac_nc_index,i,allsource_index)).eq.trim(input_comp_name)) then
-            compound_frac_index=i
         endif
     enddo
 

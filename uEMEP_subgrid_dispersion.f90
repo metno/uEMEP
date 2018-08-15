@@ -49,6 +49,20 @@
     real traj_step_size,x_loc,y_loc,L_loc,FFgrid_loc,logz0_loc,u_star0_loc,FF10_loc,zc_loc
     real z0_temp,h_temp
     
+    integer :: n_target_comp=1
+    real, allocatable :: temp_target_subgrid(:,:,:)
+    real, allocatable :: x_target_subgrid(:,:)
+    real, allocatable :: y_target_subgrid(:,:)
+    real, allocatable :: traveltime_temp_target_subgrid(:,:,:)
+    
+    integer temp_target_subgrid_dim_min(2),temp_target_subgrid_dim_max(2)
+    integer temp_target_subgrid_dim_length(2)
+    real temp_target_subgrid_delta(2)
+    logical :: use_target_subgrid=.true.
+    integer i_target_start,i_target_end,j_target_start,j_target_end
+    real area_weighted_interpolation_function
+    logical temp_use_subgrid
+
     !functions
     real gauss_plume_second_order_rotated_func
     !real gauss_plume_second_order_rotated_integral_func
@@ -87,11 +101,11 @@
     endif
  
     allocate (temp_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
-    allocate (temp_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
+    allocate (temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index))) 
     allocate (temp_FF_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
     allocate (temp_FF_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
     allocate (angle_diff(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
-
+    
     temp_subgrid=0.
     temp_emission_subgrid=0.
     temp_FF_subgrid=0.
@@ -125,6 +139,35 @@
     
         write(unit_logfile,'(a,i3)')'Calculating proxy concentration data for '//trim(source_file_str(source_index))//' with subsource index ',subsource_index
 
+        !Set up a target grid that matches the emissions grid and is just slightly bigger than it
+        !Find the grid index it belongs to
+        if (use_target_subgrid) then
+        temp_target_subgrid_dim_min(x_dim_index)=-1+1+floor((subgrid_min(x_dim_index)-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
+        temp_target_subgrid_dim_min(y_dim_index)=-1+1+floor((subgrid_min(y_dim_index)-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
+        temp_target_subgrid_dim_max(x_dim_index)=+1+1+ceiling((subgrid_max(x_dim_index)-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
+        temp_target_subgrid_dim_max(y_dim_index)=+1+1+ceiling((subgrid_max(y_dim_index)-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
+
+        temp_target_subgrid_dim_length(x_dim_index)=temp_target_subgrid_dim_max(x_dim_index)-temp_target_subgrid_dim_min(x_dim_index)+1
+        temp_target_subgrid_dim_length(y_dim_index)=temp_target_subgrid_dim_max(y_dim_index)-temp_target_subgrid_dim_min(y_dim_index)+1
+        temp_target_subgrid_delta(x_dim_index)=emission_subgrid_delta(x_dim_index,source_index)
+        temp_target_subgrid_delta(y_dim_index)=emission_subgrid_delta(y_dim_index,source_index)
+
+        !Reallocate internal target arrays for each source
+        if (allocated(temp_target_subgrid)) deallocate (temp_target_subgrid)
+        if (allocated(x_target_subgrid)) deallocate (x_target_subgrid)
+        if (allocated(y_target_subgrid)) deallocate (y_target_subgrid)
+        if (allocated(traveltime_temp_target_subgrid)) deallocate (traveltime_temp_target_subgrid)
+        if (.not.allocated(temp_target_subgrid)) allocate (temp_target_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_target_comp)) 
+        if (.not.allocated(traveltime_temp_target_subgrid)) allocate (traveltime_temp_target_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),2)) 
+        if (.not.allocated(x_target_subgrid)) allocate (x_target_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
+        if (.not.allocated(y_target_subgrid)) allocate (y_target_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
+        
+        
+        x_target_subgrid(:,:)=x_emission_subgrid(:,:,source_index)
+        y_target_subgrid(:,:)=y_emission_subgrid(:,:,source_index)
+
+        endif
+        
         !Set the start and end times of the loop
         t_start=1
         t_end=subgrid_dim(t_dim_index)
@@ -133,7 +176,9 @@
         do tt=t_start,t_end
         
         subgrid(:,:,tt,proxy_subgrid_index,source_index,:)=0.
-        
+        temp_target_subgrid=0.
+        traveltime_temp_target_subgrid=0.
+    
         !Set a temporary emission array
         temp_emission_subgrid=emission_subgrid(:,:,tt,source_index,subsource_index)
         temp_subgrid=0.
@@ -279,23 +324,59 @@
         endif
 
         !Loop through the target grid
-        do j=1,subgrid_dim(y_dim_index)
-        do i=1,subgrid_dim(x_dim_index)
+        if (use_target_subgrid) then
+            j_target_start=temp_target_subgrid_dim_min(y_dim_index);j_target_end=temp_target_subgrid_dim_max(y_dim_index)
+            i_target_start=temp_target_subgrid_dim_min(x_dim_index);i_target_end=temp_target_subgrid_dim_max(x_dim_index)
+        else
+            j_target_start=1;j_target_end=subgrid_dim(y_dim_index)
+            i_target_start=1;i_target_end=subgrid_dim(x_dim_index)
+        endif
+        !write(*,*) i_target_start,i_target_end,j_target_start,j_target_end
+        
+        do j=j_target_start,j_target_end
+        do i=i_target_start,i_target_end
+        
+        !do j=1,subgrid_dim(y_dim_index)
+        !do i=1,subgrid_dim(x_dim_index)
                
             !Only use those that are marked for use
-            if (use_subgrid(i,j,source_index)) then    
+            if (use_target_subgrid) then
+                !Always use the grids because they cannot be tested
+                temp_use_subgrid=.true.
+            else
+                temp_use_subgrid=use_subgrid(i,j,source_index)
+            endif
+            
+            if (temp_use_subgrid) then    
              
                 !Set the position of the target grid in terms of the EMEP projection
-                xpos_subgrid=xproj_subgrid(i,j)
-                ypos_subgrid=yproj_subgrid(i,j)
+                !THIS IS WRONG
+                if (use_target_subgrid) then
+                    xpos_subgrid=xproj_emission_subgrid(i,j,source_index)
+                    ypos_subgrid=yproj_emission_subgrid(i,j,source_index)
+                else
+                    xpos_subgrid=xproj_subgrid(i,j)
+                    ypos_subgrid=yproj_subgrid(i,j)
+                endif
                 
                 !Find the cross reference to the emission grid from the target grid
-                i_cross=crossreference_target_to_emission_subgrid(i,j,x_dim_index,source_index)
-                j_cross=crossreference_target_to_emission_subgrid(i,j,y_dim_index,source_index)
+                if (use_target_subgrid) then
+                    i_cross=i
+                    j_cross=j
+                else
+                    i_cross=crossreference_target_to_emission_subgrid(i,j,x_dim_index,source_index)
+                    j_cross=crossreference_target_to_emission_subgrid(i,j,y_dim_index,source_index)
+                endif
 
                 !Find the cross reference for the meteo grid at the target grid
-                i_cross_target_integral=crossreference_target_to_integral_subgrid(i,j,x_dim_index)
-                j_cross_target_integral=crossreference_target_to_integral_subgrid(i,j,y_dim_index)                    
+                if (use_target_subgrid) then
+                    i_cross_target_integral=crossreference_emission_to_integral_subgrid(i,j,x_dim_index,source_index)
+                    j_cross_target_integral=crossreference_emission_to_integral_subgrid(i,j,y_dim_index,source_index)
+                else
+                    i_cross_target_integral=crossreference_target_to_integral_subgrid(i,j,x_dim_index)
+                    j_cross_target_integral=crossreference_target_to_integral_subgrid(i,j,y_dim_index)
+                endif
+                
 
                 !Set the travel time integral values to 0
                 time_weight(tt)=0.
@@ -358,8 +439,13 @@
                                 if (use_trajectory_flag) then
                                 
                                     !Calculate the minimum distance to the trajectory. Time consuming
+                                    if (use_target_subgrid) then
+                                    call uEMEP_minimum_distance_trajectory(x_target_subgrid(i,j),y_target_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
+                                    traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
+                                    else
                                     call uEMEP_minimum_distance_trajectory(x_subgrid(i,j),y_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
                                     traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
+                                    endif
                                     
                                     !Set the starting point of the dispersion to be at (near) the edge of an emission subgrid
                                     if (abs(x_loc).le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
@@ -373,9 +459,14 @@
                                     cos_subgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,cos_subgrid_index)
                                     sin_subgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,sin_subgrid_index)                                    
 
-                                    !Determine the rotated along wind values
+                                    !Determine the rotated position along wind values
+                                    if (use_target_subgrid) then
+                                    x_loc=(x_target_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index))*cos_subgrid_loc+(y_target_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index))*sin_subgrid_loc
+                                    y_loc=-(x_target_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index))*sin_subgrid_loc+(y_target_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index))*cos_subgrid_loc
+                                    else
                                     x_loc=(x_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index))*cos_subgrid_loc+(y_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index))*sin_subgrid_loc
                                     y_loc=-(x_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index))*sin_subgrid_loc+(y_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index))*cos_subgrid_loc
+                                    endif
                                     !write(*,*) x_loc,x_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index),y_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index)
                                    
                                     !Set the starting point of the dispersion to be at (near) the edge of an emission subgrid for calculations within the emission grid
@@ -470,7 +561,11 @@
                                     temp_subgrid_internal=temp_subgrid_internal*temp_emission_subgrid(ii,jj)*internal_subgrid_emission_factor
                                     
                                     !Add to the receptor subgrid position
+                                    if (use_target_subgrid) then
+                                    temp_target_subgrid(i,j,n_target_comp)=temp_target_subgrid(i,j,n_target_comp)+temp_subgrid_internal
+                                    else
                                     temp_subgrid(i,j)=temp_subgrid(i,j)+temp_subgrid_internal
+                                    endif
                                     
                                     !Determine the distance for the travel time calculation
                                     distance_subgrid=sqrt(x_loc*x_loc+y_loc*y_loc)
@@ -498,9 +593,14 @@
                             else
                             
                                 !If not hourly concentration then use the annual dispersion function
+                                if (use_target_subgrid) then
+                                distance_subgrid=sqrt((x_emission_subgrid(ii,jj,source_index)-x_target_subgrid(i,j))*(x_emission_subgrid(ii,jj,source_index)-x_target_subgrid(i,j)) &
+                                    +(y_emission_subgrid(ii,jj,source_index)-y_target_subgrid(i,j))*(y_emission_subgrid(ii,jj,source_index)-y_target_subgrid(i,j)))
+                                else
                                 distance_subgrid=sqrt((x_emission_subgrid(ii,jj,source_index)-x_subgrid(i,j))*(x_emission_subgrid(ii,jj,source_index)-x_subgrid(i,j)) &
                                     +(y_emission_subgrid(ii,jj,source_index)-y_subgrid(i,j))*(y_emission_subgrid(ii,jj,source_index)-y_subgrid(i,j)))
-                                    
+                                endif
+                                
                                 if (wind_level_flag.eq.5) then
                                     FF_loc=temp_FF_emission_subgrid(ii,jj)
                                 else
@@ -508,10 +608,18 @@
                                 endif
                            
                                 !Divide by wind speed at emission position
+                                if (use_target_subgrid) then
+                                temp_target_subgrid(i,j,n_target_comp)=temp_target_subgrid(i,j,n_target_comp) &
+                                    +temp_emission_subgrid(ii,jj) &
+                                    *gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc) &
+                                    /FF_loc
+                                else
                                 temp_subgrid(i,j)=temp_subgrid(i,j) &
                                     +temp_emission_subgrid(ii,jj) &
                                     *gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc) &
                                     /FF_loc
+                                endif
+                                
                             
                             endif
                         
@@ -524,8 +632,15 @@
                 enddo
                                 
                 !Add to the travel time array
-                traveltime_subgrid(i,j,tt,1)=traveltime_subgrid(i,j,tt,1)+time_weight(tt)
-                traveltime_subgrid(i,j,tt,2)=traveltime_subgrid(i,j,tt,2)+time_total(tt)
+                !THIS IS WRONG  but shouldn't affect NOx or PM
+                if (use_target_subgrid) then
+                    traveltime_temp_target_subgrid(i,j,1)=traveltime_temp_target_subgrid(i,j,1)+time_weight(tt)
+                    traveltime_temp_target_subgrid(i,j,2)=traveltime_temp_target_subgrid(i,j,2)+time_total(tt)
+                else
+                    traveltime_subgrid(i,j,tt,1)=traveltime_subgrid(i,j,tt,1)+time_weight(tt)
+                    traveltime_subgrid(i,j,tt,2)=traveltime_subgrid(i,j,tt,2)+time_total(tt)
+                endif
+                
             
             else
                 !Set to nodata value for grids that should not be used
@@ -539,7 +654,28 @@
         if (mod(j,1).eq.0) write(*,'(3a,i5,a,i5,a,i3,a,i3)') 'Gridding ',trim(source_file_str(source_index)),' proxy for hour ',tt,' of ',subgrid_dim(t_dim_index),' and ',subsource_index,' of ',n_subsource(source_index)
         
         !Put the temporary subgrid back into the subgrid array
+        if (use_target_subgrid) then
+            !write(*,*) 'Mean temp traveltime target grid',tt,sum(traveltime_temp_target_subgrid(i_target_start:i_target_end,j_target_start:j_target_end,1))/temp_target_subgrid_dim_length(x_dim_index)/temp_target_subgrid_dim_length(y_dim_index)
+            !write(*,*) 'Mean temp target grid',tt,sum(temp_target_subgrid(i_target_start:i_target_end,j_target_start:j_target_end,n_target_comp))/temp_target_subgrid_dim_length(x_dim_index)/temp_target_subgrid_dim_length(y_dim_index)
+            !write(*,*) shape(traveltime_temp_target_subgrid),shape(traveltime_subgrid)
+            do j=1,subgrid_dim(y_dim_index)
+            do i=1,subgrid_dim(x_dim_index)
+                temp_subgrid(i,j)=area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,temp_target_subgrid(:,:,n_target_comp) &
+                    ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
+                traveltime_subgrid(i,j,tt,1)=traveltime_subgrid(i,j,tt,1) &
+                    +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,traveltime_temp_target_subgrid(:,:,1) &
+                    ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
+                traveltime_subgrid(i,j,tt,2)=traveltime_subgrid(i,j,tt,2) &
+                    +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,traveltime_temp_target_subgrid(:,:,2) &
+                    ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
+                !write(*,*) tt,i,j,temp_subgrid(i,j)
+            enddo
+            enddo
+        endif
+        write(unit_logfile,'(a,3f12.3)') 'Mean, min and max grid concentration: ',sum(temp_subgrid)/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index),minval(temp_subgrid),maxval(temp_subgrid)
+        
         subgrid(:,:,tt,proxy_subgrid_index,source_index,subsource_index)=temp_subgrid
+
         
         enddo !time loop
         
@@ -570,6 +706,8 @@
     if (allocated(temp_subgrid)) deallocate(temp_subgrid)
     if (allocated(temp_FF_subgrid)) deallocate(temp_FF_subgrid)
     if (allocated(temp_FF_emission_subgrid)) deallocate(temp_FF_emission_subgrid)
+    if (allocated(temp_subgrid)) deallocate(temp_subgrid)
+    if (allocated(traveltime_temp_target_subgrid)) deallocate(traveltime_temp_target_subgrid)
 
     end subroutine uEMEP_subgrid_dispersion
     

@@ -315,7 +315,6 @@
     !If there is no chemistry then place the results in the compound results
     if (n_compound_loop.eq.1) then
         comp_subgrid(:,:,:,compound_index)=subgrid(:,:,:,total_subgrid_index,allsource_index,1)
-       ! orig_EMEP_subgrid(:,:,:,compound_index)=
     endif
     
     

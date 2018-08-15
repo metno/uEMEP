@@ -25,6 +25,9 @@
     integer i_source,t,hour_of_week_index
     integer t_profile_loop
     
+    integer i_cross,j_cross
+    real hdd_temp
+    
     !Functions
     integer day_of_week
     !double precision date_to_number
@@ -102,6 +105,9 @@
     val_hour_of_week_input(:,i_source)=val_hour_of_week_input(:,i_source)/sum(val_hour_of_week_input(:,i_source))*n_hours_in_week
     val_month_of_year_input(:,i_source)=val_month_of_year_input(:,i_source)/sum(val_month_of_year_input(:,i_source))*n_months_in_year
     enddo
+    !do i=1,n_hours_in_week
+    !    write(*,*) time_hour_of_week_input(i),val_hour_of_week_input(i,1:n_col-1)
+    !enddo
     
     !Get time information for the current calculation
     !    if (use_single_time_loop_flag) then
@@ -136,6 +142,19 @@
             emission_time_profile_subgrid(:,:,t,source_index_in(i_source),:)=val_hour_of_week_input(hour_of_week_index,i_source)*val_month_of_year_input(date_array(2),i_source)
             !write(*,*) hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source),val_month_of_year_input(date_array(2),i_source)
             !write(*,*) emission_time_profile_subgrid(1,1,t,source_index_in(i_source),1)
+            if (source_index_in(i_source).eq.heating_index.and.use_RWC_emission_data) then
+                do j=1,emission_subgrid_dim(y_dim_index,source_index_in(i_source))
+                do i=1,emission_subgrid_dim(x_dim_index,source_index_in(i_source))
+                    i_cross=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,source_index_in(i_source))
+                    j_cross=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index_in(i_source))
+                    hdd_temp=max(0.,hdd_threshold_value-dmt_EMEP_grid_nc(i_cross,j_cross,1))
+                    emission_time_profile_subgrid(i,j,t,source_index_in(i_source),:)=val_hour_of_week_input(hour_of_week_index,i_source)/24.*hdd_temp
+                    !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source),hdd_temp
+                    !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,emission_time_profile_subgrid(i,j,t,source_index_in(i_source),1)
+                enddo
+                enddo
+            endif
+            
         enddo
         
         if (annual_calculations) then
