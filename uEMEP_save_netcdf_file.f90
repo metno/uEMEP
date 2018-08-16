@@ -17,7 +17,7 @@
     real, allocatable :: aqi_subgrid(:,:,:)
     integer ii,jj
     logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.true.,save_other_meteo=.true.
-    logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.true.
+    logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
     logical :: save_aqi=.true.
     real aqi_limits(5),max_aqi
     

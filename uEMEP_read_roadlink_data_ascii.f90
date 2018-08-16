@@ -19,6 +19,8 @@
     integer n_loop,loop_step
     real x_grid_min,x_grid_max,y_grid_min,y_grid_max
     integer counter_major,counter_sub
+    logical :: show_diagnostics=.false.
+    real diagnostic_val(10)
     
     real, allocatable :: inputdata_rl_temp(:,:)
     integer, allocatable :: inputdata_int_rl_temp(:,:)
@@ -258,6 +260,25 @@
         ,inputdata_int_rl(i,nlanes_rl_index),inputdata_int_rl(i,roadtype_rl_index)
     else
         write(unit_logfile,'(a)') 'No road links available in this region'
+    endif
+
+    !Calculate the veh km totals
+    if (show_diagnostics) then
+        diagnostic_val=0.
+        do i=1,n_roadlinks
+            !Total kilometres
+            diagnostic_val(1)=diagnostic_val(1)+inputdata_rl(i,length_rl_index)/1000.
+            !Total veh kilometres
+            diagnostic_val(2)=diagnostic_val(2)+inputdata_rl(i,length_rl_index)/1000.*inputdata_rl(i,adt_rl_index)*365.
+            !Light veh kilometres
+            diagnostic_val(3)=diagnostic_val(3)+(1.-inputdata_rl(i,hdv_rl_index)/100.)*inputdata_rl(i,length_rl_index)/1000.*inputdata_rl(i,adt_rl_index)*365.
+            !Light veh kilometres
+            diagnostic_val(4)=diagnostic_val(4)+(inputdata_rl(i,hdv_rl_index)/100.)*inputdata_rl(i,length_rl_index)/1000.*inputdata_rl(i,adt_rl_index)*365.
+        enddo
+        write(unit_logfile,'(a,es12.4)') 'Total km= ',diagnostic_val(1)
+        write(unit_logfile,'(a,es12.4)') 'Total veh.km= ',diagnostic_val(2)
+        write(unit_logfile,'(a,es12.4)') 'Total light veh.km= ',diagnostic_val(3)
+        write(unit_logfile,'(a,es12.4)') 'Total heavy veh.km= ',diagnostic_val(4)
     endif
     
     return

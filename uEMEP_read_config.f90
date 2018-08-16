@@ -320,7 +320,7 @@
         combine_emission_subsources_during_dispersion(industry_index)=read_name_logical('combine_emission_subsources_during_dispersion(industry_index)',combine_emission_subsources_during_dispersion(industry_index),unit_in,unit_logfile)
         
         FF_min_dispersion=read_name_real('FF_min_dispersion',FF_min_dispersion,unit_in,unit_logfile)
-        emission_timeprofile_hour_shift=read_name_real('emission_timeprofile_hour_shift',emission_timeprofile_hour_shift,unit_in,unit_logfile)
+        emission_timeprofile_hour_shift=read_name_integer('emission_timeprofile_hour_shift',emission_timeprofile_hour_shift,unit_in,unit_logfile)
         
         use_last_meteo_in_dispersion=read_name_logical('use_last_meteo_in_dispersion',use_last_meteo_in_dispersion,unit_in,unit_logfile)
         use_meandering_in_dispersion=read_name_logical('use_meandering_in_dispersion',use_meandering_in_dispersion,unit_in,unit_logfile)
@@ -375,6 +375,7 @@
 
         use_NORTRIP_emission_data=read_name_logical('use_NORTRIP_emission_data',use_NORTRIP_emission_data,unit_in,unit_logfile) 
         use_RWC_emission_data=read_name_logical('use_RWC_emission_data',use_RWC_emission_data,unit_in,unit_logfile) 
+        HDD_threshold_value=read_name_integer('HDD_threshold_value',HDD_threshold_value,unit_in,unit_logfile)
         
         integral_subgrid_delta_ref=read_name_real('integral_subgrid_delta_ref',integral_subgrid_delta_ref,unit_in,unit_logfile)
         

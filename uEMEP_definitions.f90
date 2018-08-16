@@ -448,7 +448,7 @@
     integer stability_scheme_flag
     
     real :: FF_min_dispersion=0.1
-    real :: emission_timeprofile_hour_shift=0.
+    integer :: emission_timeprofile_hour_shift=1 !Winter European time
     
     real pi
     parameter (pi=3.141592)
@@ -587,7 +587,7 @@
     real, allocatable :: RWC_grid_HDD(:,:)
     integer*8, allocatable :: RWC_grid_id(:)
     real, allocatable :: dmt_EMEP_grid_nc(:,:,:)
-    real :: hdd_threshold_value=15.
+    integer :: HDD_threshold_value=15
     logical :: use_RWC_emission_data=.false.
     
     end module uEMEP_definitions

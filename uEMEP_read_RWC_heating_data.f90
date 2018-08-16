@@ -23,7 +23,7 @@
     integer*8 ssb_id
     real x_ssb,y_ssb
     integer i_ssb_index,j_ssb_index
-    integer threshold_index
+    integer :: threshold_index=0
     real :: f_easting=2.e6
     real :: ssb_dx=250.,ssb_dy=250.
     integer RWC_compound_index
@@ -43,9 +43,16 @@
 	write(unit_logfile,'(A)') 'Reading RWC heating data  (uEMEP_read_RWC_heating_data)'
 	write(unit_logfile,'(A)') '================================================================'
     
-    threshold_index=RWC_HDD15_index
-    if (hdd_threshold_value.eq.15.) threshold_index=RWC_HDD15_index
-    if (hdd_threshold_value.eq.11.) threshold_index=RWC_HDD11_index
+    !threshold_index=RWC_HDD15_index
+    if (HDD_threshold_value.eq.15) then
+        threshold_index=RWC_HDD15_index
+    elseif (HDD_threshold_value.eq.11) then
+        threshold_index=RWC_HDD11_index
+    else
+        write(unit_logfile,'(A,f12.1)') 'HDD_threshold_value is not valid. Stopping. ',HDD_threshold_value
+        stop
+    endif
+    
     
     emission_scaling=1.
     if (compound_index.eq.pm25_index) RWC_compound_index=RWC_pm25_index
@@ -104,7 +111,7 @@
         do while(.not.eof(unit_in))
             count=count+1
             !read(unit_in,'(i,4es)') RWC_grid_id(count),RWC_grid_val(count,1:4)
-            read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_HDD(count,1:2)
+            read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index)
             !write(*,'(2i,4es)') count,RWC_grid_id(count),RWC_grid_val(count,1:4)
         enddo
     
@@ -136,6 +143,7 @@
             .and.j_ssb_index.ge.1.and.j_ssb_index.le.emission_subgrid_dim(y_dim_index,source_index)) then
 
             !write(*,*) x_ssb,y_ssb,emission_subgrid_delta(x_dim_index,source_index),i_ssb_index,j_ssb_index
+            !Set the proxy emssion subgrid. This will be multiplied by the hdd later in the read_time_profiles routine
             proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,subsource_index)=proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,subsource_index) &
                 +RWC_grid_emission(count,RWC_compound_index)/RWC_grid_HDD(count,threshold_index)*emission_scaling
             

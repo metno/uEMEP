@@ -521,3 +521,42 @@
 
     end function day_of_week
 !----------------------------------------------------------------------
+
+!----------------------------------------------------------------------
+    function summer_time_europe(a)
+    
+    implicit none
+    
+    logical summer_time_europe
+    integer a(6)
+    integer b_start(6),b_end(6)
+    integer ref_year
+    integer year
+    double precision datenum_start,datenum_end,datenum
+    double precision date_to_number
+
+    a(2)=2
+    ref_year=2000
+    b_start=0
+    b_end=0
+    year=a(1)
+    b_start(1)=a(1)
+    b_start(2)=3
+    b_start(3)=(31 - mod((((5 * year)/4) + 4),7))
+    b_start(4)=1
+    b_end(1)=a(1)
+    b_end(2)=10
+    b_end(3)=(31 - mod((((5 * year)/4) + 1),7))
+    b_end(4)=1
+    
+    datenum_start=date_to_number(b_start,ref_year)
+    datenum_end=date_to_number(b_end,ref_year)
+    datenum=date_to_number(a,ref_year)
+    
+    summer_time_europe=.false.
+    if (datenum.ge.datenum_start.and.datenum.lt.datenum_end) summer_time_europe=.true.
+    
+    !write(*,*) b_start(3),b_end(3),summer_time_europe
+   
+    end function summer_time_europe
+!----------------------------------------------------------------------

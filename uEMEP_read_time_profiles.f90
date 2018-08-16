@@ -24,12 +24,15 @@
     integer date_array(6)
     integer i_source,t,hour_of_week_index
     integer t_profile_loop
+    integer emission_time_shift_temp
     
     integer i_cross,j_cross
     real hdd_temp
     
     !Functions
     integer day_of_week
+    logical summer_time_europe
+    
     !double precision date_to_number
     
     !emission_time_profile_subgrid=1.
@@ -134,7 +137,13 @@
         !write(unit_logfile,*) 'Day of week = ',week_day_temp
         !write(*,*) t,date_array
         
-        hour_of_week_index=(week_day_temp-1)*24+date_array(4)+int(emission_timeprofile_hour_shift)
+        if (summer_time_europe(date_array)) then
+            emission_time_shift_temp=emission_timeprofile_hour_shift+1
+        else
+            emission_time_shift_temp=emission_timeprofile_hour_shift
+        endif
+        
+        hour_of_week_index=(week_day_temp-1)*24+date_array(4)+emission_time_shift_temp
         if (hour_of_week_index.gt.n_hours_in_week) hour_of_week_index=hour_of_week_index-n_hours_in_week
         if (hour_of_week_index.lt.1) hour_of_week_index=hour_of_week_index+n_hours_in_week
         emission_time_profile_subgrid(:,:,t,:,:)=1.
@@ -147,9 +156,9 @@
                 do i=1,emission_subgrid_dim(x_dim_index,source_index_in(i_source))
                     i_cross=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,source_index_in(i_source))
                     j_cross=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index_in(i_source))
-                    hdd_temp=max(0.,hdd_threshold_value-dmt_EMEP_grid_nc(i_cross,j_cross,1))
+                    hdd_temp=max(0.,HDD_threshold_value-dmt_EMEP_grid_nc(i_cross,j_cross,1))
                     emission_time_profile_subgrid(i,j,t,source_index_in(i_source),:)=val_hour_of_week_input(hour_of_week_index,i_source)/24.*hdd_temp
-                    !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source),hdd_temp
+                    !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source)/24.,hdd_temp,HDD_threshold_value,dmt_EMEP_grid_nc(i_cross,j_cross,1)
                     !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,emission_time_profile_subgrid(i,j,t,source_index_in(i_source),1)
                 enddo
                 enddo
