@@ -102,7 +102,7 @@
     !Loop for all pollutants to be calculated
     integer pollutant_index
     integer n_pollutant_nc_index
-    parameter (n_pollutant_nc_index=10) !Includes the two addition all and pm index
+    parameter (n_pollutant_nc_index=11) !Includes the two addition all and pm index
     integer :: n_pollutant_loop = 1
     integer pollutant_loop_index(n_pollutant_nc_index)
     integer pollutant_loop_back_index(n_pollutant_nc_index)

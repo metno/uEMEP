@@ -279,7 +279,10 @@
         if (.not.allocated(unit_dim_nc)) allocate (unit_dim_nc(num_dims_nc)) !x, y, z and time dimmension values
         if (.not.allocated(var1d_nc)) allocate (var1d_nc(maxval(dim_length_nc),num_dims_nc)) !x, y, z and time maximum dimmensions
         if (.not.allocated(var2d_nc)) allocate (var2d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),2)) !Lat and lon
-        if (.not.allocated(var3d_nc)) allocate (var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index,n_pollutant_loop))
+        if (.not.allocated(var3d_nc)) then
+            allocate (var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index,n_pollutant_loop))
+            var3d_nc=0.
+        endif
         if (.not.allocated(var4d_nc)) allocate (var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index,n_pollutant_loop))
         if (.not.allocated(comp_var3d_nc)) allocate (comp_var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),n_compound_nc_index))
         if (.not.allocated(comp_var4d_nc)) allocate (comp_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),n_compound_nc_index))
@@ -292,6 +295,10 @@
         if (i_file.eq.2.and..not.allocated(pm_lc_var4d_nc)) allocate (pm_lc_var4d_nc(dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index),num_lc_var_nc,n_source_nc_index,2))
         if (.not.allocated(pm_var4d_nc)) allocate (pm_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index,2))
 
+        !Initialise
+        !var3d_nc=0.;var4d_nc.;comp_var3d_nc=0.;comp_var4d_nc=0.;comp_var4d_nc=0
+        !if allocate(lc_var3d_nc)=0.lc_var3d_nc=0.;lc_var4d_nc;
+        
         !if (.not.allocated(temp_var4d_nc)) allocate (temp_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)))
 
         !write(*,*) x_dim_nc_index,y_dim_nc_index
@@ -544,7 +551,8 @@
        
     !Transfer all source values to all the sources for use in source looping later
     do i_source=1,n_source_nc_index
-        if (calculate_source(i_source).and.i_source.ne.allsource_nc_index) then
+        !if (calculate_source(i_source).and.i_source.ne.allsource_nc_index) then
+        if (i_source.ne.allsource_nc_index) then
         var3d_nc(:,:,:,conc_nc_index,i_source,:)=var3d_nc(:,:,:,conc_nc_index,allsource_nc_index,:)
         var4d_nc(:,:,:,:,conc_nc_index,i_source,:)=var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,:)
         pm_var4d_nc(:,:,:,:,conc_nc_index,i_source,:)=pm_var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,:)

@@ -237,7 +237,7 @@
         endif
     
         subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,local_subgrid_index,allsource_index,i_pollutant)+subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)
-    
+     
         !Place the results in the compound results
         do i_loop=1,n_pollutant_compound_loop(i_pollutant)
             comp_subgrid(:,:,:,pollutant_compound_loop_index(i_pollutant,i_loop))=subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)

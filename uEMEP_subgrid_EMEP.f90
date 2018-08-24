@@ -233,7 +233,8 @@
                             +var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,:)
                         subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,i_pollutant)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,i_pollutant) &
                             +(var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,:,i_pollutant)-var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:,i_pollutant))*weighting_nc(ii_w,jj_w,tt_dim,:)
-
+                        
+                        !write(*,*) var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:,i_pollutant)
                         !Interpolate the other EMEP compounds as well to subgrid
                         do i_loop=1,n_pollutant_compound_loop(i_pollutant)
                             comp_EMEP_subgrid(i,j,tt,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_EMEP_subgrid(i,j,tt,pollutant_compound_loop_index(i_pollutant,i_loop)) &
@@ -285,6 +286,7 @@
             !For diagnostics only
             nonlocal_correction_average=nonlocal_correction_average+nonlocal_correction(tt_dim,:,:)
             
+            !write(*,*) subgrid(i,j,tt,emep_nonlocal_subgrid_index,allsource_index,:)
         
         endif
         enddo
@@ -603,7 +605,9 @@
         enddo
                 
         !Set the allsource nonlocal value to the average of the remainder. This can be negative
+        if (count.gt.0) then
         subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid(:,:,:,emep_subgrid_index,allsource_index,:)/count-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))
+        endif
         
         do i_pollutant=1,n_pollutant_loop
         if (minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)).lt.0.0) then
