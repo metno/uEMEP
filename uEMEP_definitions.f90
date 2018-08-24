@@ -85,10 +85,10 @@
     
     integer compound_index
 
-    integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index,pmex_nc_index,pmco_nc_index,all_nc_index,pm_nc_index
-    parameter (no2_nc_index=1,nox_nc_index=2,pm25_nc_index=3,pm10_nc_index=4,nh3_nc_index=5,o3_nc_index=6,pmex_nc_index=7,pmco_nc_index=8,all_nc_index=9,pm_nc_index=10)
+    integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index,so2_nc_index,pmex_nc_index,pmco_nc_index,all_nc_index,pm_nc_index
+    parameter (no2_nc_index=1,nox_nc_index=2,pm25_nc_index=3,pm10_nc_index=4,nh3_nc_index=5,o3_nc_index=6,so2_nc_index=7,pmex_nc_index=8,pmco_nc_index=9,all_nc_index=10,pm_nc_index=11)
     integer n_compound_nc_index
-    parameter (n_compound_nc_index=7)
+    parameter (n_compound_nc_index=8)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
     integer allsource_nc_index,traffic_nc_index,shipping_nc_index,heating_nc_index,agriculture_nc_index,industry_nc_index
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
@@ -296,14 +296,14 @@
     integer n_meteo_subgrid_index
     parameter (n_meteo_subgrid_index=14)
 
-    !Declare compound indexes for the subgrid. Not necessarily the same as nc_index values. Must be converted when necessary
-    integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,pmex_index,traveltime_index,no_index
-    parameter (no2_index=1,nox_index=2,pm25_index=3,pm10_index=4,nh3_index=5,o3_index=6,pmex_index=7,traveltime_index=8,no_index=9)
+    !Declare compound indexes for the subgrid. Same as nc_index values for compounds. Must be converted when necessary
+    integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,so2_index,pmex_index,traveltime_index,no_index
+    parameter (no2_index=no2_nc_index,nox_index=nox_nc_index,pm25_index=pm25_nc_index,pm10_index=pm10_nc_index,nh3_index=nh3_nc_index,o3_index=o3_nc_index,so2_index=so2_nc_index,pmex_index=pmex_nc_index,traveltime_index=9)
     !Declare source indexes (type_source)
     integer allsource_index,traffic_index,shipping_index,heating_index,agriculture_index,industry_index
     parameter (allsource_index=1,traffic_index=2,shipping_index=3,heating_index=4,agriculture_index=5,industry_index=6)
     integer n_compound_index,n_source_index
-    parameter (n_compound_index=8,n_source_index=6)
+    parameter (n_compound_index=9,n_source_index=6)
     integer compound_source_index(n_compound_index,n_source_index)
     
     character(256) source_file_postfix(n_source_index)

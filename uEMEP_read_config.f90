@@ -395,12 +395,17 @@
     !Replace date in the output file if required, 3 times for yyyy mm dd
     format_temp='yyyymmdd'
     call datestr_to_date(config_date_str,format_temp,a)
-    write (unit_logfile,'(2A)') ' Updating output path from: ',trim(pathname_output_grid)
+    !write (unit_logfile,'(2A)') ' Updating output path from: ',trim(pathname_output_grid)
 
     do i=1,3
         call date_to_datestr_bracket(a,pathname_output_grid,pathname_output_grid)
+        call date_to_datestr_bracket(a,pathname_EMEP(1),pathname_EMEP(1))
+        call date_to_datestr_bracket(a,pathname_EMEP(2),pathname_EMEP(2))
+        call date_to_datestr_bracket(a,pathname_EMEP(3),pathname_EMEP(3))
+        call date_to_datestr_bracket(a,pathname_EMEP(4),pathname_EMEP(4))
     enddo
-    write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_output_grid)
+    !write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_output_grid)
+    !write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_EMEP(1))
     
     !Place tile_tag in front of file_tag if it has been read
     if (tile_tag.ne.'') then

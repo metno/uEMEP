@@ -1,7 +1,7 @@
 !Saves receptor data in netcdf format
     
     subroutine uEMEP_save_netcdf_receptor_file(unit_logfile_in,filename_netcdf,nx,ny,nt,val_array,x_array,y_array,lon_array,lat_array,name_array,unit_array,title_str,create_file,valid_min &
-        ,x_rec,y_rec,lon_rec,lat_rec,height_rec,name_rec_in,nr,variable_type)
+        ,x_rec,y_rec,lon_rec,lat_rec,height_rec,name_rec_in,nr,variable_type,scale_factor)
     
     use uEMEP_definitions
     use netcdf
@@ -22,7 +22,7 @@
     logical create_file
     real valid_min
     character(256) variable_type
-
+    real scale_factor
     
     integer ncid
     integer station_dimid,lat_dimid,lon_dimid,val_dimid,time_dimid,charlen_dimid
@@ -193,6 +193,7 @@
         endif
         call check(  nf90_put_att(ncid, val_varid, "grid_mapping", "projection_utm") )
         call check(  nf90_put_att(ncid, val_varid, "coordinates", "station_name lat lon") )
+        if (scale_factor.ne.1.) call check(  nf90_put_att(ncid, val_varid, "scale_factor", scale_factor) )
         
         !Close the definitions
         call check( nf90_enddef(ncid) )
