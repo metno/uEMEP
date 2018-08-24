@@ -45,40 +45,7 @@
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Setting subgrids automatically (uEMEP_auto_subgrid)'
 	write(unit_logfile,'(A)') '================================================================'
-   
-    !Read in use subgrid files
-    do i_source=1,n_source_index
-    if (calculate_source(i_source)) then
-
-    if (read_existing_grid_data(use_subgrid_file_index(i_source))) then
-        if (calculate_source(i_source)) then
-            temp_name=trim(pathname_grid(use_subgrid_file_index(i_source)))//trim(filename_grid(use_subgrid_file_index(i_source)))//'_'//trim(file_tag)//'.asc'
-            inquire(file=temp_name,exist=exists)
-            if (.not.exists) then
-                write(unit_logfile,*)'ERROR: '//trim(temp_name)//' does not exist.'
-                return
-            endif
-            call read_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),1,subgrid_delta(1), &
-                real(use_subgrid_val(:,:,i_source)),x_subgrid,y_subgrid)
-            
-            !Convert values to logical
-            do j=1,subgrid_dim(y_dim_index)
-            do i=1,subgrid_dim(x_dim_index)
-                if (use_subgrid_val(i,j,i_source).gt.0) then
-                    use_subgrid(i,j,i_source)=.true.
-                else
-                    use_subgrid(i,j,i_source)=.true.
-                endif      
-            enddo
-            enddo
-            
-        return
-        endif
-    endif
-    endif
-    enddo
-    
-    
+       
     !Set all subgrids to do not use
     use_subgrid_val=0
     !Set time index used for emissions to 1
@@ -91,8 +58,6 @@
     use_subgrid_range(traffic_index)=6.
     use_subgrid_range(shipping_index)=12.
     
-
-
     !Set the number of levels to match this
     n_use_subgrid_levels=floor(log(max_use_subgrid_size/sqrt(subgrid_delta(x_dim_index)*subgrid_delta(y_dim_index)))/log(2.)+.5)
         
@@ -178,27 +143,10 @@
     endif
 
     do i_source=1,n_source_index 
-        if (.not.read_existing_grid_data(use_subgrid_file_index(i_source))) then
-            if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-                write(unit_logfile,'(a,2i10,f6.1)') 'Number of calculation subgrids for '//trim(source_file_str(i_source))//' (number, total, percent):',sum(use_subgrid_val(:,:,i_source)),subgrid_dim(1)*subgrid_dim(2),sum(use_subgrid_val(:,:,i_source))*100./(subgrid_dim(1)*subgrid_dim(2))
-            endif
-        endif
-    enddo
-
-    if (save_intermediate_files) then
-    do i_source=1,n_source_index 
-        if (.not.read_existing_grid_data(use_subgrid_file_index(i_source))) then
-            if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-                !write(unit_logfile,'(a,2i10,f6.1)') 'Number of calculation subgrids for '//trim(source_file_str(i_source))//' (number, total, fraction):',sum(use_subgrid_val(:,:,i_source)),subgrid_dim(1)*subgrid_dim(2),sum(use_subgrid_val(:,:,i_source))*1./(subgrid_dim(1)*subgrid_dim(2))
-                temp_name=trim(pathname_grid(use_subgrid_file_index(i_source)))//trim(filename_grid(use_subgrid_file_index(i_source)))//'_'//trim(file_tag)//'.asc'
-                write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-                call write_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),1,subgrid_delta(1), &
-                     real(use_subgrid_val(:,:,i_source)),x_subgrid,y_subgrid)
-            
-            endif
-        endif
-    enddo
+    if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        write(unit_logfile,'(a,2i10,f6.1)') 'Number of calculation subgrids for '//trim(source_file_str(i_source))//' (number, total, percent):',sum(use_subgrid_val(:,:,i_source)),subgrid_dim(1)*subgrid_dim(2),sum(use_subgrid_val(:,:,i_source))*100./(subgrid_dim(1)*subgrid_dim(2))
     endif
+    enddo
     
     end subroutine uEMEP_auto_subgrid
     

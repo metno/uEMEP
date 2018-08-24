@@ -25,7 +25,6 @@
     integer i_loop
     integer valid_dim_length_nc(num_dims_nc) !dimmensions of file 1
     integer numAtts_projection
-    logical :: invert_levels_flag=.false.
     integer surface_level_nc_2
     
     real temp_lat(4),temp_lon(4)
@@ -41,6 +40,8 @@
     integer date_array(6)
     double precision scale_factor_nc
     
+    integer i_pollutant,p_loop,p_loop_index
+    
     integer dmt_start_time_nc_index,dmt_end_time_nc_index,dmt_dim_length_nc
 
 
@@ -49,10 +50,8 @@
     double precision, allocatable :: var2d_nc_dp(:,:)
     double precision, allocatable :: var3d_nc_dp(:,:,:)
     double precision, allocatable :: var4d_nc_dp(:,:,:,:)
-    real, allocatable :: swop_var4d_nc(:,:,:,:,:,:)
-    real, allocatable :: swop_comp_var4d_nc(:,:,:,:,:)
     
-    !Temporary files for roatating wind field and PM
+    !Temporary files for rotating wind field and PM
     real, allocatable :: temp_var4d_nc(:,:,:,:,:)
     
     !Temporary PM arrays for reading in PM10
@@ -100,7 +99,7 @@
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
         if (allocated(lc_var3d_nc)) deallocate (lc_var3d_nc)
         if (allocated(lc_var4d_nc)) deallocate (lc_var4d_nc)
-        if (allocated(dmt_EMEP_grid_nc)) deallocate (dmt_EMEP_grid_nc)
+        if (allocated(dmt_EMEP_grid_nc)) deallocate (dmt_EMEP_grid_nc) !Daily mean temperature
         
     !Loop through the EMEP files containing the data
 
@@ -167,22 +166,17 @@
                 dim_length_nc(i_dim)=1
             endif
         enddo
-        
-        
-        
+            
         if (subgrid_dim(t_dim_index).gt.dim_length_nc(time_dim_nc_index)) then
             write(unit_logfile,'(A,2I)') 'ERROR: Specified time dimensions are greater than EMEP netcdf dimmensions. Stopping ',subgrid_dim(t_dim_index),dim_length_nc(time_dim_nc_index)
             stop
         endif 
-
-               
+              
         write(unit_logfile,'(A,6I)') ' Size of dimensions (x,y,z,t,xdist,ydist): ',dim_length_nc
         
-
         dim_start_nc(time_dim_nc_index)=temp_start_time_nc_index
         dim_length_nc(time_dim_nc_index)=min(dim_length_nc(time_dim_nc_index),subgrid_dim(t_dim_index))
-
-        
+       
         write(unit_logfile,'(A,6I)') ' New size of dimensions (x,y,z,t,xdist,ydist): ',dim_length_nc
 
         if (mod(dim_length_nc(xdist_dim_nc_index),2).ne.1.or.mod(dim_length_nc(ydist_dim_nc_index),2).ne.1) then
@@ -196,12 +190,6 @@
             write(unit_logfile,'(A,2I)') ' Centre index of local contribution dimmensions: ',xdist_centre_nc,ydist_centre_nc
         endif
         
-        !Set the last vertical dimension value as the surface layer index
-        if (i_file.eq.1.and.invert_levels_flag) then
-            surface_level_nc=dim_length_nc(z_dim_nc_index)
-            write(unit_logfile,'(A,I)') ' Surface level set to number of vertical layers: ',surface_level_nc
-        endif
-
         !Calculate the necessary extent of the EMEP grid region and only read these grids
         if (reduce_EMEP_region_flag) then
             !Determine the LL cordinates of the target grid
@@ -291,16 +279,16 @@
         if (.not.allocated(unit_dim_nc)) allocate (unit_dim_nc(num_dims_nc)) !x, y, z and time dimmension values
         if (.not.allocated(var1d_nc)) allocate (var1d_nc(maxval(dim_length_nc),num_dims_nc)) !x, y, z and time maximum dimmensions
         if (.not.allocated(var2d_nc)) allocate (var2d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),2)) !Lat and lon
-        if (.not.allocated(var3d_nc)) allocate (var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index))
-        if (.not.allocated(var4d_nc)) allocate (var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index))
+        if (.not.allocated(var3d_nc)) allocate (var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index,n_pollutant_loop))
+        if (.not.allocated(var4d_nc)) allocate (var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index,n_pollutant_loop))
         if (.not.allocated(comp_var3d_nc)) allocate (comp_var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),n_compound_nc_index))
         if (.not.allocated(comp_var4d_nc)) allocate (comp_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),n_compound_nc_index))
         if (.not.allocated(var1d_nc_dp)) allocate (var1d_nc_dp(maxval(dim_length_nc))) 
         if (.not.allocated(var2d_nc_dp)) allocate (var2d_nc_dp(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index))) !Lat and lon
         !if (.not.allocated(var3d_nc_dp)) allocate (var3d_nc_dp(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)))
         !allocate (var4d_nc_dp(dim_length_nc(x_index),dim_length_nc(y_index),1,dim_length_nc(time_index)))
-        if (i_file.eq.2.and..not.allocated(lc_var3d_nc)) allocate (lc_var3d_nc(dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),num_lc_var_nc,n_source_nc_index))
-        if (i_file.eq.2.and..not.allocated(lc_var4d_nc)) allocate (lc_var4d_nc(dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index),num_lc_var_nc,n_source_nc_index))
+        if (i_file.eq.2.and..not.allocated(lc_var3d_nc)) allocate (lc_var3d_nc(dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),num_lc_var_nc,n_source_nc_index,n_pollutant_loop))
+        if (i_file.eq.2.and..not.allocated(lc_var4d_nc)) allocate (lc_var4d_nc(dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index),num_lc_var_nc,n_source_nc_index,n_pollutant_loop))
         if (i_file.eq.2.and..not.allocated(pm_lc_var4d_nc)) allocate (pm_lc_var4d_nc(dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index),num_lc_var_nc,n_source_nc_index,2))
         if (.not.allocated(pm_var4d_nc)) allocate (pm_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index,2))
 
@@ -351,33 +339,21 @@
             endif       
         enddo
 
-        !Set the pollutant index (could also be looped if required)
-        if (pollutant_index.eq.all_nc_index) then
-            n_pollutant_loop=3
-            pollutant_loop_index(1)=nox_nc_index
-            pollutant_loop_index(2)=pm25_nc_index
-            pollutant_loop_index(3)=pm10_nc_index
-        elseif (pollutant_index.eq.pm_nc_index) then
-            n_pollutant_loop=2
-            pollutant_loop_index(1)=pm25_nc_index
-            pollutant_loop_index(2)=pm10_nc_index
-        else
-            n_pollutant_loop=1
-            pollutant_loop_index(1)=compound_index
-        endif
-
-        !Set the compound index (could also be looped if required)
-        if (compound_index.eq.nox_nc_index) then
-            n_compound_loop=3
-            compound_loop_index(1)=nox_nc_index
-            compound_loop_index(2)=no2_nc_index
-            compound_loop_index(3)=o3_nc_index
-        else
-            n_compound_loop=1
-            compound_loop_index(1)=compound_index
-        endif
+     
         
-        i_conc=compound_index
+        !Loop through the pollutants
+        do p_loop=1,n_pollutant_loop+1
+
+            !Set the compound index for this pollutant
+        if (p_loop.le.n_pollutant_loop) then
+            i_pollutant=pollutant_loop_index(p_loop)
+            p_loop_index=p_loop
+        else
+            !Special case to read in meteo data that is defined as the all_nc_index
+            i_pollutant=all_nc_index
+            !Put the meteo data in the first pollutant index always
+            p_loop_index=meteo_p_loop_index
+        endif
         
         !Loop through the sources
         do i_source=1,n_source_nc_index
@@ -387,15 +363,16 @@
         !Loop through the variables
         do i=1,num_var_nc
             !write(*,*) i,trim(var_name_nc(i))
-            !if (i.eq.frac_nc_index) var_name_nc_temp=var_name_nc(i,i_conc,i_source)
-            !if (i.eq.conc_nc_index) var_name_nc_temp=var_name_nc(i,i_conc,i_source)
+            !if (i.eq.frac_nc_index) var_name_nc_temp=var_name_nc(i,i_pollutant,i_source)
+            !if (i.eq.conc_nc_index) var_name_nc_temp=var_name_nc(i,i_pollutant,i_source)
             
             !Identify the variable name and ID in the nc file
-            var_name_nc_temp=var_name_nc(i,i_conc,i_source)
+            var_name_nc_temp=var_name_nc(i,i_pollutant,i_source)
+            
             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
             !write(*,*) 'Status1: ',status_nc,var_id_nc,trim(var_name_nc_temp),i_source
             !Exception for pm10
-            if ((i.eq.conc_nc_index.or.i.eq.frac_nc_index).and.i_conc.eq.pm10_nc_index) then
+            if ((i.eq.conc_nc_index.or.i.eq.frac_nc_index).and.i_pollutant.eq.pm10_nc_index) then
                 var_name_nc_temp=var_name_nc(i,pmco_nc_index,i_source)
                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                 !write(*,*) '-------------------',trim(var_name_nc_temp),status_nc
@@ -415,13 +392,13 @@
                     endif
                 elseif (temp_num_dims.eq.3.and.i_file.eq.1) then
                     !write(*,'(6i)') dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, var3d_nc(:,:,:,i,i_source),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, var3d_nc(:,:,:,i,i_source,p_loop_index),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !write(*,*) status_nc
-                    write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var3d_nc(:,:,:,i,i_source)),maxval(var3d_nc(:,:,:,i,i_source))
+                    write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var3d_nc(:,:,:,i,i_source,p_loop_index)),maxval(var3d_nc(:,:,:,i,i_source,p_loop_index))
                 elseif (temp_num_dims.eq.4) then
                     if (i_file.eq.2.and.i.eq.ZTOP_nc_index) then
                         !Don't try to read
-                    elseif (i.eq.conc_nc_index.and.i_conc.eq.pm10_nc_index) then
+                    elseif (i.eq.conc_nc_index.and.i_pollutant.eq.pm10_nc_index) then
                         var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,1),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
@@ -430,18 +407,18 @@
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,2),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                         write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,2)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,2))
-                        var4d_nc(:,:,:,:,i,i_source)=pm_var4d_nc(:,:,:,:,i,i_source,1)+pm_var4d_nc(:,:,:,:,i,i_source,2)
+                        var4d_nc(:,:,:,:,i,i_source,p_loop_index)=pm_var4d_nc(:,:,:,:,i,i_source,1)+pm_var4d_nc(:,:,:,:,i,i_source,2)
                     else
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,p_loop_index),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !var4d_nc(:,:,:,:,i,i_source)=real(temp_var4d_nc(:,:,:,:))
-                    write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var4d_nc(:,:,:,:,i,i_source)),maxval(var4d_nc(:,:,:,:,i,i_source))
+                    write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var4d_nc(:,:,:,:,i,i_source,p_loop_index)),maxval(var4d_nc(:,:,:,:,i,i_source,p_loop_index))
                     endif
                     !write(*,*) shape(var4d_nc)
                     !write(*,*) dim_start_nc(z_dim_nc_index),dim_length_nc(z_dim_nc_index)
                     !write(*,*) maxval(var4d_nc(:,:,1,1,i,i_source)),maxval(var4d_nc(:,:,1,2,i,i_source))
                 elseif (temp_num_dims.eq.6.and.i_file.eq.2) then
-                    if (i.eq.frac_nc_index.and.i_conc.eq.pm10_nc_index) then
+                    if (i.eq.frac_nc_index.and.i_pollutant.eq.pm10_nc_index) then
                         var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
@@ -451,10 +428,10 @@
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                         write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2))
                         !Not used but calculated for writing
-                        lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source)=pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1)+pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)
+                        !lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index)=pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1)+pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)
                     else
-                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source)),maxval(lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source))
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index)),maxval(lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index))
                     endif
                     !write(*,*) shape(lc_var4d_nc)
                     !write(*,*) maxval(lc_var4d_nc(3,3,:,:,:,1,lc_frac_nc_index,i_source)),maxval(lc_var4d_nc(3,3,:,:,:,2,lc_frac_nc_index,i_source))
@@ -467,19 +444,20 @@
                  !write(unit_logfile,'(8A,8A)') ' Cannot read: ',trim(var_name_nc_temp)
             endif
 
-        enddo
+        enddo !Variable loop
         
         
         endif
-        enddo
+        enddo !Source loop
         
         !Loop through the additional compounds that are in the base file
         !if (i_file.eq.1) then
         i_source=allsource_index
-        i=conc_nc_index
-        do i_loop=1,n_compound_loop
-            i_conc=compound_loop_index(i_loop)
+        !i=conc_nc_index
+        do i_loop=1,n_pollutant_compound_loop(p_loop)
+            i_conc=pollutant_compound_loop_index(p_loop,i_loop)
             var_name_nc_temp=comp_name_nc(i_conc)
+            !write(*,*) p_loop,i_conc,i_source,trim(var_name_nc_temp)
             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
             !write(*,*) 'Status1: ',status_nc,id_nc,var_id_nc,trim(var_name_nc_temp)
             
@@ -520,7 +498,9 @@
                 
         enddo !compound loop
         !endif
-            
+        
+        enddo !pollutant loop
+           
         !Read in 2m temperature completely to get the daily average for home heating
         if (use_RWC_emission_data) then
             dmt_start_time_nc_index=start_time_nc_index
@@ -529,7 +509,7 @@
             if (.not.allocated(dmt_EMEP_grid_nc)) allocate (dmt_EMEP_grid_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dmt_dim_length_nc))
             
             if (calculate_source(heating_index).and.i_file.eq.1) then
-                var_name_nc_temp=var_name_nc(t2m_nc_index,compound_index,allsource_nc_index)
+                var_name_nc_temp=var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index)
                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                 status_nc = NF90_GET_VAR (id_nc, var_id_nc, dmt_EMEP_grid_nc,start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dmt_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dmt_dim_length_nc/))
                 write(unit_logfile,'(3A,2f16.4)') ' Reading: ',trim(var_name_nc_temp),' (min, max): ',minval(dmt_EMEP_grid_nc),maxval(dmt_EMEP_grid_nc)
@@ -542,26 +522,7 @@
 
         
         status_nc = NF90_CLOSE (id_nc)
-        
-        !Invert the base file arrays in the z direction to be compatible with the uEMEP files
-        !Not implemented any more (1.eq.2)
-        if (i_file.eq.1.and.invert_levels_flag) then
-            write(unit_logfile,'(a)') 'WARNING: Inverting layers in base file. Temporary measure since the base file layers are ordered differently to the uEMEP layers'
-            if (.not.allocated(swop_var4d_nc)) allocate (swop_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index))
-            do i=1,dim_length_nc(z_dim_nc_index)
-                swop_var4d_nc(:,:,i,:,:,:)=var4d_nc(:,:,dim_length_nc(z_dim_nc_index)-i+1,:,:,:)
-            enddo
-            var4d_nc=swop_var4d_nc
-            if (allocated(swop_var4d_nc)) deallocate (swop_var4d_nc)
-            if (.not.allocated(swop_comp_var4d_nc)) allocate (swop_comp_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),n_compound_nc_index))
-            do i=1,dim_length_nc(z_dim_nc_index)
-                swop_comp_var4d_nc(:,:,i,:,:)=comp_var4d_nc(:,:,dim_length_nc(z_dim_nc_index)-i+1,:,:)
-            enddo
-            comp_var4d_nc=swop_comp_var4d_nc
-            if (allocated(swop_comp_var4d_nc)) deallocate (swop_comp_var4d_nc)
-        endif
-        
-        
+                
         
     enddo !End file loop
     
@@ -581,27 +542,28 @@
     endif
     
        
-        !Transfer all source values to all the sources for use in source looping later
+    !Transfer all source values to all the sources for use in source looping later
     do i_source=1,n_source_nc_index
         if (calculate_source(i_source).and.i_source.ne.allsource_nc_index) then
-        var3d_nc(:,:,:,conc_nc_index,i_source)=var3d_nc(:,:,:,conc_nc_index,allsource_nc_index)
-        var4d_nc(:,:,:,:,conc_nc_index,i_source)=var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index)
+        var3d_nc(:,:,:,conc_nc_index,i_source,:)=var3d_nc(:,:,:,conc_nc_index,allsource_nc_index,:)
+        var4d_nc(:,:,:,:,conc_nc_index,i_source,:)=var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,:)
+        pm_var4d_nc(:,:,:,:,conc_nc_index,i_source,:)=pm_var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,:)
         endif
     enddo
         
         !Transfer local contribution 4d to 3d since this is the only one currently used
         !write(*,*) shape(var4d_nc)
         !write(*,*) surface_level_nc
-        lc_var3d_nc=lc_var4d_nc(:,:,:,:,surface_level_nc_2,:,:,:)
+        lc_var3d_nc=lc_var4d_nc(:,:,:,:,surface_level_nc_2,:,:,:,:)
         !var3d_nc(:,:,:,conc_nc_index,:)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,:)
-        var3d_nc(:,:,:,conc_nc_index,:)=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:)
+        var3d_nc(:,:,:,conc_nc_index,:,:)=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,:)
         comp_var3d_nc(:,:,:,:)=comp_var4d_nc(:,:,surface_level_nc,:,:)
         
         if (allocated(lc_var4d_nc)) deallocate(lc_var4d_nc)
         if (allocated(comp_var4d_nc)) deallocate(comp_var4d_nc)
 
         !Use average lowest level grid thickness
-        H_emep_temp=sum(var4d_nc(:,:,surface_level_nc_2,:,ZTOP_nc_index,allsource_index))/dim_length_nc(x_dim_nc_index)/dim_length_nc(y_dim_nc_index)/dim_length_nc(time_dim_nc_index)
+        H_emep_temp=sum(var4d_nc(:,:,surface_level_nc_2,:,ZTOP_nc_index,allsource_index,meteo_p_loop_index))/dim_length_nc(x_dim_nc_index)/dim_length_nc(y_dim_nc_index)/dim_length_nc(time_dim_nc_index)
         if (H_emep_temp.ne.0) then
             H_emep=H_emep_temp
             write(unit_logfile,'(A,f8.2)')' Using model depth info. Setting lowest level depth = ',H_emep
@@ -612,19 +574,28 @@
         H_meteo=H_emep/2.
         write(unit_logfile,'(A,f8.2)')' Setting lowest meteo grid height = ',H_meteo
         
-        var3d_nc(:,:,:,conc_nc_index,:)=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:)
+        var3d_nc(:,:,:,conc_nc_index,:,:)=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,:)
         
         !At the moment the local contribution based on fraction. Convert to local contributions here
         !Remove this if we read local contributions in a later version
         do j=1,dim_length_nc(ydist_dim_nc_index)
         do i=1,dim_length_nc(xdist_dim_nc_index)
-            if (compound_index.eq.pm10_nc_index) then
-                lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,1)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,1) &
+        
+        do p_loop=1,n_pollutant_loop
+            
+            if (pollutant_loop_index(p_loop).eq.pm10_nc_index) then
+                lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,1)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,1) &
                     +pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,2)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,2)
+                !write(*,*) sum(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)), &
+                !    sum(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,shipping_index,1)),sum(pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,shipping_index,1)), &
+                !    sum(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,shipping_index,2)),sum(pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,shipping_index,2))
             else
             !lc_var4d_nc(i,j,:,:,:,:,lc_local_nc_index,:)=var4d_nc(:,:,:,:,conc_nc_index,:)*lc_var4d_nc(i,j,:,:,:,:,lc_frac_nc_index,:)
-            lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:)=var3d_nc(:,:,:,conc_nc_index,:)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:)
+            lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=var3d_nc(:,:,:,conc_nc_index,:,p_loop)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop)
+            !write(*,*) sum(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)),sum(var3d_nc(:,:,:,conc_nc_index,:,p_loop)),sum(lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop))
             endif
+        enddo
+        
         enddo
         enddo
         
@@ -636,9 +607,9 @@
         !write(*,*) shape(var4d_nc)
         !Commented out as these are not used?
         !var4d_nc(:,:,:,:,frac_nc_index,:)=lc_var4d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,:,lc_frac_nc_index,:)
-        var3d_nc(:,:,:,frac_nc_index,:)=lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_frac_nc_index,:)
-        !var4d_nc(:,:,:,:,local_nc_index,:)=var4d_nc(:,:,:,:,conc_nc_index,:)*var4d_nc(:,:,:,:,frac_nc_index,:)
-        var3d_nc(:,:,:,local_nc_index,:)=var3d_nc(:,:,:,conc_nc_index,:)*var3d_nc(:,:,:,frac_nc_index,:)
+        !do i_pollutant=1,n_pollutant_loop
+        var3d_nc(:,:,:,frac_nc_index,:,:)=lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_frac_nc_index,:,:)
+        var3d_nc(:,:,:,local_nc_index,:,:)=var3d_nc(:,:,:,conc_nc_index,:,:)*var3d_nc(:,:,:,frac_nc_index,:,:)
         
         !write(*,*) minval(var4d_nc(:,:,:,:,local_nc_index,:)),maxval(var4d_nc(:,:,:,:,local_nc_index,:))
         !write(*,*) minval(var4d_nc(:,:,:,:,frac_nc_index,:)),maxval(var4d_nc(:,:,:,:,frac_nc_index,:))
@@ -651,48 +622,48 @@
             
         !If no logz0 available. Set to log(0.1)
         !For urban areas a value of 0.3 is used
-        where (var3d_nc(:,:,:,logz0_nc_index,:).eq.0.0) var3d_nc(:,:,:,logz0_nc_index,:)=log(0.3)
+        where (var3d_nc(:,:,:,logz0_nc_index,:,meteo_p_loop_index).eq.0.0) var3d_nc(:,:,:,logz0_nc_index,:,meteo_p_loop_index)=log(0.3)
         if (replace_z0.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Replacing z0 everywhere with: ',replace_z0
-            var3d_nc(:,:,:,logz0_nc_index,:)=log(replace_z0)
+            var3d_nc(:,:,:,logz0_nc_index,:,meteo_p_loop_index)=log(replace_z0)
         endif
         if (replace_invL.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Replacing inverse L everywhere with: ',replace_invL
-            var3d_nc(:,:,:,invL_nc_index,:)=replace_invL
+            var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index)=replace_invL
         endif
         if (replace_hmix.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Replacing HMIX everywhere with: ',replace_hmix
-            var3d_nc(:,:,:,hmix_nc_index,:)=replace_hmix
+            var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=replace_hmix
         endif
         if (FF_scale.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Rescaling wind fields everywhere with factor: ',FF_scale
-            var3d_nc(:,:,:,ustar_nc_index,:)=var3d_nc(:,:,:,ustar_nc_index,:)*FF_scale
-            var3d_nc(:,:,:,FF10_nc_index,:)=var3d_nc(:,:,:,FF10_nc_index,:)*FF_scale
-            var3d_nc(:,:,:,inv_FF10_nc_index,:)=var3d_nc(:,:,:,inv_FF10_nc_index,:)/FF_scale
-            var3d_nc(:,:,:,ugrid_nc_index,:)=var3d_nc(:,:,:,ugrid_nc_index,:)*FF_scale
-            var3d_nc(:,:,:,vgrid_nc_index,:)=var3d_nc(:,:,:,vgrid_nc_index,:)*FF_scale
-            var3d_nc(:,:,:,inv_FFgrid_nc_index,:)=var3d_nc(:,:,:,inv_FFgrid_nc_index,:)/FF_scale
-            var4d_nc(:,:,:,:,ugrid_nc_index,:)=var4d_nc(:,:,:,:,ugrid_nc_index,:)*FF_scale
-            var4d_nc(:,:,:,:,vgrid_nc_index,:)=var4d_nc(:,:,:,:,vgrid_nc_index,:)*FF_scale
-            var4d_nc(:,:,:,:,inv_FFgrid_nc_index,:)=var4d_nc(:,:,:,:,inv_FFgrid_nc_index,:)/FF_scale
+            var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)*FF_scale
+            var3d_nc(:,:,:,FF10_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,FF10_nc_index,:,meteo_p_loop_index)*FF_scale
+            var3d_nc(:,:,:,inv_FF10_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,inv_FF10_nc_index,:,meteo_p_loop_index)/FF_scale
+            var3d_nc(:,:,:,ugrid_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,ugrid_nc_index,:,meteo_p_loop_index)*FF_scale
+            var3d_nc(:,:,:,vgrid_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,vgrid_nc_index,:,meteo_p_loop_index)*FF_scale
+            var3d_nc(:,:,:,inv_FFgrid_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,inv_FFgrid_nc_index,:,meteo_p_loop_index)/FF_scale
+            var4d_nc(:,:,:,:,ugrid_nc_index,:,meteo_p_loop_index)=var4d_nc(:,:,:,:,ugrid_nc_index,:,meteo_p_loop_index)*FF_scale
+            var4d_nc(:,:,:,:,vgrid_nc_index,:,meteo_p_loop_index)=var4d_nc(:,:,:,:,vgrid_nc_index,:,meteo_p_loop_index)*FF_scale
+            var4d_nc(:,:,:,:,inv_FFgrid_nc_index,:,meteo_p_loop_index)=var4d_nc(:,:,:,:,inv_FFgrid_nc_index,:,meteo_p_loop_index)/FF_scale
         endif
         if (FF10_offset.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Offsetting 10 m wind fields everywhere with a value: ',FF10_offset
-            var3d_nc(:,:,:,FF10_nc_index,:)=var3d_nc(:,:,:,FF10_nc_index,:)+FF10_offset
+            var3d_nc(:,:,:,FF10_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,FF10_nc_index,:,meteo_p_loop_index)+FF10_offset
          endif
         if (DD_offset.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Rotating wind fields everywhere with a value: ',DD_offset
             if (.not.allocated(temp_var4d_nc)) allocate (temp_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),2))
 
             !Make use of the spare source index parts of the array for the conversion
-            temp_var4d_nc(:,:,:,:,1) = var4d_nc(:,:,:,:,ugrid_nc_index,allsource_index)*cos(DD_offset/180.*3.14159)+var4d_nc(:,:,:,:,vgrid_nc_index,allsource_index)*sin(DD_offset/180.*3.14159)                                       
-            temp_var4d_nc(:,:,:,:,2) =-var4d_nc(:,:,:,:,ugrid_nc_index,allsource_index)*sin(DD_offset/180.*3.14159)+var4d_nc(:,:,:,:,vgrid_nc_index,allsource_index)*cos(DD_offset/180.*3.14159)                                       
-            var4d_nc(:,:,:,:,ugrid_nc_index,allsource_nc_index) = temp_var4d_nc(:,:,:,:,1)
-            var4d_nc(:,:,:,:,vgrid_nc_index,allsource_nc_index) = temp_var4d_nc(:,:,:,:,2)
+            temp_var4d_nc(:,:,:,:,1) = var4d_nc(:,:,:,:,ugrid_nc_index,allsource_index,meteo_p_loop_index)*cos(DD_offset/180.*3.14159)+var4d_nc(:,:,:,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)*sin(DD_offset/180.*3.14159)                                       
+            temp_var4d_nc(:,:,:,:,2) =-var4d_nc(:,:,:,:,ugrid_nc_index,allsource_index,meteo_p_loop_index)*sin(DD_offset/180.*3.14159)+var4d_nc(:,:,:,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)*cos(DD_offset/180.*3.14159)                                       
+            var4d_nc(:,:,:,:,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index) = temp_var4d_nc(:,:,:,:,1)
+            var4d_nc(:,:,:,:,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index) = temp_var4d_nc(:,:,:,:,2)
         endif
        
         !Set the magnitude of the gridded wind fields. Should probably be done after subgridding?
-        var4d_nc(:,:,:,:,FFgrid_nc_index,allsource_index)=sqrt(var4d_nc(:,:,:,:,ugrid_nc_index,allsource_index)**2+var4d_nc(:,:,:,:,vgrid_nc_index,allsource_index)**2)
+        var4d_nc(:,:,:,:,FFgrid_nc_index,allsource_index,meteo_p_loop_index)=sqrt(var4d_nc(:,:,:,:,ugrid_nc_index,allsource_index,meteo_p_loop_index)**2+var4d_nc(:,:,:,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)**2)
   
         !Check EMEP time
         date_num_temp=dble(ceiling(val_dim_nc(1,time_dim_nc_index)*24.))/24.
@@ -737,8 +708,6 @@
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
         if (allocated(var3d_nc_dp)) deallocate (var3d_nc_dp)
         if (allocated(var4d_nc_dp)) deallocate (var4d_nc_dp)
-        if (allocated(swop_var4d_nc)) deallocate (swop_var4d_nc)
-        if (allocated(swop_comp_var4d_nc)) deallocate (swop_comp_var4d_nc)
         if (allocated(temp_var4d_nc)) deallocate (temp_var4d_nc)
  
     end subroutine uEMEP_read_EMEP

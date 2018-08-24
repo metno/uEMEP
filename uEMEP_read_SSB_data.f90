@@ -217,7 +217,7 @@
                     !Reduce the number of dwellings when they are in a multiple dwelling by factor of 3. i.e. the proxy is reduced in blocks with the assumption that only 1 in 3 use their wood heater
                     heating_proxy=dwe_todw
                     heating_proxy=max(0.,dwe_todw-dwe_mult)+dwe_mult/5.
-                    proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,subsource_index)=proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,subsource_index)+heating_proxy
+                    proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,:)=proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,:)+heating_proxy
                     count_subgrid(i_ssb_index,j_ssb_index)=count_subgrid(i_ssb_index,j_ssb_index)+1
                     !write(*,*) count,proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,subsource_index)
                 endif
@@ -260,7 +260,7 @@
     
     if (SSB_data_type.eq.dwelling_index) then
         write(unit_logfile,'(A,I)') 'Dwelling counts = ',count
-        write(unit_logfile,'(A,es12.3)') 'Total dwellings = ',sum(proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,subsource_index))
+        write(unit_logfile,'(A,es12.3)') 'Total dwellings = ',sum(proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,1))
         write(unit_logfile,'(A,I,a,i,a)') 'Number of grid placements = ',sum(count_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index))),' of ',emission_subgrid_dim(x_dim_index,source_index)*emission_subgrid_dim(y_dim_index,source_index),' grids'
     else
         write(unit_logfile,'(A,I)') 'Population type index = ',SSB_data_type
@@ -286,41 +286,6 @@
     endif
     
    
-    if (save_intermediate_files) then
-    if (SSB_data_type.eq.dwelling_index) then
-        temp_name=trim(pathname_grid(proxy_emission_file_index(source_index)))//trim(filename_grid(proxy_emission_file_index(source_index)))//trim(subsource_str(subsource_index))//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//'.asc'
-        write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-        !write(*,*) emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),emission_subgrid_delta(x_dim_index,source_index)
-        !write(*,*) size(emission_subgrid,1),size(emission_subgrid,2),size(emission_subgrid,3),size(emission_subgrid,4),size(emission_subgrid,5)
-        !write(*,*) size(x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),1),size(x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),2)
-        !write(*,*) size(y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),1),size(y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),2)
-       ! write(*,*) size(emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),t,source_index,subsource_index),1),size(emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),t,source_index,subsource_index),2)
-        
-        temp1_subgrid=proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,subsource_index)
-        temp2_subgrid=x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index)
-        temp3_subgrid=y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index)
-        !write(*,*) size(temp_subgrid,1),size(temp_subgrid,2)
-        call write_esri_ascii_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),emission_subgrid_delta(x_dim_index,source_index), &
-                temp1_subgrid,temp2_subgrid,temp3_subgrid)
-    else
-        
-        temp_name=trim(pathname_grid(population_file_index(SSB_data_type)))//trim(filename_grid(population_file_index(SSB_data_type)))//'_'//trim(file_tag)//'.asc'
-        write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-        !write(*,*) emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),emission_subgrid_delta(x_dim_index,source_index)
-        !write(*,*) size(emission_subgrid,1),size(emission_subgrid,2),size(emission_subgrid,3),size(emission_subgrid,4),size(emission_subgrid,5)
-        !write(*,*) size(x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),1),size(x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),2)
-        !write(*,*) size(y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),1),size(y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),2)
-       ! write(*,*) size(emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),t,source_index,subsource_index),1),size(emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),t,source_index,subsource_index),2)
-        
-        temp1_subgrid=population_subgrid(:,:,SSB_data_type)
-        temp2_subgrid=x_population_subgrid
-        temp3_subgrid=y_population_subgrid
-        !write(*,*) size(temp_subgrid,1),size(temp_subgrid,2)
-        call write_esri_ascii_file(unit_logfile,temp_name,population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index),population_subgrid_delta(x_dim_index), &
-                temp1_subgrid,temp2_subgrid,temp3_subgrid)
-    endif
-    endif
-
     deallocate (temp1_subgrid,temp2_subgrid,temp3_subgrid)
     
     end subroutine uEMEP_read_SSB_data

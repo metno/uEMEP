@@ -11,6 +11,7 @@
     !integer ii,jj
     real dx_temp,dy_temp
     real lon_temp,lat_temp
+    integer :: subsource_index=1
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -152,14 +153,14 @@
     if (allocated(traveltime_subgrid)) deallocate (traveltime_subgrid)
     
     !Define target grid
-    if (.not.allocated(subgrid)) allocate (subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_possible_subsource))
+    if (.not.allocated(subgrid)) allocate (subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_pollutant_loop))
     if (.not.allocated(x_subgrid)) allocate (x_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
     if (.not.allocated(y_subgrid)) allocate (y_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
     if (.not.allocated(lon_subgrid)) allocate (lon_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
     if (.not.allocated(lat_subgrid)) allocate (lat_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
     if (.not.allocated(xproj_subgrid)) allocate (xproj_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
     if (.not.allocated(yproj_subgrid)) allocate (yproj_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
-    if (.not.allocated(traveltime_subgrid)) allocate (traveltime_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),2)) !Last index 1 for weighted time, 2 for sum of weights
+    if (.not.allocated(traveltime_subgrid)) allocate (traveltime_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),2,n_pollutant_loop)) !Last index 1 for weighted time, 2 for sum of weights
     traveltime_subgrid=0.
 
     !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
@@ -203,7 +204,7 @@
     if (allocated(meteo_nc_yproj_integral_subgrid)) deallocate (meteo_nc_yproj_integral_subgrid)
 
     !Define integral grid
-    if (.not.allocated(integral_subgrid)) allocate (integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_source_index,n_possible_subsource))
+    if (.not.allocated(integral_subgrid)) allocate (integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
     if (.not.allocated(x_integral_subgrid)) allocate (x_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
     if (.not.allocated(y_integral_subgrid)) allocate (y_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
     if (.not.allocated(lon_integral_subgrid)) allocate (lon_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
@@ -268,16 +269,16 @@
     if (allocated(emission_properties_subgrid)) deallocate (emission_properties_subgrid) 
  
     !Allocate emission grids with same dimensions as the maximum emission subgrid
-    if (.not.allocated(proxy_emission_subgrid)) allocate (proxy_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index,n_possible_subsource)) 
-    if (.not.allocated(emission_subgrid)) allocate (emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_possible_subsource)) 
+    if (.not.allocated(proxy_emission_subgrid)) allocate (proxy_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index,n_pollutant_loop)) 
+    if (.not.allocated(emission_subgrid)) allocate (emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop)) 
     if (.not.allocated(x_emission_subgrid)) allocate (x_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
     if (.not.allocated(y_emission_subgrid)) allocate (y_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
     if (.not.allocated(lon_emission_subgrid)) allocate (lon_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
     if (.not.allocated(lat_emission_subgrid)) allocate (lat_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
-    if (.not.allocated(emission_time_profile_subgrid)) allocate (emission_time_profile_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_possible_subsource)) 
+    if (.not.allocated(emission_time_profile_subgrid)) allocate (emission_time_profile_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop)) 
     if (.not.allocated(xproj_emission_subgrid)) allocate (xproj_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
     if (.not.allocated(yproj_emission_subgrid)) allocate (yproj_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
-    if (.not.allocated(emission_properties_subgrid)) allocate (emission_properties_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_emission_index,n_source_index,n_possible_subsource)) 
+    if (.not.allocated(emission_properties_subgrid)) allocate (emission_properties_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_emission_index,n_source_index)) 
     emission_time_profile_subgrid=1.
     
     !Define emission grids
@@ -352,9 +353,9 @@
     do j=1,emission_max_subgrid_dim(y_dim_index)
     do i=1,emission_max_subgrid_dim(x_dim_index)
     
-        emission_properties_subgrid(i,j,emission_h_index,:,:)=h_emis(:,:)
-        emission_properties_subgrid(i,j,emission_sigz00_index,:,:)=sig_z_00(:,:)
-        emission_properties_subgrid(i,j,emission_sigy00_index,:,:)=sig_y_00(:,:)
+        emission_properties_subgrid(i,j,emission_h_index,:)=h_emis(:,subsource_index)
+        emission_properties_subgrid(i,j,emission_sigz00_index,:)=sig_z_00(:,subsource_index)
+        emission_properties_subgrid(i,j,emission_sigy00_index,:)=sig_y_00(:,subsource_index)
     
     enddo
     enddo
@@ -362,6 +363,6 @@
     !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
     if (allocated(exposure_subgrid)) deallocate (exposure_subgrid)
     !Define exposure subgrid
-    if (.not.allocated(exposure_subgrid)) allocate (exposure_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index))
+    if (.not.allocated(exposure_subgrid)) allocate (exposure_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
 
     end subroutine uEMEP_define_subgrid

@@ -20,8 +20,9 @@
     logical :: reduce_roadlink_region_flag=.true.
     
     !Nodata value
+    !Changed to -99 so it can be used with int1 variables
     real NODATA_value
-    parameter (NODATA_value=-999.)
+    parameter (NODATA_value=-99.)
     
     !often used
     !integer i,j,k
@@ -84,8 +85,8 @@
     
     integer compound_index
 
-    integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index,pmco_nc_index,all_nc_index,pm_nc_index
-    parameter (no2_nc_index=1,nox_nc_index=2,pm25_nc_index=3,pm10_nc_index=4,nh3_nc_index=5,o3_nc_index=6,pmco_nc_index=7,all_nc_index=8,pm_nc_index=9)
+    integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index,pmex_nc_index,pmco_nc_index,all_nc_index,pm_nc_index
+    parameter (no2_nc_index=1,nox_nc_index=2,pm25_nc_index=3,pm10_nc_index=4,nh3_nc_index=5,o3_nc_index=6,pmex_nc_index=7,pmco_nc_index=8,all_nc_index=9,pm_nc_index=10)
     integer n_compound_nc_index
     parameter (n_compound_nc_index=7)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
@@ -94,14 +95,6 @@
     integer n_source_nc_index
     parameter (n_source_nc_index=6)
    
-    character(256) var_name_nc(num_var_nc,n_compound_nc_index,n_source_nc_index)
-    character(256) dim_name_nc(num_dims_nc)
-    character(256) var_name_meteo_nc(num_var_meteo_nc)
-    character(256) dim_name_meteo_nc(num_dims_meteo_nc)
-    character(256) comp_name_nc(n_compound_nc_index)
-    character(256) input_comp_name
-    real comp_scale_nc(n_compound_nc_index)
-    
     !Compound loop for nox chemistry
     integer :: n_compound_loop = 1
     integer compound_loop_index(n_compound_nc_index)
@@ -109,9 +102,27 @@
     !Loop for all pollutants to be calculated
     integer pollutant_index
     integer n_pollutant_nc_index
-    parameter (n_pollutant_nc_index=9) !Includes the two addition all and pm index
+    parameter (n_pollutant_nc_index=10) !Includes the two addition all and pm index
     integer :: n_pollutant_loop = 1
     integer pollutant_loop_index(n_pollutant_nc_index)
+    integer pollutant_loop_back_index(n_pollutant_nc_index)
+    
+    !Set pollutant compound loop 
+    integer n_pollutant_compound_loop(n_pollutant_nc_index)
+    integer pollutant_compound_loop_index(n_pollutant_nc_index,n_compound_nc_index)
+    !Set the pollutant reference index for meteo data. All meteo data read from EMEP uses this index
+    integer :: meteo_p_loop_index=1
+    character(256) pollutant_file_str(n_pollutant_nc_index)
+
+    character(256) var_name_nc(num_var_nc,n_pollutant_nc_index,n_source_nc_index)
+    character(256) dim_name_nc(num_dims_nc)
+    character(256) var_name_meteo_nc(num_var_meteo_nc)
+    character(256) dim_name_meteo_nc(num_dims_meteo_nc)
+    character(256) comp_name_nc(n_compound_nc_index)
+    character(256) input_comp_name
+    real comp_scale_nc(n_compound_nc_index)
+    
+
 
     !dimension netcdf fields
     integer x_dim_nc_index,y_dim_nc_index,z_dim_nc_index,time_dim_nc_index,xdist_dim_nc_index,ydist_dim_nc_index
@@ -120,10 +131,10 @@
     !Declare netcdf files
     real, allocatable :: var1d_nc(:,:)
     real, allocatable :: var2d_nc(:,:,:)
-    real, allocatable :: var3d_nc(:,:,:,:,:)
-    real, allocatable :: var4d_nc(:,:,:,:,:,:)
-    real, allocatable :: lc_var3d_nc(:,:,:,:,:,:,:)         !Netcdf local contribution array (idist,jdist,i,j,k,t,type,source)
-    real, allocatable :: lc_var4d_nc(:,:,:,:,:,:,:,:)       !Netcdf local contribution array (idist,jdist,i,j,k,t,type,source)
+    real, allocatable :: var3d_nc(:,:,:,:,:,:)
+    real, allocatable :: var4d_nc(:,:,:,:,:,:,:)
+    real, allocatable :: lc_var3d_nc(:,:,:,:,:,:,:,:)         !Netcdf local contribution array (idist,jdist,i,j,k,t,type,source)
+    real, allocatable :: lc_var4d_nc(:,:,:,:,:,:,:,:,:)       !Netcdf local contribution array (idist,jdist,i,j,k,t,type,source)
     real, allocatable :: comp_var3d_nc(:,:,:,:)             !Netcdf additional compounds array (i,j,t,compound)
     real, allocatable :: comp_var4d_nc(:,:,:,:,:)           !Netcdf additional compounds array (i,j,k,t,compound)
     !Alternative meteorological input data netcdf files. No source element
@@ -146,6 +157,7 @@
     integer, allocatable :: inputdata_int_rl(:,:)
     real, allocatable :: inputdata_rl_emissions(:,:,:)
     logical :: use_NORTRIP_emission_data=.false.
+    logical :: use_NORTRIP_emission_pollutant(n_pollutant_nc_index)=.true.
     logical, allocatable :: valid_link_flag(:)
     
     !Road link (rl) indexes
@@ -257,7 +269,6 @@
     character(256) filename_grid(n_filenames_grid)
     character(256) pathname_grid(n_filenames_grid)
     character(256) pathfilename_grid(n_filenames_grid)  !Combined path and filename
-    logical read_existing_grid_data(n_filenames_grid)
     character(256) pathname_output_grid
     
     logical :: save_intermediate_files=.false.
@@ -285,21 +296,21 @@
     integer n_meteo_subgrid_index
     parameter (n_meteo_subgrid_index=14)
 
-    !Declare compund indexes
-    integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,pmco_index,no_index,traveltime_index
-    parameter (no2_index=1,nox_index=2,pm25_index=3,pm10_index=4,nh3_index=5,o3_index=6,pmco_index=7,no_index=8,traveltime_index=9)
+    !Declare compound indexes for the subgrid. Not necessarily the same as nc_index values. Must be converted when necessary
+    integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,pmex_index,traveltime_index,no_index
+    parameter (no2_index=1,nox_index=2,pm25_index=3,pm10_index=4,nh3_index=5,o3_index=6,pmex_index=7,traveltime_index=8,no_index=9)
     !Declare source indexes (type_source)
     integer allsource_index,traffic_index,shipping_index,heating_index,agriculture_index,industry_index
     parameter (allsource_index=1,traffic_index=2,shipping_index=3,heating_index=4,agriculture_index=5,industry_index=6)
     integer n_compound_index,n_source_index
-    parameter (n_compound_index=9,n_source_index=6)
+    parameter (n_compound_index=8,n_source_index=6)
     integer compound_source_index(n_compound_index,n_source_index)
     
     character(256) source_file_postfix(n_source_index)
     logical calculate_source(n_source_index)
     logical make_EMEP_grid_emission_data(n_source_index)
     logical replace_EMEP_local_with_subgrid_local(n_source_index)
-    logical combine_emission_subsources_during_dispersion(n_source_index)
+    !logical combine_emission_subsources_during_dispersion(n_source_index)
 
     integer x_dim_index,y_dim_index,t_dim_index,n_dim_index
     parameter (x_dim_index=1,y_dim_index=2,t_dim_index=3,n_dim_index=3)
@@ -322,8 +333,8 @@
     real, allocatable :: lat_subgrid(:,:)
     real, allocatable :: xproj_subgrid(:,:)
     real, allocatable :: yproj_subgrid(:,:)
-    real, allocatable :: traveltime_subgrid(:,:,:,:)
-    real, allocatable :: exposure_subgrid(:,:,:,:)
+    real, allocatable :: traveltime_subgrid(:,:,:,:,:)
+    real, allocatable :: exposure_subgrid(:,:,:,:,:)
     integer subgrid_loop_index(2)               !Number of target subgrids to loop through, limitted by the size of the EMEP grid
     integer integral_subgrid_loop_index(2)      !Number of integral subgrids to loop through, limitted by the size of the EMEP grid
     integer emission_subgrid_loop_index(2,n_source_index)      !Number of emission subgrids to loop through, limitted by the size of the EMEP grid
@@ -335,7 +346,7 @@
     !Each source type has its own x and y and dim
     !Each source may be of lesser dimmensions than the total array size (which is the same as the target grid)
     integer n_possible_subsource
-    parameter (n_possible_subsource=3)
+    parameter (n_possible_subsource=2)
     integer :: n_subsource(n_source_index)=1 !Initialise the number of actual emission subsources to 1 for all subsources
     character(2) subsource_str(n_possible_subsource)
     
@@ -349,7 +360,7 @@
     real, allocatable :: emission_subgrid(:,:,:,:,:)
     real, allocatable :: proxy_emission_subgrid(:,:,:,:) !No time dependence
     real, allocatable :: emission_time_profile_subgrid(:,:,:,:,:)
-    real, allocatable :: emission_properties_subgrid(:,:,:,:,:) !No time dependence
+    real, allocatable :: emission_properties_subgrid(:,:,:,:) !No time dependence and no pollutant dependence
     !x_emission_subgrid (i,j,n_source)
     real, allocatable :: x_emission_subgrid(:,:,:)
     real, allocatable :: y_emission_subgrid(:,:,:)
@@ -370,7 +381,7 @@
     real :: integral_subgrid_delta_ref=0.
     real :: integral_subgrid_delta(2)=0.
     real integral_subgrid_min(2),integral_subgrid_max(2)  !Only x and y
-    !emission_subgrid (i,j,t,n_source,n_subsource)
+    !emission_subgrid (i,j,t,n_source,n_pollutant)
     real, allocatable :: integral_subgrid(:,:,:,:,:)
     !x_emission_subgrid (i,j,n_source)
     real, allocatable :: x_integral_subgrid(:,:)
@@ -509,7 +520,7 @@
     integer :: EMEP_emission_grid_interpolation_flag=0
     logical :: subgrid_emission_distribution_flag=.false.  !If true then distributes the EMEP emissions to the existing emission subgrid
     logical :: use_downwind_position_flag=.false.           !If true then searches the upwind EMEP grid position for emissions
-    logical :: use_trajectory_flag=.false.
+    logical :: use_trajectory_flag(n_source_index)=.false.
     integer :: no2_chemistry_scheme_flag=1
     integer :: wind_level_flag=3
     integer :: wind_level_integral_flag=3
@@ -577,7 +588,8 @@
     character(256) :: pathname_tiles=''
     character(256) :: filename_tiles=''
     character(256) :: tile_tag=''
-
+    character(256) :: save_tile_tag=''
+    
     !Correction output time array converting days 1900 to seconds 2000
     integer(4), allocatable :: time_seconds_output(:)
     
@@ -589,6 +601,14 @@
     real, allocatable :: dmt_EMEP_grid_nc(:,:,:)
     integer :: HDD_threshold_value=15
     logical :: use_RWC_emission_data=.false.
+    
+    !Forecast hour string for writing to files
+    character(256) :: forecast_hour_str='00'
+    
+    !Scenario calculator variables
+    character(256) pathname_rl_change,filename_rl_change
+    
+    real aqi_hourly_limits(n_compound_index,1:3),aqi_daily_limits(n_compound_index,1:3),aqi_annual_limits(n_compound_index,1:3)
     
     end module uEMEP_definitions
     

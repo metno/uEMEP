@@ -1,7 +1,7 @@
 !Saves receptor data in netcdf format
     
     subroutine uEMEP_save_netcdf_receptor_file(unit_logfile_in,filename_netcdf,nx,ny,nt,val_array,x_array,y_array,lon_array,lat_array,name_array,unit_array,title_str,create_file,valid_min &
-        ,x_rec,y_rec,lon_rec,lat_rec,height_rec,name_rec_in,nr)
+        ,x_rec,y_rec,lon_rec,lat_rec,height_rec,name_rec_in,nr,variable_type)
     
     use uEMEP_definitions
     use netcdf
@@ -21,6 +21,8 @@
     !real y_vector(ny)
     logical create_file
     real valid_min
+    character(256) variable_type
+
     
     integer ncid
     integer station_dimid,lat_dimid,lon_dimid,val_dimid,time_dimid,charlen_dimid
@@ -41,12 +43,18 @@
     real delta(2)
     real area_weighted_interpolation_function
     integer id_rec(nr)
+    integer nf90_type
 
     !Do not save if no receptor position data is available
     if (nr.eq.0) then
         return
     endif
     
+    if (trim(variable_type).eq.'byte') nf90_type=NF90_BYTE
+    if (trim(variable_type).eq.'float') nf90_type=NF90_FLOAT
+    if (trim(variable_type).eq.'double') nf90_type=NF90_DOUBLE
+    
+
     !Interpolate to receptor position given the input array
     !write(unit_logfile,'(a)')' Interpolating to receptor point '
     !Assumes 2 elements to an array
@@ -172,14 +180,19 @@
         !write(*,*) 'Creating new: ',trim(name_array)
         call check( nf90_redef(ncid) )
         
-        call check( nf90_def_var(ncid, trim(name_array), NF90_REAL, dimids2, val_varid) )
+        call check( nf90_def_var(ncid, trim(name_array), nf90_type, dimids2, val_varid) )
         call check( nf90_put_att(ncid, val_varid, "units", trim(unit_array)) )
     
         !Specify other variable attributes
-        call check(  nf90_put_att(ncid, val_varid, "missing_value", NODATA_value ) ) !New
+        if (nf90_type.eq.NF90_byte) then
+            call check(  nf90_put_att(ncid, val_varid, "missing_value", int1(NODATA_value) ) ) !New
+            call check(  nf90_put_att(ncid, val_varid, "valid_min", int1(valid_min)) )
+        else
+            call check(  nf90_put_att(ncid, val_varid, "missing_value", NODATA_value ) ) !New
+            call check(  nf90_put_att(ncid, val_varid, "valid_min", valid_min) )
+        endif
         call check(  nf90_put_att(ncid, val_varid, "grid_mapping", "projection_utm") )
         call check(  nf90_put_att(ncid, val_varid, "coordinates", "station_name lat lon") )
-        call check(  nf90_put_att(ncid, val_varid, "valid_min", valid_min) )
         
         !Close the definitions
         call check( nf90_enddef(ncid) )
@@ -252,8 +265,12 @@
         !call check( nf90_put_var(ncid, station_name_varid, name_rec, start = (/1/), count=(/n_dims(1)/)) )
       
         !Write the variable to file
-        call check( nf90_put_var(ncid, val_varid, val_rec, start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
-        
+        if (nf90_type.eq.NF90_byte) then
+            call check( nf90_put_var(ncid, val_varid, int1(val_rec), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
+        else
+            call check( nf90_put_var(ncid, val_varid, val_rec, start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) ) 
+        endif
+
         !Write position data to the file
         call check( nf90_put_var(ncid, x_varid, x_rec, start = (/n_dims_start(1)/), count=(/n_dims_length(1)/)) )
         call check( nf90_put_var(ncid, y_varid, y_rec, start = (/n_dims_start(1)/), count=(/n_dims_length(1)/)) )

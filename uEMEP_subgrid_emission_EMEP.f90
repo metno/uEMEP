@@ -13,13 +13,12 @@
     integer ii,jj,tt,t
     integer i_temp,j_temp,i_file
     integer i_nc_temp,j_nc_temp
-    real, allocatable :: weighting_nc(:,:),weighting_subgrid(:,:)
-    real, allocatable :: total_weighting_nc(:,:),proxy_weighting_nc(:,:)
-    real, allocatable :: temp_proxy_emission_subgrid(:,:,:)
-    real, allocatable :: total_proxy_emission_subgrid(:,:,:)
-    real, allocatable :: total_proxy_subgrid_emission_in_EMEP_grid(:,:,:)
+    real, allocatable :: weighting_nc(:,:),weighting_subgrid(:,:,:)
+    real, allocatable :: total_weighting_nc(:,:,:),proxy_weighting_nc(:,:,:)
+    real, allocatable :: total_proxy_emission_subgrid(:,:,:,:)
+    real, allocatable :: total_proxy_subgrid_emission_in_EMEP_grid(:,:,:,:)
     integer, allocatable :: subgrid_count_nc(:,:)
-    integer, allocatable :: subgrid_count_subgrid(:,:)
+    integer, allocatable :: subgrid_count_subgrid(:,:,:)
     integer i_nc_start,i_nc_end,j_nc_start,j_nc_end
     integer i_start,i_end,j_start,j_end,t_start,t_end
     real lon_min,lon_max,lat_min,lat_max
@@ -35,10 +34,12 @@
     !integer, allocatable :: crossreference_weighting_to_emep_subgrid(:,:,:,:)
     integer i_w_c,j_w_c
     integer i_nc_c,j_nc_c
-    real sum_temp
+    real sum_temp(n_pollutant_loop)
     real xpos_subgrid,ypos_subgrid
     real xpos_subgrid2,ypos_subgrid2
  
+    integer i_pollutant
+    
     !functions
     
     if (local_subgrid_method_flag.ne.3.and.local_subgrid_method_flag.ne.4) return
@@ -48,34 +49,17 @@
 	write(unit_logfile,'(A)') 'Distributing EMEP emission to subgrids (uEMEP_subgrid_emission_EMEP)'
 	write(unit_logfile,'(A)') '================================================================'
 
-
-    !If EMEP gridded to subgrid files already exist then read them in and leave the subroutine
-    do i_source=1,n_source_index
-        if (read_existing_grid_data(emep_emission_subgrid_file_index(i_source)).and.calculate_source(i_source)) then           
-            i_file=emep_emission_subgrid_file_index(i_source)
-            temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//trim(subsource_str(subsource_index))//'_'//trim(file_tag)//'.asc'
-            inquire(file=temp_name,exist=exists)
-            if (.not.exists) then
-                write(unit_logfile,*)'WARNING: '//trim(temp_name)//' does not exist.'
-                !return
-            else
-                call read_esri_ascii_3d_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,i_source),emission_subgrid_dim(y_dim_index,i_source),emission_subgrid_dim(t_dim_index,i_source), &
-                    emission_subgrid_delta(1,i_source),emission_subgrid(:,:,:,i_source,subsource_index),x_emission_subgrid(:,:,i_source),y_emission_subgrid(:,:,i_source))
-            endif
-        endif
-    enddo
  
     !Allocate and save the existing emission subgrid data
-    allocate (temp_proxy_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index)) 
-    allocate (total_proxy_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index)) 
+    allocate (total_proxy_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index,n_pollutant_loop)) 
     
     !There are no subsources in EMEP so this index is set to 1 and the subsource emissions are transferred to the proxy emission subgrid
-    subsource_index=1
-    do i_source=1,n_source_index
-    if (calculate_source(i_source)) then
-        temp_proxy_emission_subgrid(:,:,i_source)=sum(proxy_emission_subgrid(:,:,i_source,:),3)
-    endif
-    enddo
+    !subsource_index=1
+    !do i_source=1,n_source_index
+    !if (calculate_source(i_source)) then
+    !    temp_proxy_emission_subgrid(:,:,i_source,:)=sum(proxy_emission_subgrid(:,:,i_source,:),3)
+    !endif
+    !enddo
         
     !Set the start and end times of the loop
     t_start=1
@@ -83,13 +67,12 @@
     
     tt=1
     
-    if (read_existing_grid_data(emep_emission_subgrid_file_index(allsource_index))) return
-
-
     do i_source=1,n_source_index
         if (calculate_source(i_source)) then
-            write(unit_logfile,'(A,A,A,ES10.2)') 'Emission source ',trim(source_file_str(i_source)),': Total hourly average emissions before use of EMEP (ug/s)=', &
-                sum(emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),:,i_source,subsource_index))/(t_end-t_start+1)
+            do i_pollutant=1,n_pollutant_loop
+            write(unit_logfile,'(A,A,A,ES10.2)') 'Emission source ',trim(source_file_str(i_source))//' ',trim(pollutant_file_str(pollutant_loop_index(i_pollutant))),': Total hourly average emissions before use of EMEP (ug/s)=', &
+                sum(emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),:,i_source,i_pollutant))/(t_end-t_start+1)
+            enddo
         endif
     enddo
                 
@@ -99,8 +82,8 @@
         write(unit_logfile,'(A)')'Distributing EMEP emissions to all subgrids within an EMEP grid'
 
         tt=1
-        allocate (total_proxy_subgrid_emission_in_EMEP_grid(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),n_source_index))
-        allocate (subgrid_count_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index)))
+        allocate (total_proxy_subgrid_emission_in_EMEP_grid(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),n_source_index,n_pollutant_loop))
+        allocate (subgrid_count_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_pollutant_loop))
         allocate (subgrid_count_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index)))
         
         !emission_subgrid=0.
@@ -121,8 +104,8 @@
                 ii=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,i_source)
                 jj=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,i_source)
                 subgrid_count_nc(ii,jj)=subgrid_count_nc(ii,jj)+1
-                total_proxy_subgrid_emission_in_EMEP_grid(ii,jj,i_source)=total_proxy_subgrid_emission_in_EMEP_grid(ii,jj,i_source)+temp_proxy_emission_subgrid(i,j,i_source)
-                emission_subgrid(i,j,:,i_source,subsource_index)=var3d_nc(ii,jj,:,emis_nc_index,i_source)
+                total_proxy_subgrid_emission_in_EMEP_grid(ii,jj,i_source,:)=total_proxy_subgrid_emission_in_EMEP_grid(ii,jj,i_source,:)+proxy_emission_subgrid(i,j,i_source,:)
+                emission_subgrid(i,j,:,i_source,:)=var3d_nc(ii,jj,:,emis_nc_index,i_source,:)
             
             enddo
             enddo
@@ -136,12 +119,12 @@
                 ii=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,i_source)
                 jj=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,i_source)
                 
-                total_proxy_emission_subgrid(i,j,i_source)=total_proxy_subgrid_emission_in_EMEP_grid(ii,jj,i_source)  
-                subgrid_count_subgrid(i,j)=subgrid_count_nc(ii,jj)  
+                total_proxy_emission_subgrid(i,j,i_source,:)=total_proxy_subgrid_emission_in_EMEP_grid(ii,jj,i_source,:)  
+                subgrid_count_subgrid(i,j,:)=subgrid_count_nc(ii,jj)  
                 
                 !Converts from mg/m2/hour(year) to ug/s/subgrid assuming the original EMEP emissions are in mg/m2/hour(year)
-                if (hourly_calculations) emission_subgrid(i,j,:,i_source,subsource_index)=emission_subgrid(i,j,:,i_source,subsource_index)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
-                if (annual_calculations) emission_subgrid(i,j,:,i_source,subsource_index)=emission_subgrid(i,j,:,i_source,subsource_index)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
+                if (hourly_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
+                if (annual_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
 
                 !write(*,*) emission_subgrid(i,j,1,i_source,subsource_index),var3d_nc(ii,jj,1,emis_nc_index,i_source)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
             enddo
@@ -159,18 +142,21 @@
                 do j=1,emission_subgrid_dim(y_dim_index,i_source)
                 do i=1,emission_subgrid_dim(x_dim_index,i_source)
                     if (hourly_calculations) then
-                        sum_temp=sum(emission_subgrid(i,j,:,i_source,subsource_index))
-                        emission_time_profile_subgrid(i,j,:,i_source,subsource_index)=emission_subgrid(i,j,:,i_source,subsource_index)/sum_temp*emission_subgrid_dim(t_dim_index,i_source)
-                        if (sum_temp.eq.0.) emission_time_profile_subgrid(i,j,:,i_source,subsource_index)=0.
+                        sum_temp(:)=sum(emission_subgrid(i,j,:,i_source,:),1)
+                        do i_pollutant=1,n_pollutant_loop
+                            emission_time_profile_subgrid(i,j,:,i_source,i_pollutant)=emission_subgrid(i,j,:,i_source,i_pollutant)/sum_temp(i_pollutant)*emission_subgrid_dim(t_dim_index,i_source)
+                            if (sum_temp(i_pollutant).eq.0.) emission_time_profile_subgrid(i,j,:,i_source,i_pollutant)=0.
+                        enddo
+                        
                     else
-                        emission_time_profile_subgrid(i,j,:,i_source,subsource_index)=1.
+                        emission_time_profile_subgrid(i,j,:,i_source,:)=1.
                     endif
                     !write(*,'(<emission_subgrid_dim(t_dim_index,i_source)>f6.2)') emission_time_profile_subgrid(i,j,:,i_source,subsource_index)
                     !write(*,*) i,j,subgrid_count_subgrid(i,j,1,i_source),total_proxy_emission_subgrid(i,j,1,i_source,subsource_index),emission_subgrid(i,j,1,i_source,subsource_index)
                     
                     !Set emissions to 0 in the case when local_subgrid_method_flag.eq.4 since these are set later
                     !This way of doing things is not logical as it fills the grid unnecessarilly. Should be fixed and made logical
-                    emission_subgrid(i,j,:,i_source,subsource_index)=0.
+                    emission_subgrid(i,j,:,i_source,:)=0.
                 enddo
                 enddo
             endif
@@ -180,28 +166,11 @@
                 write(unit_logfile,'(A)')'Distributing EMEP emissions to proxy subgrid emissions, no weighting used'
                 
                 do t=t_start,t_end
-                    emission_subgrid(:,:,t,i_source,subsource_index)=emission_subgrid(:,:,t,i_source,subsource_index)*subgrid_count_subgrid(:,:)*temp_proxy_emission_subgrid(:,:,i_source)/total_proxy_emission_subgrid(:,:,i_source)              
-                    where (total_proxy_emission_subgrid(:,:,i_source).eq.0.) emission_subgrid(:,:,t,i_source,subsource_index)=0.
+                    emission_subgrid(:,:,t,i_source,:)=emission_subgrid(:,:,t,i_source,:)*subgrid_count_subgrid(:,:,:)*proxy_emission_subgrid(:,:,i_source,:)/total_proxy_emission_subgrid(:,:,i_source,:)              
+                    where (total_proxy_emission_subgrid(:,:,i_source,:).eq.0.) emission_subgrid(:,:,t,i_source,:)=0.
                 enddo
                 
             endif    
-
-            !Apply EMEP time variation to existing subgrid emissions
-            !if (local_subgrid_method_flag.eq.4) then
-                !write(unit_logfile,'(A)')'Applying EMEP emission time variation to existing subgrid emissions'
-                !do t=t_start,t_end
-                    !emission_subgrid(:,:,t,i_source,subsource_index)=temp_proxy_emission_subgrid(:,:,i_source)*emission_time_profile_subgrid(:,:,t,i_source,subsource_index)
-                    !emission_subgrid(:,:,t,i_source,subsource_index)=emission_subgrid(:,:,t,i_source,subsource_index)*emission_time_profile_subgrid(:,:,t,i_source,subsource_index)
-                !enddo
-                
-                !where (total_proxy_emission_subgrid.eq.0.) emission_subgrid=0.
-                !i_source=traffic_index
-                !    do j=1,emission_subgrid_dim(y_dim_index,i_source)
-                !    do i=1,emission_subgrid_dim(x_dim_index,i_source)
-                !write(*,'(<emission_subgrid_dim(t_dim_index,i_source)>f6.2)') emission_subgrid(i,j,:,i_source,subsource_index)
-                !    enddo
-                !    enddo
-            !endif    
 
         endif
         enddo
@@ -221,10 +190,10 @@
         
         allocate (weighting_nc(n_weight,n_weight)) !EMEP grid weighting for interpolation. Does not need a source index for area weighting
         !allocate (subgrid_count_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),tt,n_source_index))
-        allocate (subgrid_count_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index)))
+        allocate (subgrid_count_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_pollutant_loop))
         
         
-        !allocate (emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_possible_subsource)) 
+        !allocate (emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop)) 
         total_proxy_emission_subgrid=0.
 
         
@@ -238,7 +207,7 @@
             do i=1,emission_subgrid_dim(x_dim_index,i_source)
         
                 !Only calculate for valid emission subgrids when using the proxy emissions for distribution
-                if (.not.subgrid_emission_distribution_flag.or.temp_proxy_emission_subgrid(i,j,i_source).ne.0) then
+                if (.not.subgrid_emission_distribution_flag.or.sum(proxy_emission_subgrid(i,j,i_source,:)).ne.0) then
                     
                 !Assumes it is never on the edge of the EMEP grid
                 i_nc=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,i_source)
@@ -280,7 +249,7 @@
                         weighting_nc(ii_w,jj_w)=0.
                     endif                
 
-                    emission_subgrid(i,j,:,i_source,subsource_index)=emission_subgrid(i,j,:,i_source,subsource_index)+var3d_nc(ii_nc,jj_nc,:,emis_nc_index,i_source)*weighting_nc(ii_w,jj_w)
+                    emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)+var3d_nc(ii_nc,jj_nc,:,emis_nc_index,i_source,:)*weighting_nc(ii_w,jj_w)
                     
                 enddo
                 enddo
@@ -310,8 +279,8 @@
                     if (abs(xpos_subgrid-xpos_subgrid2).le.dgrid_nc(lon_nc_index)/2. &
                         .and.abs(ypos_subgrid-ypos_subgrid2).le.dgrid_nc(lat_nc_index)/2.) then
                             
-                        total_proxy_emission_subgrid(i,j,i_source)=total_proxy_emission_subgrid(i,j,i_source)+temp_proxy_emission_subgrid(ii,jj,i_source)
-                        subgrid_count_subgrid(i,j)=subgrid_count_subgrid(i,j)+1
+                        total_proxy_emission_subgrid(i,j,i_source,:)=total_proxy_emission_subgrid(i,j,i_source,:)+proxy_emission_subgrid(ii,jj,i_source,:)
+                        subgrid_count_subgrid(i,j,:)=subgrid_count_subgrid(i,j,:)+1
 
                     endif                   
 
@@ -319,8 +288,8 @@
                 enddo
                                 
                 !Converts from mg/subgrid to ug/s/subgrid assuming the original EMEP emissions are in mg/m2/hour
-                if (hourly_calculations) emission_subgrid(i,j,:,i_source,subsource_index)=emission_subgrid(i,j,:,i_source,subsource_index)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
-                if (annual_calculations) emission_subgrid(i,j,:,i_source,subsource_index)=emission_subgrid(i,j,:,i_source,subsource_index)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
+                if (hourly_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
+                if (annual_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
 
             endif !If valid emission point
                 
@@ -333,8 +302,8 @@
             if (subgrid_emission_distribution_flag) then
                 write(unit_logfile,'(A)')'Distributing EMEP emissions to subgrid emissions within an area weighted EMEP grid'
                 do t=t_start,t_end
-                    emission_subgrid(:,:,t,i_source,subsource_index)=emission_subgrid(:,:,t,i_source,subsource_index)*subgrid_count_subgrid(:,:)*temp_proxy_emission_subgrid(:,:,i_source)/total_proxy_emission_subgrid(:,:,i_source)              
-                    where (total_proxy_emission_subgrid(:,:,i_source).eq.0.) emission_subgrid(:,:,t,i_source,subsource_index)=0.
+                    emission_subgrid(:,:,t,i_source,:)=emission_subgrid(:,:,t,i_source,:)*subgrid_count_subgrid(:,:,:)*proxy_emission_subgrid(:,:,i_source,:)/total_proxy_emission_subgrid(:,:,i_source,:)              
+                    where (total_proxy_emission_subgrid(:,:,i_source,:).eq.0.) emission_subgrid(:,:,t,i_source,:)=0.
                 enddo
             endif    
 
@@ -353,10 +322,10 @@
         tt=1
         !tt=dim_length_nc(time_dim_nc_index)
         
-        allocate (total_weighting_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index))) !EMEP grid weighting for interpolation
-        allocate (proxy_weighting_nc(5,5)) !EMEP grid weighting for interpolation
+        allocate (total_weighting_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),n_pollutant_loop)) !EMEP grid weighting for interpolation
+        allocate (proxy_weighting_nc(5,5,n_pollutant_loop)) !EMEP grid weighting for interpolation
         !allocate (subgrid_count_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),tt,n_source_index))
-        allocate (subgrid_count_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index)))
+        allocate (subgrid_count_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_pollutant_loop))
 
         i_w_c=3
         j_w_c=3
@@ -369,7 +338,7 @@
         !t_start=1
         !t_end=subgrid_dim(t_dim_index)
                
-        allocate (weighting_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index)))
+        allocate (weighting_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_pollutant_loop))
         weighting_subgrid_dim(:,:)=emission_subgrid_dim(1:2,:)
         
         !Calculate weighting sum for each EMEP grid.
@@ -380,7 +349,7 @@
             emission_subgrid(:,:,:,i_source,:)=0.
             subgrid_count_subgrid=0
             
-            weighting_subgrid(:,:)=temp_proxy_emission_subgrid(:,:,i_source)
+            weighting_subgrid(:,:,:)=proxy_emission_subgrid(:,:,i_source,:)
             
             !Calculate the total weighting (emission) in each emep grid
             do j=1,weighting_subgrid_dim(y_dim_index,i_source)
@@ -388,7 +357,7 @@
 
                 i_nc=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,i_source)
                 j_nc=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,i_source)
-                total_weighting_nc(i_nc,j_nc)=total_weighting_nc(i_nc,j_nc)+weighting_subgrid(i,j)
+                total_weighting_nc(i_nc,j_nc,:)=total_weighting_nc(i_nc,j_nc,:)+weighting_subgrid(i,j,:)
                 !write(*,*) i_source,i,j,i_nc,j_nc,weighting_subgrid(i,j,:,i_source)
                 !write(*,*) i,j,i_nc,j_nc,i_nc-crossreference_weighting_to_emep_subgrid(i,j,x_dim_index,i_source),j_nc-crossreference_weighting_to_emep_subgrid(i,j,y_dim_index,i_source)
         
@@ -401,7 +370,7 @@
             do i=1,emission_subgrid_dim(x_dim_index,i_source)
             
                 !Only calculate for valid emission subgrids when using the proxy for distribution
-                if (.not.subgrid_emission_distribution_flag.or.temp_proxy_emission_subgrid(i,j,i_source).ne.0) then
+                if (.not.subgrid_emission_distribution_flag.or.sum(proxy_emission_subgrid(i,j,i_source,:)).ne.0) then
 
                 proxy_weighting_nc=0.
                        
@@ -448,17 +417,14 @@
                         i_nc=crossreference_emission_to_emep_subgrid(ii,jj,x_dim_index,i_source)
                         j_nc=crossreference_emission_to_emep_subgrid(ii,jj,y_dim_index,i_source)                   
                         !proxy_weighting_nc(i_nc,j_nc,:,i_source)=proxy_weighting_nc(i_nc,j_nc,:,i_source)+weighting_subgrid(ii,jj,:,i_source)
-                        proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c)=proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c)+weighting_subgrid(ii,jj)
+                        proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,:)=proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,:)+weighting_subgrid(ii,jj,:)
                         
-                        total_proxy_emission_subgrid(i,j,i_source)=total_proxy_emission_subgrid(i,j,i_source)+weighting_subgrid(ii,jj) !Weighting subgrid is the same as the existing proxy subgrid but without the subsource
-                        subgrid_count_subgrid(i,j)=subgrid_count_subgrid(i,j)+1
+                        total_proxy_emission_subgrid(i,j,i_source,:)=total_proxy_emission_subgrid(i,j,i_source,:)+weighting_subgrid(ii,jj,:) !Weighting subgrid is the same as the existing proxy subgrid but without the subsource
+                        subgrid_count_subgrid(i,j,:)=subgrid_count_subgrid(i,j,:)+1
 
                     endif                   
                 enddo
                 enddo
-
-                !write(*,*) i,j,subgrid_count_subgrid(i,j,1,i_source),total_proxy_emission_subgrid(i,j,1,i_source,subsource_index)
-                !write(*,*) proxy_weighting_nc(:,:,1,i_source)
                 
                 i_cross=i !crossreference_target_to_emission_subgrid(i,j,x_dim_index,i_source)
                 j_cross=j !crossreference_target_to_emission_subgrid(i,j,y_dim_index,i_source)    
@@ -474,9 +440,9 @@
                 do jj=j_nc_start,j_nc_end
                 do ii=i_nc_start,i_nc_end
             
-                    proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c)=proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c)/total_weighting_nc(ii,jj)
+                    proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,:)=proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,:)/total_weighting_nc(ii,jj,:)
                     !where (total_weighting_nc(ii,jj,tt,i_source).eq.0) proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,:,i_source)=0.
-                    if (total_weighting_nc(ii,jj).eq.0) proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c)=0.
+                    where (total_weighting_nc(ii,jj,:).eq.0) proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,:)=0.
                     
                 enddo
                 enddo
@@ -489,8 +455,10 @@
                 !do i_subsource=1,n_subsource_index(i_source)
                 do jj=j_nc_start,j_nc_end
                 do ii=i_nc_start,i_nc_end
-                    emission_subgrid(i,j,:,i_source,subsource_index)=emission_subgrid(i,j,:,i_source,subsource_index) &
-                        +var3d_nc(ii,jj,:,emis_nc_index,i_source)*proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c)
+                    do i_pollutant=1,n_pollutant_loop
+                    emission_subgrid(i,j,:,i_source,i_pollutant)=emission_subgrid(i,j,:,i_source,i_pollutant) &
+                        +var3d_nc(ii,jj,:,emis_nc_index,i_source,i_pollutant)*proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,i_pollutant)
+                    enddo
                     !if (weighting_nc(ii,jj,traffic_index).ne.0) then
                     !    write(*,*) i,j,ii,jj,weighting_nc(ii,jj,traffic_index),subgrid(i,j,traffic_index,emep_local_subgrid_index)
                     !endif
@@ -503,8 +471,8 @@
                 !write(*,*) sum(proxy_weighting_nc)
                 
             !Converts from mg/subgrid to ug/s/subgrid assuming the original EMEP emissions are in mg/m2/hour
-            if (hourly_calculations) emission_subgrid(i,j,:,i_source,subsource_index)=emission_subgrid(i,j,:,i_source,subsource_index)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
-            if (annual_calculations) emission_subgrid(i,j,:,i_source,subsource_index)=emission_subgrid(i,j,:,i_source,subsource_index)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
+            if (hourly_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
+            if (annual_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
 
             endif !If valid emission subgrid
                 
@@ -522,8 +490,8 @@
         if (subgrid_emission_distribution_flag) then
             write(unit_logfile,'(A)')'Distributing EMEP emissions to subgrid emissions within an emission weighted EMEP grid'
             do t=t_start,t_end
-                emission_subgrid(:,:,t,i_source,subsource_index)=emission_subgrid(:,:,t,i_source,subsource_index)*subgrid_count_subgrid(:,:)*temp_proxy_emission_subgrid(:,:,i_source)/total_proxy_emission_subgrid(:,:,i_source)              
-                where (total_proxy_emission_subgrid(:,:,i_source).eq.0.) emission_subgrid(:,:,t,i_source,subsource_index)=0.
+                emission_subgrid(:,:,t,i_source,:)=emission_subgrid(:,:,t,i_source,:)*subgrid_count_subgrid(:,:,:)*proxy_emission_subgrid(:,:,i_source,:)/total_proxy_emission_subgrid(:,:,i_source,:)              
+                where (total_proxy_emission_subgrid(:,:,i_source,:).eq.0.) emission_subgrid(:,:,t,i_source,:)=0.
             enddo
         endif    
 
@@ -535,23 +503,13 @@
     !if (subgrid_emission_distribution_flag) then
     do i_source=1,n_source_index
         if (calculate_source(i_source)) then
-            write(unit_logfile,'(A,A,A,ES10.2)') 'Emission source ',trim(source_file_str(i_source)),': Total hourly average emissions after use of EMEP (ug/s)=', &
-                sum(emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),:,i_source,subsource_index))/(t_end-t_start+1)
+            do i_pollutant=1,n_pollutant_loop
+            write(unit_logfile,'(A,A,A,ES10.2)') 'Emission source ',trim(source_file_str(i_source))//' '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant))),': Total hourly average emissions after use of EMEP (ug/s)=', &
+                sum(emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),:,i_source,i_pollutant))/(t_end-t_start+1)
+            enddo
         endif
     enddo
     !endif    
-
-    !Save files
-    if (save_intermediate_files) then
-    do i_source=1,n_source_index
-    if (.not.read_existing_grid_data(emep_emission_subgrid_file_index(i_source)).and.calculate_source(i_source)) then
-        i_file=emep_emission_subgrid_file_index(i_source)
-        temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//trim(subsource_str(subsource_index))//'_'//trim(file_tag)//'.asc'
-        call write_esri_ascii_3d_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,i_source),emission_subgrid_dim(y_dim_index,i_source),emission_subgrid_dim(t_dim_index,i_source), &
-            emission_subgrid_delta(1,i_source),emission_subgrid(:,:,:,i_source,subsource_index),x_emission_subgrid(:,:,i_source),y_emission_subgrid(:,:,i_source))
-    endif
-    enddo
-    endif
 
 
     if (allocated(weighting_nc)) deallocate(weighting_nc)
@@ -559,7 +517,6 @@
     if (allocated(proxy_weighting_nc)) deallocate(proxy_weighting_nc)
     if (allocated(weighting_subgrid)) deallocate(weighting_subgrid)
     if (allocated(total_proxy_emission_subgrid)) deallocate(total_proxy_emission_subgrid)
-    if (allocated(temp_proxy_emission_subgrid)) deallocate(temp_proxy_emission_subgrid)
     if (allocated(total_proxy_subgrid_emission_in_EMEP_grid)) deallocate(total_proxy_subgrid_emission_in_EMEP_grid)
     if (allocated(subgrid_count_nc)) deallocate(subgrid_count_nc)
     if (allocated(subgrid_count_subgrid)) deallocate(subgrid_count_subgrid)

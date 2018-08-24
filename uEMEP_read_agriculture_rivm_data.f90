@@ -58,22 +58,6 @@
         stop
     endif
     
-    if (read_existing_grid_data(proxy_emission_file_index(source_index))) then
-        do subsource_index=1,n_subsource(source_index)
-        temp_name=trim(pathname_grid(proxy_emission_file_index(source_index)))//trim(filename_grid(proxy_emission_file_index(source_index)))//trim(subsource_str(subsource_index))//'_'//trim(file_tag)//'.asc'
-        inquire(file=temp_name,exist=exists)
-        if (.not.exists) then
-            write(unit_logfile,*)'ERROR: '//trim(temp_name)//' does not exist.'
-            stop
-        endif
-        call read_esri_ascii_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),emission_subgrid_delta(x_dim_index,source_index), &
-                proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,subsource_index), &
-                x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index), &
-                y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index))
-        enddo
-        return
-    endif
-    
     
     !Open the file for reading
     do i_file=1,2
@@ -168,7 +152,7 @@
         do i=i_start,i_end
         do j=j_start,j_end
         if (i.gt.0.and.i.le.emission_subgrid_dim(x_dim_index,source_index).and.j.gt.0.and.j.le.emission_subgrid_dim(y_dim_index,source_index)) then
-            proxy_emission_subgrid(i,j,source_index,subsource_index)=proxy_emission_subgrid(i,j,source_index,subsource_index)+totalnh3emission*nh3emission_scale
+            proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_nc_index))=proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_nc_index))+totalnh3emission*nh3emission_scale
             agriculture_emission_data_available(i,j)=.true.
         endif
         enddo
@@ -213,7 +197,7 @@
             iii=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,source_index)
             jjj=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index)
             if (agriculture_emission_emep_subgrid_count(iii,jjj).ne.0) then
-                proxy_emission_subgrid(i,j,source_index,subsource_index)=var3d_nc(iii,jjj,1,emis_nc_index,agriculture_nc_index)/1.0e6 &
+                proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_index))=var3d_nc(iii,jjj,1,emis_nc_index,agriculture_nc_index,pollutant_loop_back_index(nh3_nc_index))/1.0e6 &
                     *emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index)
                 
             endif
@@ -221,19 +205,6 @@
     !write(*,*) agriculture_emission_emep_subgrid_count(iii,jjj)
     enddo
     enddo
-
-    if (save_intermediate_files) then
-    if (.not.read_existing_grid_data(proxy_emission_file_index(source_index))) then
-        do subsource_index=1,n_subsource(source_index)
-        temp_name=trim(pathname_grid(proxy_emission_file_index(source_index)))//trim(filename_grid(proxy_emission_file_index(source_index)))//trim(subsource_str(subsource_index))//'_'//trim(file_tag)//'.asc'
-        write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-        call write_esri_ascii_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),emission_subgrid_delta(x_dim_index,source_index), &
-                proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,subsource_index), &
-                x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index), &
-                y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index))
-        enddo
-    endif
-    endif
     
     deallocate (agriculture_emission_data_available)
     

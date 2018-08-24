@@ -257,7 +257,7 @@
     do i=1,emission_subgrid_dim(x_dim_index,i_source)
         i_tile=crossreference_emission_to_tile_subgrid(i,j,x_dim_index,i_source)
         j_tile=crossreference_emission_to_tile_subgrid(i,j,y_dim_index,i_source)
-        tile_subgrid(i_tile,j_tile,traffic_index)=tile_subgrid(i_tile,j_tile,traffic_index)+sum(proxy_emission_subgrid(i,j,traffic_index,:))/1000. !ADT*km
+        tile_subgrid(i_tile,j_tile,traffic_index)=tile_subgrid(i_tile,j_tile,i_source)+(proxy_emission_subgrid(i,j,i_source,1))/1000. !ADT*km
     enddo
     enddo
 
@@ -267,7 +267,7 @@
     do i=1,emission_subgrid_dim(x_dim_index,i_source)
         i_tile=crossreference_emission_to_tile_subgrid(i,j,x_dim_index,i_source)
         j_tile=crossreference_emission_to_tile_subgrid(i,j,y_dim_index,i_source)
-        tile_subgrid(i_tile,j_tile,i_source)=tile_subgrid(i_tile,j_tile,i_source)+sum(proxy_emission_subgrid(i,j,i_source,:)) !emission for the time period
+        tile_subgrid(i_tile,j_tile,i_source)=tile_subgrid(i_tile,j_tile,i_source)+(proxy_emission_subgrid(i,j,i_source,1)) !emission for the time period
     enddo
     enddo
 
@@ -472,7 +472,7 @@
         if (num_tile_classes(tile_class_subgrid(i_tile,j_tile)).gt.0) then
             if (tile_class_subgrid(i_tile,j_tile).lt.reduce_grid_class) then
                 count=count+1
-                write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+                write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.
@@ -484,7 +484,7 @@
                 do j=0,1
                 do i=0,1
                     count=count+1
-                    write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+                    write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
 	                write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	                write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	                write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.+tile_subgrid_delta(x_dim_index)/2.*i
@@ -511,7 +511,7 @@
                 write(count_str,'(i8)') count
                 temp_name=trim(pathname_tiles)//trim(ADJUSTL(count_str))//'_'//trim(filename_tiles)
                 open(unit_tile,file=temp_name,access='sequential',status='unknown')
-                write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+                write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.
@@ -527,7 +527,7 @@
                     write(count_str,'(i8)') count
                     temp_name=trim(pathname_tiles)//trim(ADJUSTL(count_str))//'_'//trim(filename_tiles)
                     open(unit_tile,file=temp_name,access='sequential',status='unknown')
-                    write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+                    write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
 	                write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	                write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	                write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.+tile_subgrid_delta(x_dim_index)/2.*i
@@ -561,7 +561,7 @@
         !if (num_tile_classes(tile_class_subgrid(i_tile,j_tile)).gt.0) then
             if (aggregated_tile_class_subgrid(i_tile,j_tile,k).gt.0) then
                 count=count+1
-                write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+                write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(aggregated_tile_class_subgrid(i_tile,j_tile,k))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(aggregated_tile_class_subgrid(i_tile,j_tile,k))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',aggregated_x_tile_subgrid(i_tile,j_tile,k)-aggregated_tile_subgrid_delta(x_dim_index,k)/2.
@@ -594,7 +594,7 @@
                 write(count_str,'(i8)') count
                 temp_name=trim(pathname_tiles)//trim(ADJUSTL(count_str))//'_'//trim(filename_tiles)
                 open(unit_tile,file=temp_name,access='sequential',status='unknown')
-                write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
+                write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(aggregated_tile_class_subgrid(i_tile,j_tile,k))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(aggregated_tile_class_subgrid(i_tile,j_tile,k))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',aggregated_x_tile_subgrid(i_tile,j_tile,k)-aggregated_tile_subgrid_delta(x_dim_index,k)/2.

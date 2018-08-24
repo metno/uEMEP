@@ -20,9 +20,11 @@
     integer i_ship_index,j_ship_index
     integer source_index,subsource_index
     integer t
-    integer, allocatable :: count_subgrid(:,:)
+    integer, allocatable :: count_subgrid(:,:,:)
     real, allocatable :: temp1_subgrid(:,:),temp2_subgrid(:,:),temp3_subgrid(:,:)
    
+    integer i_pollutant
+    
     write(unit_logfile,'(A)') ''
 	write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Reading shipping asi data  (uEMEP_read_shipping_asi_data)'
@@ -33,32 +35,12 @@
     proxy_emission_subgrid(:,:,source_index,:)=0.
     t=1
 
-    allocate (count_subgrid(emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index)))
-    count_subgrid(:,:)=0
+    allocate (count_subgrid(emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),n_pollutant_loop))
+    count_subgrid=0
     allocate (temp1_subgrid(emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index)))
     allocate (temp2_subgrid(emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index)))
     allocate (temp3_subgrid(emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index)))
     
-    if (read_existing_grid_data(proxy_emission_file_index(source_index))) then
-        do subsource_index=1,n_subsource(source_index)
-        temp_name=trim(pathname_grid(proxy_emission_file_index(source_index)))//trim(filename_grid(proxy_emission_file_index(source_index)))//trim(subsource_str(subsource_index))//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//'.asc'
-            inquire(file=temp_name,exist=exists)
-            if (.not.exists) then
-                write(unit_logfile,'(A)')'ERROR: '//trim(temp_name)//' does not exist.'
-                stop
-            endif
-            call read_esri_ascii_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),emission_subgrid_delta(x_dim_index,source_index), &
-                    temp1_subgrid,temp2_subgrid,temp3_subgrid)
-                
-            proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,subsource_index)=temp1_subgrid
-            x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index)=temp2_subgrid
-            y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index)=temp3_subgrid
-                
-        enddo
-        write(unit_logfile,'(A)')'Reading existing shipping emissions'
-        write(unit_logfile,'(A)')'Reading: '//trim(temp_name)
-        return
-    endif
     
     pathfilename_ship(1)=trim(pathname_ship(1))//trim(filename_ship(1))
     if (use_aggregated_shipping_emissions_flag) pathfilename_ship(1)=trim(pathname_ship(1))//'Aggregated_'//trim(filename_ship(1))
@@ -126,62 +108,32 @@
         j_ship_index=1+floor((y_ship-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
         !(x_subgrid(i,j)-subgrid_min(1))/+subgrid_delta(1)+1=i
         
-        !Add to subgrid
-        
+        !Add to subgrid       
         if (i_ship_index.ge.1.and.i_ship_index.le.emission_subgrid_dim(x_dim_index,source_index) &
             .and.j_ship_index.ge.1.and.j_ship_index.le.emission_subgrid_dim(y_dim_index,source_index)) then
-            if  (totalnoxemission.gt.0.and.compound_index.eq.nox_nc_index) then
-            proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,subsource_index)=proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,subsource_index)+totalnoxemission
-            count_subgrid(i_ship_index,j_ship_index)=count_subgrid(i_ship_index,j_ship_index)+1
-            elseif (totalparticulatematteremission.gt.0.and.(compound_index.eq.pm25_nc_index.or.compound_index.eq.pm10_nc_index)) then
-            proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,subsource_index)=proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,subsource_index)+totalparticulatematteremission
-            count_subgrid(i_ship_index,j_ship_index)=count_subgrid(i_ship_index,j_ship_index)+1
-            endif
+            do i_pollutant=1,n_pollutant_loop
+                if  (totalnoxemission.gt.0.and.pollutant_loop_index(i_pollutant).eq.nox_nc_index) then
+                    proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,i_pollutant)=proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,i_pollutant)+totalnoxemission
+                    count_subgrid(i_ship_index,j_ship_index,i_pollutant)=count_subgrid(i_ship_index,j_ship_index,i_pollutant)+1
+                elseif (totalparticulatematteremission.gt.0.and.(pollutant_loop_index(i_pollutant).eq.pm25_nc_index.or.pollutant_loop_index(i_pollutant).eq.pm10_nc_index)) then
+                    proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,i_pollutant)=proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,i_pollutant)+totalparticulatematteremission
+                    count_subgrid(i_ship_index,j_ship_index,i_pollutant)=count_subgrid(i_ship_index,j_ship_index,i_pollutant)+1
+                endif
+            enddo
         endif
             
         endif
         
     enddo
     write(unit_logfile,'(A,I)') 'Shipping counts = ',count
-    write(unit_logfile,'(A,es12.3)') 'Total emission = ',sum(proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,subsource_index))
- 
-    !Remove shipping with 1 or less values in the grid, but not if aggregated emissions are being used
-    if (.not.use_aggregated_shipping_emissions_flag) then
-    do j=1,emission_subgrid_dim(y_dim_index,source_index)
-    do i=1,emission_subgrid_dim(x_dim_index,source_index)
-        if (count_subgrid(i,j).le.1) then
-            proxy_emission_subgrid(i,j,source_index,subsource_index)=0.
-        endif
+    do i_pollutant=1,n_pollutant_loop   
+    write(unit_logfile,'(A,es12.3)') 'Total emission '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//' = ',sum(proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,i_pollutant))
     enddo
-    enddo
-    endif
-
-    
+        
     close(unit_in)
     
     
     deallocate (count_subgrid)
-
-    
-    if (save_intermediate_files) then
-    if (.not.read_existing_grid_data(proxy_emission_file_index(source_index))) then
-        temp_name=trim(pathname_grid(proxy_emission_file_index(source_index)))//trim(filename_grid(proxy_emission_file_index(source_index)))//trim(subsource_str(subsource_index))//'_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))//'_'//trim(file_tag)//'.asc'
-        write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-        !write(*,*) emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),emission_subgrid_delta(x_dim_index,source_index)
-        !write(*,*) size(emission_subgrid,1),size(emission_subgrid,2),size(emission_subgrid,3),size(emission_subgrid,4),size(emission_subgrid,5)
-        !write(*,*) size(x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),1),size(x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),2)
-        !write(*,*) size(y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),1),size(y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index),2)
-       ! write(*,*) size(emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),t,source_index,subsource_index),1),size(emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),t,source_index,subsource_index),2)
-        
-        temp1_subgrid=proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,subsource_index)
-        temp2_subgrid=x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index)
-        temp3_subgrid=y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index)
-        !write(*,*) size(temp_subgrid,1),size(temp_subgrid,2)
-        call write_esri_ascii_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),emission_subgrid_delta(x_dim_index,source_index), &
-                temp1_subgrid,temp2_subgrid,temp3_subgrid)
-    endif
-    endif
-    
     deallocate (temp1_subgrid,temp2_subgrid,temp3_subgrid)
     
     end subroutine uEMEP_read_shipping_asi_data

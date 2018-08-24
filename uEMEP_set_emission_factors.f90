@@ -28,6 +28,7 @@
     emission_factor_conversion(pm10_index,shipping_index,:)=emission_factor(pm10_index,shipping_index,:)*(1.e+12)/(3600.*24.*365./12.) ![tonne/month]*(ug/kg)*(month/sec)=ug/sec
     emission_factor_conversion(pm10_index,heating_index,:)=emission_factor(pm10_index,heating_index,:)*(1.e+9)/(3600.*24.*365.) ![dwellings]*(kg/dwelling/year)*(ug/kg)*(year/sec)=ug/sec
 
+    emission_factor_conversion(pmex_index,traffic_index,:)=emission_factor(pmex_index,traffic_index,:)*(1.e-3)*(1.e+6)/(3600.*24.) ![veh*m/day]*(g/km/veh)*(km/m)*(ug/g)*(day/sec)=ug/sec
     emission_factor_conversion(nh3_index,agriculture_index,:)=emission_factor(nh3_index,agriculture_index,:)*(1.e+9)/(3600.*24.*365.)   ![kg/yr]*(ug/kg)*(yr/sec)=ug/sec
     
     if (use_RWC_emission_data) then
@@ -50,6 +51,8 @@
     integer tt
     real sum_emission_subgrid
     
+    integer i_pollutant
+    
     !Do not calculate emissions if EMEP emissions are to be used
     if (local_subgrid_method_flag.eq.3) return
     
@@ -61,21 +64,25 @@
     !Set all emissions to the same constant emission value with emissions in ug/sec for all sources
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
-        !Do not calculate for traffic if use_NORTRIP_emission_data=.true. This is done in uEMEP_grid_roads
-        if (i_source.ne.traffic_index.or.(i_source.eq.traffic_index.and..not.use_NORTRIP_emission_data)) then
-            do i_subsource=1,n_subsource(i_source)
+        i_subsource=1
+        do i_pollutant=1,n_pollutant_loop
+            !Do not calculate for traffic if use_NORTRIP_emission_data=.true. and  use_NORTRIP_emission_pollutant=.false.). This is done in uEMEP_grid_roads
+            if (i_source.ne.traffic_index &
+                .or.(i_source.eq.traffic_index.and..not.use_NORTRIP_emission_data) &
+                .or.(i_source.eq.traffic_index.and.use_NORTRIP_emission_data.and..not.use_NORTRIP_emission_pollutant(pollutant_loop_index(i_pollutant)))) then               
+                
                 do tt=1,subgrid_dim(t_dim_index)
-
-                    emission_subgrid(:,:,tt,i_source,i_subsource)=proxy_emission_subgrid(:,:,i_source,i_subsource) &
-                        *emission_factor_conversion(compound_index,i_source,i_subsource) &
-                        *emission_time_profile_subgrid(:,:,tt,i_source,i_subsource)
+                    emission_subgrid(:,:,tt,i_source,i_pollutant)=proxy_emission_subgrid(:,:,i_source,i_pollutant) &
+                        *emission_factor_conversion(pollutant_loop_index(i_pollutant),i_source,i_subsource) &
+                        *emission_time_profile_subgrid(:,:,tt,i_source,i_pollutant)
                     
                     !write(*,*) sum(proxy_emission_subgrid(:,:,i_source,i_subsource)),emission_factor_conversion(compound_index,i_source,i_subsource),sum(emission_time_profile_subgrid(:,:,tt,i_source,i_subsource))
                 enddo
-            enddo
-            sum_emission_subgrid=sum(emission_subgrid(:,:,:,i_source,:))
-            write(unit_logfile,'(A,es12.2)') 'Sum of emissions for '//trim(source_file_str(i_source))//' over period (kg)=',sum_emission_subgrid*3600./1.e9
-        endif
+            endif
+            
+            sum_emission_subgrid=sum(emission_subgrid(:,:,:,i_source,i_pollutant))
+            write(unit_logfile,'(A,es12.2)') 'Sum of emissions for '//trim(source_file_str(i_source))//' '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//' over period (kg)=',sum_emission_subgrid*3600./1.e9
+         enddo
     endif
     enddo
     

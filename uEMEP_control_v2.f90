@@ -22,7 +22,7 @@
     
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
-    write(*,*) 'Starting programm uEMEP_v2.1'
+    write(*,*) 'Starting programm uEMEP_v3.1'
     write(*,*) '------------------------------------------------------------------------'
     
     !Read the command line, assigning the configuration file names and the substitution date_str
@@ -33,6 +33,9 @@
     
     !Read the configuration files. Hard coded to be up to 5 files. Log file opened in this routine
     call uEMEP_read_config
+    
+    !Set the pollutant and compound loop definitions
+    call uEMEP_set_pollutant_loop
     
     !Set the names of files to be written to when saving intermediate files
     call uEMEP_set_filenames
@@ -123,6 +126,7 @@
                     !Do this only for the first receptor grid loop
                     if (first_g_loop) then
                         call uEMEP_read_roadlink_data_ascii
+                        call uEMEP_change_road_data
                         !Read in the emission data for traffic in the first g_loop if required
                         if (use_NORTRIP_emission_data) then
                             call uEMEP_read_roadlink_emission_data
@@ -175,6 +179,7 @@
                 
                 !Carry out tiling. Programme will stop here
                 if (calculate_tiling_flag) then
+                    call uEMEP_grid_roads
                     call uEMEP_set_tile_grids
                 endif
 
@@ -223,7 +228,7 @@
             call uEMEP_combine_local_source
     
             !Calculate chemistry for NO2
-            if (compound_index.eq.nox_index) then
+            if (pollutant_index.eq.nox_index.or.pollutant_index.eq.all_nc_index) then
                 call uEMEP_chemistry
             endif
 

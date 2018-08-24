@@ -17,6 +17,12 @@ function area_weighted_interpolation_function(xgrid,ygrid,zgrid,xdim,ydim,delta,
     real  xpos_area_max,xpos_area_min,ypos_area_max,ypos_area_min
     real  xpos_max,xpos_min,ypos_max,ypos_min
         
+    !If only on grid available then return the value of that grid
+    if (xdim.eq.1.and.ydim.eq.1) then
+        area_weighted_interpolation_function=zgrid(xdim,ydim)
+        return
+    endif
+    
     !Find grid index for position val
     i=1+floor((xval-xgrid(1,1))/delta(1)+0.5)
     j=1+floor((yval-ygrid(1,1))/delta(2)+0.5)     

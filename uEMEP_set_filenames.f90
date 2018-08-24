@@ -26,6 +26,21 @@
         filename_grid(use_subgrid_file_index(i))=trim('use_subgrid')//'_'//trim(source_file_str(i))
         filename_grid(emep_emission_subgrid_file_index(i))=trim('EMEP_emission_subgrid')//'_'//trim(source_file_str(i))       
     enddo
+    !Alternative set of names for outputs
+    do i=1,n_source_index
+        filename_grid(proxy_emission_file_index(i))=trim('proxy_emission')//'_'//trim(source_file_str(i))
+        filename_grid(emission_file_index(i))=trim('emission')//'_'//trim(source_file_str(i))
+        filename_grid(proxy_file_index(i))=trim('proxy')//'_'//trim(source_file_str(i))
+        filename_grid(proxy_integral_file_index(i))=trim('proxy_integral')//'_'//trim(source_file_str(i))
+        filename_grid(emep_subgrid_file_index(i))=trim('EMEP')//'_'//trim(source_file_str(i))
+        filename_grid(emep_subgrid_nonlocal_file_index(i))=trim('EMEP_nonlocal_fraction')
+        filename_grid(emep_subgrid_local_file_index(i))=trim('EMEP_local_fraction')//'_'//trim(source_file_str(i))
+        filename_grid(emep_subgrid_frac_file_index(i))=trim('EMEP_fraction')//'_'//trim(source_file_str(i))
+        filename_grid(subgrid_local_file_index(i))=trim('local_fraction')//'_'//trim(source_file_str(i))
+        filename_grid(subgrid_total_file_index(i))=trim('total')//'_'//trim(source_file_str(i))
+        filename_grid(use_subgrid_file_index(i))=trim('use_subgrid')//'_'//trim(source_file_str(i))
+        filename_grid(emep_emission_subgrid_file_index(i))=trim('EMEP_emission')//'_'//trim(source_file_str(i))       
+    enddo
     
     filename_grid(population_file_index(dwelling_index))=trim('dwelling_subgrid')
     filename_grid(population_file_index(population_index))=trim('population_subgrid')

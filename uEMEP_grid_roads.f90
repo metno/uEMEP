@@ -11,7 +11,7 @@
     integer i,j,k
     integer ro
     real, allocatable :: f_subgrid(:)
-    real, allocatable :: adt_temp(:)
+    real, allocatable :: adt_temp(:,:)
     real, allocatable :: adt_car_temp(:)
     real, allocatable :: adt_truck_temp(:)
     real x_subgrid_in(2),y_subgrid_in(2)
@@ -20,58 +20,43 @@
     character(256) temp_name
     logical exists
     integer i_start,i_end,j_start,j_end
-    integer source_index,subsource_index,t
-    
-    integer i_roadlink_emission_compound
+    integer source_index,t
+    integer :: subsource_index=1
+    integer i_roadlink_emission_compound(n_pollutant_loop)
     integer tt,ttt
     integer major_ro
     integer t_start_temp,t_end_temp
+        
+    integer i_pollutant
     
     !functions
     real line_fraction_in_grid_func
     real sigma0_traffic_func
     real minFF_traffic_func
-    
+        
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Gridding road link proxy data (uEMEP_grid_roads)'
 	write(unit_logfile,'(A)') '================================================================'
 
     allocate (f_subgrid(n_roadlinks))
-    allocate (adt_temp(n_roadlinks))
+    allocate (adt_temp(n_roadlinks,n_pollutant_loop))
     allocate (adt_car_temp(n_roadlinks))
     allocate (adt_truck_temp(n_roadlinks))
     !allocate (traffic_emission_subgrid(subgrid_dim(1),subgrid_dim(2)),n_emission_subgrid_index)
     
     source_index=traffic_index
     t=1
-    do subsource_index=1,n_subsource(source_index)
-        temp_name=trim(pathname_grid(proxy_emission_file_index(source_index)))//trim(filename_grid(proxy_emission_file_index(source_index)))//trim(subsource_str(subsource_index))//'_'//trim(file_tag)//'.asc'
-        if (read_existing_grid_data(proxy_emission_file_index(source_index))) then
-            inquire(file=temp_name,exist=exists)
-            if (.not.exists) then
-                write(unit_logfile,*)'ERROR: '//trim(temp_name)//' does not exist.'
-                return
-            endif
-            write(unit_logfile,'(A)')'Reading: '//trim(temp_name)
-            call read_esri_ascii_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),emission_subgrid_delta(x_dim_index,source_index), &
-                proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,subsource_index), &
-                x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index), &
-                y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index))
-
-            return
-        endif
-    enddo
-    
+   
     proxy_emission_subgrid(:,:,source_index,:)=0.
     
     if (use_traffic_for_sigma0_flag) then
-        emission_properties_subgrid(:,:,emission_sigy00_index,source_index,:)=0.
-        emission_properties_subgrid(:,:,emission_sigz00_index,source_index,:)=0.
+        emission_properties_subgrid(:,:,emission_sigy00_index,source_index)=0.
+        emission_properties_subgrid(:,:,emission_sigz00_index,source_index)=0.
     endif
- !   emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)=0.
+ !   emission_properties_subgrid(:,:,emission_minFF_index,source_index)=0.
  !   if (use_traffic_for_minFF_flag) then
- !       emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)=0.
+ !       emission_properties_subgrid(:,:,emission_minFF_index,source_index)=0.
  !   endif
     !write(*,*) n_roadlinks
     !write(*,*) shape(inputdata_rl)
@@ -80,17 +65,31 @@
     !Here we weight the adt by the emission ratio and give an emission factor valid for cars
     adt_car_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*(1.-inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.)
     adt_truck_temp=inputdata_rl(1:n_roadlinks,adt_rl_index)*inputdata_rl(1:n_roadlinks,hdv_rl_index)/100.
-    adt_temp=adt_car_temp+adt_truck_temp*ratio_truck_car_emission(compound_index)
+    do i_pollutant=1,n_pollutant_loop
+    adt_temp(:,i_pollutant)=adt_car_temp+adt_truck_temp*ratio_truck_car_emission(pollutant_loop_index(i_pollutant))
+    enddo
     
     !Calculate the pseudo traffic emissions in each grid
     write(unit_logfile,*)'Gridding traffic emission proxy data'
     
     !Convert from uEMEP to NORTRIP
     if (use_NORTRIP_emission_data) then
-        if (compound_index.eq.nox_index) i_roadlink_emission_compound=4
-        if (compound_index.eq.pm10_index) i_roadlink_emission_compound=1
-        if (compound_index.eq.pm25_index) i_roadlink_emission_compound=2
-        !if (compound_index.eq.ep_index) i_roadlink_emission_compound=3
+
+        do i_pollutant=1,n_pollutant_loop
+            if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index) then
+                i_roadlink_emission_compound(i_pollutant)=1
+            elseif (pollutant_loop_index(i_pollutant).eq.pm25_nc_index) then
+                i_roadlink_emission_compound(i_pollutant)=2
+            elseif (pollutant_loop_index(i_pollutant).eq.pmex_nc_index) then
+                i_roadlink_emission_compound(i_pollutant)=3
+            elseif (pollutant_loop_index(i_pollutant).eq.nox_nc_index) then
+                i_roadlink_emission_compound(i_pollutant)=4
+            else
+                write(unit_logfile,*) 'STOPPING: No valid compound chosen for NORTRIP. Stopping uEMEP_grid_roads'
+                stop
+            endif             
+        enddo
+
         emission_subgrid(:,:,:,traffic_index,:)=0.
         !Set the time to be used based on the time loop flag
         if (use_single_time_loop_flag) then
@@ -134,9 +133,9 @@
                 
                 f_subgrid(ro)=line_fraction_in_grid_func(x_subgrid_in,y_subgrid_in,x_line_in,y_line_in)
                 
-                do subsource_index=1,n_subsource(source_index)
-                    proxy_emission_subgrid(i,j,source_index,subsource_index)=proxy_emission_subgrid(i,j,source_index,subsource_index) &
-                        +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro)
+                !do subsource_index=1,n_subsource(source_index)
+                    proxy_emission_subgrid(i,j,source_index,:)=proxy_emission_subgrid(i,j,source_index,:) &
+                        +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro,:)
                     
                     !Put the temporally changing emissions straight into the emission subgrid
                     !Will not be overwritten in uEMEP_convert_proxy_to_emissions if use_NORTRIP_emission_data=true
@@ -156,18 +155,22 @@
                             !write(*,*) 'inputdata_rl_emissions',shape(inputdata_rl_emissions)
 
                             !if (t_loop.eq.2) stop
-                            emission_subgrid(i,j,t,source_index,subsource_index)=emission_subgrid(i,j,t,source_index,subsource_index)+ &
-                               +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*inputdata_rl_emissions(major_ro,ttt,i_roadlink_emission_compound) &
+                            
+                            do i_pollutant=1,n_pollutant_loop
+                                emission_subgrid(i,j,t,source_index,i_pollutant)=emission_subgrid(i,j,t,source_index,i_pollutant)+ &
+                               +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*inputdata_rl_emissions(major_ro,ttt,i_roadlink_emission_compound(i_pollutant)) &
                                 *1.e6/1.e3/3600.
+                            enddo
+                            
                         enddo
                     endif
 
                     !Set the sigma values according to traffic speed and road width using proxy weighting
                     if (use_traffic_for_sigma0_flag) then
-                        emission_properties_subgrid(i,j,emission_sigy00_index,source_index,subsource_index)=emission_properties_subgrid(i,j,emission_sigy00_index,source_index,subsource_index) &
-                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro)*sqrt((inputdata_rl(ro,width_rl_index)/2.)**2+sigma0_traffic_func(inputdata_rl(ro,speed_rl_index))**2)
-                        emission_properties_subgrid(i,j,emission_sigz00_index,source_index,subsource_index)=emission_properties_subgrid(i,j,emission_sigz00_index,source_index,subsource_index) &
-                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro)*sigma0_traffic_func(inputdata_rl(ro,speed_rl_index))
+                        emission_properties_subgrid(i,j,emission_sigy00_index,source_index)=emission_properties_subgrid(i,j,emission_sigy00_index,source_index) &
+                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro,1)*sqrt((inputdata_rl(ro,width_rl_index)/2.)**2+sigma0_traffic_func(inputdata_rl(ro,speed_rl_index))**2)
+                        emission_properties_subgrid(i,j,emission_sigz00_index,source_index)=emission_properties_subgrid(i,j,emission_sigz00_index,source_index) &
+                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro,1)*sigma0_traffic_func(inputdata_rl(ro,speed_rl_index))
                     endif
                     !Should not be used
 !                    if (use_traffic_for_minFF_flag) then
@@ -175,7 +178,7 @@
 !                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro)*minFF_traffic_func(inputdata_rl(ro,speed_rl_index),adt_temp(ro),inputdata_rl(ro,width_rl_index))
 !                    endif
                     
-                enddo
+                !enddo
                 !write(*,*) ro,i,j,f_subgrid(ro)
                 !write(*,*) ro,f_subgrid(ro),traffic_emission_subgrid(i,j,x_emission_subgrid_index),traffic_emission_subgrid(i,j,y_emission_subgrid_index),x_line_in,y_line_in
             enddo
@@ -190,8 +193,8 @@
     
     !Set the road properties based on ADT weighting
     if (use_traffic_for_sigma0_flag) then
-        emission_properties_subgrid(:,:,emission_sigy00_index,source_index,:)=emission_properties_subgrid(:,:,emission_sigy00_index,source_index,:)/proxy_emission_subgrid(:,:,source_index,:)
-        emission_properties_subgrid(:,:,emission_sigz00_index,source_index,:)=emission_properties_subgrid(:,:,emission_sigz00_index,source_index,:)/proxy_emission_subgrid(:,:,source_index,:)
+        emission_properties_subgrid(:,:,emission_sigy00_index,source_index)=emission_properties_subgrid(:,:,emission_sigy00_index,source_index)/proxy_emission_subgrid(:,:,source_index,1)
+        emission_properties_subgrid(:,:,emission_sigz00_index,source_index)=emission_properties_subgrid(:,:,emission_sigz00_index,source_index)/proxy_emission_subgrid(:,:,source_index,1)
     endif
 !    if (use_traffic_for_minFF_flag) then
 !        emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)=emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)/proxy_emission_subgrid(:,:,source_index,:)
@@ -202,20 +205,7 @@
     deallocate (adt_car_temp)
     deallocate (adt_truck_temp)
     
-    if (save_intermediate_files) then
-    do subsource_index=1,n_subsource(source_index)
-    if (.not.read_existing_grid_data(proxy_emission_file_index(source_index))) then
-        temp_name=trim(pathname_grid(proxy_emission_file_index(source_index)))//trim(filename_grid(proxy_emission_file_index(source_index)))//trim(subsource_str(subsource_index))//'_'//trim(file_tag)//'.asc'
-        write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-        !write(*,*) emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index)
-        call write_esri_ascii_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),emission_subgrid_delta(x_dim_index,source_index), &
-                proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,subsource_index), &
-                x_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index), &
-                y_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index))
-    endif
-    enddo
-    endif
-
+ 
     !Deallocate road link arrays after gridding but not when the external time step is used and not when the multiple receptor grids are used
     !because gridding roads is called again
     if (use_single_time_loop_flag.or.use_multiple_receptor_grids_flag) then

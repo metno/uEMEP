@@ -30,8 +30,8 @@
     integer ii,jj,tt
     integer i_temp,j_temp,i_file
     integer i_nc_temp,j_nc_temp
-    real, allocatable :: weighting_nc(:,:,:,:),weighting_subgrid(:,:,:,:)
-    real, allocatable :: total_weighting_nc(:,:,:,:),proxy_weighting_nc(:,:,:,:)
+    real, allocatable :: weighting_nc(:,:,:,:),weighting_subgrid(:,:,:,:,:)
+    real, allocatable :: total_weighting_nc(:,:,:,:,:),proxy_weighting_nc(:,:,:,:,:)
     real, allocatable :: area_weighting_nc(:,:,:,:,:,:)
     integer i_nc_start,i_nc_end,j_nc_start,j_nc_end
     integer i_start,i_end,j_start,j_end,t_start,t_end
@@ -40,8 +40,8 @@
     integer i_nc,j_nc
     integer id,jd
     integer source_index,emep_subsource
-    real, allocatable :: nonlocal_correction(:,:)
-    real, allocatable :: nonlocal_correction_average(:)
+    real, allocatable :: nonlocal_correction(:,:,:)
+    real, allocatable :: nonlocal_correction_average(:,:)
     integer i_source,i_subsource
     integer id_p,jd_p,id_m,jd_m,in_p,jn_p,in_m,jn_m
     integer ii_nc,jj_nc,ii_w,jj_w
@@ -64,6 +64,8 @@
     real EMEP_grid_interpolation_size_sqr
     integer :: tt_dim=1
    
+    integer i_pollutant,i_loop
+    
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Distributing EMEP concentrations to subgrids  (uEMEP_subgrid_EMEP)'
@@ -84,46 +86,13 @@
     tt_dim=1
     
     !Allocate nonlocal_correction
-    if (.not.allocated(nonlocal_correction)) allocate (nonlocal_correction(tt_dim,n_source_index))
-    if (.not.allocated(nonlocal_correction_average)) allocate (nonlocal_correction_average(n_source_index))
+    if (.not.allocated(nonlocal_correction)) allocate (nonlocal_correction(tt_dim,n_source_index,n_pollutant_loop))
+    if (.not.allocated(nonlocal_correction_average)) allocate (nonlocal_correction_average(n_source_index,n_pollutant_loop))
 
     !There are no subsources in EMEP
     emep_subsource=1
 
-    !If EMEP gridded to subgrid files already exist then read them in and leave the subroutine
-    !For testing purposes mostly
-    do source_index=1,n_source_index
-        if (read_existing_grid_data(emep_subgrid_file_index(source_index)).and.calculate_source(source_index)) then
-           
-            i_file=emep_subgrid_file_index(source_index)
-            temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//trim(subsource_str(emep_subsource))//'_'//trim(file_tag)//'.asc'
-            inquire(file=temp_name,exist=exists)
-            if (.not.exists) then
-                write(unit_logfile,*)'WARNING: '//trim(temp_name)//' does not exist.'
-                !return
-            else
-                call read_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),subgrid_delta(1),subgrid(:,:,:,emep_subgrid_index,source_index,emep_subsource),x_subgrid,y_subgrid)
-            endif
-            i_file=emep_subgrid_frac_file_index(source_index)
-            temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//trim(subsource_str(emep_subsource))//'_'//trim(file_tag)//'.asc'
-            inquire(file=temp_name,exist=exists)
-            if (.not.exists) then
-                write(unit_logfile,*)'WARNING: '//trim(temp_name)//' does not exist.'
-                !return
-            else
-                call read_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),subgrid_delta(1),subgrid(:,:,:,emep_frac_subgrid_index,source_index,emep_subsource),x_subgrid,y_subgrid)
-            endif
-            subgrid(:,:,:,emep_local_subgrid_index,source_index,emep_subsource)=subgrid(:,:,:,emep_subgrid_index,source_index,emep_subsource)*subgrid(:,:,:,emep_frac_subgrid_index,source_index,emep_subsource)
-            subgrid(:,:,:,emep_nonlocal_subgrid_index,source_index,emep_subsource)=subgrid(:,:,:,emep_subgrid_index,source_index,emep_subsource)*(1.-subgrid(:,:,:,emep_frac_subgrid_index,source_index,emep_subsource))
-            
-        endif
-    enddo
- 
-    if (read_existing_grid_data(emep_subgrid_file_index(allsource_index))) then
-        write(unit_logfile,'(A,A)') 'Reading existing local and nonlocal files: ',trim(temp_name)
-        return
-    endif
-    
+
     !Initialise a diagnostic check variable for the weighting
     nonlocal_correction_average=0.
     
@@ -137,10 +106,13 @@
             jj=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
          
             !Nearest neighbour interpolate the EMEP compounds to subgrid
-            do i_comp=1,n_compound_loop
-                orig_EMEP_subgrid(i,j,:,compound_loop_index(i_comp))=comp_var3d_nc(ii,jj,:,compound_loop_index(i_comp))
+            do i_pollutant=1,n_pollutant_loop
+            do i_loop=1,n_pollutant_compound_loop(i_pollutant)
+                !write(*,*) trim(pollutant_file_str(pollutant_compound_loop_index(i_pollutant,i_loop)))
+                orig_EMEP_subgrid(i,j,:,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_var3d_nc(ii,jj,:,pollutant_compound_loop_index(i_pollutant,i_loop))
             enddo
-
+            enddo
+            
         enddo
         enddo
 
@@ -156,19 +128,21 @@
             ii=crossreference_target_to_emep_subgrid(i,j,x_dim_index)
             jj=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
         
-            subgrid(i,j,:,emep_subgrid_index,:,emep_subsource)=var3d_nc(ii,jj,:,conc_nc_index,:)
-            subgrid(i,j,:,emep_local_subgrid_index,:,emep_subsource)=var3d_nc(ii,jj,:,local_nc_index,:)
+            subgrid(i,j,:,emep_subgrid_index,:,:)=var3d_nc(ii,jj,:,conc_nc_index,:,:)
+            subgrid(i,j,:,emep_local_subgrid_index,:,:)=var3d_nc(ii,jj,:,local_nc_index,:,:)
                     
             !Interpolate the other EMEP compounds as well to subgrid in the same way
-            do i_comp=1,n_compound_loop
-                comp_EMEP_subgrid(i,j,:,compound_loop_index(i_comp))=comp_var3d_nc(ii,jj,:,compound_loop_index(i_comp))
+            do i_pollutant=1,n_pollutant_loop
+            do i_loop=1,n_pollutant_compound_loop(i_pollutant)
+                comp_EMEP_subgrid(i,j,:,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_var3d_nc(ii,jj,:,pollutant_compound_loop_index(i_pollutant,i_loop))
+            enddo
             enddo
 
         endif
         enddo
         enddo
         
-        subgrid(:,:,:,emep_nonlocal_subgrid_index,:,emep_subsource)=subgrid(:,:,:,emep_subgrid_index,:,emep_subsource)-subgrid(:,:,:,emep_local_subgrid_index,:,emep_subsource)
+        subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)=subgrid(:,:,:,emep_subgrid_index,:,:)-subgrid(:,:,:,emep_local_subgrid_index,:,:)
    endif
 
     
@@ -253,22 +227,30 @@
                     weighting_nc(ii_w,jj_w,tt_dim,:)=0.
                 endif                
 
-                    subgrid(i,j,tt,emep_local_subgrid_index,:,emep_subsource)=subgrid(i,j,tt,emep_local_subgrid_index,:,emep_subsource) &
-                        +var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:)*weighting_nc(ii_w,jj_w,tt_dim,:)
-                    subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,emep_subsource)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,emep_subsource) &
-                        +(var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,:)-var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:))*weighting_nc(ii_w,jj_w,tt_dim,:)
+                    do i_pollutant=1,n_pollutant_loop
+                        
+                        subgrid(i,j,tt,emep_local_subgrid_index,:,i_pollutant)=subgrid(i,j,tt,emep_local_subgrid_index,:,i_pollutant) &
+                            +var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,:)
+                        subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,i_pollutant)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,i_pollutant) &
+                            +(var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,:,i_pollutant)-var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:,i_pollutant))*weighting_nc(ii_w,jj_w,tt_dim,:)
 
-                    !Interpolate the other EMEP compounds as well to subgrid
-                    do i_comp=1,n_compound_loop
-                        comp_EMEP_subgrid(i,j,tt,compound_loop_index(i_comp))=comp_EMEP_subgrid(i,j,tt,compound_loop_index(i_comp)) &
-                        +comp_var3d_nc(ii_nc,jj_nc,tt,compound_loop_index(i_comp))*weighting_nc(ii_w,jj_w,tt_dim,allsource_index)
+                        !Interpolate the other EMEP compounds as well to subgrid
+                        do i_loop=1,n_pollutant_compound_loop(i_pollutant)
+                            comp_EMEP_subgrid(i,j,tt,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_EMEP_subgrid(i,j,tt,pollutant_compound_loop_index(i_pollutant,i_loop)) &
+                                +comp_var3d_nc(ii_nc,jj_nc,tt,pollutant_compound_loop_index(i_pollutant,i_loop))*weighting_nc(ii_w,jj_w,tt_dim,allsource_index)
+                        enddo
+                        
                     enddo
+                    !do i_comp=1,n_compound_loop
+                    !    comp_EMEP_subgrid(i,j,tt,compound_loop_index(i_comp))=comp_EMEP_subgrid(i,j,tt,compound_loop_index(i_comp)) &
+                    !    +comp_var3d_nc(ii_nc,jj_nc,tt,compound_loop_index(i_comp))*weighting_nc(ii_w,jj_w,tt_dim,allsource_index)
+                    !enddo
                     
             enddo
             enddo
             
             !Calculate the nonlocal correction, weighting for grids beyond the central grid
-            nonlocal_correction(tt_dim,:)=0.
+            nonlocal_correction(tt_dim,:,:)=0.
             do jj=jj_start,jj_end
             do ii=ii_start,ii_end
                 
@@ -281,10 +263,11 @@
                 if (jj.ne.0.or.ii.ne.0) then
                     
                     !First weight is emission, the second is area
-                    nonlocal_correction(tt_dim,:)=nonlocal_correction(tt_dim,:) &
-                        -lc_var3d_nc(ii_w0,jj_w0,ii_nc,jj_nc,tt,lc_local_nc_index,:)*weighting_nc(ii_w,jj_w,tt_dim,:)*weighting_nc(ii_w0,jj_w0,tt_dim,:) &
-                        -lc_var3d_nc(ii_w,jj_w,i_nc,j_nc,tt,lc_local_nc_index,:)*weighting_nc(ii_w0,jj_w0,tt_dim,:)*weighting_nc(ii_w,jj_w,tt_dim,:)
-                                        
+                    do i_pollutant=1,n_pollutant_loop
+                    nonlocal_correction(tt_dim,:,i_pollutant)=nonlocal_correction(tt_dim,:,i_pollutant) &
+                        -lc_var3d_nc(ii_w0,jj_w0,ii_nc,jj_nc,tt,lc_local_nc_index,:,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,:)*weighting_nc(ii_w0,jj_w0,tt_dim,:) &
+                        -lc_var3d_nc(ii_w,jj_w,i_nc,j_nc,tt,lc_local_nc_index,:,i_pollutant)*weighting_nc(ii_w0,jj_w0,tt_dim,:)*weighting_nc(ii_w,jj_w,tt_dim,:)
+                    enddo                 
                 endif
                 
             enddo
@@ -292,15 +275,15 @@
             
             
             !Place the EMEP values in the target subgrid
-            subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,emep_subsource)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,emep_subsource)+nonlocal_correction(tt_dim,:)
-            subgrid(i,j,tt,emep_local_subgrid_index,:,emep_subsource)=subgrid(i,j,tt,emep_local_subgrid_index,:,emep_subsource)-nonlocal_correction(tt_dim,:)
-            subgrid(i,j,tt,emep_subgrid_index,:,emep_subsource)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,emep_subsource)+subgrid(i,j,tt,emep_local_subgrid_index,:,emep_subsource)
+            subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)+nonlocal_correction(tt_dim,:,:)
+            subgrid(i,j,tt,emep_local_subgrid_index,:,:)=subgrid(i,j,tt,emep_local_subgrid_index,:,:)-nonlocal_correction(tt_dim,:,:)
+            subgrid(i,j,tt,emep_subgrid_index,:,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)+subgrid(i,j,tt,emep_local_subgrid_index,:,:)
 
             !Put the area weighting in the larger array for use later in the emission proxy weighting (if needed)
             area_weighting_nc(i,j,:,:,tt_dim,:)=weighting_nc(:,:,tt_dim,:)
             
             !For diagnostics only
-            nonlocal_correction_average=nonlocal_correction_average+nonlocal_correction(tt_dim,:)
+            nonlocal_correction_average=nonlocal_correction_average+nonlocal_correction(tt_dim,:,:)
             
         
         endif
@@ -311,7 +294,9 @@
         
         if (tt.eq.t_end) then
             nonlocal_correction_average=nonlocal_correction_average/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
-            write(unit_logfile,'(A,<n_source_index>f12.3)') 'Nonlocal correction for area weighting = ',nonlocal_correction_average
+            do i_pollutant=1,n_pollutant_loop
+                write(unit_logfile,'(A,<n_source_index>es12.4)') 'Nonlocal correction for area weighting ('//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//') = ',nonlocal_correction_average(:,i_pollutant)
+            enddo
         endif
         
         
@@ -326,8 +311,8 @@
    
         if (tt.eq.t_start) write(unit_logfile,'(A,2i)')'Calculating EMEP local subgrid contribution using moving window interpolation method ',EMEP_grid_interpolation_flag
         
-        if (.not.allocated(total_weighting_nc)) allocate (total_weighting_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),tt_dim,n_source_index)) !EMEP grid weighting for interpolation
-        if (.not.allocated(proxy_weighting_nc)) allocate (proxy_weighting_nc(n_weight,n_weight,tt_dim,n_source_index)) !EMEP grid weighting for interpolation
+        if (.not.allocated(total_weighting_nc)) allocate (total_weighting_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),tt_dim,n_source_index,n_pollutant_loop)) !EMEP grid weighting for interpolation
+        if (.not.allocated(proxy_weighting_nc)) allocate (proxy_weighting_nc(n_weight,n_weight,tt_dim,n_source_index,n_pollutant_loop)) !EMEP grid weighting for interpolation
         
         !Set the index offset for the local contribution
         i_w_c=1+floor(n_weight*.5)
@@ -342,9 +327,9 @@
         !Emission weighting
         if (EMEP_grid_interpolation_flag.eq.2) then
 
-            if (.not.allocated(weighting_subgrid)) allocate (weighting_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),tt_dim,n_source_index))
+            if (.not.allocated(weighting_subgrid)) allocate (weighting_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),tt_dim,n_source_index,n_pollutant_loop))
             if (.not.allocated(crossreference_weighting_to_emep_subgrid)) allocate (crossreference_weighting_to_emep_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),2,n_source_index))
-            weighting_subgrid(:,:,tt_dim,:)=sum(emission_subgrid(:,:,tt,:,:),4)
+            weighting_subgrid(:,:,tt_dim,:,:)=emission_subgrid(:,:,tt,:,:)
             weighting_subgrid_dim(:,:)=emission_subgrid_dim(1:2,:)
             crossreference_weighting_to_emep_subgrid=crossreference_emission_to_emep_subgrid
 
@@ -353,20 +338,20 @@
         if (EMEP_grid_interpolation_flag.eq.3) then
 
             !Aggregated emissions first on integral grid to increase speed
-            if (.not.allocated(weighting_subgrid)) allocate (weighting_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),tt_dim,n_source_index))
+            if (.not.allocated(weighting_subgrid)) allocate (weighting_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),tt_dim,n_source_index,n_pollutant_loop))
             if (.not.allocated(crossreference_weighting_to_emep_subgrid)) allocate (crossreference_weighting_to_emep_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),2,n_source_index))
             do i_source=1,n_source_index
                 crossreference_weighting_to_emep_subgrid(:,:,:,i_source)=crossreference_integral_to_emep_subgrid
                 weighting_subgrid_dim(:,i_source)=integral_subgrid_dim(1:2)
             enddo
-            weighting_subgrid(:,:,tt_dim,:)=0.
+            weighting_subgrid(:,:,tt_dim,:,:)=0.
             do i_source=1,n_source_index
             if (calculate_source(i_source)) then
             do j=1,emission_subgrid_dim(y_dim_index,i_source)
             do i=1,emission_subgrid_dim(x_dim_index,i_source)
                 i_cross=crossreference_emission_to_integral_subgrid(i,j,x_dim_index,i_source)
                 j_cross=crossreference_emission_to_integral_subgrid(i,j,y_dim_index,i_source)                   
-                weighting_subgrid(i_cross,j_cross,tt_dim,i_source)=weighting_subgrid(i_cross,j_cross,tt_dim,i_source)+sum(emission_subgrid(i,j,tt,i_source,:),1)
+                weighting_subgrid(i_cross,j_cross,tt_dim,i_source,:)=weighting_subgrid(i_cross,j_cross,tt_dim,i_source,:)+emission_subgrid(i,j,tt,i_source,:)
             enddo
             enddo
             endif
@@ -377,14 +362,14 @@
         !Integral proxy weighting
         if (EMEP_grid_interpolation_flag.eq.4) then
             !Aggregated proxy on integral grid to increase speed
-            if (.not.allocated(weighting_subgrid)) allocate (weighting_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_source_index))
+            if (.not.allocated(weighting_subgrid)) allocate (weighting_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
             if (.not.allocated(crossreference_weighting_to_emep_subgrid)) allocate (crossreference_weighting_to_emep_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),2,n_source_index))
             do i_source=1,n_source_index
                 crossreference_weighting_to_emep_subgrid(:,:,:,i_source)=crossreference_integral_to_emep_subgrid
                 weighting_subgrid_dim(:,i_source)=integral_subgrid_dim(1:2)
             enddo
             !Set the weighting subgrid to the sum of all subsource integral emissions
-            weighting_subgrid(:,:,tt_dim,:)=sum(integral_subgrid(:,:,tt,:,:),4)
+            weighting_subgrid(:,:,tt_dim,:,:)=integral_subgrid(:,:,tt,:,:)
             
         endif
         
@@ -396,7 +381,7 @@
         do i=1,weighting_subgrid_dim(x_dim_index,i_source)
             i_nc=crossreference_weighting_to_emep_subgrid(i,j,x_dim_index,i_source)
             j_nc=crossreference_weighting_to_emep_subgrid(i,j,y_dim_index,i_source)
-            total_weighting_nc(i_nc,j_nc,tt_dim,i_source)=total_weighting_nc(i_nc,j_nc,tt_dim,i_source)+weighting_subgrid(i,j,tt_dim,i_source)
+            total_weighting_nc(i_nc,j_nc,tt_dim,i_source,:)=total_weighting_nc(i_nc,j_nc,tt_dim,i_source,:)+weighting_subgrid(i,j,tt_dim,i_source,:)
             !write(*,*) i_source,i,j,i_nc,j_nc,weighting_subgrid(i,j,:,i_source)
         enddo
         enddo
@@ -450,7 +435,7 @@
                             .and.abs(ypos_subgrid-ypos_emission_subgrid).le.ypos_limit) then                  
                             i_nc=crossreference_emission_to_emep_subgrid(ii,jj,x_dim_index,i_source)
                             j_nc=crossreference_emission_to_emep_subgrid(ii,jj,y_dim_index,i_source)                   
-                            proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,tt_dim,i_source)=proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,tt_dim,i_source)+weighting_subgrid(ii,jj,tt_dim,i_source)
+                            proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,tt_dim,i_source,:)=proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,tt_dim,i_source,:)+weighting_subgrid(ii,jj,tt_dim,i_source,:)
                             !write(*,*) tt, proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,tt_dim,i_source), weighting_subgrid(ii,jj,tt_dim,i_source)
 
                         endif                   
@@ -481,7 +466,7 @@
                             .and.abs(ypos_subgrid-ypos_integral_subgrid).le.ypos_limit) then                  
                             i_nc=crossreference_integral_to_emep_subgrid(ii,jj,x_dim_index)
                             j_nc=crossreference_integral_to_emep_subgrid(ii,jj,y_dim_index)                   
-                            proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,tt_dim,i_source)=proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,tt_dim,i_source)+weighting_subgrid(ii,jj,tt_dim,i_source)
+                            proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,tt_dim,i_source,:)=proxy_weighting_nc(i_nc-i_nc_c+i_w_c,j_nc-j_nc_c+j_w_c,tt_dim,i_source,:)+weighting_subgrid(ii,jj,tt_dim,i_source,:)
                         endif                   
                     enddo
                     enddo
@@ -500,30 +485,31 @@
             do jj=j_nc_start,j_nc_end
             do ii=i_nc_start,i_nc_end
             
-                 if (total_weighting_nc(ii,jj,tt_dim,i_source).ne.0.) then
-                    proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source)=proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source)/total_weighting_nc(ii,jj,tt_dim,i_source)/EMEP_grid_interpolation_size_sqr
+                do i_pollutant=1,n_pollutant_loop
+                if (total_weighting_nc(ii,jj,tt_dim,i_source,i_pollutant).ne.0.) then
+                    proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source,i_pollutant)=proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source,i_pollutant)/total_weighting_nc(ii,jj,tt_dim,i_source,i_pollutant)/EMEP_grid_interpolation_size_sqr
                     !write(*,*)  tt,proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source)
                 else
-                    proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source)=0.
+                    proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source,i_pollutant)=0.
                 endif
-                if (proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source).gt.1) write(*,'(A,7i6,f12.2)')'WEIGHTING>1: ',tt,i,j,ii,jj,ii-i_nc,jj-j_nc,proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source)
-                        
+                if (proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source,i_pollutant).gt.1) write(*,'(A,8i6,f12.2)')'WEIGHTING>1: ',i_pollutant,tt,i,j,ii,jj,ii-i_nc,jj-j_nc,proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source,i_pollutant)
+                enddo
+                
             enddo
             enddo
                                 
             !Add up the contributing weights
-            !Note that only the emep_subsource=1 can be determined since EMEP has no subsources
                 do jj=j_nc_start,j_nc_end
                 do ii=i_nc_start,i_nc_end
                     
-                    subgrid(i,j,tt,emep_local_subgrid_index,i_source,emep_subsource)=subgrid(i,j,tt,emep_local_subgrid_index,i_source,emep_subsource) &
-                        +var3d_nc(ii,jj,tt,local_nc_index,i_source)*proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source)
+                    subgrid(i,j,tt,emep_local_subgrid_index,i_source,:)=subgrid(i,j,tt,emep_local_subgrid_index,i_source,:) &
+                        +var3d_nc(ii,jj,tt,local_nc_index,i_source,:)*proxy_weighting_nc(ii-i_nc+i_w_c,jj-j_nc+j_w_c,tt_dim,i_source,:)
                     
                 enddo
                 enddo                
 
             !Subtract the additional local emissions from the nonlocal using the new scheme
-            nonlocal_correction(tt_dim,i_source)=0.
+            nonlocal_correction(tt_dim,i_source,:)=0.
 
             do jj=-1-floor((EMEP_grid_interpolation_size-1.)*0.5),+1+floor((EMEP_grid_interpolation_size-1.)*0.5)
             do ii=-1-floor((EMEP_grid_interpolation_size-1.)*0.5),+1+floor((EMEP_grid_interpolation_size-1.)*0.5)
@@ -535,20 +521,20 @@
 
                 if (jj.ne.0.or.ii.ne.0) then
                     !First weight is emission, the second is area
-                    nonlocal_correction(tt_dim,i_source)=nonlocal_correction(tt_dim,i_source) &
-                        -lc_var3d_nc(ii_w0,jj_w0,ii_nc,jj_nc,tt,lc_local_nc_index,i_source)*proxy_weighting_nc(ii+i_w_c,jj+j_w_c,tt_dim,i_source)*area_weighting_nc(i,j,ii_w0,jj_w0,tt_dim,i_source) &
-                        -lc_var3d_nc(ii_w,jj_w,i_nc,j_nc,tt,lc_local_nc_index,i_source)*proxy_weighting_nc(ii+i_w_c,jj+j_w_c,tt_dim,i_source)*area_weighting_nc(i,j,ii_w,jj_w,tt_dim,i_source)
+                    nonlocal_correction(tt_dim,i_source,:)=nonlocal_correction(tt_dim,i_source,:) &
+                        -lc_var3d_nc(ii_w0,jj_w0,ii_nc,jj_nc,tt,lc_local_nc_index,i_source,:)*proxy_weighting_nc(ii+i_w_c,jj+j_w_c,tt_dim,i_source,:)*area_weighting_nc(i,j,ii_w0,jj_w0,tt_dim,i_source) &
+                        -lc_var3d_nc(ii_w,jj_w,i_nc,j_nc,tt,lc_local_nc_index,i_source,:)*proxy_weighting_nc(ii+i_w_c,jj+j_w_c,tt_dim,i_source,:)*area_weighting_nc(i,j,ii_w,jj_w,tt_dim,i_source)
                 endif
 
             enddo
             enddo
             
-            subgrid(i,j,tt,emep_nonlocal_subgrid_index,i_source,emep_subsource)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,i_source,emep_subsource)+nonlocal_correction(tt_dim,i_source)
-            subgrid(i,j,tt,emep_local_subgrid_index,i_source,emep_subsource)=subgrid(i,j,tt,emep_local_subgrid_index,i_source,emep_subsource)-nonlocal_correction(tt_dim,i_source)            
-            subgrid(i,j,tt,emep_subgrid_index,i_source,emep_subsource)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,i_source,emep_subsource)+subgrid(i,j,tt,emep_local_subgrid_index,i_source,emep_subsource)
+            subgrid(i,j,tt,emep_nonlocal_subgrid_index,i_source,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,i_source,:)+nonlocal_correction(tt_dim,i_source,:)
+            subgrid(i,j,tt,emep_local_subgrid_index,i_source,:)=subgrid(i,j,tt,emep_local_subgrid_index,i_source,:)-nonlocal_correction(tt_dim,i_source,:)            
+            subgrid(i,j,tt,emep_subgrid_index,i_source,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,i_source,:)+subgrid(i,j,tt,emep_local_subgrid_index,i_source,:)
             
             !Averaged over time for diagnostic purposes only
-            nonlocal_correction_average(i_source)=nonlocal_correction_average(i_source)+nonlocal_correction(tt_dim,i_source)
+            nonlocal_correction_average(i_source,:)=nonlocal_correction_average(i_source,:)+nonlocal_correction(tt_dim,i_source,:)
                
         endif !use subgrid
         
@@ -561,7 +547,9 @@
         
         if (tt.eq.t_end) then
             nonlocal_correction_average=nonlocal_correction_average/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
-            write(unit_logfile,'(A,<n_source_index>f12.3)') 'Nonlocal correction for proxy weighting = ',nonlocal_correction_average
+            do i_pollutant=1,n_pollutant_loop
+                write(unit_logfile,'(A,<n_source_index>es12.4)') 'Nonlocal correction for proxy weighting ('//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//') = ',nonlocal_correction_average(:,i_pollutant)
+            enddo            
         endif
 
     endif
@@ -572,100 +560,76 @@
 
         !Create the all source version of the local and nonlocal contribution after calculating all the source contributions
         !The nonlocal contribution uses the difference between the local and total, here the total is based on the area interpolation. Is this correct?
-        subgrid(:,:,:,emep_local_subgrid_index,allsource_index,emep_subsource)=0.
-        subgrid(:,:,:,emep_subgrid_index,allsource_index,emep_subsource)=0.
-        subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,emep_subsource)=0. !-subgrid(:,:,:,emep_subgrid_index,allsource_index,emep_subsource)
+        subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)=0.
+        subgrid(:,:,:,emep_subgrid_index,allsource_index,:)=0.
+        subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=0. !-subgrid(:,:,:,emep_subgrid_index,allsource_index,:)
         count=0
         do i_source=1,n_source_index
         if (calculate_source(i_source)) then
                 
             !Check values for local and totals for each source
             !write(*,*) trim(source_file_str(i_source))
-            if (minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,emep_subsource)).lt.0.0) then
-                write(unit_logfile,'(A,A,f12.4,A)') 'WARNING: Min nonlocal source less than 0 for ',trim(source_file_str(i_source)),minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,emep_subsource)),' Setting to 0 and adding to local'            
+            do i_pollutant=1,n_pollutant_loop
+            if (minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,i_pollutant)).lt.0.0) then
+                write(unit_logfile,'(A,A,f12.4,A)') 'WARNING: Min nonlocal source less than 0 for ',trim(source_file_str(i_source))//' '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant))),minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,emep_subsource)),' Setting to 0 and adding to local'            
             endif
+            enddo
+            
             !Set any negative nonlocal to 0 and add the value back into the local. Indicates a problem with the moving window method
                 do j=1,subgrid_dim(y_dim_index)
                 do i=1,subgrid_dim(x_dim_index)
-                    where (subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,emep_subsource).lt.0.) 
-                        subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,emep_subsource)=0.
-                        subgrid(i,j,:,emep_local_subgrid_index,i_source,emep_subsource)=subgrid(i,j,:,emep_local_subgrid_index,i_source,emep_subsource)-subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,emep_subsource)
+                    where (subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,:).lt.0.) 
+                        subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,:)=0.
+                        subgrid(i,j,:,emep_local_subgrid_index,i_source,:)=subgrid(i,j,:,emep_local_subgrid_index,i_source,:)-subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,:)
                     endwhere
                 enddo
                 enddo
                 
                 !Add the local subgrid sources together to get an allsource local contribution
-                subgrid(:,:,:,emep_local_subgrid_index,allsource_index,emep_subsource)=subgrid(:,:,:,emep_local_subgrid_index,allsource_index,emep_subsource)+subgrid(:,:,:,emep_local_subgrid_index,i_source,emep_subsource)
-                subgrid(:,:,:,emep_subgrid_index,i_source,emep_subsource)=subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,emep_subsource)+subgrid(:,:,:,emep_local_subgrid_index,i_source,emep_subsource)
+                subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)=subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)+subgrid(:,:,:,emep_local_subgrid_index,i_source,:)
+                subgrid(:,:,:,emep_subgrid_index,i_source,:)=subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,:)+subgrid(:,:,:,emep_local_subgrid_index,i_source,:)
                 count=count+1
                 !Add up the total EMEP for all source (will be averaged with count)
-                subgrid(:,:,:,emep_subgrid_index,allsource_index,emep_subsource)=subgrid(:,:,:,emep_subgrid_index,allsource_index,emep_subsource)+subgrid(:,:,:,emep_subgrid_index,i_source,emep_subsource)
-                if (minval(subgrid(:,:,:,emep_subgrid_index,i_source,emep_subsource)).lt.0.0) then
-                    write(unit_logfile,'(A,A,f12.4)') 'ERROR: Min total source less than 0 for ',trim(source_file_str(i_source)),minval(subgrid(:,:,:,emep_subgrid_index,i_source,emep_subsource))
+                subgrid(:,:,:,emep_subgrid_index,allsource_index,:)=subgrid(:,:,:,emep_subgrid_index,allsource_index,:)+subgrid(:,:,:,emep_subgrid_index,i_source,:)
+                do i_pollutant=1,n_pollutant_loop
+                if (minval(subgrid(:,:,:,emep_subgrid_index,i_source,i_pollutant)).lt.0.0) then
+                    write(unit_logfile,'(A,A,f12.4)') 'ERROR: Min total source less than 0 for ',trim(source_file_str(i_source))//' '//trim(pollutant_file_str(pollutant_loop_index(pollutant_loop_index(i_pollutant)))),minval(subgrid(:,:,:,emep_subgrid_index,i_source,i_pollutant))
                     stop
                 endif
+                enddo
                 
         
         endif
         enddo
                 
         !Set the allsource nonlocal value to the average of the remainder. This can be negative
-        subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,emep_subsource)=(subgrid(:,:,:,emep_subgrid_index,allsource_index,emep_subsource)/count-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,emep_subsource))
+        subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid(:,:,:,emep_subgrid_index,allsource_index,:)/count-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))
         
-        if (minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,emep_subsource)).lt.0.0) then
-            write(unit_logfile,'(A,f12.4,A)') 'WARNING: Min nonlocal allsource less than 0 with ',minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,emep_subsource)),' Setting to 0'  
+        do i_pollutant=1,n_pollutant_loop
+        if (minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)).lt.0.0) then
+            write(unit_logfile,'(A,f12.4,A)') 'WARNING: Min nonlocal allsource less than 0 with '//trim(source_file_str(allsource_index))//' '//trim(pollutant_file_str(i_pollutant)),minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)),' Setting to 0'  
         endif
+        enddo
+        
         !Remove any negative values.
         do j=1,subgrid_dim(y_dim_index)
         do i=1,subgrid_dim(x_dim_index)
-            where (subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,emep_subsource).lt.0.) 
-                subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,emep_subsource)=0.
+            where (subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,:).lt.0.) 
+                subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,:)=0.
             endwhere
         enddo
         enddo
 
         !Add up the sources and calculate fractions
-        subgrid(:,:,:,emep_subgrid_index,:,emep_subsource)=subgrid(:,:,:,emep_nonlocal_subgrid_index,:,emep_subsource)+subgrid(:,:,:,emep_local_subgrid_index,:,emep_subsource)
-        subgrid(:,:,:,emep_frac_subgrid_index,:,emep_subsource)=subgrid(:,:,:,emep_local_subgrid_index,:,emep_subsource)/subgrid(:,:,:,emep_subgrid_index,:,emep_subsource)
-        if (minval(subgrid(:,:,:,emep_subgrid_index,allsource_index,emep_subsource)).lt.0.0) then
-             write(unit_logfile,'(A,f12.4)')'ERROR: Minimum total allsource less than 0 with ',minval(subgrid(:,:,:,emep_subgrid_index,allsource_index,emep_subsource))
+        subgrid(:,:,:,emep_subgrid_index,:,:)=subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)+subgrid(:,:,:,emep_local_subgrid_index,:,:)
+        subgrid(:,:,:,emep_frac_subgrid_index,:,:)=subgrid(:,:,:,emep_local_subgrid_index,:,:)/subgrid(:,:,:,emep_subgrid_index,:,:)
+        do i_pollutant=1,n_pollutant_loop
+        if (minval(subgrid(:,:,:,emep_subgrid_index,allsource_index,:)).lt.0.0) then
+             write(unit_logfile,'(A,f12.4)')'ERROR: Minimum total allsource less than 0 with '//trim(source_file_str(allsource_index))//' '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant))),minval(subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant))
             stop
         endif
+        enddo
     
-    !Save files
-    if (save_intermediate_files) then
-    do source_index=1,n_source_index
-        if (.not.read_existing_grid_data(emep_subgrid_file_index(source_index)).and.(calculate_source(source_index).or.source_index.eq.allsource_index)) then
-            !do subsource_index=1,n_subsource(source_index)
-            i_file=emep_subgrid_file_index(source_index)
-            temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            call write_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),subgrid_delta(1),subgrid(:,:,:,emep_subgrid_index,source_index,emep_subsource),x_subgrid,y_subgrid)
-            i_file=emep_subgrid_local_file_index(source_index)
-            temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            call write_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),subgrid_delta(1),subgrid(:,:,:,emep_local_subgrid_index,source_index,emep_subsource),x_subgrid,y_subgrid)
-            i_file=emep_subgrid_nonlocal_file_index(source_index)
-            temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            call write_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),subgrid_delta(1),subgrid(:,:,:,emep_nonlocal_subgrid_index,source_index,emep_subsource),x_subgrid,y_subgrid)
-        endif
-    enddo
-    endif
-
-    
-    if (save_intermediate_files) then
-         if (.not.read_existing_grid_data(emep_subgrid_file_index(allsource_index))) then
-            !Save the other EMEP compounds used for nox chemistry as well
-            do i_comp=1,n_compound_loop
-                i_file=emep_subgrid_file_index(allsource_index)
-                temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(var_name_nc(conc_nc_index,compound_loop_index(i_comp),allsource_index))//'_'//trim(file_tag)//'.asc'
-                write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-                call write_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),subgrid_delta(1),comp_EMEP_subgrid(:,:,:,compound_loop_index(i_comp)),x_subgrid,y_subgrid)
-            enddo
-         endif
-     endif    
-
 
     if (allocated(weighting_nc)) deallocate(weighting_nc)
     if (allocated(area_weighting_nc)) deallocate(area_weighting_nc)

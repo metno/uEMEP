@@ -103,38 +103,6 @@
         use_receptor_region=read_name_integer('use_receptor_region',use_receptor_region,unit_in,unit_logfile)
         reduce_roadlink_region_flag=read_name_logical('reduce_roadlink_region_flag',reduce_roadlink_region_flag,unit_in,unit_logfile)
 
-        
-        !Read in choice of reading existing proxy emission, proxy dispersion, meteorology and use_subgid file data. These will rarely, if ever, be used
-        read_existing_grid_data(proxy_emission_file_index(:))=read_name_logical('read_existing_grid_data(proxy_emission_file_index(:))',read_existing_grid_data(proxy_emission_file_index(allsource_index)),unit_in,unit_logfile)
-        read_existing_grid_data(proxy_emission_file_index(traffic_index))=read_name_logical('read_existing_grid_data(proxy_emission_file_index(traffic_index))',read_existing_grid_data(proxy_emission_file_index(traffic_index)),unit_in,unit_logfile)
-        read_existing_grid_data(proxy_emission_file_index(shipping_index))=read_name_logical('read_existing_grid_data(proxy_emission_file_index(shipping_index))',read_existing_grid_data(proxy_emission_file_index(shipping_index)),unit_in,unit_logfile)
-        read_existing_grid_data(proxy_emission_file_index(heating_index))=read_name_logical('read_existing_grid_data(proxy_emission_file_index(heating_index))',read_existing_grid_data(proxy_emission_file_index(heating_index)),unit_in,unit_logfile)
-        read_existing_grid_data(proxy_emission_file_index(agriculture_index))=read_name_logical('read_existing_grid_data(proxy_emission_file_index(agriculture_index))',read_existing_grid_data(proxy_emission_file_index(agriculture_index)),unit_in,unit_logfile)
-        read_existing_grid_data(proxy_emission_file_index(industry_index))=read_name_logical('read_existing_grid_data(proxy_emission_file_index(industry_index))',read_existing_grid_data(proxy_emission_file_index(industry_index)),unit_in,unit_logfile)
- 
-        read_existing_grid_data(proxy_file_index(:))=read_name_logical('read_existing_grid_data(proxy_file_index(:))',read_existing_grid_data(proxy_file_index(allsource_index)),unit_in,unit_logfile)
-        read_existing_grid_data(proxy_file_index(traffic_index))=read_name_logical('read_existing_grid_data(proxy_file_index(traffic_index))',read_existing_grid_data(proxy_file_index(traffic_index)),unit_in,unit_logfile)
-        read_existing_grid_data(proxy_file_index(shipping_index))=read_name_logical('read_existing_grid_data(proxy_file_index(shipping_index))',read_existing_grid_data(proxy_file_index(shipping_index)),unit_in,unit_logfile)
-        read_existing_grid_data(proxy_file_index(heating_index))=read_name_logical('read_existing_grid_data(proxy_file_index(heating_index))',read_existing_grid_data(proxy_file_index(heating_index)),unit_in,unit_logfile)
-        read_existing_grid_data(proxy_file_index(agriculture_index))=read_name_logical('read_existing_grid_data(proxy_file_index(agriculture_index))',read_existing_grid_data(proxy_file_index(agriculture_index)),unit_in,unit_logfile)
-        read_existing_grid_data(proxy_file_index(industry_index))=read_name_logical('read_existing_grid_data(proxy_file_index(industry_index))',read_existing_grid_data(proxy_file_index(industry_index)),unit_in,unit_logfile)
-
-        read_existing_grid_data(emep_subgrid_file_index(:))=read_name_logical('read_existing_grid_data(emep_subgrid_file_index(:))',read_existing_grid_data(emep_subgrid_file_index(allsource_index)),unit_in,unit_logfile)
-        read_existing_grid_data(emep_subgrid_file_index(traffic_index))=read_name_logical('read_existing_grid_data(emep_subgrid_file_index(traffic_index))',read_existing_grid_data(emep_subgrid_file_index(traffic_index)),unit_in,unit_logfile)
-        read_existing_grid_data(emep_subgrid_file_index(shipping_index))=read_name_logical('read_existing_grid_data(emep_subgrid_file_index(shipping_index))',read_existing_grid_data(emep_subgrid_file_index(shipping_index)),unit_in,unit_logfile)
-        read_existing_grid_data(emep_subgrid_file_index(heating_index))=read_name_logical('read_existing_grid_data(emep_subgrid_file_index(heating_index))',read_existing_grid_data(emep_subgrid_file_index(heating_index)),unit_in,unit_logfile)
-        read_existing_grid_data(emep_subgrid_file_index(agriculture_index))=read_name_logical('read_existing_grid_data(emep_subgrid_file_index(agriculture_index))',read_existing_grid_data(emep_subgrid_file_index(agriculture_index)),unit_in,unit_logfile)
-        read_existing_grid_data(emep_subgrid_file_index(industry_index))=read_name_logical('read_existing_grid_data(emep_subgrid_file_index(industry_index))',read_existing_grid_data(emep_subgrid_file_index(industry_index)),unit_in,unit_logfile)
-        
-        read_existing_grid_data(subgrid_meteo_file_index)=read_name_logical('read_existing_grid_data(subgrid_meteo_file_index)',read_existing_grid_data(subgrid_meteo_file_index),unit_in,unit_logfile)
-
-        read_existing_grid_data(use_subgrid_file_index(:))=read_name_logical('read_existing_grid_data(use_subgrid_file_index(:))',read_existing_grid_data(use_subgrid_file_index(allsource_index)),unit_in,unit_logfile)
-        read_existing_grid_data(use_subgrid_file_index(traffic_index))=read_name_logical('read_existing_grid_data(use_subgrid_file_index(traffic_index))',read_existing_grid_data(use_subgrid_file_index(traffic_index)),unit_in,unit_logfile)
-        read_existing_grid_data(use_subgrid_file_index(shipping_index))=read_name_logical('read_existing_grid_data(use_subgrid_file_index(shipping_index))',read_existing_grid_data(use_subgrid_file_index(shipping_index)),unit_in,unit_logfile)
-        read_existing_grid_data(use_subgrid_file_index(heating_index))=read_name_logical('read_existing_grid_data(use_subgrid_file_index(heating_index))',read_existing_grid_data(use_subgrid_file_index(heating_index)),unit_in,unit_logfile)
-        read_existing_grid_data(use_subgrid_file_index(agriculture_index))=read_name_logical('read_existing_grid_data(use_subgrid_file_index(agriculture_index))',read_existing_grid_data(use_subgrid_file_index(agriculture_index)),unit_in,unit_logfile)
-        read_existing_grid_data(use_subgrid_file_index(industry_index))=read_name_logical('read_existing_grid_data(use_subgrid_file_index(industry_index))',read_existing_grid_data(use_subgrid_file_index(industry_index)),unit_in,unit_logfile)
-
         !Choose which sources to calculate
         !calculate_source(:)=read_name_logical('calculate_source(:)',calculate_source(allsource_index),unit_in,unit_logfile)
         calculate_source(traffic_index)=read_name_logical('calculate_source(traffic_index)',calculate_source(traffic_index),unit_in,unit_logfile)
@@ -185,7 +153,13 @@
         use_population_positions_for_auto_subgrid_flag=read_name_logical('use_population_positions_for_auto_subgrid_flag',use_population_positions_for_auto_subgrid_flag,unit_in,unit_logfile)
         interpolate_subgrids_flag=read_name_logical('interpolate_subgrids_flag',interpolate_subgrids_flag,unit_in,unit_logfile)
 
-        use_trajectory_flag=read_name_logical('use_trajectory_flag',use_trajectory_flag,unit_in,unit_logfile)
+        use_trajectory_flag(:)=read_name_logical('use_trajectory_flag',use_trajectory_flag(allsource_index),unit_in,unit_logfile)
+        use_trajectory_flag(shipping_index)=read_name_logical('use_trajectory_flag(shipping_index)',use_trajectory_flag(shipping_index),unit_in,unit_logfile)
+        use_trajectory_flag(traffic_index)=read_name_logical('use_trajectory_flag(traffic_index)',use_trajectory_flag(traffic_index),unit_in,unit_logfile)
+        use_trajectory_flag(heating_index)=read_name_logical('use_trajectory_flag(heating_index)',use_trajectory_flag(heating_index),unit_in,unit_logfile)
+        use_trajectory_flag(agriculture_index)=read_name_logical('use_trajectory_flag(agriculture_index)',use_trajectory_flag(agriculture_index),unit_in,unit_logfile)
+        use_trajectory_flag(industry_index)=read_name_logical('use_trajectory_flag(industry_index)',use_trajectory_flag(industry_index),unit_in,unit_logfile)
+        
         traj_step_scale=read_name_real('traj_step_scale',traj_step_scale,unit_in,unit_logfile)
 
         calculate_aggregated_shipping_emissions_flag=read_name_logical('calculate_aggregated_shipping_emissions_flag',calculate_aggregated_shipping_emissions_flag,unit_in,unit_logfile)
@@ -311,14 +285,7 @@
         filename_timeprofile=read_name_char('filename_timeprofile',filename_timeprofile,unit_in,unit_logfile)
 
         population_data_type=read_name_integer('population_data_type',population_data_type,unit_in,unit_logfile)
-        
-        combine_emission_subsources_during_dispersion(:)=read_name_logical('combine_emission_subsources_during_dispersion(:)',combine_emission_subsources_during_dispersion(allsource_index),unit_in,unit_logfile)
-        combine_emission_subsources_during_dispersion(traffic_index)=read_name_logical('combine_emission_subsources_during_dispersion(traffic_index)',combine_emission_subsources_during_dispersion(traffic_index),unit_in,unit_logfile)
-        combine_emission_subsources_during_dispersion(shipping_index)=read_name_logical('combine_emission_subsources_during_dispersion(shipping_index)',combine_emission_subsources_during_dispersion(shipping_index),unit_in,unit_logfile)
-        combine_emission_subsources_during_dispersion(heating_index)=read_name_logical('combine_emission_subsources_during_dispersion(heating_index)',combine_emission_subsources_during_dispersion(heating_index),unit_in,unit_logfile)
-        combine_emission_subsources_during_dispersion(agriculture_index)=read_name_logical('combine_emission_subsources_during_dispersion(agriculture_index)',combine_emission_subsources_during_dispersion(agriculture_index),unit_in,unit_logfile)
-        combine_emission_subsources_during_dispersion(industry_index)=read_name_logical('combine_emission_subsources_during_dispersion(industry_index)',combine_emission_subsources_during_dispersion(industry_index),unit_in,unit_logfile)
-        
+                
         FF_min_dispersion=read_name_real('FF_min_dispersion',FF_min_dispersion,unit_in,unit_logfile)
         emission_timeprofile_hour_shift=read_name_integer('emission_timeprofile_hour_shift',emission_timeprofile_hour_shift,unit_in,unit_logfile)
         
@@ -349,6 +316,9 @@
         emission_factor(pm10_index,traffic_index,:)=read_name_real('emission_factor(pm10_index,traffic_index,:)',emission_factor(pm10_index,traffic_index,1),unit_in,unit_logfile)
         emission_factor(pm10_index,traffic_index,1)=read_name_real('emission_factor(pm10_index,traffic_index,1)',emission_factor(pm10_index,traffic_index,1),unit_in,unit_logfile)
         emission_factor(pm10_index,traffic_index,2)=read_name_real('emission_factor(pm10_index,traffic_index,2)',emission_factor(pm10_index,traffic_index,2),unit_in,unit_logfile)
+        emission_factor(pmex_index,traffic_index,:)=read_name_real('emission_factor(pmex_index,traffic_index,:)',emission_factor(pmex_index,traffic_index,1),unit_in,unit_logfile)
+        emission_factor(pmex_index,traffic_index,1)=read_name_real('emission_factor(pmex_index,traffic_index,1)',emission_factor(pmex_index,traffic_index,1),unit_in,unit_logfile)
+        emission_factor(pmex_index,traffic_index,2)=read_name_real('emission_factor(pmex_index,traffic_index,2)',emission_factor(pmex_index,traffic_index,2),unit_in,unit_logfile)
 
         ratio_truck_car_emission(nox_index)=read_name_real('ratio_truck_car_emission(nox_index)',ratio_truck_car_emission(nox_index),unit_in,unit_logfile)
         ratio_truck_car_emission(pm25_index)=read_name_real('ratio_truck_car_emission(pm25_index)',ratio_truck_car_emission(pm25_index),unit_in,unit_logfile)
@@ -372,13 +342,22 @@
         pathname_tiles=read_name_char('pathname_tiles','',unit_in,unit_logfile)
         filename_tiles=read_name_char('filename_tiles','',unit_in,unit_logfile)
         tile_tag=read_name_char('tile_tag','',unit_in,unit_logfile)
-
+        save_tile_tag=read_name_char('save_tile_tag','',unit_in,unit_logfile)  
+    
         use_NORTRIP_emission_data=read_name_logical('use_NORTRIP_emission_data',use_NORTRIP_emission_data,unit_in,unit_logfile) 
+        use_NORTRIP_emission_pollutant(nox_index)=read_name_logical('use_NORTRIP_emission_pollutant(nox_index)',use_NORTRIP_emission_pollutant(nox_index),unit_in,unit_logfile) 
+        use_NORTRIP_emission_pollutant(pm10_index)=read_name_logical('use_NORTRIP_emission_pollutant(pm10_index)',use_NORTRIP_emission_pollutant(pm10_index),unit_in,unit_logfile) 
+        use_NORTRIP_emission_pollutant(pm25_index)=read_name_logical('use_NORTRIP_emission_pollutant(pm25_index)',use_NORTRIP_emission_pollutant(pm25_index),unit_in,unit_logfile) 
+        use_NORTRIP_emission_pollutant(pmex_index)=read_name_logical('use_NORTRIP_emission_pollutant(pmex_index)',use_NORTRIP_emission_pollutant(pmex_index),unit_in,unit_logfile) 
         use_RWC_emission_data=read_name_logical('use_RWC_emission_data',use_RWC_emission_data,unit_in,unit_logfile) 
         HDD_threshold_value=read_name_integer('HDD_threshold_value',HDD_threshold_value,unit_in,unit_logfile)
         
         integral_subgrid_delta_ref=read_name_real('integral_subgrid_delta_ref',integral_subgrid_delta_ref,unit_in,unit_logfile)
         
+        pathname_rl_change=read_name_char('pathname_rl_change','',unit_in,unit_logfile)
+        filename_rl_change=read_name_char('filename_rl_change','',unit_in,unit_logfile)
+
+        forecast_hour_str=read_name_char('forecast_hour_str',forecast_hour_str,unit_in,unit_logfile)
         
     close (unit_in)
     
@@ -389,9 +368,10 @@
     endif
 
     !Find the correct compound index based on the compound string
-    do i=1,n_compound_nc_index
+    do i=1,n_pollutant_nc_index
         if (trim(var_name_nc(conc_nc_index,i,allsource_index)).eq.trim(input_comp_name)) then
             compound_index=i
+            pollutant_index=i
             !write(*,*) trim(input_comp_name),i
         endif
     enddo
@@ -424,7 +404,7 @@
     
     !Place tile_tag in front of file_tag if it has been read
     if (tile_tag.ne.'') then
-        file_tag=trim(tile_tag)//'_'//trim(file_tag)
+        file_tag=trim(file_tag)//'_'//trim(tile_tag)
     endif
     
     enddo !End configuration file number loop

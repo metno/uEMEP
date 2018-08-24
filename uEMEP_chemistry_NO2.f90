@@ -35,17 +35,19 @@
     t_end=subgrid_dim(t_dim_index)
     i_subsource=1
     emep_subsource=1
-    comp_subgrid(:,:,:,:)=0
+    comp_subgrid(:,:,:,no2_index)=0
+    comp_subgrid(:,:,:,nox_index)=0
+    comp_subgrid(:,:,:,o3_index)=0
 
     nox_bg=0.;no2_bg=0.;o3_bg=0.;nox_loc=0.;f_no2_loc=0.;J_photo=0.;temperature=0.;
         
     !Calculate the weighted travel time from the totals calculated in uEMEP_subgrid_dispersion
     do t=t_start,t_end
-        traveltime_subgrid(:,:,t,1)=traveltime_subgrid(:,:,t,1)/traveltime_subgrid(:,:,t,2)
+        traveltime_subgrid(:,:,t,1,:)=traveltime_subgrid(:,:,t,1,:)/traveltime_subgrid(:,:,t,2,:)
         !Invert it to get the time scale
         !traveltime_subgrid(:,:,t,1)=1./traveltime_subgrid(:,:,t,1)
         !Set none valid to 12 hours (long time)
-        where (traveltime_subgrid(:,:,t,2).eq.0) traveltime_subgrid(:,:,t,1)=3600.*12.
+        where (traveltime_subgrid(:,:,t,2,:).eq.0) traveltime_subgrid(:,:,t,1,:)=3600.*12.
         !write(*,*) t
         !write(*,*) traveltime_subgrid(:,:,t,1)
     enddo
@@ -67,7 +69,7 @@
         J_photo=meteo_subgrid(i_integral,j_integral,t,J_subgrid_index)
         temperature=273.
        
-        nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,emep_subsource)
+        nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
         !nox_bg=subgrid(i,j,t,emep_subgrid_index,allsource_index,emep_subsource)
         !nox_bg=comp_subgrid(i,j,t,nox_index)*(14.+16.*2.)/14.
         
@@ -79,8 +81,8 @@
         do i_source=1,n_source_index
         if (calculate_source(i_source)) then
             do i_subsource=1,n_subsource(i_source)
-            f_no2_loc=f_no2_loc+emission_factor_conversion(no2_index,i_source,i_subsource)/emission_factor_conversion(nox_index,i_source,i_subsource)*subgrid(i,j,t,local_subgrid_index,i_source,i_subsource)
-            nox_loc=nox_loc+subgrid(i,j,t,local_subgrid_index,i_source,i_subsource)
+            f_no2_loc=f_no2_loc+emission_factor_conversion(no2_index,i_source,i_subsource)/emission_factor_conversion(nox_index,i_source,i_subsource)*subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+            nox_loc=nox_loc+subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
             enddo         
         endif
         enddo
@@ -90,7 +92,7 @@
             f_no2_loc=0.
         endif
         !no2_bg=max(0.,comp_subgrid(i,j,t,no2_index)-f_no2_loc*subgrid(i,j,t,emep_local_subgrid_index,allsource_index,emep_subsource))
-        no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,emep_subsource)/subgrid(i,j,t,emep_subgrid_index,allsource_index,emep_subsource)
+        no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
         !no2_bg=comp_subgrid(i,j,t,no2_index)
         
        !if (J_photo.ne.0) then
@@ -107,7 +109,7 @@
         elseif (no2_chemistry_scheme_flag.eq.1) then
             call uEMEP_photostationary_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
         elseif (no2_chemistry_scheme_flag.eq.2) then
-            call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1),nox_out,no2_out,o3_out,p_bg_out,p_out)
+            call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_index)),nox_out,no2_out,o3_out,p_bg_out,p_out)
             !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1),no2_out/nox_out,o3_out/o3_bg
         elseif (no2_chemistry_scheme_flag.eq.3) then
             call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out)        
@@ -140,16 +142,6 @@
     enddo
     enddo
     enddo
-
-    !Save the new values.
-    if (save_intermediate_files) then
-        do i_comp=1,n_compound_loop
-        i_file=subgrid_total_file_index(allsource_index)
-        temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(var_name_nc(conc_nc_index,compound_loop_index(i_comp),allsource_index))//'_'//trim(file_tag)//'.asc'
-        write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-        call write_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),subgrid_delta(1),comp_subgrid(:,:,:,compound_loop_index(i_comp)),x_subgrid,y_subgrid)
-        enddo
-    endif
     
 
     

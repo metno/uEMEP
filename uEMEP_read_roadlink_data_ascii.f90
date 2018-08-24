@@ -30,12 +30,6 @@
 	write(unit_logfile,'(A)') 'Reading road link data ascii (uEMEP_read_roadlink_data_ascii)'
 	write(unit_logfile,'(A)') '================================================================'
     
-    if (read_existing_grid_data(proxy_emission_file_index(traffic_index))) then 
-        write(unit_logfile,'(A)')'Reading existing traffic emissions'
-        return
-    endif
-    
-
     min_adt=10.
     min_link_size=1.
 
@@ -454,3 +448,93 @@
     
     
     end subroutine uEMEP_read_roadlink_emission_data
+    
+    
+    subroutine uEMEP_change_road_data
+    
+    use uEMEP_definitions
+    
+    implicit none
+    
+    integer i,j,k
+    character(256) pathfilename_rl_change
+    integer unit_in
+    integer change_offset_index,change_scale_index,change_replace_index
+    parameter (change_offset_index=1,change_scale_index=2,change_replace_index=3)
+    !integer change_adt_index,change_hdv_index,change_speed_index
+    !parameter (change_adt_index=1,change_hdv_index=2,change_speed_index=3)
+    real change_val(num_var_rl,3)
+    character(256) temp_str
+    real change_x(2),change_y(2)
+    integer count
+    integer change_loop(3),change_index
+    integer :: n_change_loop=3
+    integer exists
+    
+    change_loop(1)=adt_rl_index
+    change_loop(2)=hdv_rl_index
+    change_loop(3)=speed_rl_index
+    
+    !If there is no path or file name for the replacement file then do not calculate
+    if (pathname_rl_change.eq.''.or.filename_rl_change.eq.'') return
+    
+    write(unit_logfile,'(A)') ''
+	write(unit_logfile,'(A)') '================================================================'
+	write(unit_logfile,'(A)') 'Changing road link data (uEMEP_change_road_data)'
+	write(unit_logfile,'(A)') '================================================================'
+    
+    !Read in replacement file
+    pathfilename_rl_change=trim(pathname_rl_change)//trim(filename_rl_change)
+    
+    !Test existence of the road link filename (2). If does not exist then use default
+    inquire(file=trim(pathfilename_rl_change),exist=exists)
+    if (.not.exists) then
+        write(unit_logfile,'(A,A)') ' ERROR: Road link change file does not exist: ', trim(pathfilename_rl_change)
+        stop
+    endif
+    
+     !Open the file for reading
+    unit_in=20
+    open(unit_in,file=pathfilename_rl_change,access='sequential',status='old',readonly)  
+    write(unit_logfile,'(a)') ' Opening road link change file(ascii) '//trim(pathfilename_rl_change)
+    rewind(unit_in)
+   
+    !Skip over coordinates header
+    read(unit_in,*) temp_str
+
+    !Read coordinates
+    read(unit_in,*) change_x(1),change_y(1),change_x(2),change_y(2)
+    !write(*,*) change_x(1),change_y(1),change_x(2),change_y(2)
+    
+    !Skip over values header
+    read(unit_in,*) temp_str
+    
+    !Read values
+    do j=1,n_change_loop
+        change_index=change_loop(j)
+        !write(*,*) change_index
+        read(unit_in,*) temp_str,change_val(change_index,change_offset_index),change_val(change_index,change_scale_index),change_val(change_index,change_replace_index)
+        !write(*,*) trim(temp_str),change_val(change_index,change_offset_index),change_val(change_index,change_scale_index),change_val(change_index,change_replace_index)
+    enddo
+    close(unit_in)
+    
+    !Search for road links. If found change them 
+    count=0
+    do i=1,n_roadlinks
+        if(inputdata_rl(i,x0_rl_index).ge.change_x(1).and.inputdata_rl(i,x0_rl_index).le.change_x(2).and. &
+           inputdata_rl(i,y0_rl_index).ge.change_y(1).and.inputdata_rl(i,y0_rl_index).le.change_y(2)) then
+           count=count+1
+           
+             do j=1,n_change_loop
+                change_index=change_loop(j)
+                inputdata_rl(i,change_index)=change_val(change_index,change_offset_index)+change_val(change_index,change_scale_index)*inputdata_rl(i,change_index)
+                if (change_val(change_index,change_replace_index).ne.0) inputdata_rl(i,change_index)=change_val(change_index,change_replace_index)
+             enddo
+         
+        endif
+        
+    enddo
+    
+    write(unit_logfile,'(A,i)') 'Number of road links changed = ',count
+
+    end subroutine uEMEP_change_road_data

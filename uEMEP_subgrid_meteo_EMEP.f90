@@ -54,34 +54,6 @@
     !Initialise all meteo subgrid fields
     meteo_subgrid=0.
     
-    !If EMEP meteo gridded to subgrid files already exist then read them in and leave the subroutine
-    !Only tests ugrid_file_index
-    if (read_existing_grid_data(subgrid_meteo_file_index)) then
-            
-        !Test existence of the uwind file only
-        i_file=subgrid_ugrid_file_index
-        temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-        inquire(file=temp_name,exist=exists)
-        if (.not.exists) then
-            write(unit_logfile,*)'WARNING: '//trim(temp_name)//' does not exist.'
-                !return
-        else
-            call read_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,ugrid_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-            i_file=subgrid_vgrid_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            call read_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,vgrid_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-            i_file=subgrid_hmix_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            call read_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,hmix_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-            i_file=subgrid_kz_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            call read_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,kz_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-            i_file=subgrid_FFgrid_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            call read_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,FFgrid_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-            i_file=subgrid_FF10_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            call read_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,FF10_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-        endif
-        
-        return
-    endif
-
     write(unit_logfile,'(A,I4)')'Setting EMEP subgrid meteo data using method ',EMEP_meteo_grid_interpolation_flag
 
     !Loop through the integral subgrid and find those subgrids within EMEP grids and allocate values directly from EMEP grids. Nearest neighbour
@@ -93,18 +65,18 @@
             i_nc=crossreference_integral_to_emep_subgrid(i,j,x_dim_index)
             j_nc=crossreference_integral_to_emep_subgrid(i,j,y_dim_index)
         
-            meteo_subgrid(i,j,:,ugrid_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,ugrid_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,vgrid_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,vgrid_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,FFgrid_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,FFgrid_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,FF10_subgrid_index)=var3d_nc(i_nc,j_nc,:,FF10_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,kz_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,kz_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,hmix_subgrid_index)=var3d_nc(i_nc,j_nc,:,hmix_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,logz0_subgrid_index)=var3d_nc(i_nc,j_nc,:,logz0_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,invL_subgrid_index)=var3d_nc(i_nc,j_nc,:,invL_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,inv_FFgrid_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=var3d_nc(i_nc,j_nc,:,inv_FF10_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,ustar_subgrid_index)=var3d_nc(i_nc,j_nc,:,ustar_nc_index,allsource_index)
-            meteo_subgrid(i,j,:,J_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,J_nc_index,allsource_index)
+            meteo_subgrid(i,j,:,ugrid_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,ugrid_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,vgrid_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,FFgrid_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,FFgrid_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,FF10_subgrid_index)=var3d_nc(i_nc,j_nc,:,FF10_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,kz_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,kz_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,hmix_subgrid_index)=var3d_nc(i_nc,j_nc,:,hmix_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,logz0_subgrid_index)=var3d_nc(i_nc,j_nc,:,logz0_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,invL_subgrid_index)=var3d_nc(i_nc,j_nc,:,invL_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,inv_FFgrid_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=var3d_nc(i_nc,j_nc,:,inv_FF10_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,ustar_subgrid_index)=var3d_nc(i_nc,j_nc,:,ustar_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,J_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,J_nc_index,allsource_index,meteo_p_loop_index)
                   
             if (use_alternative_meteorology_flag) then
             i_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,x_dim_index)
@@ -163,18 +135,18 @@
                     weighting_nc(ii,jj)=0.
                 endif                
 
-                meteo_subgrid(i,j,:,ugrid_subgrid_index)=meteo_subgrid(i,j,:,ugrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,ugrid_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,vgrid_subgrid_index)=meteo_subgrid(i,j,:,vgrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,vgrid_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,FFgrid_subgrid_index)=meteo_subgrid(i,j,:,FFgrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,FFgrid_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,kz_subgrid_index)=meteo_subgrid(i,j,:,kz_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,kz_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,hmix_subgrid_index)=meteo_subgrid(i,j,:,hmix_subgrid_index)+var3d_nc(ii,jj,:,hmix_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,FF10_subgrid_index)=meteo_subgrid(i,j,:,FF10_subgrid_index)+var3d_nc(ii,jj,:,FF10_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,logz0_subgrid_index)=meteo_subgrid(i,j,:,logz0_subgrid_index)+var3d_nc(ii,jj,:,logz0_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,invL_subgrid_index)=meteo_subgrid(i,j,:,invL_subgrid_index)+var3d_nc(ii,jj,:,invL_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)=meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,inv_FFgrid_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=meteo_subgrid(i,j,:,inv_FF10_subgrid_index)+var3d_nc(ii,jj,:,inv_FF10_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,ustar_subgrid_index)=meteo_subgrid(i,j,:,ustar_subgrid_index)+var3d_nc(ii,jj,:,ustar_nc_index,allsource_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,J_subgrid_index)=meteo_subgrid(i,j,:,J_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,J_nc_index,allsource_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,ugrid_subgrid_index)=meteo_subgrid(i,j,:,ugrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,ugrid_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,vgrid_subgrid_index)=meteo_subgrid(i,j,:,vgrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,FFgrid_subgrid_index)=meteo_subgrid(i,j,:,FFgrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,FFgrid_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,kz_subgrid_index)=meteo_subgrid(i,j,:,kz_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,kz_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,hmix_subgrid_index)=meteo_subgrid(i,j,:,hmix_subgrid_index)+var3d_nc(ii,jj,:,hmix_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,FF10_subgrid_index)=meteo_subgrid(i,j,:,FF10_subgrid_index)+var3d_nc(ii,jj,:,FF10_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,logz0_subgrid_index)=meteo_subgrid(i,j,:,logz0_subgrid_index)+var3d_nc(ii,jj,:,logz0_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,invL_subgrid_index)=meteo_subgrid(i,j,:,invL_subgrid_index)+var3d_nc(ii,jj,:,invL_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)=meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,inv_FFgrid_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=meteo_subgrid(i,j,:,inv_FF10_subgrid_index)+var3d_nc(ii,jj,:,inv_FF10_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,ustar_subgrid_index)=meteo_subgrid(i,j,:,ustar_subgrid_index)+var3d_nc(ii,jj,:,ustar_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,J_subgrid_index)=meteo_subgrid(i,j,:,J_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,J_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
 
             enddo
             enddo
@@ -325,40 +297,6 @@
         if (t_loop.eq.start_time_loop_index) then
             last_meteo_subgrid(:,:,:)=meteo_subgrid(:,:,1,:)        
         endif
-    endif
-
-    !Save files in ascii format
-    if (save_intermediate_files) then
-    if (.not.read_existing_grid_data(subgrid_meteo_file_index)) then
-            i_file=subgrid_ugrid_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            call write_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,ugrid_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-            
-            i_file=subgrid_vgrid_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            call write_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,vgrid_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-            
-            i_file=subgrid_hmix_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            call write_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,hmix_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-            
-            i_file=subgrid_kz_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            call write_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,kz_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-
-            i_file=subgrid_FFgrid_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            call write_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,FFgrid_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-
-            i_file=subgrid_FF10_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            call write_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,FF10_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-
-            i_file=subgrid_J_file_index;temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            call write_esri_ascii_3d_file(unit_logfile,temp_name,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),integral_subgrid_delta(1),meteo_subgrid(:,:,:,J_subgrid_index),x_integral_subgrid,y_integral_subgrid)
-        !enddo
-    endif
     endif
     
     if (allocated(u_utm)) deallocate(u_utm)
