@@ -21,6 +21,7 @@
     integer ii,jj
     logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.false.,save_other_meteo=.false.
     logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
+    
     logical :: save_aqi=.true.
     real aqi_limits_temp(n_compound_index,1:5)
     real max_aqi
@@ -30,7 +31,6 @@
     integer i_pollutant,i_loop
     character(256) variable_type
     logical :: receptor_available=.true.
-    integer centre_grid(3)
     real scale_factor
     
     if (.not.allocated(temp_subgrid)) allocate(temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))

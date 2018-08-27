@@ -228,9 +228,7 @@
             call uEMEP_combine_local_source
     
             !Calculate chemistry for NO2
-            if (pollutant_index.eq.nox_index.or.pollutant_index.eq.all_nc_index) then
-                call uEMEP_chemistry
-            endif
+            call uEMEP_chemistry
 
             !Calculate exposure
             if (calculate_population_exposure_flag) then

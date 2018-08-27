@@ -6,7 +6,7 @@
     
     implicit none
     
-    integer i,j,k
+    integer i,j
     integer i_source
     !integer ii,jj
     real dx_temp,dy_temp

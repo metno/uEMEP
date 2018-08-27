@@ -6,16 +6,25 @@
 
     implicit none
     
-    integer i,j,k
+    integer i,j
     real nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature
     real nox_out,no2_out,o3_out,p_bg_out,p_out
     
     integer t,t_start,t_end
     integer i_source,i_subsource,emep_subsource
-    integer i_comp,i_file
-    character(256) temp_name
-    
+    integer i_pollutant
+    logical :: nox_available=.false.
+    !integer i_comp,i_file
+    !character(256) temp_name
     integer i_integral,j_integral
+    
+    !Search for nox in the pollutants
+    do i_pollutant=1,n_pollutant_loop
+        if (pollutant_loop_index(i_pollutant).eq.nox_nc_index) nox_available=.true.
+    enddo
+    
+    !Leave the chemistry routine if nox is not available
+    if (.not.nox_available) return  
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -111,7 +120,7 @@
             call uEMEP_photostationary_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
         elseif (no2_chemistry_scheme_flag.eq.2) then
             !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_index))
-            call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_index)),nox_out,no2_out,o3_out,p_bg_out,p_out)
+            call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out,p_bg_out,p_out)
             !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1),no2_out/nox_out,o3_out/o3_bg
         elseif (no2_chemistry_scheme_flag.eq.3) then
             call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out)        
@@ -119,9 +128,9 @@
         
         !write(*,*) nox_out-subgrid(i,j,t,total_subgrid_index,allsource_index,1)
         
-        comp_subgrid(i,j,t,o3_nc_index)=o3_out
-        comp_subgrid(i,j,t,no2_nc_index)=no2_out
-        comp_subgrid(i,j,t,nox_nc_index)=nox_out
+        comp_subgrid(i,j,t,o3_index)=o3_out
+        comp_subgrid(i,j,t,no2_index)=no2_out
+        comp_subgrid(i,j,t,nox_index)=nox_out
        
         
         !if (J_photo.ne.0) then
@@ -135,9 +144,9 @@
     !endif
     
     else
-        comp_subgrid(i,j,t,o3_nc_index)=NODATA_value
-        comp_subgrid(i,j,t,no2_nc_index)=NODATA_value
-        comp_subgrid(i,j,t,nox_nc_index)=NODATA_value
+        comp_subgrid(i,j,t,o3_index)=NODATA_value
+        comp_subgrid(i,j,t,no2_index)=NODATA_value
+        comp_subgrid(i,j,t,nox_index)=NODATA_value
         
     endif
     
@@ -273,7 +282,8 @@
     real mass(n_i)
     real mmass(n_i)
     real mol(n_i)
-    real f_no2,f_ox,Jd,Jd_bg,fac_sqrt
+   ! real fac_sqrt
+    real f_no2,f_ox,Jd,Jd_bg
     real :: min_nox=1.0e-6
     real c,b,BB,td,f_no2_0,f_no2_ps
     complex(4) AA

@@ -75,7 +75,7 @@
     
     double precision date_to_number
     integer ref_year
-    integer y,m,d,i
+    integer y,m,i
     integer a(6)
     
     integer daysinmonth(12)

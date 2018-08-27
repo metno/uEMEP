@@ -6,7 +6,7 @@
 
     implicit none
     
-    integer i,j,k
+    integer i
     
     !Set pathname for all gridded data to be saved
     pathname_grid(:)=pathname_output_grid

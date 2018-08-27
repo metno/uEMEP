@@ -4,6 +4,8 @@
    
     module uEMEP_definitions
     
+    implicit none
+    
     !Directory seperator for linux (/) or windows (\)
     character(1) :: slash='\'
 
@@ -96,8 +98,8 @@
     parameter (n_source_nc_index=6)
    
     !Compound loop for nox chemistry
-    integer :: n_compound_loop = 1
-    integer compound_loop_index(n_compound_nc_index)
+    !integer :: n_compound_loop = 1
+    !integer compound_loop_index(n_compound_nc_index)
 
     !Loop for all pollutants to be calculated
     integer pollutant_index
@@ -172,7 +174,7 @@
     integer num_var_rl
     parameter(num_var_rl=18)
 
-    integer id_rl_index,roadtype_rl_index,nlanes_rl_index
+    integer id_rl_index,roadtype_rl_index,nlanes_rl_index,major_index_rl_index
     parameter (id_rl_index=1,roadtype_rl_index=2,nlanes_rl_index=3,major_index_rl_index=4)
     integer num_int_rl
     parameter(num_int_rl=4)
@@ -201,7 +203,7 @@
 
     integer date_ship_index,time_ship_index
     parameter (date_ship_index=1,time_ship_index=2)
-    integer num_char_ship
+    integer num_char_ship,num_char_rl
     parameter(num_char_rl=2)
 
     !Declare file and path names for shipping ais files
@@ -298,7 +300,8 @@
 
     !Declare compound indexes for the subgrid. Same as nc_index values for compounds. Must be converted when necessary
     integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,so2_index,pmex_index,traveltime_index,no_index
-    parameter (no2_index=no2_nc_index,nox_index=nox_nc_index,pm25_index=pm25_nc_index,pm10_index=pm10_nc_index,nh3_index=nh3_nc_index,o3_index=o3_nc_index,so2_index=so2_nc_index,pmex_index=pmex_nc_index,traveltime_index=9)
+    parameter (no2_index=1,nox_index=2,pm25_index=3,pm10_index=4,nh3_index=5,o3_index=6,so2_index=7,pmex_index=8,traveltime_index=9)
+    !parameter (no2_index=no2_nc_index,nox_index=nox_nc_index,pm25_index=pm25_nc_index,pm10_index=pm10_nc_index,nh3_index=nh3_nc_index,o3_index=o3_nc_index,so2_index=so2_nc_index,pmex_index=pmex_nc_index,traveltime_index=9)
     !Declare source indexes (type_source)
     integer allsource_index,traffic_index,shipping_index,heating_index,agriculture_index,industry_index
     parameter (allsource_index=1,traffic_index=2,shipping_index=3,heating_index=4,agriculture_index=5,industry_index=6)
@@ -544,7 +547,7 @@
     integer valid_receptor_inverse_index(n_receptor_max)
     
     !Indicies for SSB building and population data
-    integer dwelling_index,population_index,establishment_index,school_index,home_index,municipality_index,RWC_heating_index,n_population_index
+    integer dwelling_index,population_index,establishment_index,school_index,kindergaten_index,home_index,municipality_index,RWC_heating_index,n_population_index
     parameter(dwelling_index=1,population_index=2,establishment_index=3,school_index=4,kindergaten_index=5,home_index=6,municipality_index=7,RWC_heating_index=8,n_population_index=8)
     integer population_file_index(n_population_index)
     
