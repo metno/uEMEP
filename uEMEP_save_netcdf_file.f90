@@ -32,6 +32,14 @@
     character(256) variable_type
     logical :: receptor_available=.true.
     real scale_factor
+    integer n_save_aqi_pollutant_index
+    
+    if (include_o3_in_aqi_index) then
+        n_save_aqi_pollutant_index=n_aqi_pollutant_index
+    else
+        n_save_aqi_pollutant_index=n_aqi_pollutant_index-1
+    endif
+    
     
     if (.not.allocated(temp_subgrid)) allocate(temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
     if (.not.allocated(exhaust_subgrid)) allocate(exhaust_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
@@ -427,7 +435,7 @@
         do j=1,subgrid_dim(y_dim_index)
         do i=1,subgrid_dim(x_dim_index)
             max_aqi=0.
-            do l=1,n_aqi_pollutant_index !pollutant (no2,pm10,pm2.5,o3)
+            do l=1,n_save_aqi_pollutant_index !pollutant (no2,pm10,pm2.5,o3)
                 do k=1,4 !level 
                     if (comp_subgrid(i,j,t,aqi_pollutant_index(l)).ge.aqi_limits_temp(aqi_pollutant_index(l),k).and.comp_subgrid(i,j,t,aqi_pollutant_index(l)).lt.aqi_limits_temp(aqi_pollutant_index(l),k+1)) then
                         aqi_subgrid(i,j,t,aqi_pollutant_index(l))=k+(comp_subgrid(i,j,t,aqi_pollutant_index(l))-aqi_limits_temp(aqi_pollutant_index(l),k))/(aqi_limits_temp(aqi_pollutant_index(l),k+1)-aqi_limits_temp(aqi_pollutant_index(l),k))
@@ -444,14 +452,14 @@
         enddo        
         enddo
         
-        do l=1,n_aqi_pollutant_index
+        do l=1,n_save_aqi_pollutant_index
             write(unit_logfile,*)  'MAX AQI in time and space from '//trim(pollutant_file_str(aqi_pollutant_index(l)))//' = ',maxval(aqi_subgrid(:,:,:,aqi_pollutant_index(l)))
         enddo
         
         var_name_temp='AQI'
         unit_str='1'
         !Take the maximum of the pollutants
-        temp_subgrid=maxval(aqi_subgrid(:,:,:,:),4)/scale_factor
+        temp_subgrid=maxval(aqi_subgrid(:,:,:,1:n_save_aqi_pollutant_index),4)/scale_factor
         if (save_netcdf_file_flag) then
             write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
@@ -470,7 +478,7 @@
         endif
         
         
-    do l=1,n_aqi_pollutant_index
+    do l=1,n_save_aqi_pollutant_index
 
         i_comp=aqi_pollutant_index(l)
         var_name_temp='AQI_'//trim(var_name_nc(conc_nc_index,i_comp,allsource_index))

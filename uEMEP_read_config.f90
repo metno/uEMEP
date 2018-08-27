@@ -359,6 +359,9 @@
 
         forecast_hour_str=read_name_char('forecast_hour_str',forecast_hour_str,unit_in,unit_logfile)
         
+        include_o3_in_aqi_index=read_name_logical('include_o3_in_aqi_index',include_o3_in_aqi_index,unit_in,unit_logfile) 
+        
+        
     close (unit_in)
     
     !Call some error traps

@@ -472,7 +472,8 @@
         if (num_tile_classes(tile_class_subgrid(i_tile,j_tile)).gt.0) then
             if (tile_class_subgrid(i_tile,j_tile).lt.reduce_grid_class) then
                 count=count+1
-                write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
+                !write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
+                write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.
@@ -484,7 +485,8 @@
                 do j=0,1
                 do i=0,1
                     count=count+1
-                    write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
+                    !write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
+                    write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
 	                write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	                write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(tile_class_subgrid(i_tile,j_tile))
 	                write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',x_tile_subgrid(i_tile,j_tile)-tile_subgrid_delta(x_dim_index)/2.+tile_subgrid_delta(x_dim_index)/2.*i
@@ -561,7 +563,8 @@
         !if (num_tile_classes(tile_class_subgrid(i_tile,j_tile)).gt.0) then
             if (aggregated_tile_class_subgrid(i_tile,j_tile,k).gt.0) then
                 count=count+1
-                write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
+                !write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
+                write(unit_tile,'(a,i0.5)') 'tile_tag= ',count
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(x_dim_index)=',resolution_tile_classes(aggregated_tile_class_subgrid(i_tile,j_tile,k))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_delta(y_dim_index)=',resolution_tile_classes(aggregated_tile_class_subgrid(i_tile,j_tile,k))
 	            write(unit_tile,'(a,f12.2)') 'subgrid_min(x_dim_index)=',aggregated_x_tile_subgrid(i_tile,j_tile,k)-aggregated_tile_subgrid_delta(x_dim_index,k)/2.

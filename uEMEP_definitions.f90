@@ -613,6 +613,8 @@
     
     real aqi_hourly_limits(n_compound_index,1:3),aqi_daily_limits(n_compound_index,1:3),aqi_annual_limits(n_compound_index,1:3)
     
+    logical :: include_o3_in_aqi_index=.false.
+    
     end module uEMEP_definitions
     
     
