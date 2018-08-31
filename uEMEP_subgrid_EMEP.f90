@@ -639,6 +639,7 @@
     if (allocated(area_weighting_nc)) deallocate(area_weighting_nc)
     if (allocated(total_weighting_nc)) deallocate(total_weighting_nc)
     if (allocated(weighting_subgrid)) deallocate(weighting_subgrid)
+    if (allocated(nonlocal_correction_average)) deallocate(nonlocal_correction_average)
   
   
     end subroutine uEMEP_subgrid_EMEP

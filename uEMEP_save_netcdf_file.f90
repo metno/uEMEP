@@ -21,6 +21,7 @@
     integer ii,jj
     logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.false.,save_other_meteo=.false.
     logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
+    logical :: save_population=.true.
     
     logical :: save_aqi=.true.
     real aqi_limits_temp(n_compound_index,1:5)
@@ -38,8 +39,7 @@
         n_save_aqi_pollutant_index=n_aqi_pollutant_index
     else
         n_save_aqi_pollutant_index=n_aqi_pollutant_index-1
-    endif
-    
+    endif   
     
     if (.not.allocated(temp_subgrid)) allocate(temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
     if (.not.allocated(exhaust_subgrid)) allocate(exhaust_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
@@ -290,7 +290,52 @@
     enddo
     enddo
     endif
+
+    !Save the emissions interpolated to the target grid
+    if (save_population) then
+    variable_type='float'
+    unit_str="inhabitants/grid"   
     
+                i_file=population_file_index(population_index)
+                var_name_temp=trim(filename_grid(i_file))
+                
+                !Calculate the emissions in the target grid
+                temp_subgrid=0.
+                do j=1,subgrid_dim(y_dim_index)
+                do i=1,subgrid_dim(x_dim_index)
+                
+                    
+                    ii=crossreference_target_to_population_subgrid(i,j,x_dim_index)
+                    jj=crossreference_target_to_population_subgrid(i,j,y_dim_index)
+            
+                    temp_subgrid(i,j,:)=population_subgrid(ii,jj,population_index)
+                    !Acount for the difference in subgrid sizes here
+                    temp_subgrid(i,j,:)=temp_subgrid(i,j,:)*(subgrid_delta(y_dim_index)*subgrid_delta(x_dim_index)) &
+                        /(population_subgrid_delta(y_dim_index)*population_subgrid_delta(x_dim_index))
+ 
+                enddo
+                enddo
+                
+                unit_str='inhabitants/grid'
+                if (save_netcdf_file_flag) then
+                    write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                        ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                        ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+                endif
+                if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                    write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
+                    call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                        ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                        ,unit_str,title_str_rec,create_file_rec,valid_min &
+                        ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,z_rec(allsource_index,1) &
+                        ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+                endif
+    
+    endif
+
     !Save the EMEP data interpolated to the subgrid
     if (save_EMEP_source_contributions) then
     do i_pollutant=1,n_pollutant_loop
@@ -459,7 +504,7 @@
         var_name_temp='AQI'
         unit_str='1'
         !Take the maximum of the pollutants
-        temp_subgrid=maxval(aqi_subgrid(:,:,:,1:n_save_aqi_pollutant_index),4)/scale_factor
+        temp_subgrid=maxval(aqi_subgrid(:,:,:,aqi_pollutant_index(1:n_save_aqi_pollutant_index)),4)/scale_factor
         if (save_netcdf_file_flag) then
             write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &

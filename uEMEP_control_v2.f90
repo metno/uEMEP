@@ -7,7 +7,7 @@
 !   Control programme for running the downscaling routine uEMEP
 !****************************************************************************
 
-    program uEMEP_v2
+    program uEMEP_v3
 
     use uEMEP_definitions
    
@@ -274,5 +274,5 @@
     write(*,'(a,i3,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
     write(*,*) '------------------------------------------------------------------------'
 
-    end program uEMEP_v2
+    end program uEMEP_v3
 
