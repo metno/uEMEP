@@ -11,7 +11,7 @@ F90FLAGS = -qopenmp -O3  -r8 -g -ftz $(shell nf-config --cflags)
 LLIB = $(shell nf-config --flibs) 
 LDFLAGS =  $(F90FLAGS) $(LLIB)
 
-PROG = uEMEPv2
+PROG = uEMEPv3
 
 NILUDIR = NILU
 
