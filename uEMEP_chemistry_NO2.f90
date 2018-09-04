@@ -158,6 +158,161 @@
     
     end subroutine uEMEP_chemistry
    
+    subroutine uEMEP_source_fraction_chemistry
+    !Special source allocation for no2 based on leaving out one source at a time in the chemistry calculation
+    !This will always give a sum less, but not much less than, the total no2
+    !This is normalised in order for it to be used
+    !
+    
+    use uEMEP_definitions
+
+    implicit none
+    
+    integer i,j
+    real nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature
+    real nox_out,no2_out,o3_out,p_bg_out,p_out
+    
+    integer t,t_start,t_end
+    integer i_source,i_subsource,emep_subsource
+    integer i_pollutant
+    logical :: nox_available=.false.
+    !integer i_comp,i_file
+    !character(256) temp_name
+    integer i_integral,j_integral
+    integer remove_source
+    real sum_no2_source_subgrid
+    
+    !Search for nox in the pollutants
+    do i_pollutant=1,n_pollutant_loop
+        if (pollutant_loop_index(i_pollutant).eq.nox_nc_index) nox_available=.true.
+    enddo
+    
+    !Leave the chemistry routine if nox is not available
+    if (.not.nox_available) return  
+
+    write(unit_logfile,'(A)') ''
+    write(unit_logfile,'(A)') '================================================================'
+	write(unit_logfile,'(A)') 'Calculating chemistry source contribution for NO2 (uEMEP_source_fraction_chemistry)'
+	write(unit_logfile,'(A)') '================================================================'
+    if (no2_chemistry_scheme_flag.eq.0) then
+        write(unit_logfile,'(A)') 'No chemistry used'
+    elseif (no2_chemistry_scheme_flag.eq.1) then
+        write(unit_logfile,'(A)') 'Photostationary state used'
+    elseif (no2_chemistry_scheme_flag.eq.2) then
+        write(unit_logfile,'(A)') 'Photochemistry with time scale used'
+    elseif (no2_chemistry_scheme_flag.eq.3) then
+        write(unit_logfile,'(A)') 'Romberg parameterisation used'
+    endif
+    
+    !Deallocate in case of changing grid sizes (should not happen)
+    if (allocated(no2_source_fraction_subgrid)) deallocate(no2_source_fraction_subgrid)
+    if (.not.allocated(no2_source_fraction_subgrid)) allocate(no2_source_fraction_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index))
+    
+    t_start=1
+    t_end=subgrid_dim(t_dim_index)
+    i_subsource=1
+    emep_subsource=1
+
+    nox_bg=0.;no2_bg=0.;o3_bg=0.;nox_loc=0.;f_no2_loc=0.;J_photo=0.;temperature=0.;
+        
+    !Weighted travel time already calculated
+    
+    do t=t_start,t_end
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+    if (use_subgrid(i,j,allsource_index)) then
+        
+        i_integral=crossreference_target_to_integral_subgrid(i,j,x_dim_index)
+        j_integral=crossreference_target_to_integral_subgrid(i,j,y_dim_index)
+
+        J_photo=meteo_subgrid(i_integral,j_integral,t,J_subgrid_index)
+        temperature=273.
+       
+        nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
+         
+        o3_bg=comp_EMEP_subgrid(i,j,t,o3_index)
+            
+        do remove_source=1,n_source_index
+        if (calculate_source(remove_source).or.remove_source.eq.allsource_index) then
+        
+            f_no2_loc=0.
+            nox_loc=0.
+
+            do i_source=1,n_source_index
+            if (calculate_source(i_source)) then
+                if (remove_source.ne.i_source) then
+                    do i_subsource=1,n_subsource(i_source)
+                    f_no2_loc=f_no2_loc+emission_factor_conversion(no2_index,i_source,i_subsource)/emission_factor_conversion(nox_index,i_source,i_subsource)*subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                    nox_loc=nox_loc+subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                    enddo       
+                endif
+            endif
+            enddo
+            if (nox_loc.ne.0.0) then
+                f_no2_loc=f_no2_loc/nox_loc
+            else
+                f_no2_loc=0.
+            endif
+ 
+            !Use the all source index to calculate the contribution from the background
+            if (remove_source.ne.allsource_index) then
+                nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
+                no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))       
+            else
+                no2_bg=0.
+                nox_bg=0.
+            endif
+            
+            if (no2_chemistry_scheme_flag.eq.0) then
+                nox_out=nox_bg+nox_loc
+                no2_out=no2_bg+nox_loc*f_no2_loc
+                o3_out=o3_bg
+            elseif (no2_chemistry_scheme_flag.eq.1) then
+                call uEMEP_photostationary_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
+            elseif (no2_chemistry_scheme_flag.eq.2) then
+                !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_index))
+                call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out,p_bg_out,p_out)
+                !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1),no2_out/nox_out,o3_out/o3_bg
+            elseif (no2_chemistry_scheme_flag.eq.3) then
+                call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out)        
+            endif
+        
+            !write(*,*) nox_out-subgrid(i,j,t,total_subgrid_index,allsource_index,1)
+        
+            !comp_subgrid(i,j,t,o3_index)=o3_out
+            no2_source_fraction_subgrid(i,j,t,remove_source)=comp_subgrid(i,j,t,no2_index)-no2_out
+            
+         
+        endif
+        enddo
+        
+    else
+
+        no2_source_fraction_subgrid(i,j,t,:)=NODATA_value
+        
+    endif
+            !Calculate the sum
+            sum_no2_source_subgrid=0.
+            do i_source=1,n_source_index
+            if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+                sum_no2_source_subgrid=sum_no2_source_subgrid+no2_source_fraction_subgrid(i,j,t,i_source)
+            endif
+            enddo
+            !Calculate it as a fraction
+            if (sum_no2_source_subgrid.gt.0) then
+                no2_source_fraction_subgrid(i,j,t,:)=no2_source_fraction_subgrid(i,j,t,:)/sum_no2_source_subgrid
+            else
+                no2_source_fraction_subgrid(i,j,t,:)=0
+            endif
+            
+            !write(*,'(2i4,6f12.6)') i,j,sum_no2_source_subgrid,sum_no2_source_subgrid/comp_subgrid(i,j,t,no2_index),no2_source_fraction_subgrid(i,j,t,allsource_index),no2_source_fraction_subgrid(i,j,t,traffic_index),no2_source_fraction_subgrid(i,j,t,shipping_index),no2_source_fraction_subgrid(i,j,t,heating_index)
+
+    enddo
+    enddo
+    enddo
+    
+    end subroutine uEMEP_source_fraction_chemistry
+    
     
     subroutine uEMEP_photostationary_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
 
