@@ -76,7 +76,7 @@
         j_integral=crossreference_target_to_integral_subgrid(i,j,y_dim_index)
 
         J_photo=meteo_subgrid(i_integral,j_integral,t,J_subgrid_index)
-        temperature=273.
+        temperature=meteo_subgrid(i_integral,j_integral,t,t2m_subgrid_index)
        
         nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
         !nox_bg=subgrid(i,j,t,emep_subgrid_index,allsource_index,emep_subsource)
@@ -180,7 +180,7 @@
     !character(256) temp_name
     integer i_integral,j_integral
     integer remove_source
-    real sum_no2_source_subgrid
+    real sum_no2_source_subgrid,sum_o3_source_subgrid
     
     !Search for nox in the pollutants
     do i_pollutant=1,n_pollutant_loop
@@ -205,8 +205,8 @@
     endif
     
     !Deallocate in case of changing grid sizes (should not happen)
-    if (allocated(no2_source_fraction_subgrid)) deallocate(no2_source_fraction_subgrid)
-    if (.not.allocated(no2_source_fraction_subgrid)) allocate(no2_source_fraction_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index))
+    if (allocated(comp_source_fraction_subgrid)) deallocate(comp_source_fraction_subgrid)
+    if (.not.allocated(comp_source_fraction_subgrid)) allocate(comp_source_fraction_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
     
     t_start=1
     t_end=subgrid_dim(t_dim_index)
@@ -226,7 +226,7 @@
         j_integral=crossreference_target_to_integral_subgrid(i,j,y_dim_index)
 
         J_photo=meteo_subgrid(i_integral,j_integral,t,J_subgrid_index)
-        temperature=273.
+        temperature=meteo_subgrid(i_integral,j_integral,t,t2m_subgrid_index)
        
         nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
          
@@ -255,12 +255,16 @@
             endif
  
             !Use the all source index to calculate the contribution from the background
+            !This is done by removing all the sources, rather than the difference as done for the local sources
+            !This is because the chemistry is disturbed when removing background nox and no2
             if (remove_source.ne.allsource_index) then
                 nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
                 no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))       
             else
-                no2_bg=0.
-                nox_bg=0.
+                nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
+                no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))       
+                nox_loc=0.
+                f_no2_loc=0.
             endif
             
             if (no2_chemistry_scheme_flag.eq.0) then
@@ -270,43 +274,67 @@
             elseif (no2_chemistry_scheme_flag.eq.1) then
                 call uEMEP_photostationary_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
             elseif (no2_chemistry_scheme_flag.eq.2) then
-                !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_index))
+                !write(*,'(i,7f8.2,f12.2,2f8.2)') remove_source,nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index))
                 call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out,p_bg_out,p_out)
-                !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1),no2_out/nox_out,o3_out/o3_bg
+                !write(*,'(i,7f8.2,f12.2,3f8.4)') remove_source,nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out
             elseif (no2_chemistry_scheme_flag.eq.3) then
-                call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out)        
+                call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out)   
             endif
         
             !write(*,*) nox_out-subgrid(i,j,t,total_subgrid_index,allsource_index,1)
         
-            !comp_subgrid(i,j,t,o3_index)=o3_out
-            no2_source_fraction_subgrid(i,j,t,remove_source)=comp_subgrid(i,j,t,no2_index)-no2_out
-            
-         
+            !For background just use the result without any sources.
+            !There is a problem disturbing the chemistry by removing the background nox and no2 but not chaning the o3
+            if (remove_source.eq.allsource_index) then
+                comp_source_fraction_subgrid(i,j,t,no2_index,remove_source)=no2_out
+                comp_source_fraction_subgrid(i,j,t,o3_index,remove_source)=o3_out
+            else
+                !Avoid round off errors which can occur with small numbers
+                comp_source_fraction_subgrid(i,j,t,no2_index,remove_source)=max(0.0,comp_subgrid(i,j,t,no2_index)-no2_out)
+                !Can be negative and can be greater than 1 so do not limit
+                comp_source_fraction_subgrid(i,j,t,o3_index,remove_source)=comp_subgrid(i,j,t,o3_index)-o3_out
+            endif
+      
         endif
         enddo
         
     else
 
-        no2_source_fraction_subgrid(i,j,t,:)=NODATA_value
+        comp_source_fraction_subgrid(i,j,t,:,:)=NODATA_value
         
     endif
             !Calculate the sum
             sum_no2_source_subgrid=0.
+            sum_o3_source_subgrid=0.
             do i_source=1,n_source_index
             if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-                sum_no2_source_subgrid=sum_no2_source_subgrid+no2_source_fraction_subgrid(i,j,t,i_source)
+                sum_no2_source_subgrid=sum_no2_source_subgrid+comp_source_fraction_subgrid(i,j,t,no2_index,i_source)
+                sum_o3_source_subgrid=sum_o3_source_subgrid+comp_source_fraction_subgrid(i,j,t,o3_index,i_source)
             endif
             enddo
-            !Calculate it as a fraction
+            !Calculate it as a fraction of the total calculated
             if (sum_no2_source_subgrid.gt.0) then
-                no2_source_fraction_subgrid(i,j,t,:)=no2_source_fraction_subgrid(i,j,t,:)/sum_no2_source_subgrid
+                comp_source_fraction_subgrid(i,j,t,no2_index,:)=comp_source_fraction_subgrid(i,j,t,no2_index,:)/sum_no2_source_subgrid
             else
-                no2_source_fraction_subgrid(i,j,t,:)=0
+                comp_source_fraction_subgrid(i,j,t,no2_index,:)=0
+            endif
+            if (sum_o3_source_subgrid.gt.0) then
+                comp_source_fraction_subgrid(i,j,t,o3_index,:)=comp_source_fraction_subgrid(i,j,t,o3_index,:)/sum_o3_source_subgrid
+            else
+                comp_source_fraction_subgrid(i,j,t,o3_index,:)=0
             endif
             
-            !write(*,'(2i4,6f12.6)') i,j,sum_no2_source_subgrid,sum_no2_source_subgrid/comp_subgrid(i,j,t,no2_index),no2_source_fraction_subgrid(i,j,t,allsource_index),no2_source_fraction_subgrid(i,j,t,traffic_index),no2_source_fraction_subgrid(i,j,t,shipping_index),no2_source_fraction_subgrid(i,j,t,heating_index)
-
+            !write(*,'(2i4,6f12.6)') i,j,sum_no2_source_subgrid,sum_no2_source_subgrid/comp_subgrid(i,j,t,no2_index),comp_source_fraction_subgrid(i,j,t,no2_index,allsource_index) &
+            !    ,comp_source_fraction_subgrid(i,j,t,no2_index,traffic_index),comp_source_fraction_subgrid(i,j,t,no2_index,shipping_index),comp_source_fraction_subgrid(i,j,t,no2_index,heating_index)
+            write(*,'(2i4,6f12.6)') i,j,sum_o3_source_subgrid,sum_o3_source_subgrid/comp_subgrid(i,j,t,o3_index),comp_source_fraction_subgrid(i,j,t,o3_index,allsource_index) &
+                ,comp_source_fraction_subgrid(i,j,t,o3_index,traffic_index),comp_source_fraction_subgrid(i,j,t,o3_index,shipping_index),comp_source_fraction_subgrid(i,j,t,o3_index,heating_index)
+            !if (comp_source_fraction_subgrid(i,j,t,nor_index,allsource_index).lt.0.or.comp_source_fraction_subgrid(i,j,t,no2_index,traffic_index).lt.0.or.no2_source_fraction_subgrid(i,j,t,shipping_index).lt.0.or.no2_source_fraction_subgrid(i,j,t,heating_index).lt.0) then
+             !   write(*,*) 'Traffic value less than 0. comp_subgrid =',comp_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,no2_index) &
+             !       ,comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))  &
+             !       ,comp_EMEP_subgrid(i,j,t,o3_index)
+            !    stop
+            !endif
+            
     enddo
     enddo
     enddo

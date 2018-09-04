@@ -290,13 +290,13 @@
     integer n_subgrid_index
     parameter (n_subgrid_index=11)
 
-    !Declare meteo subgrid variables. Must be the same as the nc version
+    !Declare meteo subgrid variables. Does nothave to be the same as the nc version
     integer ugrid_subgrid_index,vgrid_subgrid_index,FF10_subgrid_index,FFgrid_subgrid_index,inv_FFgrid_subgrid_index,inv_FF10_subgrid_index
-    integer hmix_subgrid_index,kz_subgrid_index,invL_subgrid_index,ustar_subgrid_index,logz0_subgrid_index,J_subgrid_index,cos_subgrid_index,sin_subgrid_index
+    integer hmix_subgrid_index,kz_subgrid_index,invL_subgrid_index,ustar_subgrid_index,logz0_subgrid_index,J_subgrid_index,t2m_subgrid_index,cos_subgrid_index,sin_subgrid_index
     parameter (ugrid_subgrid_index=1,vgrid_subgrid_index=2,FF10_subgrid_index=3,FFgrid_subgrid_index=4,inv_FFgrid_subgrid_index=5,inv_FF10_subgrid_index=6)
-    parameter (hmix_subgrid_index=7,kz_subgrid_index=8,invL_subgrid_index=9,ustar_subgrid_index=10,logz0_subgrid_index=11,J_subgrid_index=12,cos_subgrid_index=13,sin_subgrid_index=14)
+    parameter (hmix_subgrid_index=7,kz_subgrid_index=8,invL_subgrid_index=9,ustar_subgrid_index=10,logz0_subgrid_index=11,J_subgrid_index=12,t2m_subgrid_index=13,cos_subgrid_index=14,sin_subgrid_index=15)
     integer n_meteo_subgrid_index
-    parameter (n_meteo_subgrid_index=14)
+    parameter (n_meteo_subgrid_index=15)
 
     !Declare compound indexes for the subgrid. Same as nc_index values for compounds. Must be converted when necessary
     integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,so2_index,pmex_index,traveltime_index,no_index
@@ -616,7 +616,7 @@
     logical :: include_o3_in_aqi_index=.false.
 
     !Special source allocation for no2 based on leaving out the source in the chemistry calculation
-    real, allocatable :: no2_source_fraction_subgrid(:,:,:,:)
+    real, allocatable :: comp_source_fraction_subgrid(:,:,:,:,:)
 
     end module uEMEP_definitions
     

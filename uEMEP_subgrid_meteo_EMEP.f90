@@ -77,6 +77,7 @@
             meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=var3d_nc(i_nc,j_nc,:,inv_FF10_nc_index,allsource_index,meteo_p_loop_index)
             meteo_subgrid(i,j,:,ustar_subgrid_index)=var3d_nc(i_nc,j_nc,:,ustar_nc_index,allsource_index,meteo_p_loop_index)
             meteo_subgrid(i,j,:,J_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,J_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,t2m_subgrid_index)=var3d_nc(i_nc,j_nc,:,t2m_nc_index,allsource_index,meteo_p_loop_index)
                   
             if (use_alternative_meteorology_flag) then
             i_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,x_dim_index)
@@ -91,6 +92,7 @@
             !meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,,:,inv_FFgrid_nc_index)
             !meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,inv_FF10_nc_index)
             meteo_subgrid(i,j,:,ustar_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,ustar_nc_index)
+            meteo_subgrid(i,j,:,t2m_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,t2m_nc_index)
             endif
                     
         enddo
@@ -147,6 +149,7 @@
                 meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=meteo_subgrid(i,j,:,inv_FF10_subgrid_index)+var3d_nc(ii,jj,:,inv_FF10_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
                 meteo_subgrid(i,j,:,ustar_subgrid_index)=meteo_subgrid(i,j,:,ustar_subgrid_index)+var3d_nc(ii,jj,:,ustar_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
                 meteo_subgrid(i,j,:,J_subgrid_index)=meteo_subgrid(i,j,:,J_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,J_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,t2m_subgrid_index)=meteo_subgrid(i,j,:,t2m_subgrid_index)+var3d_nc(ii,jj,:,t2m_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
 
             enddo
             enddo
@@ -172,6 +175,7 @@
         !meteo_subgrid(:,:,:,inv_FFgrid_subgrid_index)=0.
         !meteo_subgrid(:,:,:,inv_FF10_subgrid_index)=0.
         meteo_subgrid(:,:,:,ustar_subgrid_index)=0.
+        meteo_subgrid(:,:,:,t2m_subgrid_index)=0.
         
         do j=1,integral_subgrid_dim(y_dim_index)
         do i=1,integral_subgrid_dim(x_dim_index)
@@ -214,6 +218,7 @@
                 !meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)=meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)+meteo_var3d_nc(ii,jj,:,inv_FFgrid_nc_index)*weighting_nc(ii,jj)
                 !meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=meteo_subgrid(i,j,:,inv_FF10_subgrid_index)+meteo_var3d_nc(ii,jj,:,inv_FF10_nc_index)*weighting_nc(ii,jj)
                 meteo_subgrid(i,j,:,ustar_subgrid_index)=meteo_subgrid(i,j,:,ustar_subgrid_index)+meteo_var3d_nc(ii,jj,:,ustar_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,t2m_subgrid_index)=meteo_subgrid(i,j,:,t2m_subgrid_index)+meteo_var3d_nc(ii,jj,:,t2m_nc_index)*weighting_nc(ii,jj)
 
             enddo
             enddo

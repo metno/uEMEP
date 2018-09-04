@@ -21,7 +21,7 @@
     integer ii,jj
     logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.false.,save_other_meteo=.false.
     logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
-    logical :: save_population=.false.,save_no2_source_contributions=.true.
+    logical :: save_population=.false.,save_no2_source_contributions=.true.,save_o3_source_contributions=.true.
     
     logical :: save_aqi=.true.
     real aqi_limits_temp(n_compound_index,1:5)
@@ -240,11 +240,14 @@
     enddo
     endif
 
+    if (save_no2_source_contributions.or.save_o3_source_contributions) then       
+        call uEMEP_source_fraction_chemistry
+    endif
+    
     if (save_no2_source_contributions) then
-        
-    call uEMEP_source_fraction_chemistry
-    variable_type='byte'
-    unit_str="%"   
+    
+    variable_type='short'
+    unit_str="%"
 
     do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
@@ -257,7 +260,7 @@
             endif
             
             var_name_temp=trim(var_name_nc(conc_nc_index,no2_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))
-            temp_subgrid=no2_source_fraction_subgrid(:,:,:,i_source)*100.
+            temp_subgrid=comp_source_fraction_subgrid(:,:,:,no2_index,i_source)*100.
             
             if (save_netcdf_file_flag) then
                 write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
@@ -277,6 +280,48 @@
             endif
         endif
     enddo
+    
+    endif
+    
+   if (save_o3_source_contributions) then
+           
+    variable_type='short'
+    unit_str="%"   
+    valid_min=-10000.
+
+    do i_source=1,n_source_index
+        !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        
+            if (i_source.eq.allsource_index) then
+                i_file=emep_subgrid_nonlocal_file_index(i_source)
+            else
+                i_file=subgrid_local_file_index(i_source)
+            endif
+            
+            var_name_temp=trim(var_name_nc(conc_nc_index,o3_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))
+            temp_subgrid=comp_source_fraction_subgrid(:,:,:,o3_index,i_source)*100.
+            
+            if (save_netcdf_file_flag) then
+                write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                    ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                    ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+            endif
+            if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
+                call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                    ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                    ,unit_str,title_str_rec,create_file_rec,valid_min &
+                    ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                    ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                    ,z_rec(allsource_index,1) &
+                    ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+            endif
+        endif
+    enddo
+    
+    valid_min=0.   
     
     endif
     
@@ -999,6 +1044,7 @@
     
 
     if (trim(variable_type).eq.'byte') nf90_type=NF90_BYTE
+    if (trim(variable_type).eq.'short') nf90_type=NF90_SHORT
     if (trim(variable_type).eq.'float') nf90_type=NF90_FLOAT
     if (trim(variable_type).eq.'double') nf90_type=NF90_DOUBLE
     
@@ -1104,6 +1150,9 @@
         if (nf90_type.eq.NF90_byte) then
             call check(  nf90_put_att(ncid, val_varid, "missing_value", int1(NODATA_value) ) ) !New
             call check(  nf90_put_att(ncid, val_varid, "valid_min", int1(valid_min)) )
+        elseif (nf90_type.eq.NF90_short) then
+            call check(  nf90_put_att(ncid, val_varid, "missing_value", int2(NODATA_value) ) ) !New
+            call check(  nf90_put_att(ncid, val_varid, "valid_min", int2(valid_min)) )
         else
             call check(  nf90_put_att(ncid, val_varid, "missing_value", NODATA_value ) ) !New
             call check(  nf90_put_att(ncid, val_varid, "valid_min", valid_min) )
@@ -1132,6 +1181,8 @@
         call check( nf90_inq_varid(ncid, trim(name_array), val_varid) )
         if (nf90_type.eq.NF90_byte) then
             call check( nf90_put_var(ncid, val_varid, int1(val_array), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
+        elseif (nf90_type.eq.NF90_short) then
+            call check( nf90_put_var(ncid, val_varid, int2(val_array), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
         else
             call check( nf90_put_var(ncid, val_varid, val_array, start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
         endif
@@ -1141,6 +1192,8 @@
         !Write the variable to file. Default is float
         if (nf90_type.eq.NF90_byte) then
             call check( nf90_put_var(ncid, val_varid, int1(val_array)) )
+        elseif (nf90_type.eq.NF90_short) then
+            call check( nf90_put_var(ncid, val_varid, int2(val_array)) )
         else
             call check( nf90_put_var(ncid, val_varid, val_array) )
         endif

@@ -426,7 +426,8 @@
             meteo_var3d_nc(:,:,:,ustar_nc_index)=sqrt(sqrt(meteo_var3d_nc(:,:,:,uw_nc_index)**2+meteo_var3d_nc(:,:,:,vw_nc_index)**2)/1.2)
 
             !Approximate temperature (273 +/- 10%)
-            meteo_var3d_nc(:,:,:,invL_nc_index)=meteo_var3d_nc(:,:,:,Hflux_nc_index)/1.2/1004.*0.4*9.8/273./meteo_var3d_nc(:,:,:,ustar_nc_index)**3
+            !Have inserted the correct temperature now
+            meteo_var3d_nc(:,:,:,invL_nc_index)=meteo_var3d_nc(:,:,:,Hflux_nc_index)/1.2/1004.*0.4*9.8/meteo_var3d_nc(:,:,:,t2m_nc_index)/meteo_var3d_nc(:,:,:,ustar_nc_index)**3
             
             !Put the 10 m wind vectors as the lowest grid level
             H_meteo=val_dim_meteo_nc(surface_level_nc,z_dim_nc_index)
@@ -465,6 +466,7 @@
             write(unit_logfile,'(3A,2f16.4)') ' Alternative meteo: ',trim(var_name_meteo_nc(vgrid_nc_index)),' (min, max): ',minval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),vgrid_nc_index)),maxval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),vgrid_nc_index))
             write(unit_logfile,'(3A,2f16.4)') ' Alternative meteo: ',trim(var_name_meteo_nc(FF10_nc_index)),' (min, max): ',minval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),FF10_nc_index)),maxval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),FF10_nc_index))
             write(unit_logfile,'(3A,2f16.4)') ' Alternative meteo: ',trim(var_name_meteo_nc(hmix_nc_index)),' (min, max): ',minval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),hmix_nc_index)),maxval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),hmix_nc_index))
+            write(unit_logfile,'(3A,2f16.4)') ' Alternative meteo: ',trim(var_name_meteo_nc(t2m_nc_index)),' (min, max): ',minval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),t2m_nc_index)),maxval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),t2m_nc_index))
             
             
         !If no logz0 available. Set to log(0.1)
