@@ -246,7 +246,7 @@
     
     if (save_no2_source_contributions) then
     
-    variable_type='short'
+    variable_type='byte'
     unit_str="%"
 
     do i_source=1,n_source_index
@@ -285,9 +285,9 @@
     
    if (save_o3_source_contributions) then
            
-    variable_type='short'
+    variable_type='byte'
     unit_str="%"   
-    valid_min=-10000.
+    valid_min=0.
 
     do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
@@ -299,6 +299,14 @@
                 i_file=subgrid_local_file_index(i_source)
             endif
             
+            !Temporary measure is to set nonlocal to 100% and the sources to 0.
+            !This correctly says that all ozone comes from outside, it just does not say how much is removed by the local sources
+            if (i_source.eq.allsource_index) then
+                comp_source_fraction_subgrid(:,:,:,o3_index,i_source)=1.
+            else
+                comp_source_fraction_subgrid(:,:,:,o3_index,i_source)=0.
+            endif
+             
             var_name_temp=trim(var_name_nc(conc_nc_index,o3_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))
             temp_subgrid=comp_source_fraction_subgrid(:,:,:,o3_index,i_source)*100.
             

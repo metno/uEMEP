@@ -326,8 +326,8 @@
             
             !write(*,'(2i4,6f12.6)') i,j,sum_no2_source_subgrid,sum_no2_source_subgrid/comp_subgrid(i,j,t,no2_index),comp_source_fraction_subgrid(i,j,t,no2_index,allsource_index) &
             !    ,comp_source_fraction_subgrid(i,j,t,no2_index,traffic_index),comp_source_fraction_subgrid(i,j,t,no2_index,shipping_index),comp_source_fraction_subgrid(i,j,t,no2_index,heating_index)
-            write(*,'(2i4,6f12.6)') i,j,sum_o3_source_subgrid,sum_o3_source_subgrid/comp_subgrid(i,j,t,o3_index),comp_source_fraction_subgrid(i,j,t,o3_index,allsource_index) &
-                ,comp_source_fraction_subgrid(i,j,t,o3_index,traffic_index),comp_source_fraction_subgrid(i,j,t,o3_index,shipping_index),comp_source_fraction_subgrid(i,j,t,o3_index,heating_index)
+            !write(*,'(2i4,6f12.6)') i,j,sum_o3_source_subgrid,sum_o3_source_subgrid/comp_subgrid(i,j,t,o3_index),comp_source_fraction_subgrid(i,j,t,o3_index,allsource_index) &
+            !    ,comp_source_fraction_subgrid(i,j,t,o3_index,traffic_index),comp_source_fraction_subgrid(i,j,t,o3_index,shipping_index),comp_source_fraction_subgrid(i,j,t,o3_index,heating_index)
             !if (comp_source_fraction_subgrid(i,j,t,nor_index,allsource_index).lt.0.or.comp_source_fraction_subgrid(i,j,t,no2_index,traffic_index).lt.0.or.no2_source_fraction_subgrid(i,j,t,shipping_index).lt.0.or.no2_source_fraction_subgrid(i,j,t,heating_index).lt.0) then
              !   write(*,*) 'Traffic value less than 0. comp_subgrid =',comp_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,no2_index) &
              !       ,comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))  &
