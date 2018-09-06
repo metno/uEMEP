@@ -151,14 +151,22 @@
     do i_pollutant=1,n_pollutant_loop
     do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-        if (calculate_source(i_source).and.i_source.ne.allsource_index) then
+        !Don't save any exhaust pollutant sources
+        if (calculate_source(i_source).and.i_source.ne.allsource_index.and.pollutant_loop_index(i_pollutant).ne.pmex_index) then
         
             i_file=subgrid_local_file_index(i_source)
-
-            if (pollutant_loop_index(i_pollutant).ne.pmex_index) then
-
-            var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
-            temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+            
+            !Only save nonexhaust pm and all the other sources
+            if ((pollutant_loop_index(i_pollutant).eq.nox_index.and.i_source.eq.traffic_index)) then
+            !if ((pollutant_loop_index(i_pollutant).ne.nox_index.or.i_source.ne.traffic_index)) then
+            else
+            if (i_source.eq.traffic_index.and.(pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index)) then
+                var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//'_nonexhaust'
+                temp_subgrid=(subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)-subgrid(:,:,:,local_subgrid_index,i_source,pollutant_loop_back_index(pmex_index)))/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+            else
+                var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
+                temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+            endif
             where (subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant).eq.0) temp_subgrid=0
             
             if (save_netcdf_file_flag) then
@@ -181,9 +189,17 @@
             endif
             
             !Special case for exhaust as this must be given as a fraction for both PM2.5 and PM10.
-            if ((pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index).and.i_source.eq.traffic_index) then
+            !if ((pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index).and.i_source.eq.traffic_index) then
+            !Write all exhaust pollutants except the pmex
+            if (i_source.eq.traffic_index) then
             
-            exhaust_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,pollutant_loop_back_index(pmex_index))
+            !If PM then exhaust output is exhaust
+            if (pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index) then
+                exhaust_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,pollutant_loop_back_index(pmex_index))
+            else
+                exhaust_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)            
+            endif
+            
             temp_subgrid=exhaust_subgrid/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
             where (subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant).eq.0) temp_subgrid=0
             var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//'local_fraction_traffic_exhaust'
@@ -205,7 +221,7 @@
                     ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
             endif
             
-        endif
+            endif
         endif
             
         if (pollutant_loop_index(i_pollutant).ne.pmex_index) then
@@ -259,7 +275,11 @@
                 i_file=subgrid_local_file_index(i_source)
             endif
             
-            var_name_temp=trim(var_name_nc(conc_nc_index,no2_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))
+            if (i_source.eq.traffic_index) then
+                var_name_temp=trim(var_name_nc(conc_nc_index,no2_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))//'_exhaust'
+            else
+                var_name_temp=trim(var_name_nc(conc_nc_index,no2_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))
+            endif
             temp_subgrid=comp_source_fraction_subgrid(:,:,:,no2_index,i_source)*100.
             
             if (save_netcdf_file_flag) then
@@ -291,7 +311,8 @@
 
     do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-        if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        !Only save the nonlocal part as 100%
+        if (i_source.eq.allsource_index) then
         
             if (i_source.eq.allsource_index) then
                 i_file=emep_subgrid_nonlocal_file_index(i_source)
