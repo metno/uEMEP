@@ -256,6 +256,11 @@
         filename_agriculture(1)=read_name_char('filename_agriculture(1)',filename_agriculture(1),unit_in,unit_logfile)
         filename_agriculture(2)=read_name_char('filename_agriculture(2)',filename_agriculture(2),unit_in,unit_logfile)
         
+        pathname_industry(1)=read_name_char('pathname_industry(1)',pathname_industry(1),unit_in,unit_logfile)
+        pathname_industry(2)=read_name_char('pathname_industry(2)',pathname_industry(2),unit_in,unit_logfile)
+        filename_industry(1)=read_name_char('filename_industry(1)',filename_industry(1),unit_in,unit_logfile)
+        filename_industry(2)=read_name_char('filename_industry(2)',filename_industry(2),unit_in,unit_logfile)
+
         pathname_heating(dwelling_index)=read_name_char('pathname_heating(dwelling_index)',pathname_heating(dwelling_index),unit_in,unit_logfile)
         pathname_heating(population_index)=read_name_char('pathname_heating(population_index)',pathname_heating(population_index),unit_in,unit_logfile)
         filename_heating(dwelling_index)=read_name_char('filename_heating(dwelling_index)',filename_heating(dwelling_index),unit_in,unit_logfile)
@@ -406,6 +411,8 @@
         call date_to_datestr_bracket(a,pathname_EMEP(2),pathname_EMEP(2))
         call date_to_datestr_bracket(a,pathname_EMEP(3),pathname_EMEP(3))
         call date_to_datestr_bracket(a,pathname_EMEP(4),pathname_EMEP(4))
+        call date_to_datestr_bracket(a,pathname_rl(1),pathname_rl(1))
+        call date_to_datestr_bracket(a,pathname_rl(2),pathname_rl(2))  
     enddo
     !write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_output_grid)
     !write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_EMEP(1))

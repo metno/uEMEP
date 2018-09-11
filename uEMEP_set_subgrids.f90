@@ -6,7 +6,7 @@
 
     implicit none
 
-    integer i,j,k    
+    integer i 
     
     !Reset min and max with the buffer and calculate dimensions
     !subgrid_min(x_dim_index)=subgrid_min(x_dim_index)-buffer(x_dim_index);subgrid_min(y_dim_index)=subgrid_min(y_dim_index)-buffer(y_dim_index)
@@ -72,6 +72,8 @@
     emission_subgrid_delta(y_dim_index,shipping_index)=max(subgrid_delta(y_dim_index),limit_shipping_delta)
     emission_subgrid_delta(x_dim_index,heating_index)=max(subgrid_delta(x_dim_index),limit_heating_delta)
     emission_subgrid_delta(y_dim_index,heating_index)=max(subgrid_delta(y_dim_index),limit_heating_delta)
+    emission_subgrid_delta(x_dim_index,industry_index)=max(subgrid_delta(x_dim_index),limit_industry_delta)
+    emission_subgrid_delta(y_dim_index,industry_index)=max(subgrid_delta(y_dim_index),limit_industry_delta)
     
     !Set all the emission subgrid dimmensions after changes
     do i=1,n_source_index

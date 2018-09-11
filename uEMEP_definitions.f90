@@ -228,6 +228,9 @@
     character(256) pathname_heating(10)
     character(256) pathfilename_heating(10)
     
+    character(256) filename_industry(10)
+    character(256) pathname_industry(10)
+    character(256) pathfilename_industry(10)
     
     !integer traffic_emission_file_index,traffic_proxy_file_index,traffic_proxy_integral_file_index
     !parameter (traffic_emission_file_index=1,traffic_proxy_file_index=2,traffic_proxy_integral_file_index=3)
@@ -510,6 +513,7 @@
 
     real :: limit_shipping_delta=250.
     real :: limit_heating_delta=250.
+    real :: limit_industry_delta=250.
     real :: limit_population_delta=250.
     real :: traj_step_scale=2.
     

@@ -4,10 +4,8 @@
     
     implicit none
     
-    integer i,j,k
+    integer i,j
     integer count
-    character(1) str_temp
-    
     
     !Initialise some array flags
 	replace_EMEP_local_with_subgrid_local=.false.
@@ -49,6 +47,11 @@
         var_name_nc(frac_nc_index,pm25_nc_index,heating_nc_index)='pm25_sec02_local_fraction'
         var_name_nc(frac_nc_index,pmco_nc_index,heating_nc_index)='pmco_sec02_local_fraction'
 
+        !SNAP 1 is energy, SNAP 3 is combustion in manufacturing and SNAP 4 is process, all should be used but in Norway it is mostly process???
+        var_name_nc(frac_nc_index,nox_nc_index,industry_nc_index)='nox_sec04_local_fraction'
+        var_name_nc(frac_nc_index,pm25_nc_index,industry_nc_index)='pm25_sec04_local_fraction'
+        var_name_nc(frac_nc_index,pmco_nc_index,industry_nc_index)='pmco_sec04_local_fraction'
+
         !Total emissions
         var_name_nc(emis_nc_index,nh3_nc_index,allsource_nc_index)='Emis_mgm2_nh3'
         var_name_nc(emis_nc_index,nox_nc_index,allsource_nc_index)='Emis_mgm2_nox'
@@ -68,6 +71,10 @@
         var_name_nc(emis_nc_index,pm25_nc_index,heating_nc_index)='Emis_mgm2_sec2pm25'
         var_name_nc(emis_nc_index,pmco_nc_index,heating_nc_index)='Emis_mgm2_sec2pmco'
               
+        var_name_nc(emis_nc_index,nox_nc_index,industry_nc_index)='Emis_mgm2_sec4nox'
+        var_name_nc(emis_nc_index,pm25_nc_index,industry_nc_index)='Emis_mgm2_sec4pm25'
+        var_name_nc(emis_nc_index,pmco_nc_index,industry_nc_index)='Emis_mgm2_sec4pmco'
+
         !Meteorology
         var_name_nc(ugrid_nc_index,all_nc_index,allsource_nc_index)='u_wind'
         var_name_nc(vgrid_nc_index,all_nc_index,allsource_nc_index)='v_wind'
@@ -92,8 +99,12 @@
         dim_name_meteo_nc(time_dim_nc_index)='time'
 
         var_name_meteo_nc=''
+        !Depends which file you read unfortunately. My files lat, MEPS latitude WHY?
+        !Put these in the config file
         var_name_meteo_nc(lon_nc_index)='lon'
         var_name_meteo_nc(lat_nc_index)='lat'
+        var_name_meteo_nc(lon_nc_index)='longitude'
+        var_name_meteo_nc(lat_nc_index)='latitude'
         var_name_meteo_nc(ugrid_nc_index)='u_wind' !!Doesn't exist but name is used
         var_name_meteo_nc(vgrid_nc_index)='v_wind' !!Doesn't exist but name is used
         var_name_meteo_nc(FFgrid_nc_index)='FF_wind' !Doesn't exist but name is used
@@ -222,18 +233,22 @@
     emission_factor(nox_index,traffic_index,:)=0.4 !(g/km/veh)
     emission_factor(nox_index,shipping_index,:)=1. !Shipping data is in emissions [tonne/month]
     emission_factor(nox_index,heating_index,:)=3./15. !(kg/dwelling/year) Estimate only
+    emission_factor(nox_index,industry_index,:)=1. !Industry data is in emissions [tonne/year]
 
     emission_factor(no2_index,traffic_index,:)=0.15*emission_factor(nox_index,traffic_index,:)
     emission_factor(no2_index,shipping_index,:)=0.10*emission_factor(nox_index,shipping_index,:)
     emission_factor(no2_index,heating_index,:)=0.1*emission_factor(nox_index,heating_index,:)!(kg/dwelling/year) Estimate only
+    emission_factor(no2_index,industry_index,:)=0.10*emission_factor(nox_index,shipping_index,:)
 
     emission_factor(pm25_index,traffic_index,:)=0.01 !(g/km/veh)
     emission_factor(pm25_index,shipping_index,:)=1. !Shipping data is in emissions [tonne/month]
     emission_factor(pm25_index,heating_index,:)=3. !(kg/dwelling/year) SSB number is 6
+    emission_factor(pm25_index,industry_index,:)=1. 
 
     emission_factor(pm10_index,traffic_index,:)=0.01 !(g/km/veh)
     emission_factor(pm10_index,shipping_index,:)=1. !Shipping data is in emissions [tonne/month]
     emission_factor(pm10_index,heating_index,:)=3. !(kg/dwelling/year) SSB number is 6
+    emission_factor(pm10_index,industry_index,:)=1. 
 
     emission_factor(pmex_index,traffic_index,:)=0.01 !(g/km/veh)
 

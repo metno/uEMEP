@@ -136,6 +136,11 @@
                     !call uEMEP_grid_roads
                 endif
  
+                if (calculate_source(industry_index)) then
+                    !Read in and grid industry data
+                    call uEMEP_read_industry_data
+                endif
+
                 !Read and subgrid shipping data
                 if (calculate_source(shipping_index)) then
                     !If necessary aggregate shipping ddata first

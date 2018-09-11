@@ -36,6 +36,9 @@
         emission_factor_conversion(:,heating_index,:)=1.e6/3600.
     endif
     
+    !Converts tonne per year to ug/s/subgrid
+    emission_factor_conversion(:,industry_index,:)=1.e12/(3600.*24*365.)
+    
     
     end subroutine uEMEP_set_emission_factors
 
