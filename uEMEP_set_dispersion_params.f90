@@ -193,15 +193,15 @@
 
     end subroutine uEMEP_set_dispersion_sigma_simple
     
-    subroutine uEMEP_set_dispersion_sigma_PG(L,logz0,sig_z_00,sig_y_00,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
+    subroutine uEMEP_set_dispersion_sigma_PG(invL_in,logz0,sig_z_00,sig_y_00,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
     
     implicit none
 
-    real, intent(in) :: L,logz0,sig_z_00,sig_y_00,subgrid_delta(2),delta_wind,x
+    real, intent(in) :: invL_in,logz0,sig_z_00,sig_y_00,subgrid_delta(2),delta_wind,x
     real, intent(out) :: sig_z,sig_y,sig_z_0,sig_y_0
     
     integer i_bot,i_top,i
-    real weight,invL_in
+    real weight
     real ay,by,az,bz
     real ay_pg(6),by_pg(6),az_pg(6),bz_pg(6)
     real a_invL(6),b_invL(6),invL(6)
@@ -214,7 +214,6 @@
     data a_invL /-0.096,-0.037,-0.002,0.0,0.004,0.035/
     data b_invL /0.029,0.029,0.018,0.0,-0.018,-0.036/
     
-    invL_in=1./L
     invL=a_invL+b_invL*logz0
 
     !Find and interpolate the stability class based on input invL
@@ -255,41 +254,78 @@
     
     end subroutine uEMEP_set_dispersion_sigma_PG
     
-    subroutine uEMEP_set_dispersion_sigma_Kz_emulator(z_emis,L,logz0,z_pbl,sig_z_00,sig_y_00,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
+    subroutine uEMEP_set_dispersion_sigma_Kz_emulator(z_emis,invL,logz0,z_pbl,sig_z_00,sig_y_00,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
     
     implicit none
 
-    real, intent(in) :: z_emis,L,logz0,z_pbl,sig_z_00,sig_y_00,subgrid_delta(2),delta_wind,x
+    real, intent(in) :: z_emis,invL,logz0,z_pbl,sig_z_00,sig_y_00,subgrid_delta(2),delta_wind,x
     real, intent(out) :: sig_z,sig_y,sig_z_0,sig_y_0
     
     real invL_in,zz_pbl,z0
     real ay,by,az,bz
+    real z0_ref,zz_pbl_ref,zz_pbl_L,logz
     
-    invL_in=1./L
+    !invL_in=1./L
     
     !Remove the stable cases as these are not normally done in the full K_z formulation
     !invL_in=min(invL_in,1./100.)
-    invL_in=min(invL_in,0.)
+    invL_in=min(invL,0.)
     !invL_in=0.
     
-    zz_pbl=z_emis/z_pbl
+    zz_pbl=min(.95,z_emis/z_pbl) !Cannot be greater than 0.95 as it is outside the emulator region
+    zz_pbl_L=z_pbl*invL_in;
+    logz=log(z_emis)
     z0=exp(logz0)
     
-    az=0.15+0.52*(z0-0.02)-0.15*(1.-EXP(-zz_pbl/0.03))+0.16*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/5.))
-    bz=0.77-0.15*(1.-EXP(-z0/0.3))+0.2*(1.-EXP(-zz_pbl/0.03))-0.4*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/8.))
+    !Original
+    !az=0.15+0.52*(z0-0.02)-0.15*(1.-EXP(-zz_pbl/0.03))+0.16*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/5.))
+    !bz=0.77-0.15*(1.-EXP(-z0/0.3))+0.2*(1.-EXP(-zz_pbl/0.03))-0.4*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/8.))
 
-    az=min(max(az,0.02),0.7)
+    !Alternative form
+    z0_ref=0.1
+    zz_pbl_ref=0.001
+    
+    !az=0.15+.70*(z0-z0_ref)-0.1*(1.-exp(-(zz_pbl-zz_pbl_ref)*30.))+0.01*sign(1.,invL_in)*(1.-exp(-abs(invL_in)*10.))
+    !bz=0.76-0.17*(1.-exp(-(z0-z0_ref)*.3))+0.2*(1.-exp(-(zz_pbl-zz_pbl_ref)*30.))-0.4*sign(1.,invL_in)*(1.-exp(-abs(invL_in)*10.))
+    !ay=0.15+.70*(z0-z0_ref)-0.1*(1.-exp(-(zz_pbl)*10.))+.01*sign(1.,invL_in)*(1.-exp(-abs(invL_in)*10.))
+    !by=0.76-0.17*(1.-exp(-(z0-z0_ref)*3))+0.70*(1.-exp(-(zz_pbl)*1.))-.4*sign(1.,invL_in)*(1.-exp(-abs(invL_in)*10.))
+    
+    az=(-tanh((logz-1.2)*3.)*0.08+0.1+(1-exp(-zz_pbl/0.05))*0.06)*(1+(z0-z0_ref)/(z0+0.6)*3.)-.02*sign(1.,invL_in)*(1.-exp(-abs(zz_pbl_L)*10.))
+    bz=tanh((logz-1.2)*3)*0.14+0.88-(1-exp(-zz_pbl/0.05))*0.11-log(z0/z0_ref)*0.04-.20*sign(1.,invL_in)*(1.-exp(-abs(invL_in)*10.))
+    if (z_emis/z_pbl.gt.1) then
+        az=0.001
+        bz=1.0
+    endif
+    
+    !Limit to the values explored by the emulator, just in case
+    az=min(max(az,0.001),0.7)
     bz=min(max(bz,0.4),1.2)
     
+    !Calculate y values, taken as close to the maximum K height of z/z_pbl=0.25
     zz_pbl=0.25
-    ay=0.15+0.52*(z0-0.02)-0.15*(1.-EXP(-zz_pbl/0.03))+0.16*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/5.))
-    by=0.77-0.15*(1.-EXP(-z0/0.3))+0.2*(1.-EXP(-zz_pbl/0.03))-0.4*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/8.))
+    logz=log(zz_pbl*z_pbl)
+    
+    !ay=0.15+0.52*(z0-0.02)-0.15*(1.-EXP(-zz_pbl/0.03))+0.16*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/5.))
+    !by=0.77-0.15*(1.-EXP(-z0/0.3))+0.2*(1.-EXP(-zz_pbl/0.03))-0.4*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/8.))
+    
+    !az=0.15+.70*(z0-z0_ref)-0.1*(1.-exp(-(zz_pbl-zz_pbl_ref)*30.))+0.01*sign(1.,invL_in)*(1.-exp(-abs(invL_in)*10.))
+    !bz=0.76-0.17*(1.-exp(-(z0-z0_ref)*.3))+0.2*(1.-exp(-(zz_pbl-zz_pbl_ref)*30.))-0.4*sign(1.,invL_in)*(1.-exp(-abs(invL_in)*10.))
+    !ay=0.15+.70*(z0-z0_ref)-0.1*(1.-exp(-(zz_pbl)*10.))+.01*sign(1.,invL_in)*(1.-exp(-abs(invL_in)*10.))
+    !by=0.76-0.17*(1.-exp(-(z0-z0_ref)*3))+0.70*(1.-exp(-(zz_pbl)*1.))-.4*sign(1.,invL_in)*(1.-exp(-abs(invL_in)*10.))
 
-    ay=min(max(ay,0.02),0.7)
+    ay=(-tanh((logz-1.2)*3.)*0.08+0.1+(1-exp(-zz_pbl/0.05))*0.06)*(1+(z0-z0_ref)/(z0+0.6)*3.)-.02*sign(1.,invL_in)*(1.-exp(-abs(zz_pbl_L)*10.))
+    by=tanh((logz-1.2)*3)*0.14+0.88-(1-exp(-zz_pbl/0.05))*0.11-log(z0/z0_ref)*0.04-.20*sign(1.,invL_in)*(1.-exp(-abs(invL_in)*10.))
+    if (z_emis/z_pbl.ge.1.) then
+        ay=0.001
+        by=1.0
+    endif
+
+    ay=min(max(ay,0.001),0.7)
     by=min(max(by,0.4),1.2)
     
     !Set sig_y_0 to be half of the average x,y grid size
     sig_y_0=sig_y_00+(subgrid_delta(1)+subgrid_delta(2))/4.
+    
     !Set sig_z_0 to be the size of the plume after travelling half of the grid size
     sig_z_0=sig_z_00+az*exp(bz*log(sig_y_0-sig_y_00))
 

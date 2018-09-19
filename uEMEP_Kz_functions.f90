@@ -10,17 +10,17 @@
 !   Calculates dispersion based on Kz and wind profiles
 !==========================================================================
 
-    subroutine uEMEP_set_dispersion_sigma_Kz(x_in,sig_z0,sig_y0,sig_z_in,z_emis_loc,h_mix_loc,L,u_val,z_val,logz0,subgrid_delta,u_star0_in,average_zc_h_in_Kz_flag,sig_z,sig_y,u_zc)
+    subroutine uEMEP_set_dispersion_sigma_Kz(x_in,sig_z0,sig_y0,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta,u_star0_in,average_zc_h_in_Kz_flag,sig_z,sig_y,u_zc)
 
     implicit none
     
-    real, intent(in) :: x_in,sig_z0,sig_y0,sig_z_in,z_emis_loc,h_mix_loc,L,u_val,z_val,logz0,subgrid_delta(2),u_star0_in
+    real, intent(in) :: x_in,sig_z0,sig_y0,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta(2),u_star0_in
     logical, intent(in) :: average_zc_h_in_Kz_flag
     real, intent(out) :: sig_z,sig_y,u_zc
     
     integer n_loop,j
     
-    real K_z,K_y
+    real K_z,K_y,L
     real :: z_tau_min=2.,z_tau_max=100.
     real z0,zc,ustar0,u_hmix
     real :: K_min=0.001
@@ -28,15 +28,23 @@
     real u_star0,u_star0_val,tau,sig_z_0,zc_start,K_z_start,u_zc_start
     real min_x,x
     
-    n_loop=2
+    n_loop=1
+    
+    L=1.e6
+    if (abs(invL).gt.1./L) L=1./invL
     
     z0=exp(logz0)
     min_x=(subgrid_delta(1)+subgrid_delta(2))/4.
     !min_x=1.
     x=max(x_in,min_x)
+    !x=x_in
     
     !Initialise sig_z
     sig_z=sig_z_in
+    
+    !If the emission is above the boundary layer height then set the initial plume guess to its low turbulence form
+    !Same values used in the emulator (1/1000 slender plume)
+    if (z_emis_loc/h_mix_loc.ge.1.0) sig_z=sig_z_0+0.001*exp(1.0*log(x))
     
     !Set ustar0 for K_z to the value from EMEP
     u_star0=u_star0_in

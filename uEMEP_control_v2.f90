@@ -60,6 +60,23 @@
     
     first_g_loop=.true.
     
+        if (use_single_time_loop_flag) then
+            start_time_loop_index=1
+            end_time_loop_index=end_time_nc_index-start_time_nc_index+1
+            subgrid_dim(t_dim_index)=1
+            dim_length_nc(time_dim_nc_index)=1
+        else
+            start_time_loop_index=1
+            end_time_loop_index=1
+            subgrid_dim(t_dim_index)=end_time_nc_index-start_time_nc_index+1
+            dim_length_nc(time_dim_nc_index)=subgrid_dim(t_dim_index)
+        endif
+ 
+        !if (use_multiple_receptor_grids_flag) then
+        !call uEMEP_read_EMEP
+        !if (use_alternative_meteorology_flag.or.use_alternative_z0_flag) call uEMEP_read_meteo_nc
+        !endif
+   
     !Start internal grid receptor loop using only those receptor grids specified in uEMEP_read_receptor_data
     do g_loop=start_grid_loop_index,end_grid_loop_index
     if (use_receptor(g_loop)) then
@@ -76,18 +93,7 @@
         
         !Set the internal time loop (t_loop). If use_single_time_loop_flag=T then time array dimmensions are set to 1 and each time set of data
         !is read individually. This mostly to save memory
-        if (use_single_time_loop_flag) then
-            start_time_loop_index=1
-            end_time_loop_index=end_time_nc_index-start_time_nc_index+1
-            subgrid_dim(t_dim_index)=1
-            dim_length_nc(time_dim_nc_index)=1
-        else
-            start_time_loop_index=1
-            end_time_loop_index=1
-            subgrid_dim(t_dim_index)=end_time_nc_index-start_time_nc_index+1
-            dim_length_nc(time_dim_nc_index)=subgrid_dim(t_dim_index)
-        endif
-    
+   
         !Start the internal time loop
         do t_loop=start_time_loop_index,end_time_loop_index
    
@@ -109,9 +115,11 @@
             endif
                 
             !Read EMEP data and meteo grid from netcdf files
+            !if (.not.use_multiple_receptor_grids_flag) then
             call uEMEP_read_EMEP
             if (use_alternative_meteorology_flag.or.use_alternative_z0_flag) call uEMEP_read_meteo_nc
-        
+            !endif
+            
             !Set the following for the first internal time step only
             if (t_loop.eq.start_time_loop_index) then
         

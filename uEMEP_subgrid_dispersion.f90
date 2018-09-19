@@ -46,7 +46,7 @@
 
     integer traj_max_index
     logical valid_traj
-    real traj_step_size,x_loc,y_loc,L_loc,FFgrid_loc,logz0_loc,u_star0_loc,FF10_loc,zc_loc
+    real traj_step_size,x_loc,y_loc,FFgrid_loc,logz0_loc,u_star0_loc,FF10_loc,zc_loc,invL_loc
     real z0_temp,h_temp
     
     real, allocatable :: temp_target_subgrid(:,:,:)
@@ -474,7 +474,8 @@
                                     h_mix_loc=(meteo_subgrid(i_cross_integral,j_cross_integral,tt,hmix_subgrid_index)+meteo_subgrid(i_cross_target_integral,j_cross_target_integral,tt,hmix_subgrid_index))/2.
                                     !Set the local wind speed and other parameters at emission position
                                     FF_loc=temp_FF_subgrid(i_cross_integral,j_cross_integral)
-                                    L_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
+                                    !L_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
+                                    invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
                                     FFgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index)
                                     logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
                                     u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),0.001)
@@ -493,7 +494,7 @@
                                     endif
                                     
                                     if (stability_scheme_flag.eq.2) then
-                                        call uEMEP_set_dispersion_sigma_PG(L_loc,logz0_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_PG(invL_loc,logz0_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     endif
                                     
                                     if (stability_scheme_flag.eq.3) then
@@ -501,10 +502,16 @@
                                         call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     
                                         !write(*,*) 'IN:  ',x_loc,sig_z_loc,FF_loc
-                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_00_loc,sig_y_00_loc,sig_z_loc,h_emis_loc,h_mix_loc,L_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,sig_z_loc,sig_y_loc,FF_zc_loc)
-                                        !write(*,*) 'OUT: ',x_loc,sig_z_loc,sig_z_00_loc
+                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_0_loc,sig_y_0_loc,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,sig_z_loc,sig_y_loc,FF_zc_loc)
+                                        if (2.eq.1) then
+                                        write(*,'(a,5f12.2,f12.4)') 'OUT KZ FULL: ',x_loc,sig_z_loc,sig_y_loc,h_mix_loc,exp(logz0_loc),invL_loc
+                                        !call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),0.,x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        write(*,'(A,5f12.2,f12.4)') 'OUT KZ EMUL: ',x_loc,sig_z_loc,sig_y_loc,h_mix_loc,exp(logz0_loc),invL_loc
+                                        write(*,*)
+                                        endif
                                         
-                                        !Add the meandering and change in wind angle to the plume
+                                        !Add the meandering and change in wind angle to the plume since not included in Kz calculation
                                         sig_y_loc=sig_y_loc+x_loc*angle_diff(i_cross_integral,j_cross_integral)
                                         
                                         !Use the average of the emisiion height and zc to determine wind speed. Is set to true if wind_level_flag=6
@@ -517,10 +524,13 @@
                                     endif
                                     
                                     if (stability_scheme_flag.eq.4) then
-                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,L_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     endif
                                     
+                                    !Adjust the height of the wind to the average of the emission and plume centre of mass height.
+                                    !This is already the case in the Kz calculation so not repeated here.
                                     if (wind_level_flag.eq.6.and.stability_scheme_flag.ne.3) then
+                                    !if (wind_level_flag.eq.6) then
                                         call z_centremass_gauss_func(sig_z_loc,h_emis_loc,h_mix_loc,zc_loc)
                                         zc_loc=(h_emis_loc+zc_loc)/2.
                                         call u_profile_neutral_val_func(zc_loc,FF10_loc,10.,h_mix_loc,exp(logz0_loc),FF_zc_loc,u_star0_loc)
@@ -728,7 +738,7 @@
 
     integer         traj_max_index
     logical         valid_traj
-    real            traj_step_size,x_loc,y_loc,L_loc,FFgrid_loc,logz0_loc,u_star0_loc,FF10_loc
+    real            traj_step_size,x_loc,y_loc,invL_loc,FFgrid_loc,logz0_loc,u_star0_loc,FF10_loc
     real            z0_temp,h_temp
     
     integer i_pollutant
@@ -1027,7 +1037,8 @@
                                     h_mix_loc=(meteo_subgrid(i_cross_integral,j_cross_integral,tt,hmix_subgrid_index)+meteo_subgrid(i_cross_target_integral,j_cross_target_integral,tt,hmix_subgrid_index))/2.
                                     !Set the local wind speed and other parameters at emission position
                                     FF_loc=temp_FF_subgrid(i_cross_integral,j_cross_integral)
-                                    L_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
+                                    !L_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
+                                    invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
                                     FFgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index)
                                     logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
                                     u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),0.001)
@@ -1045,7 +1056,7 @@
                                         call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     endif
                                     if (stability_scheme_flag.eq.2) then
-                                        call uEMEP_set_dispersion_sigma_PG(L_loc,logz0_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_PG(invL_loc,logz0_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     endif
                                     
                                     if (stability_scheme_flag.eq.3) then
@@ -1054,7 +1065,7 @@
                                         call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     
                                         !write(*,*) 'IN:  ',x_loc,sig_z_loc,FF_loc
-                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_0_loc,sig_y_0_loc,sig_z_loc,h_emis_loc,h_mix_loc,L_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,sig_z_loc,sig_y_loc,FF_zc_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_0_loc,sig_y_0_loc,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,sig_z_loc,sig_y_loc,FF_zc_loc)
                                         !write(*,*) 'OUT: ',x_loc,sig_z_loc,FF_loc
                                         
                                         sig_y_loc=sig_y_loc+x_loc*abs(angle_diff(i_cross_integral,j_cross_integral))
@@ -1067,7 +1078,7 @@
                                     endif
 
                                     if (stability_scheme_flag.eq.4) then
-                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,L_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     endif
                                     
                                     if (wind_level_integral_flag.eq.6.and.stability_scheme_flag.ne.3) then

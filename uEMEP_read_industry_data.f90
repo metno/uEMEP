@@ -29,6 +29,8 @@
     integer i_industry_index,j_industry_index,source_index,i_pollutant
     real ratio_industry_pm25_to_pm10
     real x_industry,y_industry
+    integer, allocatable :: count_subgrid(:,:,:)
+
     
     subsource_index=1
     source_index=industry_index
@@ -97,6 +99,9 @@
     write(unit_logfile,'(a,i)') ' Number of industries: ',n_industries
     
     !Read in emission file
+    allocate (count_subgrid(emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),n_pollutant_loop))
+    count_subgrid=0
+
     !Open the metadata file for reading
     unit_in=20
     open(unit_in,file=pathfilename_industry(2),access='sequential',status='old',readonly)  
@@ -151,31 +156,33 @@
                 if  (trim(industry_emission_comp_str).eq.'nox'.and.pollutant_loop_index(i_pollutant).eq.nox_nc_index) then
                     proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
                         +industry_emission_comp_val
-                    !count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
+                    count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
                 endif
                 if (trim(industry_emission_comp_str).eq.'pm10'.and.(pollutant_loop_index(i_pollutant).eq.pm25_nc_index)) then
                     proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
                         +industry_emission_comp_val*ratio_industry_pm25_to_pm10
-                    !count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
-                    
+                    count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1    
                 endif
                 if (trim(industry_emission_comp_str).eq.'pm10'.and.pollutant_loop_index(i_pollutant).eq.pm10_nc_index) then
                     proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
                         +industry_emission_comp_val
-                    !count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
+                    count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
                  endif
                 if (trim(industry_emission_comp_str).eq.'pm25'.and.(pollutant_loop_index(i_pollutant).eq.pm25_nc_index)) then
                     proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
                         +industry_emission_comp_val
-                    !count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
+                    count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
                 endif
                 if (trim(industry_emission_comp_str).eq.'pm25'.and.(pollutant_loop_index(i_pollutant).eq.pm10_nc_index)) then
                     proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
                         +industry_emission_comp_val
-                    !count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
+                    count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
                 endif
                 
                 !Needs to be changed to be an average if there are more in a grid, or a weighted average based on emission strengths from one of the compounds?
+                !If this is done then emission heights can be different for different compounds
+                !Chane the second index of h_emis to be pollutant, add an emission property subgrid dimension that is pollutant
+                !Find out how high the chimneys need to be for any particular emission. Depends how many there are I guess
                 !emission_properties_subgrid(i_industry_index,j_industry_index,emission_h_index,source_index)=industry_height(industry_number)
                 emission_properties_subgrid(i_industry_index,j_industry_index,emission_h_index,source_index)=h_emis(industry_index,1)
 
@@ -201,6 +208,8 @@
     deallocate(industry_xy_pos)
     deallocate(industry_height)
     deallocate(industry_code)
+    deallocate (count_subgrid)
+
     
     end subroutine uEMEP_read_industry_data
     
