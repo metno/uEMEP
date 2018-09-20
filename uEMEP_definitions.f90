@@ -619,6 +619,8 @@
     
     logical :: include_o3_in_aqi_index=.false.
 
+    integer :: n_kz_iterations=2
+    
     !Special source allocation for no2 based on leaving out the source in the chemistry calculation
     real, allocatable :: comp_source_fraction_subgrid(:,:,:,:,:)
 

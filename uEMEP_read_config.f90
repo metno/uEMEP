@@ -366,6 +366,8 @@
         
         include_o3_in_aqi_index=read_name_logical('include_o3_in_aqi_index',include_o3_in_aqi_index,unit_in,unit_logfile) 
         
+        n_kz_iterations=read_name_integer('n_kz_iterations',n_kz_iterations,unit_in,unit_logfile)
+
         
     close (unit_in)
     

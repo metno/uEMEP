@@ -148,6 +148,7 @@
     real, intent(out) :: sig_z,sig_y,sig_z_0,sig_y_0
     
     real ay,by,az,bz
+    real min_xy
     
     !Set the psedo dispersion parameters for neutral conditions
     
@@ -182,10 +183,11 @@
     bz=0.79 !For z0=0.3, corresponding to the same as K_z for wind height at emission source of 1 m
 
 
+    min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
     !Set sig_y_0 to be half of the average x,y grid size
-    sig_y_0=sig_y_00+(subgrid_delta(1)+subgrid_delta(2))/4.
+    sig_y_0=sig_y_00+min_xy
     !Set sig_z_0 to be the size of the plume after travelling half of the grid size
-    sig_z_0=sig_z_00+az*exp(bz*log(sig_y_0-sig_y_00))
+    sig_z_0=sig_z_00+az*exp(bz*log(min_xy))
 
     !Set sig_y and sig_z = sig_0 + a*x^b +x*delata_wind
     sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta_wind)
@@ -203,6 +205,7 @@
     integer i_bot,i_top,i
     real weight
     real ay,by,az,bz
+    real min_xy
     real ay_pg(6),by_pg(6),az_pg(6),bz_pg(6)
     real a_invL(6),b_invL(6),invL(6)
     !Use ASME parameters
@@ -215,6 +218,7 @@
     data b_invL /0.029,0.029,0.018,0.0,-0.018,-0.036/
     
     invL=a_invL+b_invL*logz0
+    min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
 
     !Find and interpolate the stability class based on input invL
     if (invL_in.le.invL(1)) then
@@ -242,9 +246,9 @@
     bz=bz_pg(i_bot)*(1.-weight)+bz_pg(i_top)*weight
     
     !Set sig_y_0 to be half of the average x,y grid size
-    sig_y_0=sig_y_00+(subgrid_delta(1)+subgrid_delta(2))/4.
+    sig_y_0=sig_y_00+min_xy
     !Set sig_z_0 to be the size of the plume after travelling half of the grid size
-    sig_z_0=sig_z_00+az*exp(bz*log(sig_y_0-sig_y_00))
+    sig_z_0=sig_z_00+az*exp(bz*log(min_xy))
 
     !Set sig_y and sig_z = sig_0 + a*x^b +x*delata_wind
     sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta_wind)
@@ -263,9 +267,11 @@
     
     real invL_in,zz_pbl,z0
     real ay,by,az,bz
+    real min_xy
     real z0_ref,zz_pbl_ref,zz_pbl_L,logz
     
     !invL_in=1./L
+    min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
     
     !Remove the stable cases as these are not normally done in the full K_z formulation
     !invL_in=min(invL_in,1./100.)
@@ -324,14 +330,19 @@
     by=min(max(by,0.4),1.2)
     
     !Set sig_y_0 to be half of the average x,y grid size
-    sig_y_0=sig_y_00+(subgrid_delta(1)+subgrid_delta(2))/4.
+    sig_y_0=sig_y_00+min_xy
     
     !Set sig_z_0 to be the size of the plume after travelling half of the grid size
-    sig_z_0=sig_z_00+az*exp(bz*log(sig_y_0-sig_y_00))
+    !sig_z_0=sig_z_00+az*exp(bz*log(min_xy))
 
     !Set sig_y and sig_z = sig_0 + a*x^b +x*delata_wind
-    sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta_wind)
-    sig_z=sig_z_0+az*exp(bz*log(x))
+    sig_y=sig_y_0+ay*exp(by*log(x+min_xy))+(x+min_xy)*abs(delta_wind)
+    !sig_z=sig_z_0+az*exp(bz*log(x))
+    !if (x.lt.10.) write(*,*) x,sig_z_00,sig_z
+    sig_z_0=sig_z_00+az*exp(bz*log(min_xy))
+    sig_z=sig_z_00+az*exp(bz*log(x+min_xy))
+    !if (x.lt.10.) write(*,*) x+min_xy,sig_z_00,sig_z
+    !if (x.lt.10.) write(*,*)
 
     !if (zz_pbl.le.0.or.sig_z.le.0.or.sig_y.le.0) then
     !    write(*,'(7f)') az,bz,ay,by,sig_z,sig_y,x

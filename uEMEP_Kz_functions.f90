@@ -10,11 +10,12 @@
 !   Calculates dispersion based on Kz and wind profiles
 !==========================================================================
 
-    subroutine uEMEP_set_dispersion_sigma_Kz(x_in,sig_z0,sig_y0,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta,u_star0_in,average_zc_h_in_Kz_flag,sig_z,sig_y,u_zc)
+    subroutine uEMEP_set_dispersion_sigma_Kz(x_in,sig_z00,sig_y00,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta,u_star0_in,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z,sig_y,u_zc)
 
     implicit none
     
-    real, intent(in) :: x_in,sig_z0,sig_y0,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta(2),u_star0_in
+    real, intent(in) :: x_in,sig_z00,sig_y00,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta(2),u_star0_in
+    integer, intent(in) :: n_kz_iterations
     logical, intent(in) :: average_zc_h_in_Kz_flag
     real, intent(out) :: sig_z,sig_y,u_zc
     
@@ -25,26 +26,26 @@
     real z0,zc,ustar0,u_hmix
     real :: K_min=0.001
     real l_t,f_t
-    real u_star0,u_star0_val,tau,sig_z_0,zc_start,K_z_start,u_zc_start
-    real min_x,x
+    real u_star0,u_star0_val,tau,zc_start,K_z_start,u_zc_start
+    real min_xy,x
     
-    n_loop=1
+    n_loop=n_kz_iterations
     
     L=1.e6
     if (abs(invL).gt.1./L) L=1./invL
     
     z0=exp(logz0)
-    min_x=(subgrid_delta(1)+subgrid_delta(2))/4.
+    min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
     !min_x=1.
-    x=max(x_in,min_x)
-    !x=x_in
+    !x=max(x_in,min_x)
+    x=x_in+min_xy
     
     !Initialise sig_z
     sig_z=sig_z_in
     
     !If the emission is above the boundary layer height then set the initial plume guess to its low turbulence form
     !Same values used in the emulator (1/1000 slender plume)
-    if (z_emis_loc/h_mix_loc.ge.1.0) sig_z=sig_z_0+0.001*exp(1.0*log(x))
+    if (z_emis_loc/h_mix_loc.ge.1.0) sig_z=sig_z00+0.001*exp(1.0*log(x))
     
     !Set ustar0 for K_z to the value from EMEP
     u_star0=u_star0_in
@@ -56,6 +57,12 @@
     !call Kz_func(h_mix_loc,L,u_star0,zc_start,K_min,K_z_start)
     !call u_profile_val_func(zc_start,L,u_val,z_val,h_mix_loc,z0,u_zc_start,u_star0,u_hmix)
     
+    !Calculate the Lagrangian time scale before the iteration loop using a minimum distance for this to make it non zero on the grid
+    l_t=max(x,min_xy)/u_zc
+    tau=0.6*max(min(z_tau_max,z_emis_loc),z_tau_min)/u_star0
+    f_t=1.+tau/l_t*(exp(-l_t/tau)-1.)
+    !write(*,'(i,4f)') j,tau,l_t,f_t,u_zc
+
     !All functions commented out 4 secs
     !All functions included 15 secs
     !Without u_profile 11 secs
@@ -87,23 +94,17 @@
         !Take average of K_z_start(x=0) and K_z(x)
         !K_z=(K_z+K_z_start)/2.
         
-        !Calculate the Lagrangian time scale
-        l_t=x/u_zc
-        tau=0.6*max(min(z_tau_max,z_emis_loc),z_tau_min)/u_star0
-        f_t=1.+tau/l_t*(exp(-l_t/tau)-1.)
-        !write(*,'(i,4f)') j,tau,l_t,f_t,u_zc
         
         !Calculate sig_z for the next iteration, using the sig_z0 from the neutral plume approximation
-        sig_z=sig_z0+sqrt(2.*K_z*l_t*f_t)
+        sig_z=sig_z00+sqrt(2.*K_z*l_t*f_t)
         !write(*,'(i,1f)') j,sig_z
         
     enddo
     
     !Calculate sigma_y at the maximum K, around 0.25 of the boundary layer height
     call Kz_func(h_mix_loc,L,u_star0,h_mix_loc*0.25,K_min,K_y)
-    sig_y=sig_y0+sqrt(2.*K_y*l_t*f_t)
+    sig_y=sig_y00+min_xy+sqrt(2.*K_y*l_t*f_t)
     
-    !write(*,*) x,sig_z,sig_y
     
     end subroutine uEMEP_set_dispersion_sigma_Kz
     
