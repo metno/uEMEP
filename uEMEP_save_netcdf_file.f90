@@ -405,7 +405,7 @@
     enddo
     endif
 
-    !Save the emissions interpolated to the target grid
+    !Save population interpolated to the target grid
     if (save_population) then
     variable_type='float'
     unit_str="inhabitants/grid"   
@@ -1092,7 +1092,7 @@
         call check(  nf90_put_att(ncid, nf90_global, "title", trim(title_str)) )
         call check(  nf90_put_att(ncid, nf90_global, "Model", "uEMEP" ) )        
     
-        !Projection data
+        !Projection data          
         call check(  nf90_def_var(ncid, "projection_utm", NF90_int, proj_varid) )
         call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", 6378137.0 ) )
         call check(  nf90_put_att(ncid, proj_varid, "inverse_flattening", 298.257222101 ) )
@@ -1102,8 +1102,6 @@
         call check(  nf90_put_att(ncid, proj_varid, "latitude_of_projection_origin", 0 ) )
         call check(  nf90_put_att(ncid, proj_varid, "false_easting", 500000. ) )
         call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", utm_lon0 ) )
-        !call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", 6378140.0 ) )
-        !call check(  nf90_put_att(ncid, proj_varid, "semi_minor_axis", 6356750.0 ) )
   
         !Define the dimensions
         call check(  nf90_def_dim(ncid,"time",NF90_UNLIMITED, time_dimid) )

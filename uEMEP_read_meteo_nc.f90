@@ -1,4 +1,6 @@
-!uEMEP_read_EMEP
+!uEMEP_read_meteo_nc
+    !Reads in AROME data in 2 files, 3 for meteo and 4 for z0
+    !These two files must have the same x,y dimmensions as they are placed in the same grid
     
     subroutine uEMEP_read_meteo_nc
     
@@ -53,6 +55,10 @@
     
     !Temporary files for roatating wind field
     real, allocatable :: temp_meteo_var3d_nc(:,:,:,:)
+    
+    !Daily mean temperature variables
+    integer DMT_start_time_nc_index,DMT_end_time_nc_index,DMT_dim_length_nc
+
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -286,7 +292,7 @@
         
         !Allocate the nc arrays for reading
         if (.not.allocated(val_dim_meteo_nc)) allocate (val_dim_meteo_nc(maxval(dim_length_meteo_nc),num_dims_meteo_nc)) !x, y, z and time dimmension values
-        if (.not.allocated(unit_dim_nc)) allocate (unit_dim_nc(num_dims_meteo_nc)) !x, y, z and time dimmension values
+        if (.not.allocated(unit_dim_meteo_nc)) allocate (unit_dim_meteo_nc(num_dims_meteo_nc)) !x, y, z and time dimmension values
         if (.not.allocated(var1d_nc_dp)) allocate (var1d_nc_dp(maxval(dim_length_meteo_nc))) 
         if (.not.allocated(var2d_nc_dp)) allocate (var2d_nc_dp(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index))) !Lat and lon
 
@@ -304,9 +310,9 @@
             !write(*,*) id_nc, trim(dim_name_nc(i)), var_id_nc(i),dim_length_nc(i)
             var1d_nc_dp=0.
             !write(*,*) 'HERE',i,dim_start_nc(i),dim_length_nc(i)
-            unit_dim_nc(i)=''
+            unit_dim_meteo_nc(i)=''
             if (status_nc .EQ. NF90_NOERR) then
-                status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_nc(i))
+                status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
                 status_nc = NF90_GET_VAR (id_nc, var_id_nc,var1d_nc_dp(1:dim_length_meteo_nc(i)),start=(/dim_start_meteo_nc(i)/),count=(/dim_length_meteo_nc(i)/));meteo_var1d_nc(1:dim_length_meteo_nc(i),i)=real(var1d_nc_dp(1:dim_length_meteo_nc(i)))  
                 !Use the first file to give valid time stamps
                 if (i_file.eq.3.and.i.eq.time_dim_nc_index) then
@@ -320,7 +326,7 @@
                 endif            
             
                 !Convert from meters to km for AROME data if necessary
-                if ((i.eq.x_dim_nc_index.or.i.eq.y_dim_nc_index).and.trim(unit_dim_nc(i)).eq.'km') then
+                if ((i.eq.x_dim_nc_index.or.i.eq.y_dim_nc_index).and.trim(unit_dim_meteo_nc(i)).eq.'km') then
                     write(unit_logfile,'(A)') 'Units of x y data are in kilometres. Converting to metres'
                     val_dim_meteo_nc(1:dim_length_meteo_nc(i),i)=val_dim_meteo_nc(1:dim_length_meteo_nc(i),i)*1000.
                     meteo_var1d_nc(1:dim_length_meteo_nc(i),i)=meteo_var1d_nc(1:dim_length_meteo_nc(i),i)*1000.
@@ -373,7 +379,7 @@
                     !write(*,*) dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(z_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)/))
                     !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                    !var4d_nc(:,:,:,:,i,i_source)=real(temp_var4d_nc(:,:,:,:))
+                    !var4d_nc(:,val_dim_nc:,:,:,i,i_source)=real(temp_var4d_nc(:,:,:,:))
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i)),maxval(meteo_var4d_nc(1:dim_length_meteo_nc(x_dim_nc_index),1:dim_length_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i))
                 else
                     write(unit_logfile,'(8A,8A)') ' Cannot find a correct dimmension for: ',trim(var_name_nc_temp)
@@ -385,6 +391,31 @@
 
         enddo
                     
+        !Read in 2m temperature completely to get the daily average for home heating
+        !if (use_RWC_emission_data.and.save_emissions_for_EMEP(heating_index).and.i_file.eq.3) then
+        if (use_RWC_emission_data.and.i_file.eq.3) then
+            DMT_start_time_nc_index=start_time_meteo_nc_index
+            DMT_end_time_nc_index=end_time_meteo_nc_index
+            !DMT_start_time_nc_index=save_emissions_start_index
+            !DMT_end_time_nc_index=save_emissions_end_index
+            
+            DMT_dim_length_nc=DMT_end_time_nc_index-DMT_start_time_nc_index+1
+            if (allocated(DMT_EMEP_grid_nc)) deallocate (DMT_EMEP_grid_nc)
+            if (.not.allocated(DMT_EMEP_grid_nc)) allocate (DMT_EMEP_grid_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),DMT_dim_length_nc))
+            
+            !write(*,*) DMT_start_time_nc_index,DMT_end_time_nc_index,DMT_dim_length_nc
+            if (calculate_source(heating_index).and.i_file.eq.3) then
+                var_name_nc_temp=var_name_meteo_nc(t2m_nc_index)
+                status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                status_nc = NF90_GET_VAR (id_nc, var_id_nc, DMT_EMEP_grid_nc(:,:,:),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),1,DMT_start_time_nc_index/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),1,DMT_dim_length_nc/))
+                write(unit_logfile,'(3A,2f16.4)') ' Reading: ',trim(var_name_nc_temp),' (min, max): ',minval(DMT_EMEP_grid_nc),maxval(DMT_EMEP_grid_nc)
+                DMT_EMEP_grid_nc(:,:,1)=sum(DMT_EMEP_grid_nc,3)/DMT_dim_length_nc-273.13
+                write(unit_logfile,'(3A,2f16.4)') ' Calculating mean: ',trim('Daily mean temperature'),' (min, max): ',minval(DMT_EMEP_grid_nc(:,:,1)),maxval(DMT_EMEP_grid_nc(:,:,1))
+            
+            endif
+        
+        endif
+
         status_nc = NF90_CLOSE (id_nc)
                     
     enddo !End file loop
@@ -408,10 +439,12 @@
         !Put everything in 3d data since it is all surface values
             write(unit_logfile,'(A)') ' Calculating alternative meteorological data'
             write(unit_logfile,'(A,4i)') ' Dimmensions: ',dim_length_meteo_nc
+            !logz0 is read in as z0 and must be converted to logz0 
             where (meteo_var3d_nc(:,:,:,logz0_nc_index).lt.0.01 ) meteo_var3d_nc(:,:,:,logz0_nc_index)=0.01 
             meteo_var3d_nc(:,:,:,logz0_nc_index)=log(meteo_var3d_nc(:,:,:,logz0_nc_index))
             
-            !Assumes that the first step is 0 and data is hourly. So that the start time step for meteo must correspond to the fsecond hour of any calculation
+            meteo_var3d_nc(:,:,:,t2m_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,:,t2m_nc_index)
+            !Assumes that the first step is 0 and data is hourly. So that the start time step for meteo must correspond to the second hour of any calculation
             t=1
             meteo_var3d_nc(:,:,t,Hflux_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,t,Hflux_nc_index)/3600.
             meteo_var3d_nc(:,:,t,uw_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,t,uw_nc_index)/3600.
@@ -424,10 +457,14 @@
             enddo
             !Approximate density of air used (1.2 kg/m^3 +/- 10%)
             meteo_var3d_nc(:,:,:,ustar_nc_index)=sqrt(sqrt(meteo_var3d_nc(:,:,:,uw_nc_index)**2+meteo_var3d_nc(:,:,:,vw_nc_index)**2)/1.2)
-
+            where (meteo_var3d_nc(:,:,:,ustar_nc_index).lt.ustar_min) meteo_var3d_nc(:,:,:,ustar_nc_index)=ustar_min
+            
             !Approximate temperature (273 +/- 10%)
             !Have inserted the correct temperature now
-            meteo_var3d_nc(:,:,:,invL_nc_index)=meteo_var3d_nc(:,:,:,Hflux_nc_index)/1.2/1004.*0.4*9.8/meteo_var3d_nc(:,:,:,t2m_nc_index)/meteo_var3d_nc(:,:,:,ustar_nc_index)**3
+            meteo_var3d_nc(:,:,:,invL_nc_index)=(meteo_var3d_nc(:,:,:,Hflux_nc_index)/1.2/1004.*0.4*9.8/meteo_var3d_nc(:,:,:,t2m_nc_index))/meteo_var3d_nc(:,:,:,ustar_nc_index)**3
+            !Limit this to realistic values. Even these are extreme
+            where (meteo_var3d_nc(:,:,:,invL_nc_index).lt.-1.0) meteo_var3d_nc(:,:,:,invL_nc_index)=-1.0
+            where (meteo_var3d_nc(:,:,:,invL_nc_index).gt.1.0) meteo_var3d_nc(:,:,:,invL_nc_index)=1.0
             
             !Put the 10 m wind vectors as the lowest grid level
             H_meteo=val_dim_meteo_nc(surface_level_nc,z_dim_nc_index)
@@ -436,7 +473,7 @@
             meteo_var3d_nc(:,:,:,vgrid_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,:,v10_nc_index)
             meteo_var3d_nc(:,:,:,FF10_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,:,FF10_nc_index)
             
-            !Smooth the boundary layer height (running mean) and set minimum 10 100 m
+            !Smooth the boundary layer height (running mean) and set minimum 
             meteo_var3d_nc(:,:,:,hmix_nc_index)=0.
             do j=2,dim_length_meteo_nc(y_dim_nc_index)-1
             do i=2,dim_length_meteo_nc(x_dim_nc_index)-1
@@ -515,15 +552,15 @@
   
         !Check meteo time which comes in seconds since 1970. Converts to days.
         if (use_alternative_meteorology_flag) then
-        date_num_temp=val_dim_meteo_nc(1,time_dim_nc_index)/3600./24.+0.1/24.
-        call number_to_date(date_num_temp,date_array,ref_year_meteo)
-        write(unit_logfile,'(a,i6)') ' Time dimmension meteo: ',dim_length_meteo_nc(time_dim_nc_index)
-        write(unit_logfile,'(a,6i6)') ' Date start meteo = ',date_array
-        date_num_temp=dble(ceiling(val_dim_meteo_nc(dim_length_meteo_nc(time_dim_nc_index),time_dim_nc_index)/3600.))/24.
-        date_num_temp=val_dim_meteo_nc(dim_length_meteo_nc(time_dim_nc_index),time_dim_nc_index)/3600./24.+0.1/24.
-        call number_to_date(date_num_temp,date_array,ref_year_meteo)
-        write(unit_logfile,'(a,6i6)') ' Date end meteo =   ',date_array
-        !write(*,*) start_time_meteo_nc_index,valid_dim_length_meteo_nc(time_dim_nc_index)
+            date_num_temp=val_dim_meteo_nc(1,time_dim_nc_index)/3600./24.+30./24./3600.
+            call number_to_date(date_num_temp,date_array,ref_year_meteo)
+            write(unit_logfile,'(a,i6)') ' Time dimension meteo: ',dim_length_meteo_nc(time_dim_nc_index)
+            write(unit_logfile,'(a,6i6)') ' Date start meteo = ',date_array
+            !date_num_temp=dble(ceiling(val_dim_meteo_nc(dim_length_meteo_nc(time_dim_nc_index),time_dim_nc_index)/3600.))/24.
+            date_num_temp=val_dim_meteo_nc(dim_length_meteo_nc(time_dim_nc_index),time_dim_nc_index)/3600./24.+30./24./3600.
+            call number_to_date(date_num_temp,date_array,ref_year_meteo)
+            write(unit_logfile,'(a,6i6)') ' Date end meteo =   ',date_array
+            !write(*,*) start_time_meteo_nc_index,valid_dim_length_meteo_nc(time_dim_nc_index)
         endif
         !do t=1,dim_length_meteo_nc(time_dim_nc_index)
         !    date_num_temp=val_dim_meteo_nc(t,time_dim_nc_index)/3600./24.+0.1/24.
@@ -535,6 +572,7 @@
         if (allocated(var1d_nc_dp)) deallocate (var1d_nc_dp)
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
         if (allocated(temp_meteo_var3d_nc)) deallocate (temp_meteo_var3d_nc)
+        if (allocated(meteo_var4d_nc)) deallocate (meteo_var4d_nc) 
  
     end subroutine uEMEP_read_meteo_nc
     

@@ -21,7 +21,7 @@
     integer RWC_HDD11_index,RWC_HDD15_index
     parameter (RWC_HDD11_index=1,RWC_HDD15_index=2)
     integer*8 ssb_id
-    real x_ssb,y_ssb
+    real x_ssb,y_ssb,lon_ssb,lat_ssb
     integer i_ssb_index,j_ssb_index
     integer :: threshold_index=0
     real :: f_easting=2.e6
@@ -131,6 +131,12 @@
         ssb_id=RWC_grid_id(count)
         x_ssb=ssb_id/10000000-f_easting+ssb_dx/2.
         y_ssb=mod(ssb_id,10000000)+ssb_dy/2.
+        
+        !Convert to EMEP coordinates
+        if (save_emissions_for_EMEP(heating_index)) then
+            call UTM2LL(utm_zone,y_ssb,x_ssb,lat_ssb,lon_ssb)
+            call lb2lambert2_uEMEP(x_ssb,y_ssb,lon_ssb,lat_ssb,EMEP_projection_attributes)
+         endif
                 
         !Find the grid index it belongs to
         i_ssb_index=1+floor((x_ssb-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))

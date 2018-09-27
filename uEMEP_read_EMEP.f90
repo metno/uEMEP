@@ -42,7 +42,7 @@
     
     integer i_pollutant,p_loop,p_loop_index
     
-    integer dmt_start_time_nc_index,dmt_end_time_nc_index,dmt_dim_length_nc
+    integer DMT_start_time_nc_index,DMT_end_time_nc_index,DMT_dim_length_nc
 
 
     !Temporary reading variables
@@ -99,7 +99,7 @@
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
         if (allocated(lc_var3d_nc)) deallocate (lc_var3d_nc)
         if (allocated(lc_var4d_nc)) deallocate (lc_var4d_nc)
-        if (allocated(dmt_EMEP_grid_nc)) deallocate (dmt_EMEP_grid_nc) !Daily mean temperature
+        if (allocated(DMT_EMEP_grid_nc)) deallocate (DMT_EMEP_grid_nc) !Daily mean temperature
         
     !Loop through the EMEP files containing the data
 
@@ -519,18 +519,18 @@
            
         !Read in 2m temperature completely to get the daily average for home heating
         if (use_RWC_emission_data) then
-            dmt_start_time_nc_index=start_time_nc_index
-            dmt_end_time_nc_index=end_time_nc_index
-            dmt_dim_length_nc=dmt_end_time_nc_index-dmt_start_time_nc_index+1
-            if (.not.allocated(dmt_EMEP_grid_nc)) allocate (dmt_EMEP_grid_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dmt_dim_length_nc))
+            DMT_start_time_nc_index=start_time_nc_index
+            DMT_end_time_nc_index=end_time_nc_index
+            DMT_dim_length_nc=DMT_end_time_nc_index-DMT_start_time_nc_index+1
+            if (.not.allocated(DMT_EMEP_grid_nc)) allocate (DMT_EMEP_grid_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),DMT_dim_length_nc))
             
             if (calculate_source(heating_index).and.i_file.eq.1) then
                 var_name_nc_temp=var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index)
                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc, dmt_EMEP_grid_nc,start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dmt_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dmt_dim_length_nc/))
-                write(unit_logfile,'(3A,2f16.4)') ' Reading: ',trim(var_name_nc_temp),' (min, max): ',minval(dmt_EMEP_grid_nc),maxval(dmt_EMEP_grid_nc)
-                dmt_EMEP_grid_nc(:,:,1)=sum(dmt_EMEP_grid_nc,3)/dmt_dim_length_nc-273.13
-                write(unit_logfile,'(3A,2f16.4)') ' Calculating mean: ',trim(var_name_nc_temp),' (min, max): ',minval(dmt_EMEP_grid_nc(:,:,1)),maxval(dmt_EMEP_grid_nc(:,:,1))
+                status_nc = NF90_GET_VAR (id_nc, var_id_nc, DMT_EMEP_grid_nc,start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),DMT_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),DMT_dim_length_nc/))
+                write(unit_logfile,'(3A,2f16.4)') ' Reading: ',trim(var_name_nc_temp),' (min, max): ',minval(DMT_EMEP_grid_nc),maxval(DMT_EMEP_grid_nc)
+                DMT_EMEP_grid_nc(:,:,1)=sum(DMT_EMEP_grid_nc,3)/DMT_dim_length_nc-273.13
+                write(unit_logfile,'(3A,2f16.4)') ' Calculating mean: ',trim(var_name_nc_temp),' (min, max): ',minval(DMT_EMEP_grid_nc(:,:,1)),maxval(DMT_EMEP_grid_nc(:,:,1))
             
             endif
         

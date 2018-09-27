@@ -43,6 +43,11 @@
     !Read positions of receptor points (usually observations) for specifying multiple receptor grids or calculation points within a single grid
     call uEMEP_read_receptor_data
     
+    !Enter the routine for saving emissions to EMEP. Will stop after this
+    if (save_emissions_for_EMEP(allsource_index)) then
+        call uEMEP_calculate_emissions_for_EMEP
+    endif
+    
     !Set the grid loop (g_loop) extent based on use_multiple_receptor_grids_flag or not
     if (use_multiple_receptor_grids_flag) then
         start_grid_loop_index=1

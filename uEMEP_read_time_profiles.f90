@@ -154,11 +154,23 @@
             if (source_index_in(i_source).eq.heating_index.and.use_RWC_emission_data) then
                 do j=1,emission_subgrid_dim(y_dim_index,source_index_in(i_source))
                 do i=1,emission_subgrid_dim(x_dim_index,source_index_in(i_source))
-                    i_cross=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,source_index_in(i_source))
-                    j_cross=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index_in(i_source))
-                    hdd_temp=max(0.,HDD_threshold_value-dmt_EMEP_grid_nc(i_cross,j_cross,1))
+                    if (save_emissions_for_EMEP(allsource_index)) then
+                        !Need to cross reference the meteo grid to the emission grid as this is not done normally
+                        !Tricky using the two different emep grids?
+                        i_cross=1+floor((x_emission_subgrid(i,j,allsource_index)-meteo_var1d_nc(1,lon_nc_index))/meteo_dgrid_nc(lon_nc_index)+0.5)
+                        j_cross=1+floor((y_emission_subgrid(i,j,allsource_index)-meteo_var1d_nc(1,lat_nc_index))/meteo_dgrid_nc(lat_nc_index)+0.5)     
+                        !Because the meteo grid can be smaller than the EMEP grid then need to limit it
+                        !write(*,'(6i12)') i,j,i_cross,j_cross,dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index)
+                        i_cross=min(max(1,i_cross),dim_length_meteo_nc(x_dim_nc_index))
+                        j_cross=min(max(1,j_cross),dim_length_meteo_nc(y_dim_nc_index))
+                        
+                    else
+                        i_cross=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,source_index_in(i_source))
+                        j_cross=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index_in(i_source))
+                    endif
+                    hdd_temp=max(0.,HDD_threshold_value-DMT_EMEP_grid_nc(i_cross,j_cross,1))
                     emission_time_profile_subgrid(i,j,t,source_index_in(i_source),:)=val_hour_of_week_input(hour_of_week_index,i_source)/24.*hdd_temp
-                    !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source)/24.,hdd_temp,HDD_threshold_value,dmt_EMEP_grid_nc(i_cross,j_cross,1)
+                    !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source)/24.,hdd_temp,HDD_threshold_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)
                     !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,emission_time_profile_subgrid(i,j,t,source_index_in(i_source),1)
                 enddo
                 enddo

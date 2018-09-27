@@ -11,7 +11,7 @@
     integer rl_length_short
     integer exists
     logical nxtdat_flag
-    real sub_nodes_x(5000),sub_nodes_y(5000)
+    real sub_nodes_x(5000),sub_nodes_y(5000),sub_nodes_lon(5000),sub_nodes_lat(5000)
     integer temp_id,n_subnodes,temp_road_type,temp_nlanes
     real temp_adt,temp_hdv,temp_speed,temp_width
     integer counter
@@ -84,6 +84,13 @@
             read(unit_in,*) sub_nodes_x(1)
             read(unit_in,*) sub_nodes_y(1)
     
+            !Convert to EMEP coordinates from UTM to lambert. No choices here
+            if (save_emissions_for_EMEP(traffic_index)) then
+                call UTM2LL(utm_zone,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_lat(1),sub_nodes_lon(1))
+                call lb2lambert2_uEMEP(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1),EMEP_projection_attributes)
+                !write(*,*) sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1)
+            endif
+            
             !Test position within emission region
             if (sub_nodes_x(1).ge.x_grid_min.and.sub_nodes_x(1).le.x_grid_max &
                 .and.sub_nodes_y(1).ge.y_grid_min.and.sub_nodes_y(1).le.y_grid_max) then

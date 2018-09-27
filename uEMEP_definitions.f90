@@ -605,7 +605,7 @@
     real, allocatable :: RWC_grid_emission(:,:)
     real, allocatable :: RWC_grid_HDD(:,:)
     integer*8, allocatable :: RWC_grid_id(:)
-    real, allocatable :: dmt_EMEP_grid_nc(:,:,:)
+    real, allocatable :: DMT_EMEP_grid_nc(:,:,:)
     integer :: HDD_threshold_value=15
     logical :: use_RWC_emission_data=.false.
     
@@ -623,6 +623,11 @@
     
     !Special source allocation for no2 based on leaving out the source in the chemistry calculation
     real, allocatable :: comp_source_fraction_subgrid(:,:,:,:,:)
+    
+    logical :: save_emissions_for_EMEP(n_source_index)=.false.
+    character(256) :: pathname_emissions_for_EMEP=''
+    integer :: save_emissions_start_index=1
+	integer :: save_emissions_end_index=24
 
     end module uEMEP_definitions
     

@@ -15,7 +15,7 @@
     real, allocatable :: adt_car_temp(:)
     real, allocatable :: adt_truck_temp(:)
     real x_subgrid_in(2),y_subgrid_in(2)
-    real x_line_in(2),y_line_in(2)
+    real x_line_in(2),y_line_in(2),lat_line_in(2),lon_line_in(2)
     integer i_traffic_index(2),j_traffic_index(2)
     character(256) temp_name
     logical exists
@@ -107,9 +107,19 @@
         x_line_in=inputdata_rl(ro,x1_rl_index:x2_rl_index)
         y_line_in=inputdata_rl(ro,y1_rl_index:y2_rl_index)
         
+        !Convert to EMEP coordinates from UTM to lambert. No choices here
+        if (save_emissions_for_EMEP(traffic_index)) then
+            do i=1,2
+                call UTM2LL(utm_zone,y_line_in(i),x_line_in(i),lat_line_in(i),lon_line_in(i))
+                call lb2lambert2_uEMEP(x_line_in(i),y_line_in(i),lon_line_in(i),lat_line_in(i),EMEP_projection_attributes)
+            enddo
+            !write(*,*) x_line_in(1),y_line_in(1),lon_line_in(1),lat_line_in(1)
+        endif
+        
+        
         i_traffic_index=1+floor((x_line_in-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
         j_traffic_index=1+floor((y_line_in-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
-
+ 
         if ((i_traffic_index(1).ge.1.or.i_traffic_index(2).ge.1).and.(j_traffic_index(1).ge.1.or.j_traffic_index(2).ge.1).and. &
             (i_traffic_index(1).le.emission_subgrid_dim(x_dim_index,source_index).or.i_traffic_index(2).le.emission_subgrid_dim(x_dim_index,source_index)).and. &
             (j_traffic_index(1).le.emission_subgrid_dim(y_dim_index,source_index).or.j_traffic_index(2).le.emission_subgrid_dim(y_dim_index,source_index))) then
@@ -166,7 +176,7 @@
                     endif
 
                     !Set the sigma values according to traffic speed and road width using proxy weighting
-                    if (use_traffic_for_sigma0_flag) then
+                    if (use_traffic_for_sigma0_flag.and..not.save_emissions_for_EMEP(traffic_index)) then
                         emission_properties_subgrid(i,j,emission_sigy00_index,source_index)=emission_properties_subgrid(i,j,emission_sigy00_index,source_index) &
                             +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro,1)*sqrt((inputdata_rl(ro,width_rl_index)/2.)**2+sigma0_traffic_func(inputdata_rl(ro,speed_rl_index))**2)
                         emission_properties_subgrid(i,j,emission_sigz00_index,source_index)=emission_properties_subgrid(i,j,emission_sigz00_index,source_index) &

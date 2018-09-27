@@ -15,7 +15,7 @@
     character(256) format_temp
     
     integer :: unit_in=30
-    integer i_config
+    integer i_config,i_source
     
     !Functions
     character(256) replace_string_char
@@ -367,6 +367,23 @@
         include_o3_in_aqi_index=read_name_logical('include_o3_in_aqi_index',include_o3_in_aqi_index,unit_in,unit_logfile) 
         
         n_kz_iterations=read_name_integer('n_kz_iterations',n_kz_iterations,unit_in,unit_logfile)
+
+        
+        save_emissions_for_EMEP(traffic_index)=read_name_logical('save_emissions_for_EMEP(traffic_index)',save_emissions_for_EMEP(traffic_index),unit_in,unit_logfile)        
+        save_emissions_for_EMEP(shipping_index)=read_name_logical('save_emissions_for_EMEP(shipping_index)',save_emissions_for_EMEP(shipping_index),unit_in,unit_logfile)        
+        save_emissions_for_EMEP(industry_index)=read_name_logical('save_emissions_for_EMEP(industry_index)',save_emissions_for_EMEP(industry_index),unit_in,unit_logfile)        
+        save_emissions_for_EMEP(heating_index)=read_name_logical('save_emissions_for_EMEP(heating_index)',save_emissions_for_EMEP(heating_index),unit_in,unit_logfile)        
+        save_emissions_for_EMEP(agriculture_index)=read_name_logical('save_emissions_for_EMEP(agriculture_index)',save_emissions_for_EMEP(agriculture_index),unit_in,unit_logfile)        
+        
+        !Set all source index to true if any of the sources are to be saved. allsource_index defines if the routine is called or not
+        do i_source=1,n_source_index
+            if (save_emissions_for_EMEP(i_source)) save_emissions_for_EMEP(allsource_index)=.true.
+        enddo
+        
+        pathname_emissions_for_EMEP=read_name_char('pathname_emissions_for_EMEP',pathname_emissions_for_EMEP,unit_in,unit_logfile)
+        
+        save_emissions_start_index=read_name_integer('save_emissions_start_index',save_emissions_start_index,unit_in,unit_logfile)
+        save_emissions_end_index=read_name_integer('save_emissions_end_index',save_emissions_end_index,unit_in,unit_logfile)
 
         
     close (unit_in)
