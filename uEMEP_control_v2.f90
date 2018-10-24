@@ -156,10 +156,14 @@
 
                 !Read and subgrid shipping data
                 if (calculate_source(shipping_index)) then
-                    !If necessary aggregate shipping ddata first
+                    !If necessary aggregate shipping data first
                     call uEMEP_preaggregate_shipping_asi_data
                     !Read in shipping data
-                    call uEMEP_read_shipping_asi_data
+                    if (read_weekly_shipping_data_flag) then
+                        call uEMEP_read_weekly_shipping_asi_data
+                    else
+                        call uEMEP_read_shipping_asi_data
+                    endif
                 endif
 
                 !Read in proxy data fro home heating. Currently dwelling density

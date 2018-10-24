@@ -628,6 +628,8 @@
     character(256) :: pathname_emissions_for_EMEP=''
     integer :: save_emissions_start_index=1
 	integer :: save_emissions_end_index=24
+    
+    logical :: read_weekly_shipping_data_flag=.false.
 
     end module uEMEP_definitions
     

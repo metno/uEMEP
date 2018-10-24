@@ -523,18 +523,19 @@
 !----------------------------------------------------------------------
 
 !----------------------------------------------------------------------
-    function summer_time_europe(a)
+    function summer_time_europe(a_in)
     
     implicit none
     
     logical summer_time_europe
-    integer a(6)
+    integer a(6),a_in(6)
     integer b_start(6),b_end(6)
     integer ref_year
     integer year
     double precision datenum_start,datenum_end,datenum
     double precision date_to_number
 
+    a=a_in
     a(2)=2
     ref_year=2000
     b_start=0

@@ -81,9 +81,11 @@
     format_temp='yyyymmdd'
     call datestr_to_date(config_date_str,format_temp,a_start)
     !Assumes it starts at hour 1
-    a_start(4)=save_emissions_start_index
+    a_start(4)=1
     a_start(5:6)=0
     date_num_start=date_to_number(a_start,ref_year_EMEP)
+    !Move the starting time according to the index value given (index is the number of hours)
+    date_num_start=date_num_start+dble(save_emissions_start_index-1)/24.
     !long_name = "time at middle of period";
     unit_dim_nc(time_dim_nc_index)="days since 1900-1-1 0:0:0";
     do t=1,subgrid_dim(t_dim_index)
@@ -129,7 +131,7 @@
             !Must set g_loop=1 for it to read
             g_loop=1
             call uEMEP_read_RWC_heating_data
-            !Read in the temperature fields from the alternative meteorology
+            !Read in the temperature fields from the alternative meteorology always, since EMEP data should not exist yet
             use_alternative_meteorology_flag=.true.
             call uEMEP_read_meteo_nc
             !Need to make a cross reference here or simply skip the two based on an if statement

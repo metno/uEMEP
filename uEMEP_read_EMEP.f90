@@ -309,6 +309,10 @@
             allocate (pm_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index,2))
             pm_var4d_nc=0.
         endif
+        if (.not.allocated(temp_var4d_nc).and.i_file.eq.1) then
+            allocate (temp_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),2))
+            temp_var4d_nc=0.
+        endif
         
         !write(*,*) x_dim_nc_index,y_dim_nc_index
         !write(*,*) shape(var1d_nc_dp)
@@ -670,7 +674,6 @@
          endif
         if (DD_offset.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Rotating wind fields everywhere with a value: ',DD_offset
-            if (.not.allocated(temp_var4d_nc)) allocate (temp_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),2))
 
             !Make use of the spare source index parts of the array for the conversion
             temp_var4d_nc(:,:,:,:,1) = var4d_nc(:,:,:,:,ugrid_nc_index,allsource_index,meteo_p_loop_index)*cos(DD_offset/180.*3.14159)+var4d_nc(:,:,:,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)*sin(DD_offset/180.*3.14159)                                       

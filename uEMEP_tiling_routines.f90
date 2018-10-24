@@ -60,7 +60,8 @@
     integer reduce_grid_class
     real aggregation_tile_scale(10)
     integer n_aggregated_tiles
-    parameter (n_aggregated_tiles=4)
+    parameter (n_aggregated_tiles=4) !40to10km
+    !parameter (n_aggregated_tiles=5) !160to10km
     
     real aggregated_tile_subgrid_delta(n_dim_index,n_aggregated_tiles)
     real aggregated_tile_subgrid_min(n_dim_index,n_aggregated_tiles)
@@ -94,14 +95,20 @@
     population_tile_scale=1. !For 10 km
     !population_tile_scale=3. !For 20 km
     population_tile_scale=0.625 !For 5 km, to give 250 people /km^2
-    population_tile_scale=0.5 !For 5 km, to give 200 people /km^2
-	tile_subgrid_delta(x_dim_index)=5000.
-	tile_subgrid_delta(y_dim_index)=5000.
     tile_subgrid_min(x_dim_index)=-70000.-40000
     tile_subgrid_min(y_dim_index)=6440000.-40000
     tile_subgrid_max(x_dim_index)=1110000.+40000.
     tile_subgrid_max(y_dim_index)=7950000.+40000.
-    
+
+    !40to5km tile class
+    population_tile_scale=0.5 !For 5 km, to give 200 people /km^2
+	tile_subgrid_delta(x_dim_index)=5000.
+	tile_subgrid_delta(y_dim_index)=5000.
+    !160to10 km tile classs
+    population_tile_scale=1.
+	tile_subgrid_delta(x_dim_index)=10000.
+	tile_subgrid_delta(y_dim_index)=10000.
+
     limit_val_tile_population=limit_val_tile_population*population_tile_scale
     
     !Set all tile subgrids relative to the target subgrid
@@ -111,7 +118,14 @@
 
     
     !aggregation_tile_scale
-    if (n_aggregated_tiles.eq.4) then
+    if (n_aggregated_tiles.eq.5) then
+        !Not in use
+        aggregation_tile_scale(1)=16.
+        aggregation_tile_scale(2)=8.
+        aggregation_tile_scale(3)=4.
+        aggregation_tile_scale(4)=2.
+        aggregation_tile_scale(5)=1.
+    elseif (n_aggregated_tiles.eq.4) then
         aggregation_tile_scale(1)=8.
         aggregation_tile_scale(2)=4.
         aggregation_tile_scale(3)=2.
@@ -408,7 +422,7 @@
                 count_tile_class(count)=aggregated_tile_class_subgrid(i,j,k+1)
                 i_tile_class(count)=i
                 j_tile_class(count)=j
-                endif
+            endif
         enddo
         enddo
              
@@ -427,9 +441,14 @@
             enddo
             
             do l=1,count
+                !if (((count_tile_class(l).le.max_count.and.count_tile_class(l).ge.0)).and.OK.and.max_count.lt.4 &
+                !    .and.((max_counter+zero_counter.ge.1.and.k.eq.3).or.(max_counter+zero_counter.ge.1.and.k.eq.2).or.(max_counter+zero_counter.ge.3.and.k.eq.1)) &
+                !    .and..not.(k.eq.1.and.max_count.eq.3)) & 
+                !This does not allow 125 m to be the largest size. Removed for 160to10km
                 if (((count_tile_class(l).le.max_count.and.count_tile_class(l).ge.0)).and.OK.and.max_count.lt.4 &
                     .and.((max_counter+zero_counter.ge.1.and.k.eq.3).or.(max_counter+zero_counter.ge.1.and.k.eq.2).or.(max_counter+zero_counter.ge.3.and.k.eq.1)) &
-                    .and..not.(k.eq.1.and.max_count.eq.3)) then
+                    ) & 
+                    then
                     OK=.true.
                 else 
                     OK=.false.
