@@ -116,7 +116,7 @@
     
     proxy_emission_subgrid(:,:,source_index,:)=0.
     emission_properties_subgrid(:,:,emission_h_index,source_index)=0.
-    ratio_industry_pm25_to_pm10=0.2
+    ratio_industry_pm25_to_pm10=1.0
     
     !Count how many lines for allocation of arrays
     count=0

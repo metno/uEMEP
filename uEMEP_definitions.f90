@@ -169,10 +169,10 @@
     parameter (lon1_rl_index=7,lon2_rl_index=8,lat1_rl_index=9,lat2_rl_index=10,lon0_rl_index=11,lat0_rl_index=12)
     integer length_rl_index,z0_rl_index,width_rl_index
     parameter (length_rl_index=13,z0_rl_index=14,width_rl_index=15)
-    integer adt_rl_index,speed_rl_index,hdv_rl_index
-    parameter (adt_rl_index=16,speed_rl_index=17,hdv_rl_index=18)
+    integer adt_rl_index,speed_rl_index,hdv_rl_index,tunnel_length_rl_index
+    parameter (adt_rl_index=16,speed_rl_index=17,hdv_rl_index=18,tunnel_length_rl_index=19)
     integer num_var_rl
-    parameter(num_var_rl=18)
+    parameter(num_var_rl=19)
 
     integer id_rl_index,roadtype_rl_index,nlanes_rl_index,major_index_rl_index
     parameter (id_rl_index=1,roadtype_rl_index=2,nlanes_rl_index=3,major_index_rl_index=4)
@@ -630,6 +630,7 @@
 	integer :: save_emissions_end_index=24
     
     logical :: read_weekly_shipping_data_flag=.false.
+    logical :: use_tunnel_deposition_flag=.false.
 
     end module uEMEP_definitions
     

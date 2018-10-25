@@ -21,6 +21,8 @@
     integer counter_major,counter_sub
     logical :: show_diagnostics=.false.
     real diagnostic_val(10)
+    integer temp_category,temp_structure_type,temp_region_id,temp_surface_id,temp_route_id
+    real temp_length,temp_tunnel_length
     
     real, allocatable :: inputdata_rl_temp(:,:)
     integer, allocatable :: inputdata_int_rl_temp(:,:)
@@ -146,7 +148,10 @@
         read(unit_in,*) 
     else
         !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
-        read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+        !read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+        !ID ADT HDV ROAD_ACTIVITY_TYPE SPEED ROAD_WIDTH N_LANES N_SUBNODES ROAD_CATEGORY ROAD_LENGTH ROAD_STRUCTURE_TYPE REGION_ID ROAD_SURFACE_ID TUNNEL_LENGTH ROUTE_ID
+        read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes &
+            ,temp_category,temp_length,temp_structure_type,temp_region_id,temp_surface_id,temp_tunnel_length,temp_route_id
         !write(*,*) temp_id,temp_adt,n_subnodes
         read(unit_in,*) sub_nodes_x(1:n_subnodes)
         read(unit_in,*) sub_nodes_y(1:n_subnodes)
@@ -184,6 +189,7 @@
             inputdata_rl_temp(counter,y1_rl_index)=sub_nodes_y(j)
             inputdata_rl_temp(counter,y2_rl_index)=sub_nodes_y(j+loop_step)
             !write(*,*) inputdata_int_rl(counter,id_rl_index),inputdata_rl(counter,x1_rl_index),inputdata_rl(counter,y2_rl_index)
+            inputdata_rl_temp(counter,tunnel_length_rl_index)=temp_tunnel_length
         enddo
         endif
     

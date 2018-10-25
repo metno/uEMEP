@@ -26,6 +26,7 @@
     integer tt,ttt
     integer major_ro
     integer t_start_temp,t_end_temp
+    real tunnel_ratio
         
     integer i_pollutant
     
@@ -167,9 +168,16 @@
                             !if (t_loop.eq.2) stop
                             
                             do i_pollutant=1,n_pollutant_loop
+                                !write(*,*) i_pollutant,major_ro,inputdata_rl(major_ro,tunnel_length_rl_index)
+                                if (use_tunnel_deposition_flag.and.inputdata_rl(ro,tunnel_length_rl_index).gt.0) then
+                                    call tunnel_deposition_factor(pollutant_loop_index(i_pollutant),inputdata_rl(ro,tunnel_length_rl_index),tunnel_ratio)
+                                else
+                                    tunnel_ratio=1.
+                                endif
+                                
                                 emission_subgrid(i,j,t,source_index,i_pollutant)=emission_subgrid(i,j,t,source_index,i_pollutant)+ &
-                               +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*inputdata_rl_emissions(major_ro,ttt,i_roadlink_emission_compound(i_pollutant)) &
-                                *1.e6/1.e3/3600.
+                                    +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*inputdata_rl_emissions(major_ro,ttt,i_roadlink_emission_compound(i_pollutant)) &
+                                    *1.e6/1.e3/3600.*tunnel_ratio
                             enddo
                             
                         enddo
@@ -227,6 +235,43 @@
     endif
     
     end subroutine uEMEP_grid_roads
+    
+!==========================================================================
+!   uEMEP model tunnel_deposition_factor
+!==========================================================================
+    subroutine tunnel_deposition_factor(tunnel_pollutant_index,tunnel_length,ratio)
+    
+    use uEMEP_definitions
+
+    implicit none
+    
+    integer, intent(in) :: tunnel_pollutant_index
+    real, intent(in) :: tunnel_length
+    real:: dep_velocity !(cm/s)
+    real:: radius_tunnel=5. !Radius of the tunnel opening. Fixed
+    real :: B
+    real, intent(out) ::  ratio
+    
+    dep_velocity=0.
+    
+    if (tunnel_pollutant_index.eq.pm10_index) dep_velocity=0.1
+    if (tunnel_pollutant_index.eq.pm25_index) dep_velocity=0.05
+    if (tunnel_pollutant_index.eq.pmex_index) dep_velocity=0.05
+    if (tunnel_pollutant_index.eq.nox_index) dep_velocity=0.02
+    !if (tunnel_pollutant_index.eq.no2_index) dep_velocity=0.02
+
+    B=2./radius_tunnel*dep_velocity/100.
+
+    ratio=1.
+    if (B*tunnel_length.lt.1e-5) then
+        ratio=1-B*tunnel_length/2.
+    else
+        ratio=1/B*(1-exp(-B*tunnel_length))/tunnel_length      
+    endif
+    
+    !write(*,*) tunnel_pollutant_index,tunnel_length,ratio
+    
+    end subroutine tunnel_deposition_factor
     
     function sigma0_traffic_func(speed)
     implicit none
