@@ -269,9 +269,11 @@
     real ay,by,az,bz
     real min_xy
     real z0_ref,zz_pbl_ref,zz_pbl_L,logz
+    real x_val
     
     !invL_in=1./L
     min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
+    x_val=max(x,min_xy)
     
     !Remove the stable cases as these are not normally done in the full K_z formulation
     !invL_in=min(invL_in,1./100.)
@@ -309,6 +311,8 @@
     
     !Calculate y values, taken as close to the maximum K height of z/z_pbl=0.25
     zz_pbl=0.25
+    zz_pbl=(z_pbl*0.25+z_emis)/2./z_pbl
+
     logz=log(zz_pbl*z_pbl)
     
     !ay=0.15+0.52*(z0-0.02)-0.15*(1.-EXP(-zz_pbl/0.03))+0.16*SIGN(1.0,invL_in)*(1.-EXP(-ABS(invL_in)/zz_pbl/5.))

@@ -27,7 +27,7 @@
     real :: K_min=0.001
     real l_t,f_t
     real u_star0,u_star0_val,tau,zc_start,K_z_start,u_zc_start
-    real min_xy,x
+    real min_xy,x,h_y
     
     n_loop=n_kz_iterations
     
@@ -37,7 +37,9 @@
     z0=exp(logz0)
     min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
     !min_x=1.
-    !x=max(x_in,min_x)
+    !x=max(x_in,min_xy)
+    !Set x to this value because it simulates that it has already travelled half a grid to get this sig_z0
+    !Which is why sg_z is added only to sig_z00   
     x=x_in+min_xy
     
     !Initialise sig_z
@@ -57,12 +59,17 @@
     !call Kz_func(h_mix_loc,L,u_star0,zc_start,K_min,K_z_start)
     !call u_profile_val_func(zc_start,L,u_val,z_val,h_mix_loc,z0,u_zc_start,u_star0,u_hmix)
     
+    !Put bug back in
+    u_zc=u_val
+    
     !Calculate the Lagrangian time scale before the iteration loop using a minimum distance for this to make it non zero on the grid
-    l_t=max(x,min_xy)/u_zc
+    !l_t=max(x,min_xy)/u_zc
     tau=0.6*max(min(z_tau_max,z_emis_loc),z_tau_min)/u_star0
-    f_t=1.+tau/l_t*(exp(-l_t/tau)-1.)
-    !write(*,'(i,4f)') j,tau,l_t,f_t,u_zc
-
+    !f_t=1.+tau/l_t*(exp(-l_t/tau)-1.)
+        !if (x.lt.200) then
+        !write(*,'(a,i,5f)') 'S: ',j,tau,l_t,f_t,u_zc,sig_z
+        !endif
+        
     !All functions commented out 4 secs
     !All functions included 15 secs
     !Without u_profile 11 secs
@@ -94,15 +101,27 @@
         !Take average of K_z_start(x=0) and K_z(x)
         !K_z=(K_z+K_z_start)/2.
         
+        !calculate l_t based on the centre of mass wind speed
+        l_t=max(x,min_xy)/u_zc
+        f_t=1.+tau/l_t*(exp(-l_t/tau)-1.)
         
         !Calculate sig_z for the next iteration, using the sig_z0 from the neutral plume approximation
         sig_z=sig_z00+sqrt(2.*K_z*l_t*f_t)
         !write(*,'(i,1f)') j,sig_z
+        !write(*,*) K_z,l_t,f_t,sig_z,u_zc
+        !write(*,*) j,z_emis_loc,zc,h_mix_loc*0.25,sig_z
+    
+        !if (x.lt.200) then
+        !write(*,'(a,i,5f)') 'S: ',j,tau,l_t,f_t,u_zc,sig_z
+        !endif
         
     enddo
     
-    !Calculate sigma_y at the maximum K, around 0.25 of the boundary layer height
-    call Kz_func(h_mix_loc,L,u_star0,h_mix_loc*0.25,K_min,K_y)
+    !Calculate sigma_y at the maximum K, around the average of the emission height and 0.25 of the boundary layer height
+    !THis is new 27.10.2018 and not tested. It will reduce sig_y which is OK
+    h_y=(h_mix_loc*0.25+z_emis_loc)/2.
+    call Kz_func(h_mix_loc,L,u_star0,h_y,K_min,K_y)
+    !call Kz_func(h_mix_loc,L,u_star0,zc,K_min,K_y)
     sig_y=sig_y00+min_xy+sqrt(2.*K_y*l_t*f_t)
     
     
