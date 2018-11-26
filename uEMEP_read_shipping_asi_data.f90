@@ -30,6 +30,7 @@
     integer week_of_year,ship_week,ship_counts
     logical nxtdat_flag
     real ship_delta_x,ship_delta_y
+    real lat_ship,lon_ship
     
     double precision date_to_number
     
@@ -90,10 +91,16 @@
     do i=1,ship_counts
         read(unit_in,*) x_ship,y_ship,totalnoxemission,totalparticulatematteremission
  
+        !Convert to EMEP coordinates if it is to be saved. emission grids are already in the EMEP coordinate system
+        if (save_emissions_for_EMEP(shipping_index)) then
+            call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
+            call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
+        endif
+
         i_ship_index=1+floor((x_ship-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
         j_ship_index=1+floor((y_ship-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
 
-        !Add to subgrid       
+        !Add to subgrid 
         if (i_ship_index.ge.1.and.i_ship_index.le.emission_subgrid_dim(x_dim_index,source_index) &
             .and.j_ship_index.ge.1.and.j_ship_index.le.emission_subgrid_dim(y_dim_index,source_index)) then
             do i_pollutant=1,n_pollutant_loop
@@ -120,6 +127,215 @@
     
     end subroutine uEMEP_read_weekly_shipping_asi_data
 
+    subroutine uEMEP_read_monthly_and_daily_shipping_asi_data
+ 
+    use uEMEP_definitions
+    
+    implicit none
+    
+    integer i,j,k
+    character(256) temp_name
+    character(2048) temp_str
+    character(256) temp_str1,temp_str2
+    real temp_val
+    integer unit_in
+    integer exists
+    integer count,index_val
+    integer temp_int
+    real totalnoxemission,totalparticulatematteremission
+    real y_ship,x_ship
+    integer i_ship_index,j_ship_index
+    integer source_index,subsource_index
+    integer t,tt
+    integer, allocatable :: count_subgrid(:,:,:)
+   
+    integer i_pollutant
+    
+    integer a(6)
+    character(256) format_temp,month_of_year_str
+    double precision date_num,date_num_start
+    integer month_of_year,ship_month,ship_counts
+    logical nxtdat_flag
+    real ship_delta_x,ship_delta_y
+    real lat_ship,lon_ship
+    real daily_cycle(24)
+    integer i_ship_range,j_ship_range
+    integer date_array(6)
+    double precision date_num_temp
+    
+    double precision date_to_number
+    
+    write(unit_logfile,'(A)') ''
+	write(unit_logfile,'(A)') '================================================================'
+	write(unit_logfile,'(A)') 'Reading monthly shipping asi data  (uEMEP_read_monthly_and_daily_shipping_asi_data)'
+	write(unit_logfile,'(A)') '================================================================'
+    
+    source_index=shipping_index
+    n_subsource(source_index)=1
+    proxy_emission_subgrid(:,:,source_index,:)=0.
+    daily_cycle=1.
+    t=1
+
+    allocate (count_subgrid(emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),n_pollutant_loop))
+    count_subgrid=0
+    
+    !Determine week of year approximately using date string. Needs proper function    
+    format_temp='yyyymmdd'
+    call datestr_to_date(config_date_str,format_temp,a)
+    !date_num=date_to_number(a,ref_year_meteo)
+    !a(2)=1;a(3)=1;a(4)=1;
+    !date_num_start=date_to_number(a,ref_year_meteo)
+    !week_of_year=1+int((date_num-date_num_start)/7.)
+    month_of_year=a(2)
+   ! write(*,*) month_of_year
+    write(month_of_year_str,'(i0.2)') month_of_year
+    write(unit_logfile,'(a)') 'Month of year: '//trim(ADJUSTL(month_of_year_str))
+    
+    pathfilename_ship(1)=trim(pathname_ship(1))//trim(filename_ship(1))//'_'//trim(ADJUSTL(month_of_year_str))//'.txt'
+
+    !Test existence of the shipping filename. If does not exist then use default
+    inquire(file=trim(pathfilename_ship(1)),exist=exists)
+    if (.not.exists) then
+        write(unit_logfile,'(A,A)') ' ERROR: Shipping file does not exist: ', trim(pathfilename_ship(1))
+        stop
+    endif
+
+    !Open the file for reading
+    unit_in=20
+    open(unit_in,file=pathfilename_ship(1),access='sequential',status='old',readonly)  
+    write(unit_logfile,'(a)') ' Opening shipping file '//trim(pathfilename_ship(1))
+    
+    rewind(unit_in)
+
+    subsource_index=1
+    
+    !Skip over lines starting with #
+    call NXTDAT(unit_in,nxtdat_flag)
+    
+    !Read data
+    read(unit_in,*) temp_str1,ship_delta_x
+    read(unit_in,*) temp_str1,ship_delta_y
+    read(unit_in,*) temp_str1,ship_month
+    read(unit_in,*) temp_str1,ship_counts
+    
+    !Skip header
+    read(unit_in,*) temp_str1
+    do i=1,ship_counts
+        read(unit_in,*) x_ship,y_ship,totalnoxemission,totalparticulatematteremission
+ 
+        !Convert to EMEP coordinates if it is to be saved. emission grids are already in the EMEP coordinate system
+        if (save_emissions_for_EMEP(shipping_index)) then
+            call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
+            call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
+        endif
+
+        i_ship_index=1+floor((x_ship-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
+        j_ship_index=1+floor((y_ship-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
+
+        !Add to subgrid 
+        if (i_ship_index.ge.1.and.i_ship_index.le.emission_subgrid_dim(x_dim_index,source_index) &
+            .and.j_ship_index.ge.1.and.j_ship_index.le.emission_subgrid_dim(y_dim_index,source_index)) then
+            do i_pollutant=1,n_pollutant_loop
+                if  (totalnoxemission.gt.0.and.pollutant_loop_index(i_pollutant).eq.nox_nc_index) then
+                    proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,i_pollutant)=proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,i_pollutant)+totalnoxemission
+                    count_subgrid(i_ship_index,j_ship_index,i_pollutant)=count_subgrid(i_ship_index,j_ship_index,i_pollutant)+1
+                elseif (totalparticulatematteremission.gt.0.and.(pollutant_loop_index(i_pollutant).eq.pm25_nc_index.or.pollutant_loop_index(i_pollutant).eq.pm10_nc_index)) then
+                    proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,i_pollutant)=proxy_emission_subgrid(i_ship_index,j_ship_index,source_index,i_pollutant)+totalparticulatematteremission
+                    count_subgrid(i_ship_index,j_ship_index,i_pollutant)=count_subgrid(i_ship_index,j_ship_index,i_pollutant)+1
+                endif
+            enddo
+            endif
+ 
+    enddo
+
+    write(unit_logfile,'(A,I)') 'Shipping counts for monthly mean = ',ship_counts
+    do i_pollutant=1,n_pollutant_loop   
+    write(unit_logfile,'(A,es12.3)') 'Total emission (g/hr) '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//' = ',sum(proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,i_pollutant))
+    enddo
+        
+    close(unit_in)
+    
+    !Now read in the daily cycle data for the same month and applyt it to the emission grid
+    !Read in as utm33
+    pathfilename_ship(2)=trim(pathname_ship(2))//trim(filename_ship(2))//'_'//trim(ADJUSTL(month_of_year_str))//'.txt'
+
+    !Test existence of the shipping filename. If does not exist then use default
+    inquire(file=trim(pathfilename_ship(2)),exist=exists)
+    if (.not.exists) then
+        write(unit_logfile,'(A,A)') ' ERROR: Shipping file does not exist: ', trim(pathfilename_ship(2))
+        stop
+    endif
+
+    count_subgrid=0
+    
+    !Set the emission time profile to the default of 1
+    emission_time_profile_subgrid(:,:,:,source_index,:)=1.
+
+    !Open the file for reading
+    unit_in=20
+    open(unit_in,file=pathfilename_ship(2),access='sequential',status='old',readonly)  
+    write(unit_logfile,'(a)') ' Opening shipping file '//trim(pathfilename_ship(2))
+    
+    rewind(unit_in)
+
+    subsource_index=1
+    
+    !Skip over lines starting with #
+    call NXTDAT(unit_in,nxtdat_flag)
+    
+    !Read data
+    read(unit_in,*) temp_str1,ship_delta_x
+    read(unit_in,*) temp_str1,ship_delta_y
+    read(unit_in,*) temp_str1,ship_month
+    read(unit_in,*) temp_str1,ship_counts
+    
+    !Skip header
+    read(unit_in,*) temp_str1
+    do i=1,ship_counts
+        !read(unit_in,'(2f16.1,24f8.2)') x_ship,y_ship,(daily_cycle(t),t=1,24)
+        read(unit_in,*) x_ship,y_ship,(daily_cycle(t),t=1,24)
+        !write(*,'(i,2f16.1,24f8.2)') i,x_ship,y_ship,(daily_cycle(t),t=1,24)
+        !Convert to EMEP coordinates if it is to be saved. emission grids are already in the EMEP coordinate system
+        if (save_emissions_for_EMEP(shipping_index)) then
+            call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
+            call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
+        endif
+
+        i_ship_index=1+floor((x_ship-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
+        j_ship_index=1+floor((y_ship-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
+        i_ship_range=floor(ship_delta_x/emission_subgrid_delta(x_dim_index,source_index)/2.)
+        j_ship_range=floor(ship_delta_y/emission_subgrid_delta(x_dim_index,source_index)/2.)
+        
+        !Add to subgrid 
+        if (i_ship_index.ge.1+i_ship_range.and.i_ship_index.le.emission_subgrid_dim(x_dim_index,source_index)-i_ship_range &
+            .and.j_ship_index.ge.1+j_ship_range.and.j_ship_index.le.emission_subgrid_dim(y_dim_index,source_index)-j_ship_range) then
+            !do i_pollutant=1,n_pollutant_loop
+                do t=1,dim_length_nc(time_dim_nc_index)
+                    date_num_temp=val_dim_nc(t,time_dim_nc_index)        
+                    call number_to_date(date_num_temp,date_array,ref_year_EMEP)
+                    tt=date_array(4)
+                    if (tt.eq.0) tt=24
+                    !write(*,'(4i,f6.2)') i,t,date_array(4),tt,daily_cycle(tt)
+                    emission_time_profile_subgrid(i_ship_index-i_ship_range:i_ship_index+i_ship_range,j_ship_index-j_ship_range:j_ship_index+j_ship_range,t,source_index,:)=daily_cycle(tt)
+                enddo
+                count_subgrid(i_ship_index,j_ship_index,:)=count_subgrid(i_ship_index,j_ship_index,:)+1
+            !enddo
+        endif
+ 
+    enddo
+
+    write(unit_logfile,'(A,I)') 'Shipping counts for daily cycle = ',ship_counts
+    write(unit_logfile,'(A,I)') 'Shipping grids found for daily cycle = ',sum(count_subgrid(:,:,1))
+        
+    close(unit_in)
+
+    deallocate (count_subgrid)
+    
+    
+    
+    end subroutine uEMEP_read_monthly_and_daily_shipping_asi_data
+
+    
     subroutine uEMEP_read_shipping_asi_data
  
     use uEMEP_definitions
@@ -220,9 +436,13 @@
         
         if  (totalnoxemission.gt.0.or.totalparticulatematteremission.gt.0) then
             
-        !Convert lat lon to utm coords
-        call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
-        
+        !Convert to EMEP coordinates if it is to be saved. emission grids are already in the EMEP coordinate system
+        if (save_emissions_for_EMEP(shipping_index)) then
+            call lb2lambert2_uEMEP(x_ship,y_ship,ddlongitude,ddlatitude,EMEP_projection_attributes)
+        else
+            !Convert lat lon to utm coords
+            call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
+        endif        
         !Find the grid index it belongs to
         i_ship_index=1+floor((x_ship-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
         j_ship_index=1+floor((y_ship-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))

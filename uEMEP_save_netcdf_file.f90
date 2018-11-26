@@ -19,8 +19,8 @@
     integer, allocatable :: aqi_responsible_pollutant_index(:,:,:)
     
     integer ii,jj
-    logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.false.,save_other_meteo=.false.
-    logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
+    logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.true.,save_other_meteo=.false.
+    logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.true.,save_for_chemistry=.false.
     logical :: save_population=.false.,save_no2_source_contributions=.true.,save_o3_source_contributions=.true.
     
     logical :: save_aqi=.true.

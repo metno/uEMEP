@@ -146,9 +146,16 @@
         hour_of_week_index=(week_day_temp-1)*24+date_array(4)+emission_time_shift_temp
         if (hour_of_week_index.gt.n_hours_in_week) hour_of_week_index=hour_of_week_index-n_hours_in_week
         if (hour_of_week_index.lt.1) hour_of_week_index=hour_of_week_index+n_hours_in_week
-        emission_time_profile_subgrid(:,:,t,:,:)=1.
+        
         do i_source=1,n_col-1
-            emission_time_profile_subgrid(:,:,t,source_index_in(i_source),:)=val_hour_of_week_input(hour_of_week_index,i_source)*val_month_of_year_input(date_array(2),i_source)
+            if (source_index_in(i_source).eq.shipping_index.and.read_monthly_and_daily_shipping_data_flag) then
+                !Do nothing as the time profile has already been set in uEMEP_read_monthly_and_daily_shipping_asi_data subroutine
+                !write(unit_logfile,'(a,i,es16.6)') 'Not resetting shipping time profiles: ',t,sum(emission_time_profile_subgrid(:,:,t,source_index_in(i_source),1))
+            else
+                !Set the time profile
+                emission_time_profile_subgrid(:,:,t,source_index_in(i_source),:)=val_hour_of_week_input(hour_of_week_index,i_source)*val_month_of_year_input(date_array(2),i_source)
+            
+            endif
             !write(*,*) hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source),val_month_of_year_input(date_array(2),i_source)
             !write(*,*) emission_time_profile_subgrid(1,1,t,source_index_in(i_source),1)
             if (source_index_in(i_source).eq.heating_index.and.use_RWC_emission_data) then
@@ -168,7 +175,7 @@
                         i_cross=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,source_index_in(i_source))
                         j_cross=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index_in(i_source))
                     endif
-                    hdd_temp=max(0.,HDD_threshold_value-DMT_EMEP_grid_nc(i_cross,j_cross,1))
+                    hdd_temp=max(0.,HDD_threshold_value-max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)))
                     emission_time_profile_subgrid(i,j,t,source_index_in(i_source),:)=val_hour_of_week_input(hour_of_week_index,i_source)/24.*hdd_temp
                     !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source)/24.,hdd_temp,HDD_threshold_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)
                     !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,emission_time_profile_subgrid(i,j,t,source_index_in(i_source),1)

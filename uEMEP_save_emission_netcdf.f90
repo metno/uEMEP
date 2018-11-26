@@ -86,6 +86,11 @@
     date_num_start=date_to_number(a_start,ref_year_EMEP)
     !Move the starting time according to the index value given (index is the number of hours)
     date_num_start=date_num_start+dble(save_emissions_start_index-1)/24.
+    !Set the emission_date_str to be used to name the output file as this may not be the same as the input file
+    call number_to_date(date_num_start,a_start,ref_year_EMEP)
+    call date_to_datestr(a_start,format_temp,emission_date_str)
+    !write(*,*) config_date_str,emission_date_str
+    
     !long_name = "time at middle of period";
     unit_dim_nc(time_dim_nc_index)="days since 1900-1-1 0:0:0";
     do t=1,subgrid_dim(t_dim_index)
@@ -140,6 +145,27 @@
             call uEMEP_convert_proxy_to_emissions
             
         endif
+        if (i_source.eq.shipping_index) then
+            !meteo_var3d_nc(i_nc,j_nc,:,t2m_nc_index)
+            !Read the heating data. Emission grid coordinates will be redefined within this routine
+            !Must set g_loop=1 for it to read
+            g_loop=1
+            if (read_weekly_shipping_data_flag) then
+                call uEMEP_read_weekly_shipping_asi_data
+            elseif (read_monthly_and_daily_shipping_data_flag) then
+                call uEMEP_read_monthly_and_daily_shipping_asi_data
+            else
+                call uEMEP_read_shipping_asi_data
+            endif
+            !Read in the temperature fields from the alternative meteorology always, since EMEP data should not exist yet
+            use_alternative_meteorology_flag=.true.
+            call uEMEP_read_meteo_nc
+            !Need to make a cross reference here or simply skip the two based on an if statement
+            call uEMEP_read_time_profiles
+            call uEMEP_set_emission_factors
+            call uEMEP_convert_proxy_to_emissions
+            
+        endif
     
     endif
     enddo
@@ -181,8 +207,8 @@
     !Save the data
     !i_file=subgrid_total_file_index(allsource_index)
     !temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.nc'
-    if (len(config_date_str).gt.0) then
-        temp_date_str='_'//trim(config_date_str)
+    if (len(emission_date_str).gt.0) then
+        temp_date_str='_'//trim(emission_date_str)
     else
         temp_date_str=''
     endif
@@ -237,7 +263,7 @@
                 !Subgrid emissions are in units ug/sec/subgrid. Convert to mg/m2/hour. Acount for the difference in subgrid sizes here
                 temp_subgrid(:,:,:)=1.0e-3*3600.*temp_subgrid(:,:,:)/(emission_subgrid_delta(y_dim_index,i_source)*emission_subgrid_delta(x_dim_index,i_source))
  
-                if (save_netcdf_file_flag) then
+                if (save_netcdf_file_flag.or.save_netcdf_receptor_flag) then
                     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
                     call uEMEP_save_for_EMEP_netcdf_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,i_source),emission_subgrid_dim(y_dim_index,i_source),subgrid_dim(t_dim_index) &
                         ,temp_subgrid(:,:,:),x_emission_subgrid(:,:,i_source),y_emission_subgrid(:,:,i_source),lon_emission_subgrid(:,:,i_source),lat_emission_subgrid(:,:,i_source),var_name_temp &

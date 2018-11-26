@@ -99,7 +99,7 @@
     !bz(source_index,subsource_index)=0.727
 
 
-    sig_y_0(source_index,subsource_index)=sig_y_00(source_index,subsource_index)+sqrt(emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index))/2.
+    sig_y_0(source_index,subsource_index)=sig_y_00(source_index,subsource_index)+sqrt(emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index))/4.*sigy_0_subgid_width_scale
     sig_z_0(source_index,subsource_index)=sig_z_00(source_index,subsource_index)+az(source_index,subsource_index)*exp(bz(source_index,subsource_index)*log(sig_y_0(source_index,subsource_index)))
     
     
@@ -140,11 +140,11 @@
     
     end subroutine delta_wind_direction
     
-    subroutine uEMEP_set_dispersion_sigma_simple(sig_z_00,sig_y_00,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
+    subroutine uEMEP_set_dispersion_sigma_simple(sig_z_00,sig_y_00,sigy_0_subgid_width_scale,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
     
     implicit none
 
-    real, intent(in) :: sig_z_00,sig_y_00,subgrid_delta(2),delta_wind,x
+    real, intent(in) :: sig_z_00,sig_y_00,sigy_0_subgid_width_scale,subgrid_delta(2),delta_wind,x
     real, intent(out) :: sig_z,sig_y,sig_z_0,sig_y_0
     
     real ay,by,az,bz
@@ -185,7 +185,7 @@
 
     min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
     !Set sig_y_0 to be half of the average x,y grid size
-    sig_y_0=sig_y_00+min_xy
+    sig_y_0=sig_y_00+min_xy*sigy_0_subgid_width_scale
     !Set sig_z_0 to be the size of the plume after travelling half of the grid size
     sig_z_0=sig_z_00+az*exp(bz*log(min_xy))
 
@@ -195,11 +195,11 @@
 
     end subroutine uEMEP_set_dispersion_sigma_simple
     
-    subroutine uEMEP_set_dispersion_sigma_PG(invL_in,logz0,sig_z_00,sig_y_00,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
+    subroutine uEMEP_set_dispersion_sigma_PG(invL_in,logz0,sig_z_00,sig_y_00,sigy_0_subgid_width_scale,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
     
     implicit none
 
-    real, intent(in) :: invL_in,logz0,sig_z_00,sig_y_00,subgrid_delta(2),delta_wind,x
+    real, intent(in) :: invL_in,logz0,sig_z_00,sig_y_00,sigy_0_subgid_width_scale,subgrid_delta(2),delta_wind,x
     real, intent(out) :: sig_z,sig_y,sig_z_0,sig_y_0
     
     integer i_bot,i_top,i
@@ -246,7 +246,7 @@
     bz=bz_pg(i_bot)*(1.-weight)+bz_pg(i_top)*weight
     
     !Set sig_y_0 to be half of the average x,y grid size
-    sig_y_0=sig_y_00+min_xy
+    sig_y_0=sig_y_00+min_xy*sigy_0_subgid_width_scale
     !Set sig_z_0 to be the size of the plume after travelling half of the grid size
     sig_z_0=sig_z_00+az*exp(bz*log(min_xy))
 
@@ -258,11 +258,11 @@
     
     end subroutine uEMEP_set_dispersion_sigma_PG
     
-    subroutine uEMEP_set_dispersion_sigma_Kz_emulator(z_emis,invL,logz0,z_pbl,sig_z_00,sig_y_00,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
+    subroutine uEMEP_set_dispersion_sigma_Kz_emulator(z_emis,invL,logz0,z_pbl,sig_z_00,sig_y_00,sigy_0_subgid_width_scale,subgrid_delta,delta_wind,x,sig_z,sig_y,sig_z_0,sig_y_0)
     
     implicit none
 
-    real, intent(in) :: z_emis,invL,logz0,z_pbl,sig_z_00,sig_y_00,subgrid_delta(2),delta_wind,x
+    real, intent(in) :: z_emis,invL,logz0,z_pbl,sig_z_00,sig_y_00,sigy_0_subgid_width_scale,subgrid_delta(2),delta_wind,x
     real, intent(out) :: sig_z,sig_y,sig_z_0,sig_y_0
     
     real invL_in,zz_pbl,z0
@@ -334,7 +334,8 @@
     by=min(max(by,0.4),1.2)
     
     !Set sig_y_0 to be half of the average x,y grid size
-    sig_y_0=sig_y_00+min_xy
+    !Mulitiply by the scale
+    sig_y_0=sig_y_00+min_xy*sigy_0_subgid_width_scale
     
     !Set sig_z_0 to be the size of the plume after travelling half of the grid size
     !sig_z_0=sig_z_00+az*exp(bz*log(min_xy))

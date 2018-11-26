@@ -14,6 +14,7 @@
     character(256) :: filename_log_file='uEMEP_log.txt'
     character(256) :: pathname_log_file=''
     character(256) :: config_date_str=''
+    character(256) :: emission_date_str=''
     character(256) :: replacement_date_str='<>'
     integer :: n_config_files=0
     
@@ -607,6 +608,7 @@
     integer*8, allocatable :: RWC_grid_id(:)
     real, allocatable :: DMT_EMEP_grid_nc(:,:,:)
     integer :: HDD_threshold_value=15
+    real :: DMT_min_value=-20. !Minimum allowable daily mean temperature for heating degree day calculation
     logical :: use_RWC_emission_data=.false.
     
     !Forecast hour string for writing to files
@@ -630,7 +632,11 @@
 	integer :: save_emissions_end_index=24
     
     logical :: read_weekly_shipping_data_flag=.false.
+    logical :: read_monthly_and_daily_shipping_data_flag=.false.
+    
     logical :: use_tunnel_deposition_flag=.false.
+    
+    real :: sigy_0_subgid_width_scale=0.25
 
     end module uEMEP_definitions
     

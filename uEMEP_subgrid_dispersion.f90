@@ -286,7 +286,7 @@
                 
                 !Set sig_0's at the emission position
                 x_loc=0.
-                call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
+                call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
 
                 !Use the initial plume centre of mass to determine wind advection height
                 call z_centremass_gauss_func(sig_z_0_loc,h_emis_loc,h_mix_loc,zc_loc)
@@ -499,18 +499,18 @@
                                     
                                     if (stability_scheme_flag.eq.3) then
                                         !Set initial values for sigma. Initial sig_y is set here as well but is overridden by Kz dispersion
-                                        call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                         !call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),0.,x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                         !write(*,*) 'H0: ',sig_z_loc
                                     
-                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_00_loc,sig_y_00_loc,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z_loc,sig_y_loc,FF_zc_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z_loc,sig_y_loc,FF_zc_loc)
                                         !write(*,*) 'H1: ',sig_z_loc
                                         
                                         !Diagnostic
                                         if (2.eq.1.and.x_loc.lt.10.) then
                                         write(*,'(a,5f12.2,f12.4)') 'OUT KZ FULL: ',x_loc,sig_z_loc,sig_y_loc,h_mix_loc,exp(logz0_loc),invL_loc
                                         !call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
-                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),0.,x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),0.,x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                         write(*,'(A,5f12.2,f12.4)') 'OUT KZ EMUL: ',x_loc,sig_z_loc,sig_y_loc,h_mix_loc,exp(logz0_loc),invL_loc
                                         write(*,*)
                                         endif
@@ -528,7 +528,7 @@
                                     endif
                                     
                                     if (stability_scheme_flag.eq.4) then
-                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     endif
                                     
                                     !Adjust the height of the wind to the average of the emission and plume centre of mass height.
@@ -916,7 +916,7 @@
 
                 !Set sig_0's at the emission position
                 x_loc=0.
-                call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
+                call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
 
                 !Use the initial plume centre of mass to determine wind advection height
                 call z_centremass_gauss_func(sig_z_0_loc,h_emis_loc,h_mix_loc,zc_loc)
@@ -1057,19 +1057,19 @@
 
                                     !Select method for assigning sigma
                                     if (stability_scheme_flag.eq.1) then
-                                        call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     endif
                                     if (stability_scheme_flag.eq.2) then
-                                        call uEMEP_set_dispersion_sigma_PG(invL_loc,logz0_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_PG(invL_loc,logz0_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     endif
                                     
                                     if (stability_scheme_flag.eq.3) then
                                         
                                         !Set initial values for sigma. Sig_y is set here
-                                        call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     
                                         !write(*,*) 'IN:  ',x_loc,sig_z_loc,FF_loc
-                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_0_loc,sig_y_0_loc,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z_loc,sig_y_loc,FF_zc_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_0_loc,sig_y_0_loc,sigy_0_subgid_width_scale,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z_loc,sig_y_loc,FF_zc_loc)
                                         !write(*,*) 'OUT: ',x_loc,sig_z_loc,FF_loc
                                         
                                         sig_y_loc=sig_y_loc+x_loc*abs(angle_diff(i_cross_integral,j_cross_integral))
@@ -1082,7 +1082,7 @@
                                     endif
 
                                     if (stability_scheme_flag.eq.4) then
-                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     endif
                                     
                                     if (wind_level_integral_flag.eq.6.and.stability_scheme_flag.ne.3) then

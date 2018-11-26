@@ -259,9 +259,9 @@
                 endif
                 
                 scale_grid_interpolation_size=EMEP_temp_delta/temp_delta
-                write(*,*) dgrid_nc(lon_nc_index),dgrid_nc(lat_nc_index)
-                write(*,*) EMEP_temp_delta
-                write(*,*) scale_grid_interpolation_size
+                !write(*,*) dgrid_nc(lon_nc_index),dgrid_nc(lat_nc_index)
+                !write(*,*) EMEP_temp_delta
+                !write(*,*) scale_grid_interpolation_size
                 !stop
                 
                 !Find grid position of the max and min coordinates and add2 grids*EMEP_grid_interpolation_size

@@ -10,11 +10,11 @@
 !   Calculates dispersion based on Kz and wind profiles
 !==========================================================================
 
-    subroutine uEMEP_set_dispersion_sigma_Kz(x_in,sig_z00,sig_y00,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta,u_star0_in,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z,sig_y,u_zc)
+    subroutine uEMEP_set_dispersion_sigma_Kz(x_in,sig_z00,sig_y00,sigy_0_subgid_width_scale,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta,u_star0_in,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z,sig_y,u_zc)
 
     implicit none
     
-    real, intent(in) :: x_in,sig_z00,sig_y00,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta(2),u_star0_in
+    real, intent(in) :: x_in,sig_z00,sig_y00,sigy_0_subgid_width_scale,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta(2),u_star0_in
     integer, intent(in) :: n_kz_iterations
     logical, intent(in) :: average_zc_h_in_Kz_flag
     real, intent(out) :: sig_z,sig_y,u_zc
@@ -122,7 +122,7 @@
     h_y=(h_mix_loc*0.25+z_emis_loc)/2.
     call Kz_func(h_mix_loc,L,u_star0,h_y,K_min,K_y)
     !call Kz_func(h_mix_loc,L,u_star0,zc,K_min,K_y)
-    sig_y=sig_y00+min_xy+sqrt(2.*K_y*l_t*f_t)
+    sig_y=sig_y00+min_xy*sigy_0_subgid_width_scale+sqrt(2.*K_y*l_t*f_t)
     
     
     end subroutine uEMEP_set_dispersion_sigma_Kz

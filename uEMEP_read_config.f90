@@ -217,6 +217,8 @@
         sig_y_00(agriculture_index,2)=read_name_real('sig_y_00(agriculture_index,2)',sig_y_00(agriculture_index,2),unit_in,unit_logfile)
         sig_y_00(industry_index,2)=read_name_real('sig_y_00(industry_index,2)',sig_y_00(industry_index,2),unit_in,unit_logfile)
 
+        sigy_0_subgid_width_scale=read_name_real('sigy_0_subgid_width_scale',sigy_0_subgid_width_scale,unit_in,unit_logfile)
+        
         sig_z_00(traffic_index,1)=read_name_real('sig_z_00(traffic_index,1)',sig_z_00(traffic_index,1),unit_in,unit_logfile)
         sig_z_00(shipping_index,1)=read_name_real('sig_z_00(shipping_index,1)',sig_z_00(shipping_index,1),unit_in,unit_logfile)
         sig_z_00(heating_index,1)=read_name_real('sig_z_00(heating_index,1)',sig_z_00(heating_index,1),unit_in,unit_logfile)
@@ -356,6 +358,8 @@
         use_NORTRIP_emission_pollutant(pmex_index)=read_name_logical('use_NORTRIP_emission_pollutant(pmex_index)',use_NORTRIP_emission_pollutant(pmex_index),unit_in,unit_logfile) 
         use_RWC_emission_data=read_name_logical('use_RWC_emission_data',use_RWC_emission_data,unit_in,unit_logfile) 
         HDD_threshold_value=read_name_integer('HDD_threshold_value',HDD_threshold_value,unit_in,unit_logfile)
+        DMT_min_value=read_name_real('DMT_min_value',DMT_min_value,unit_in,unit_logfile)
+        
         
         integral_subgrid_delta_ref=read_name_real('integral_subgrid_delta_ref',integral_subgrid_delta_ref,unit_in,unit_logfile)
         
@@ -369,6 +373,7 @@
         n_kz_iterations=read_name_integer('n_kz_iterations',n_kz_iterations,unit_in,unit_logfile)
 
         read_weekly_shipping_data_flag=read_name_logical('read_weekly_shipping_data_flag',read_weekly_shipping_data_flag,unit_in,unit_logfile) 
+        read_monthly_and_daily_shipping_data_flag=read_name_logical('read_monthly_and_daily_shipping_data_flag',read_monthly_and_daily_shipping_data_flag,unit_in,unit_logfile) 
         use_tunnel_deposition_flag=read_name_logical('use_tunnel_deposition_flag',use_tunnel_deposition_flag,unit_in,unit_logfile) 
         
         save_emissions_for_EMEP(traffic_index)=read_name_logical('save_emissions_for_EMEP(traffic_index)',save_emissions_for_EMEP(traffic_index),unit_in,unit_logfile)        

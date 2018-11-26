@@ -161,6 +161,8 @@
                     !Read in shipping data
                     if (read_weekly_shipping_data_flag) then
                         call uEMEP_read_weekly_shipping_asi_data
+                    elseif (read_monthly_and_daily_shipping_data_flag) then
+                        call uEMEP_read_monthly_and_daily_shipping_asi_data
                     else
                         call uEMEP_read_shipping_asi_data
                     endif
