@@ -12,9 +12,9 @@
     
     !double precision :: EMEP_projection_attributes(10)
     !real, allocatable :: EMEP_emissions_grid(:,:,:,:,:) !x,y,t,source,pollutant
-    integer a_start(6),date_array(6)
+    integer a_start(6),date_array(6),a_start_emission(6)
     character(256) format_temp
-    double precision date_num_temp,date_num_start
+    double precision date_num_temp,date_num_start,date_num_start_emission
     integer t,i_source,i,j
     
     !Functions
@@ -58,7 +58,8 @@
     !Move minium to edge, for consistency with normal subgrid definition
     emission_subgrid_min(y_dim_index,:)=emission_subgrid_min(y_dim_index,:)-emission_subgrid_delta(y_dim_index,:)/2.
     
-    subgrid_dim(t_dim_index)=save_emissions_end_index-save_emissions_start_index+1
+    !subgrid_dim(t_dim_index)=save_emissions_end_index-save_emissions_start_index+1
+    subgrid_dim(t_dim_index)=save_emissions_end_index
 
     dim_length_nc(x_dim_nc_index)=emission_subgrid_dim(x_dim_index,allsource_index)
     dim_length_nc(y_dim_nc_index)=emission_subgrid_dim(y_dim_index,allsource_index)
@@ -83,12 +84,15 @@
     !Assumes it starts at hour 1
     a_start(4)=1
     a_start(5:6)=0
+    a_start_emission=a_start
+    
     date_num_start=date_to_number(a_start,ref_year_EMEP)
     !Move the starting time according to the index value given (index is the number of hours)
-    date_num_start=date_num_start+dble(save_emissions_start_index-1)/24.
+    date_num_start_emission=date_num_start+dble(save_emissions_start_index-1)/24.
     !Set the emission_date_str to be used to name the output file as this may not be the same as the input file
     call number_to_date(date_num_start,a_start,ref_year_EMEP)
-    call date_to_datestr(a_start,format_temp,emission_date_str)
+    call number_to_date(date_num_start_emission,a_start_emission,ref_year_EMEP)
+    call date_to_datestr(a_start_emission,format_temp,emission_date_str)
     !write(*,*) config_date_str,emission_date_str
     
     !long_name = "time at middle of period";
@@ -194,8 +198,11 @@
     integer i_file,i_pollutant,i_source
     real, allocatable :: temp_subgrid(:,:,:)
     integer exists
+    integer temp_time_dim
     
-    if (.not.allocated(temp_subgrid)) allocate(temp_subgrid(emission_subgrid_dim(x_dim_index,allsource_index),emission_subgrid_dim(y_dim_index,allsource_index),subgrid_dim(t_dim_index)))
+    temp_time_dim=save_emissions_end_index-save_emissions_start_index+1
+    write(unit_logfile,'(A,3i6)') 'Time dimensions to be saved: ',save_emissions_start_index,save_emissions_end_index,temp_time_dim
+    if (.not.allocated(temp_subgrid)) allocate(temp_subgrid(emission_subgrid_dim(x_dim_index,allsource_index),emission_subgrid_dim(y_dim_index,allsource_index),temp_time_dim))
 
     valid_min=0.   
     unit_str="ug/m3"
@@ -252,12 +259,12 @@
                 var_name_temp=trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),allsource_index)) !//'_'//trim(filename_grid(i_file))
                 
                 !Calculate the emissions in the target grid            
-                temp_subgrid(:,:,:)=emission_subgrid(:,:,:,i_source,i_pollutant)
+                temp_subgrid(:,:,:)=emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,i_pollutant)
 
                 !Convert the PM10 to PMco, special case
                 if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index) then
                     var_name_temp=trim(var_name_nc(emis_nc_index,pmco_nc_index,allsource_index)) !//'_'//trim(filename_grid(i_file))
-                    temp_subgrid(:,:,:)=emission_subgrid(:,:,:,i_source,pollutant_loop_back_index(pm10_nc_index))-emission_subgrid(:,:,:,i_source,pollutant_loop_back_index(pm25_nc_index))
+                    temp_subgrid(:,:,:)=emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,pollutant_loop_back_index(pm10_nc_index))-emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,pollutant_loop_back_index(pm25_nc_index))
                 endif
 
                 !Subgrid emissions are in units ug/sec/subgrid. Convert to mg/m2/hour. Acount for the difference in subgrid sizes here
@@ -265,7 +272,7 @@
  
                 if (save_netcdf_file_flag.or.save_netcdf_receptor_flag) then
                     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
-                    call uEMEP_save_for_EMEP_netcdf_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,i_source),emission_subgrid_dim(y_dim_index,i_source),subgrid_dim(t_dim_index) &
+                    call uEMEP_save_for_EMEP_netcdf_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,i_source),emission_subgrid_dim(y_dim_index,i_source),temp_time_dim &
                         ,temp_subgrid(:,:,:),x_emission_subgrid(:,:,i_source),y_emission_subgrid(:,:,i_source),lon_emission_subgrid(:,:,i_source),lat_emission_subgrid(:,:,i_source),var_name_temp &
                         ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
                 endif
@@ -381,7 +388,7 @@
         !write(*,*) 'here6',shape(val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index))
         !write(*,*) val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index)
 
-        call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index)) )
+        call check( nf90_put_var(ncid, time_varid, val_dim_nc(save_emissions_start_index:save_emissions_end_index,time_dim_nc_index)) )
         !call check( nf90_put_var(ncid, time_varid, time_seconds_output(1:dim_length_nc(time_dim_nc_index))) )
         call check( nf90_put_var(ncid, y_varid, y_vector) )
         call check( nf90_put_var(ncid, x_varid, x_vector) )

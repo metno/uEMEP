@@ -431,6 +431,7 @@
                 read(unit_in,*) inputdata_rl_temp(1:n_roadlink_emission_time)
                 inputdata_rl_emissions(counter,1:time_index_temp,j)=inputdata_rl_temp(t_match_index:t_match_index+time_index_temp-1)
             enddo
+            !write(*,*) counter,inputdata_rl_emissions(counter,10,1),inputdata_rl_emissions(counter,10,2)
         else
             read(unit_in,*,ERR=20) 
             do j=1,n_roadlink_emission_compound

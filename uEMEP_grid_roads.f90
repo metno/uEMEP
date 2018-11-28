@@ -179,7 +179,7 @@
                                     +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*inputdata_rl_emissions(major_ro,ttt,i_roadlink_emission_compound(i_pollutant)) &
                                     *1.e6/1.e3/3600.*tunnel_ratio
                             enddo
-                            
+                            !write(*,*) i,j, emission_subgrid(i,j,t,source_index,pollutant_loop_back_index(pm10_nc_index)),emission_subgrid(i,j,t,source_index,pollutant_loop_back_index(pm25_nc_index))
                         enddo
                     endif
 
