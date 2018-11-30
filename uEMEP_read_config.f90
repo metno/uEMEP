@@ -5,7 +5,7 @@
 
     implicit none
     
-    integer i,j,k
+    integer i
     real read_name_real
     logical read_name_logical
     integer read_name_integer
@@ -16,9 +16,12 @@
     
     integer :: unit_in=30
     integer i_config,i_source
+    double precision datenum_temp
+    character(256) yesterday_date_str
     
     !Functions
     character(256) replace_string_char
+    double precision date_to_number
     
 !==========================================================================
 !   uEMEP model setup
@@ -85,7 +88,9 @@
         file_tag=read_name_char('file_tag',file_tag,unit_in,unit_logfile)
         
         replacement_date_str=read_name_char('replacement_date_str',replacement_date_str,unit_in,unit_logfile)
-        
+        replacement_yesterday_date_str=read_name_char('replacement_yesterday_date_str',replacement_yesterday_date_str,unit_in,unit_logfile)
+        replacement_hour_str=read_name_char('replacement_hour_str',replacement_hour_str,unit_in,unit_logfile)
+
         input_comp_name=read_name_char('input_comp_name',input_comp_name,unit_in,unit_logfile)
         
         hourly_calculations=read_name_logical('hourly_calculations',hourly_calculations,unit_in,unit_logfile)
@@ -410,6 +415,7 @@
         endif
     enddo
 
+    
     !Replace some of the strings with the date_str. Do this twice in case there are two occurences of it in a string
     do i=1,2
         pathname_EMEP(1)=replace_string_char(config_date_str,replacement_date_str,pathname_EMEP(1))
@@ -442,6 +448,32 @@
     enddo
     !write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_output_grid)
     !write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_EMEP(1))
+
+    !Specify the yesterday date string and replace it if found
+    !call datestr_to_date(config_date_str,format_temp,a)
+    datenum_temp=date_to_number(a,ref_year_EMEP)
+    datenum_temp=datenum_temp-1.
+    call number_to_date(datenum_temp,a,ref_year_EMEP)
+    call date_to_datestr(a,format_temp,yesterday_date_str)
+    write(unit_logfile,'(2a)')'Todays date string: ',trim(config_date_str)
+    write(unit_logfile,'(2a)')'Yesterdays date string: ',trim(yesterday_date_str)
+
+    do i=1,2
+        pathname_EMEP(1)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,pathname_EMEP(1))
+        pathname_EMEP(2)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,pathname_EMEP(2))
+        pathname_EMEP(3)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,pathname_EMEP(3))
+        pathname_EMEP(4)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,pathname_EMEP(4))
+        filename_EMEP(1)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_EMEP(1))
+        filename_EMEP(2)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_EMEP(2))
+        filename_EMEP(3)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_EMEP(3))
+        filename_EMEP(4)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_EMEP(4))
+        pathname_output_grid=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,pathname_output_grid)
+        !NORTRIP file and path name
+        pathname_rl(2)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,pathname_rl(2))
+        filename_rl(2)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_rl(2))
+    enddo
+    
+    !write(*,*) trim(filename_EMEP(3))
     
     !Place tile_tag in front of file_tag if it has been read
     if (tile_tag.ne.'') then

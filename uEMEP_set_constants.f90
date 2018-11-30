@@ -262,8 +262,10 @@
 
     !Set AQI thresholds
     aqi_hourly_limits(no2_index,1)=100.;aqi_hourly_limits(no2_index,2)=200.;aqi_hourly_limits(no2_index,3)=400.;
-    aqi_hourly_limits(pm10_index,1)=50.;aqi_hourly_limits(pm10_index,2)=80.;aqi_hourly_limits(pm10_index,3)=400.;
-    aqi_hourly_limits(pm25_index,1)=25.;aqi_hourly_limits(pm25_index,2)=40.;aqi_hourly_limits(pm25_index,3)=150.;
+    !aqi_hourly_limits(pm10_index,1)=50.;aqi_hourly_limits(pm10_index,2)=80.;aqi_hourly_limits(pm10_index,3)=400.;
+    !aqi_hourly_limits(pm25_index,1)=25.;aqi_hourly_limits(pm25_index,2)=40.;aqi_hourly_limits(pm25_index,3)=150.;
+    aqi_hourly_limits(pm10_index,1)=60.;aqi_hourly_limits(pm10_index,2)=120.;aqi_hourly_limits(pm10_index,3)=400.;
+    aqi_hourly_limits(pm25_index,1)=30.;aqi_hourly_limits(pm25_index,2)=50.;aqi_hourly_limits(pm25_index,3)=150.;
     aqi_hourly_limits(o3_index,1)=100.;aqi_hourly_limits(o3_index,2)=180.;aqi_hourly_limits(o3_index,3)=240.;
 
     aqi_daily_limits(pm10_index,1)=30.;aqi_daily_limits(pm10_index,2)=50.;aqi_daily_limits(pm10_index,3)=150.;
