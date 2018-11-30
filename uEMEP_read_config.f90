@@ -458,6 +458,16 @@
     write(unit_logfile,'(2a)')'Todays date string: ',trim(config_date_str)
     write(unit_logfile,'(2a)')'Yesterdays date string: ',trim(yesterday_date_str)
 
+    do i=1,3
+        call date_to_datestr_squarebracket(a,pathname_output_grid,pathname_output_grid)
+        call date_to_datestr_squarebracket(a,pathname_EMEP(1),pathname_EMEP(1))
+        call date_to_datestr_squarebracket(a,pathname_EMEP(2),pathname_EMEP(2))
+        call date_to_datestr_squarebracket(a,pathname_EMEP(3),pathname_EMEP(3))
+        call date_to_datestr_squarebracket(a,pathname_EMEP(4),pathname_EMEP(4))
+        call date_to_datestr_squarebracket(a,pathname_rl(1),pathname_rl(1))
+        call date_to_datestr_squarebracket(a,pathname_rl(2),pathname_rl(2))  
+    enddo
+
     do i=1,2
         pathname_EMEP(1)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,pathname_EMEP(1))
         pathname_EMEP(2)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,pathname_EMEP(2))
@@ -473,7 +483,9 @@
         filename_rl(2)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_rl(2))
     enddo
     
-    !write(*,*) trim(filename_EMEP(3))
+    write(*,*) trim(filename_EMEP(3))
+    write(*,*) trim(pathname_EMEP(3))
+    
     
     !Place tile_tag in front of file_tag if it has been read
     if (tile_tag.ne.'') then
@@ -482,7 +494,6 @@
     
     enddo !End configuration file number loop
     
-
     end subroutine uEMEP_read_config
     
     

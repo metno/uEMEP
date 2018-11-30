@@ -438,7 +438,104 @@
     
     end subroutine date_to_datestr_bracket
 !----------------------------------------------------------------------
+
+!----------------------------------------------------------------------
+    subroutine date_to_datestr_squarebracket(a,in_format_str,out_a_str)
     
+    implicit none
+    
+    character(*), intent(out) ::  out_a_str
+    character(*), intent(in) :: in_format_str
+    integer, intent(in) :: a(6)
+    character(256) format_str,a_str
+    integer pos
+    integer pos1,pos2
+    
+    !based on (yyyy.mm.dd HH:MM:SS)
+    
+    !a_str=format_str
+    
+    !To avoid just putting in date parts e.g. mm or dd that might occurr in a string then it is required that at least two of the date
+    !strings are present, i.e. yyyy, mm and dd or HH, MM and SS
+    
+    !Only changes dates when they are inside '[.....]'
+    !Removes these once changed
+    pos1=index(in_format_str,'[')
+    pos2=index(in_format_str,']')
+    
+    if (pos1.le.0.or.pos2.le.0.or.pos1+1.gt.pos2-1) then
+        out_a_str=in_format_str
+        return
+    endif
+    
+    !Reassign format_str to be just the text between <..>
+    format_str=in_format_str(pos1+1:pos2-1)
+    a_str=format_str
+    
+    !extract year
+    pos=index(format_str,'yyyy')
+    if (pos.gt.0) then
+        write(a_str(pos:pos+3),'(i4)') a(1)
+    endif
+    
+    pos=index(format_str,'mm')
+    if (pos.gt.0) then
+        if (a(2).gt.9) then
+            write(a_str(pos:pos+1),'(i2)') a(2)
+        else
+            write(a_str(pos:pos+1),'(a1,i1)') '0',a(2)
+        endif     
+    endif
+
+    pos=index(format_str,'dd')
+    if (pos.gt.0) then
+        if (a(3).gt.9) then
+            write(a_str(pos:pos+1),'(i2)') a(3)
+        else
+            write(a_str(pos:pos+1),'(a1,i1)') '0',a(3)
+        endif     
+    endif
+    
+    pos=index(format_str,'HH')
+    if (pos.gt.0) then
+        if (a(4).gt.9) then
+            write(a_str(pos:pos+1),'(i2)') a(4)
+        else
+            write(a_str(pos:pos+1),'(a1,i1)') '0',a(4)
+        endif     
+    endif
+
+    pos=index(format_str,'MM')
+    if (pos.gt.0) then
+        if (a(5).gt.9) then
+            write(a_str(pos:pos+1),'(i2)') a(5)
+        else
+            write(a_str(pos:pos+1),'(a1,i1)') '0',a(5)
+        endif     
+    endif
+    
+    pos=index(format_str,'SS')
+    if (pos.gt.0) then
+        if (a(6).gt.9) then
+            write(a_str(pos:pos+1),'(i2)') a(6)
+        else
+            write(a_str(pos:pos+1),'(a1,i1)') '0',a(6)
+        endif     
+    endif
+    
+    !insert the a_str into out_a_str, removing the '[]' text
+    if (len_trim(in_format_str).gt.pos2) then
+        out_a_str=in_format_str(1:pos1-1)//trim(a_str)//in_format_str(pos2+1:)
+    else
+        out_a_str=in_format_str(1:pos1-1)//trim(a_str)
+    endif
+    
+    !write(*,*) trim(in_format_str),trim(out_a_str)
+    !stop
+    
+    end subroutine date_to_datestr_squarebracket
+!----------------------------------------------------------------------
+
 !----------------------------------------------------------------------
     function day_of_week (a)
     !Adapted from EPISODE code
