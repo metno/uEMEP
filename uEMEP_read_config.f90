@@ -483,8 +483,8 @@
         filename_rl(2)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_rl(2))
     enddo
     
-    write(*,*) trim(filename_EMEP(3))
-    write(*,*) trim(pathname_EMEP(3))
+    !write(*,*) trim(filename_EMEP(3))
+    !write(*,*) trim(pathname_EMEP(3))
     
     
     !Place tile_tag in front of file_tag if it has been read

@@ -16,7 +16,7 @@
     character(256) :: config_date_str=''
     character(256) :: emission_date_str=''
     character(256) :: replacement_date_str='<>'
-    character(256) :: replacement_yesterday_date_str='<>'
+    character(256) :: replacement_yesterday_date_str='[]'
     character(256) :: replacement_hour_str='<>'
     integer :: n_config_files=0
     

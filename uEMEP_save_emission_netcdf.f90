@@ -128,11 +128,17 @@
         if (i_source.eq.traffic_index) then
             !Read inthe road data
             call uEMEP_read_roadlink_data_ascii
-            call uEMEP_read_roadlink_emission_data
+            if (use_NORTRIP_emission_data) then
+                call uEMEP_read_roadlink_emission_data
+            endif
             !Redefine the road link positions to correspond to the EMEP coordinates
         
             !Grid the data. Road link coordinates will be redefined within this routine
             call uEMEP_grid_roads
+            !call uEMEP_read_time_profiles
+            !call uEMEP_set_emission_factors
+            !call uEMEP_convert_proxy_to_emissions
+            
         endif
         if (i_source.eq.heating_index) then
             !meteo_var3d_nc(i_nc,j_nc,:,t2m_nc_index)
@@ -177,7 +183,7 @@
     call uEMEP_save_emission_netcdf
     
 	write(unit_logfile,'(A)') '================================================================'
-    write(unit_logfile,'(a)') 'Finished saving emission data for EMEP. Stopping'
+    write(unit_logfile,'(a)') 'Finished saving emission data for EMEP.'
 	write(unit_logfile,'(A)') '================================================================'
     
     stop
