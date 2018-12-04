@@ -93,6 +93,8 @@
     call number_to_date(date_num_start,a_start,ref_year_EMEP)
     call number_to_date(date_num_start_emission,a_start_emission,ref_year_EMEP)
     call date_to_datestr(a_start_emission,format_temp,emission_date_str)
+    !Do not do this now
+    emission_date_str=config_date_str
     !write(*,*) config_date_str,emission_date_str
     
     !long_name = "time at middle of period";
