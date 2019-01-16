@@ -150,6 +150,10 @@
             call uEMEP_read_RWC_heating_data
             !Read in the temperature fields from the alternative meteorology always, since EMEP data should not exist yet
             use_alternative_meteorology_flag=.true.
+            !Set the maximum dimension to that which is necessary. Minimum is not changed as it is selected in uEMEP_save_emission_netcdf
+            !start_time_meteo_nc_index=start_time_meteo_nc_index+(save_emissions_start_index-1)
+            end_time_meteo_nc_index=start_time_meteo_nc_index+(save_emissions_end_index-1)
+
             call uEMEP_read_meteo_nc
             !Need to make a cross reference here or simply skip the two based on an if statement
             call uEMEP_read_time_profiles

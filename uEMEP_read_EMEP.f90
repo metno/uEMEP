@@ -640,7 +640,14 @@
         !write(*,*) minval(var3d_nc(:,:,:,inv_FF10_nc_index,allsource_index)),maxval(var3d_nc(:,:,:,inv_FF10_nc_index,allsource_index))
         !write(*,*) minval(var3d_nc(:,:,:,FF10_nc_index,allsource_index)),maxval(var3d_nc(:,:,:,FF10_nc_index,allsource_index))
         
-            
+        
+        !Limit stable L to lowest_stable_L and to lowest_unstable_L (negative number) for unstable.
+        where (var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index).lt.1.0/lowest_unstable_L) var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index)=1.0/lowest_unstable_L
+        where (var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index).gt.1.0/lowest_stable_L) var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index)=1.0/lowest_stable_L
+
+        where (var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index).lt.ustar_min) var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)=ustar_min
+
+
         !If no logz0 available. Set to log(0.1)
         !For urban areas a value of 0.3 is used
         where (var3d_nc(:,:,:,logz0_nc_index,:,meteo_p_loop_index).eq.0.0) var3d_nc(:,:,:,logz0_nc_index,:,meteo_p_loop_index)=log(0.3)

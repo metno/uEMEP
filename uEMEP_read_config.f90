@@ -252,6 +252,9 @@
         filename_EMEP(2)=read_name_char('filename_EMEP(2)',filename_EMEP(2),unit_in,unit_logfile)
         filename_EMEP(3)=read_name_char('filename_EMEP(3)',filename_EMEP(3),unit_in,unit_logfile)
         filename_EMEP(4)=read_name_char('filename_EMEP(4)',filename_EMEP(4),unit_in,unit_logfile)
+        original_pathname_EMEP=pathname_EMEP
+        original_filename_EMEP=filename_EMEP
+        
 
         pathname_ship(1)=read_name_char('pathname_ship(1)',pathname_ship(1),unit_in,unit_logfile)
         pathname_ship(2)=read_name_char('pathname_ship(2)',pathname_ship(2),unit_in,unit_logfile)
@@ -397,6 +400,21 @@
         save_emissions_start_index=read_name_integer('save_emissions_start_index',save_emissions_start_index,unit_in,unit_logfile)
         save_emissions_end_index=read_name_integer('save_emissions_end_index',save_emissions_end_index,unit_in,unit_logfile)
 
+        save_compounds=read_name_logical('save_compounds',save_compounds,unit_in,unit_logfile)
+        save_source_contributions=read_name_logical('save_source_contributions',save_source_contributions,unit_in,unit_logfile)
+        save_wind_vectors=read_name_logical('save_wind_vectors',save_wind_vectors,unit_in,unit_logfile)
+        save_other_meteo=read_name_logical('save_other_meteo',save_other_meteo,unit_in,unit_logfile)
+        save_emep_source_contributions=read_name_logical('save_emep_source_contributions',save_emep_source_contributions,unit_in,unit_logfile)
+        save_emep_original=read_name_logical('save_emep_original',save_emep_original,unit_in,unit_logfile)
+        save_emissions=read_name_logical('save_emissions',save_emissions,unit_in,unit_logfile)
+        save_for_chemistry=read_name_logical('save_for_chemistry',save_for_chemistry,unit_in,unit_logfile)
+        save_population=read_name_logical('save_population',save_population,unit_in,unit_logfile)
+        save_no2_source_contributions=read_name_logical('save_no2_source_contributions',save_no2_source_contributions,unit_in,unit_logfile)
+        save_o3_source_contributions=read_name_logical('save_o3_source_contributions',save_o3_source_contributions,unit_in,unit_logfile)
+
+        lowest_stable_L=read_name_real('lowest_stable_L',lowest_stable_L,unit_in,unit_logfile)
+        lowest_unstable_L=read_name_real('lowest_unstable_L',lowest_unstable_L,unit_in,unit_logfile)
+        
         
     close (unit_in)
     
@@ -415,7 +433,6 @@
         endif
     enddo
 
-    
     !Replace some of the strings with the date_str. Do this twice in case there are two occurences of it in a string
     do i=1,2
         pathname_EMEP(1)=replace_string_char(config_date_str,replacement_date_str,pathname_EMEP(1))
@@ -430,6 +447,20 @@
         !NORTRIP file and path name
         pathname_rl(2)=replace_string_char(config_date_str,replacement_date_str,pathname_rl(2))
         filename_rl(2)=replace_string_char(config_date_str,replacement_date_str,filename_rl(2))
+
+        pathname_EMEP(1)=replace_string_char(forecast_hour_str,replacement_hour_str,pathname_EMEP(1))
+        pathname_EMEP(2)=replace_string_char(forecast_hour_str,replacement_hour_str,pathname_EMEP(2))
+        pathname_EMEP(3)=replace_string_char(forecast_hour_str,replacement_hour_str,pathname_EMEP(3))
+        pathname_EMEP(4)=replace_string_char(forecast_hour_str,replacement_hour_str,pathname_EMEP(4))
+        filename_EMEP(1)=replace_string_char(forecast_hour_str,replacement_hour_str,filename_EMEP(1))
+        filename_EMEP(2)=replace_string_char(forecast_hour_str,replacement_hour_str,filename_EMEP(2))
+        filename_EMEP(3)=replace_string_char(forecast_hour_str,replacement_hour_str,filename_EMEP(3))
+        filename_EMEP(4)=replace_string_char(forecast_hour_str,replacement_hour_str,filename_EMEP(4))
+        pathname_output_grid=replace_string_char(forecast_hour_str,replacement_hour_str,pathname_output_grid)
+        !NORTRIP file and path name
+        pathname_rl(2)=replace_string_char(forecast_hour_str,replacement_hour_str,pathname_rl(2))
+        filename_rl(2)=replace_string_char(forecast_hour_str,replacement_hour_str,filename_rl(2))
+
     enddo
 
     !Replace date in the output file if required, 3 times for yyyy mm dd
@@ -445,11 +476,18 @@
         call date_to_datestr_bracket(a,pathname_EMEP(4),pathname_EMEP(4))
         call date_to_datestr_bracket(a,pathname_rl(1),pathname_rl(1))
         call date_to_datestr_bracket(a,pathname_rl(2),pathname_rl(2))  
+        
+        call date_to_datestr_bracket(a,filename_EMEP(1),filename_EMEP(1))
+        call date_to_datestr_bracket(a,filename_EMEP(2),filename_EMEP(2))
+        call date_to_datestr_bracket(a,filename_EMEP(3),filename_EMEP(3))
+        call date_to_datestr_bracket(a,filename_EMEP(4),filename_EMEP(4))
+        call date_to_datestr_bracket(a,filename_rl(1),filename_rl(1))
+        call date_to_datestr_bracket(a,filename_rl(2),filename_rl(2))  
     enddo
     !write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_output_grid)
-    !write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_EMEP(1))
+    !write (unit_logfile,'(2A)') ' Updating output file to:   ',trim(pathname_EMEP(1))
 
-    !Specify the yesterday date string and replace it if found
+    !Specify the yesterday date string and replace it if found. Identified wiht a square bracket
     !call datestr_to_date(config_date_str,format_temp,a)
     datenum_temp=date_to_number(a,ref_year_EMEP)
     datenum_temp=datenum_temp-1.

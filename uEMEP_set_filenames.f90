@@ -12,6 +12,7 @@
     pathname_grid(:)=pathname_output_grid
 
     !Set filenames for all gridded data to be saved
+    !These are the names now given in the netcdf files
     do i=1,n_source_index
         filename_grid(proxy_emission_file_index(i))=trim('proxy_emission_subgrid')//'_'//trim(source_file_str(i))
         filename_grid(emission_file_index(i))=trim('emission_subgrid')//'_'//trim(source_file_str(i))
@@ -26,7 +27,7 @@
         filename_grid(use_subgrid_file_index(i))=trim('use_subgrid')//'_'//trim(source_file_str(i))
         filename_grid(emep_emission_subgrid_file_index(i))=trim('EMEP_emission_subgrid')//'_'//trim(source_file_str(i))       
     enddo
-    !Alternative set of names for outputs
+    !Alternative set of names for outputs to netcdf
     do i=1,n_source_index
         filename_grid(proxy_emission_file_index(i))=trim('proxy_emission')//'_'//trim(source_file_str(i))
         filename_grid(emission_file_index(i))=trim('emission')//'_'//trim(source_file_str(i))
@@ -49,18 +50,21 @@
     filename_grid(population_file_index(kindergaten_index))=trim('kindergaten_subgrid')
     filename_grid(population_file_index(home_index))=trim('home_subgrid')
 
-    !Meteo files
-    filename_grid(subgrid_ugrid_file_index)='ugrid_subgrid'
-    filename_grid(subgrid_vgrid_file_index)='vgrid_subgrid'
-    filename_grid(subgrid_hmix_file_index)='hmix_subgrid'
-    filename_grid(subgrid_kz_file_index)='kz_subgrid'
-    filename_grid(subgrid_logz0_file_index)='logz0_subgrid'
-    filename_grid(subgrid_invL_file_index)='invL_subgrid'
-    filename_grid(subgrid_FFgrid_file_index)='FFgrid_subgrid'
-    filename_grid(subgrid_FF10_file_index)='FF10_subgrid'
-    filename_grid(subgrid_invFFgrid_file_index)='invFFgrid_subgrid'
-    filename_grid(subgrid_invFF10_file_index)='invFF10_subgrid'
-    filename_grid(subgrid_ustar_file_index)='ustar_subgrid'
-    filename_grid(subgrid_J_file_index)='J_subgrid'
+    !Meteo file names
+    filename_grid(subgrid_ugrid_file_index)='xgrid_wind'
+    filename_grid(subgrid_vgrid_file_index)='ygrid_wind'
+    filename_grid(subgrid_hmix_file_index)='hmix'
+    filename_grid(subgrid_kz_file_index)='kz'
+    filename_grid(subgrid_logz0_file_index)='logz0'
+    filename_grid(subgrid_invL_file_index)='inv_L'
+    filename_grid(subgrid_FFgrid_file_index)='wind_speed_grid'
+    filename_grid(subgrid_DDgrid_file_index)='wind_direction_grid'
+    filename_grid(subgrid_FF10_file_index)='wind_speed_10m'
+    filename_grid(subgrid_DD10_file_index)='wind_direction_10m'
+    filename_grid(subgrid_invFFgrid_file_index)='inv_FFgrid'
+    filename_grid(subgrid_invFF10_file_index)='inv_FF10'
+    filename_grid(subgrid_ustar_file_index)='ustar'
+    filename_grid(subgrid_J_file_index)='J_photo'
+    filename_grid(subgrid_t2m_file_index)='air_temperature_2m'
     
     end subroutine uEMEP_set_filenames

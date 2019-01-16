@@ -54,6 +54,11 @@
     !Initialise all meteo subgrid fields
     meteo_subgrid=0.
     
+    !Set the time dimensions for transfering the alternative meteorology which has a time index that starts at 0
+    t_start=1
+    t_end=subgrid_dim(t_dim_index)
+
+    
     write(unit_logfile,'(A,I4)')'Setting EMEP subgrid meteo data using method ',EMEP_meteo_grid_interpolation_flag
 
     !Loop through the integral subgrid and find those subgrids within EMEP grids and allocate values directly from EMEP grids. Nearest neighbour
@@ -82,22 +87,22 @@
             if (use_alternative_meteorology_flag) then
             i_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,x_dim_index)
             j_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,y_dim_index)
-            meteo_subgrid(i,j,:,ugrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,ugrid_nc_index)
-            meteo_subgrid(i,j,:,vgrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,vgrid_nc_index)
-            meteo_subgrid(i,j,:,FFgrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,FFgrid_nc_index)
-            meteo_subgrid(i,j,:,FF10_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,FF10_nc_index)
-            meteo_subgrid(i,j,:,hmix_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,hmix_nc_index)
-            meteo_subgrid(i,j,:,logz0_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,logz0_nc_index)
-            meteo_subgrid(i,j,:,invL_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,invL_nc_index)
-            !meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,,:,inv_FFgrid_nc_index)
-            !meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,inv_FF10_nc_index)
-            meteo_subgrid(i,j,:,ustar_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,ustar_nc_index)
-            meteo_subgrid(i,j,:,t2m_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,t2m_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,ugrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,ugrid_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,vgrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,vgrid_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,FFgrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,FFgrid_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,FF10_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,FF10_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,hmix_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,hmix_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,logz0_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,logz0_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,invL_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,invL_nc_index)
+            !meteo_subgrid(i,j,t_start:t_end,inv_FFgrid_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,,t_start:t_end,inv_FFgrid_nc_index)
+            !meteo_subgrid(i,j,t_start:t_end,inv_FF10_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,inv_FF10_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,ustar_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,ustar_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,t2m_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,t2m_nc_index)
             endif
             
             !Not properly implemented. Always false
             if (use_alternative_z0_flag) then
-            meteo_subgrid(i,j,:,logz0_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,:,logz0_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,logz0_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,logz0_nc_index)
             endif
             
                     
@@ -222,21 +227,21 @@
                 endif                
 
                 if (use_alternative_meteorology_flag) then
-                meteo_subgrid(i,j,:,ugrid_subgrid_index)=meteo_subgrid(i,j,:,ugrid_subgrid_index)+meteo_var3d_nc(ii,jj,:,ugrid_nc_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,vgrid_subgrid_index)=meteo_subgrid(i,j,:,vgrid_subgrid_index)+meteo_var3d_nc(ii,jj,:,vgrid_nc_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,FFgrid_subgrid_index)=meteo_subgrid(i,j,:,FFgrid_subgrid_index)+meteo_var3d_nc(ii,jj,:,FFgrid_nc_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,hmix_subgrid_index)=meteo_subgrid(i,j,:,hmix_subgrid_index)+meteo_var3d_nc(ii,jj,:,hmix_nc_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,FF10_subgrid_index)=meteo_subgrid(i,j,:,FF10_subgrid_index)+meteo_var3d_nc(ii,jj,:,FF10_nc_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,logz0_subgrid_index)=meteo_subgrid(i,j,:,logz0_subgrid_index)+meteo_var3d_nc(ii,jj,:,logz0_nc_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,invL_subgrid_index)=meteo_subgrid(i,j,:,invL_subgrid_index)+meteo_var3d_nc(ii,jj,:,invL_nc_index)*weighting_nc(ii,jj)
-                !meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)=meteo_subgrid(i,j,:,inv_FFgrid_subgrid_index)+meteo_var3d_nc(ii,jj,:,inv_FFgrid_nc_index)*weighting_nc(ii,jj)
-                !meteo_subgrid(i,j,:,inv_FF10_subgrid_index)=meteo_subgrid(i,j,:,inv_FF10_subgrid_index)+meteo_var3d_nc(ii,jj,:,inv_FF10_nc_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,ustar_subgrid_index)=meteo_subgrid(i,j,:,ustar_subgrid_index)+meteo_var3d_nc(ii,jj,:,ustar_nc_index)*weighting_nc(ii,jj)
-                meteo_subgrid(i,j,:,t2m_subgrid_index)=meteo_subgrid(i,j,:,t2m_subgrid_index)+meteo_var3d_nc(ii,jj,:,t2m_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,ugrid_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,ugrid_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,ugrid_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,vgrid_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,vgrid_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,vgrid_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,FFgrid_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,FFgrid_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,FFgrid_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,hmix_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,hmix_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,hmix_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,FF10_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,FF10_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,FF10_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,logz0_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,logz0_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,logz0_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,invL_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,invL_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,invL_nc_index)*weighting_nc(ii,jj)
+                !meteo_subgrid(i,j,t_start:t_end,inv_FFgrid_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,inv_FFgrid_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,inv_FFgrid_nc_index)*weighting_nc(ii,jj)
+                !meteo_subgrid(i,j,t_start:t_end,inv_FF10_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,inv_FF10_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,inv_FF10_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,ustar_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,ustar_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,ustar_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,t2m_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,t2m_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,t2m_nc_index)*weighting_nc(ii,jj)
                 endif
                 
                 if (use_alternative_z0_flag) then
-                meteo_subgrid(i,j,:,logz0_subgrid_index)=meteo_subgrid(i,j,:,logz0_subgrid_index)+meteo_var3d_nc(ii,jj,:,logz0_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,logz0_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,logz0_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,logz0_nc_index)*weighting_nc(ii,jj)
                 endif
 
             enddo
@@ -268,21 +273,20 @@
             endif
             
             if (use_alternative_meteorology_flag) then
-            !Assumes it is never on the edge of the EMEP grid, not limitted
-            i_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,x_dim_index)
-            j_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,y_dim_index)
+                !Assumes it is never on the edge of the EMEP grid, not limitted
+                i_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,x_dim_index)
+                j_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,y_dim_index)
                         
-            !Adjust wind direction to utm projection.
-            !First determine rotation for grids that are not lat lon
-            !Will fail for 90 degree rotations though this should never be the case
-            if (meteo_nc_projection_type.ne.LL_projection_index) then
-                dlatx=meteo_var2d_nc(i_nc+1,j_nc,lat_nc_index)-meteo_var2d_nc(i_nc-1,j_nc,lat_nc_index)
-                dlaty=meteo_var2d_nc(i_nc,j_nc+1,lat_nc_index)-meteo_var2d_nc(i_nc,j_nc-1,lat_nc_index)
-                angle_lcc=atan(dlatx/dlaty)    
-            else
-                angle_lcc=0.
-            endif
-
+                !Adjust wind direction to utm projection.
+                !First determine rotation for grids that are not lat lon
+                !Will fail for 90 degree rotations though this should never be the case
+                if (meteo_nc_projection_type.ne.LL_projection_index) then
+                    dlatx=meteo_var2d_nc(i_nc+1,j_nc,lat_nc_index)-meteo_var2d_nc(i_nc-1,j_nc,lat_nc_index)
+                    dlaty=meteo_var2d_nc(i_nc,j_nc+1,lat_nc_index)-meteo_var2d_nc(i_nc,j_nc-1,lat_nc_index)
+                    angle_lcc=atan(dlatx/dlaty)    
+                else
+                    angle_lcc=0.
+                endif
             endif
      
             !Rotation from lat lon grid to UTM grid. No alternatives

@@ -260,6 +260,8 @@
     character(256) filename_EMEP(4)
     character(256) pathname_EMEP(4)
     character(256) pathfilename_EMEP(4)  !Combined path and filename
+    character(256) original_filename_EMEP(4)
+    character(256) original_pathname_EMEP(4)
 
     !Definition of the receptor file to be read.
     character(256) filename_receptor
@@ -500,6 +502,7 @@
     !Filename index for meteorological parameters
     integer subgrid_ugrid_file_index,subgrid_vgrid_file_index,subgrid_hmix_file_index,subgrid_kz_file_index,subgrid_logz0_file_index,subgrid_invL_file_index,subgrid_FF10_file_index,subgrid_FFgrid_file_index
     integer subgrid_invFF10_file_index,subgrid_invFFgrid_file_index,subgrid_ustar_file_index,subgrid_J_file_index,subgrid_meteo_file_index
+    integer subgrid_DD10_file_index,subgrid_DDgrid_file_index,subgrid_t2m_file_index
     !Filename index for grid auto grid parameters
     integer use_subgrid_file_index(n_source_index)
     integer emep_emission_subgrid_file_index(n_source_index)
@@ -639,6 +642,14 @@
     logical :: use_tunnel_deposition_flag=.false.
     
     real :: sigy_0_subgid_width_scale=0.25
+    real :: lowest_stable_L=1.e6
+    real :: lowest_unstable_L=-10.
+    
+    !Output data saving flags
+    logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.false.,save_other_meteo=.false.
+    logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
+    logical :: save_population=.false.,save_no2_source_contributions=.true.,save_o3_source_contributions=.true.
+
 
     end module uEMEP_definitions
     

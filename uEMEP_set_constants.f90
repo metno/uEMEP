@@ -119,12 +119,24 @@
         var_name_meteo_nc(J_nc_index)=''
         var_name_meteo_nc(ZTOP_nc_index)=''
         var_name_meteo_nc(t2m_nc_index)='air_temperature_2m'
+        
         !Additional     parameter (u10_nc_subgrid_index=22,v10_nc_subgrid_index=23,uw_nc_subgrid_index=24,vw_nc_subgrid_index=25,Hflux_nc_subgrid_index=26)
         var_name_meteo_nc(u10_nc_index)='x_wind_10m' !10 m wind not grid. Replaces ugrid. Used for direction
         var_name_meteo_nc(v10_nc_index)='y_wind_10m' !10 m wind not grid. Replaces vgrid. Used for direction
         var_name_meteo_nc(uw_nc_index)='downward_eastward_momentum_flux_in_air' !Will be used to determine ustar
         var_name_meteo_nc(vw_nc_index)='downward_northward_momentum_flux_in_air' !Will be used to determine ustar
         var_name_meteo_nc(Hflux_nc_index)='integral_of_surface_downward_sensible_heat_flux_wrt_time'
+
+        !var_name_meteo_nc(rh2m_nc_index)='relative_humidity_2m'
+        !var_name_meteo_nc(t0m_nc_index)='air_temperature_0m'
+        !var_name_meteo_nc(t12m_nc_index)='air_temperature_ml' !This is at level 0
+        !var_name_meteo_nc(t100m_nc_index)='air_temperature_ml' !This is at model level 4 (0-4)
+        !var_name_meteo_nc(SWflux_nc_index)='integral_of_surface_downwelling_shortwave_flux_in_air_wrt_time'
+        !var_name_meteo_nc(LWflux_nc_index)='integral_of_surface_downwelling_longwave_flux_in_air_wrt_time'
+        !var_name_meteo_nc(cloudcover_nc_index)='cloud_area_fraction'
+        !var_name_meteo_nc(rain_nc_index)='precipitation_amount_acc'
+        !var_name_meteo_nc(snow_nc_index)='snowfall_amount_acc'
+        !var_name_meteo_nc(pressure_nc_index)='surface_air_pressure'
         
        
         !Additional compounds for chemistry and totals
@@ -197,11 +209,16 @@
     j=j+1;subgrid_invL_file_index=j     
     j=j+1;subgrid_FFgrid_file_index=j     
     j=j+1;subgrid_FF10_file_index=j
+    j=j+1;subgrid_DDgrid_file_index=j     
+    j=j+1;subgrid_DD10_file_index=j
     j=j+1;subgrid_invFFgrid_file_index=j     
     j=j+1;subgrid_invFF10_file_index=j
     j=j+1;subgrid_ustar_file_index=j
+    j=j+1;subgrid_t2m_file_index=j
     j=j+1;subgrid_J_file_index=j
     j=j+1;subgrid_meteo_file_index=j
+    
+    
     
     
     !Set initial values  for the dispersion parameters

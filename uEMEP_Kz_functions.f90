@@ -31,8 +31,11 @@
     
     n_loop=n_kz_iterations
     
-    L=1.e6
-    if (abs(invL).gt.1./L) L=1./invL
+    !Limit stable L to this positive L value 
+    !L=1.e6
+    !L=lowest_stable_L
+    !if (abs(invL).gt.1./L) L=1./invL
+    L=1./invL
     
     z0=exp(logz0)
     min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
@@ -154,7 +157,7 @@
     if (L.ge.0) then
         K_z=0.39*u_star0*z*exp(-0.5*(z/0.21/z_pbl)*(z/0.21/z_pbl))  !As in EMEP
         K_z=0.39*u_star0*z*exp(-0.5*(z/0.32/z_pbl)*(z/0.32/z_pbl)) !Adjusted to match under neutral conditions
-        !K_z=0.39*u_star0*z/phih*exp(-0.5*(z/0.32/z_pbl)*(z/0.32/z_pbl)) !Adjusted but with stability added
+        K_z=0.39*u_star0*z/phih*exp(-0.5*(z/0.32/z_pbl)*(z/0.32/z_pbl)) !Adjusted but with stability added
     else
         call phih_func(h_s,L,phih_hs,phih_i_hs)
         call phih_func(h_s+1.,L,phih_hs_p1,phih_i_hs_p1)

@@ -11,17 +11,14 @@
     character(256) temp_name,unit_str,title_str,title_str_rec,var_name_temp, temp_date_str,station_name_str,temp_name_rec,temp_compound_str
     logical create_file,create_file_rec
     integer i_source
-    integer :: EMEP_subsource=1
     real :: valid_min=0.
     real, allocatable :: temp_subgrid(:,:,:)
+    real, allocatable :: temp_integral_subgrid(:,:,:)
     real, allocatable :: exhaust_subgrid(:,:,:)
     real, allocatable :: aqi_subgrid(:,:,:,:)
     integer, allocatable :: aqi_responsible_pollutant_index(:,:,:)
     
-    integer ii,jj
-    logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.false.,save_other_meteo=.false.
-    logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
-    logical :: save_population=.false.,save_no2_source_contributions=.true.,save_o3_source_contributions=.true.
+    integer ii,jj,tt
     
     logical :: save_aqi=.true.
     real aqi_limits_temp(n_compound_index,1:5)
@@ -35,6 +32,9 @@
     real scale_factor
     integer n_save_aqi_pollutant_index
     
+    !Functions
+    real DIRECTION
+    
     if (include_o3_in_aqi_index) then
         n_save_aqi_pollutant_index=n_aqi_pollutant_index
     else
@@ -42,6 +42,7 @@
     endif   
     
     if (.not.allocated(temp_subgrid)) allocate(temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
+    if (.not.allocated(temp_integral_subgrid)) allocate(temp_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
     if (.not.allocated(exhaust_subgrid)) allocate(exhaust_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
     if (.not.allocated(aqi_subgrid).and.save_aqi) allocate(aqi_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
     if (.not.allocated(aqi_responsible_pollutant_index).and.save_aqi) allocate(aqi_responsible_pollutant_index(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
@@ -455,10 +456,6 @@
     do i_pollutant=1,n_pollutant_loop
     do i_source=1,n_source_index
         if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-            !do subsource_index=1,n_subsource(source_index)
-            !temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.asc'
-            !write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
-            !call write_esri_ascii_3d_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),subgrid_delta(1),subgrid(:,:,:,emep_subgrid_index,source_index,emep_subsource),x_subgrid,y_subgrid)
             
             !Only save the allsource value here
             if (i_source.eq.allsource_index) then
@@ -867,6 +864,71 @@
         endif
         !The same for all--------------------
 
+        i_file=subgrid_t2m_file_index
+        i_meteo=t2m_subgrid_index
+        unit_str="Celcius"
+        !The same for all--------------------
+        var_name_temp=trim(filename_grid(i_file))
+        temp_subgrid=0.
+        do j=1,subgrid_dim(y_dim_index)
+        do i=1,subgrid_dim(x_dim_index)
+            ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)-273.13
+        enddo
+        enddo
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+        !The same for all--------------------
+
+        i_file=subgrid_DDgrid_file_index
+        !i_meteo=DDgrid_subgrid_index !i_meteo not used in this conversion to wind direction
+        unit_str="degrees"
+        do tt=1,subgrid_dim(t_dim_index)
+        do jj=1,integral_subgrid_dim(y_dim_index)
+        do ii=1,integral_subgrid_dim(x_dim_index)
+            temp_integral_subgrid(ii,jj,tt)=DIRECTION(meteo_subgrid(ii,jj,tt,ugrid_subgrid_index),meteo_subgrid(ii,jj,tt,vgrid_subgrid_index))        
+        enddo
+        enddo
+        enddo
+        !This is not converted to real degrees, but subgrid degrees, so is wrong but close
+        
+        !The same for all--------------------
+        var_name_temp=trim(filename_grid(i_file))
+        temp_subgrid=0.
+        do j=1,subgrid_dim(y_dim_index)
+        do i=1,subgrid_dim(x_dim_index)
+            ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);
+            !In this case this is not the same for all
+            temp_subgrid(i,j,:)=temp_integral_subgrid(ii,jj,:)
+        enddo
+        enddo
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+        !The same for all--------------------
+
         i_file=subgrid_FF10_file_index
         i_meteo=FF10_subgrid_index
         unit_str="m/s"
@@ -1047,7 +1109,7 @@
     
     implicit none
     
-    character(256) filename_netcdf,name_array,unit_array,title_str,temp_name,temp_name3(3)
+    character(256) filename_netcdf,name_array,unit_array,title_str,temp_name
     integer unit_logfile_in
     integer nx,ny,nt
     real val_array(nx,ny,nt)!,val_array_temp(nx,ny,nt)
@@ -1064,7 +1126,7 @@
     real scale_factor
     
     integer ncid
-    integer y_dimid,x_dimid,lat_dimid,lon_dimid,val_dimid,time_dimid
+    integer y_dimid,x_dimid,time_dimid
     integer y_varid,x_varid,lat_varid,lon_varid,val_varid,time_varid,proj_varid
     integer dimids3(3),dimids2(2),chunks3(3)
     integer n_dims(3)
@@ -1245,4 +1307,20 @@
       stop 
     end if
     
-    end subroutine check  
+    end subroutine check
+    
+    
+! ######################################################################	
+	FUNCTION DIRECTION(UD,VD)
+!	CALCULATES THE WIND DIRECTION
+    !Taken from NBLM1
+	IMPLICIT NONE
+	REAL DIRECTION,UD,VD,PI
+	PI=180./3.14159
+	DIRECTION=0.
+	IF (UD.GT.0.AND.VD.GE.0) DIRECTION=270.-ATAN(ABS(VD/UD))*PI
+	IF (UD.LE.0.AND.VD.GT.0) DIRECTION=180.-ATAN(ABS(UD/VD))*PI
+	IF (UD.LT.0.AND.VD.LE.0) DIRECTION=90.-ATAN(ABS(VD/UD))*PI
+	IF (UD.GE.0.AND.VD.LT.0) DIRECTION=360.-ATAN(ABS(UD/VD))*PI
+	END FUNCTION DIRECTION
+! ######################################################################

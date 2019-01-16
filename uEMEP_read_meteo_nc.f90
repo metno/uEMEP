@@ -49,6 +49,13 @@
     integer temp_nc_projection_type
     double precision :: temp_nc_projection_attributes(10)
 
+    logical found_file
+    integer :: search_hour_step=6
+    integer new_start_date_input(6)
+    character(256) format_temp
+    double precision date_to_number
+    character(256) replace_string_char
+    
     !Temporary reading rvariables
     double precision, allocatable :: var1d_nc_dp(:)
     double precision, allocatable :: var2d_nc_dp(:,:)
@@ -107,13 +114,76 @@
         pathfilename_EMEP(i_file)=trim(pathname_EMEP(i_file))//trim(filename_EMEP(i_file))
      
         !Test existence of the filename. If does not exist then stop
+        !inquire(file=trim(pathfilename_EMEP(i_file)),exist=exists)
+        !if (.not.exists) then
+        !    write(unit_logfile,'(A,A)') ' ERROR: Netcdf file does not exist: ', trim(pathfilename_EMEP(i_file))
+        !    write(unit_logfile,'(A)') '  STOPPING'
+        !    stop
+        !endif
+
+        !Test existence of the filename. If does not exist then try 6 hours before
+        if (i_file.eq.3) then
+        
         inquire(file=trim(pathfilename_EMEP(i_file)),exist=exists)
         if (.not.exists) then
-            write(unit_logfile,'(A,A)') ' ERROR: Netcdf file does not exist: ', trim(pathfilename_EMEP(i_file))
-            write(unit_logfile,'(A)') '  STOPPING'
-            stop
+            write(unit_logfile,'(A,A)') ' WARNING: Meteo netcdf file does not exist: ',  trim(pathfilename_EMEP(i_file))
+            write(unit_logfile,'(A)') ' Will try 6 hours before 4 times'
+        
+            !Start search back 6 hours
+            found_file=.false.
+            do i=1,4
+                if (hourly_calculations) then
+                    temp_start_time_meteo_nc_index=start_time_meteo_nc_index+search_hour_step*(i)
+                    temp_end_time_meteo_nc_index=end_time_meteo_nc_index+search_hour_step*(i)
+                endif     
+                if (use_single_time_loop_flag) then
+                    temp_start_time_meteo_nc_index=start_time_meteo_nc_index+t_loop-1+search_hour_step*(i)
+                    temp_end_time_meteo_nc_index=temp_start_time_meteo_nc_index+search_hour_step*(i)    
+                endif
+                !Create new date_str
+                format_temp='yyyymmdd'
+                call datestr_to_date(config_date_str,format_temp,new_start_date_input)
+                date_num_temp=date_to_number(new_start_date_input,ref_year_meteo)
+                call number_to_date(date_num_temp-dble(search_hour_step*i)/dble(24.),new_start_date_input,ref_year_meteo)
+                !Replace replacement_date_str with <yyyyhhmm> so the new_start_date_input can be inserted
+                format_temp='<yyyymmdd>'
+                filename_EMEP(i_file)=replace_string_char(format_temp,replacement_date_str,original_filename_EMEP(i_file))
+                pathname_EMEP(i_file)=replace_string_char(format_temp,replacement_date_str,original_pathname_EMEP(i_file))
+                !write(*,*) trim(filename_EMEP(i_file)),'  ',trim(replacement_date_str)
+                !Replace replacement_hour_str with <HH> so the forecast hour can be inserted
+                format_temp='<HH>'
+                filename_EMEP(i_file)=replace_string_char(format_temp,replacement_hour_str,filename_EMEP(i_file))
+                pathname_EMEP(i_file)=replace_string_char(format_temp,replacement_hour_str,pathname_EMEP(i_file))
+                !write(*,*) trim(filename_EMEP(i_file)),'  ',trim(forecast_hour_str)
+                !Replace datestr twice for both forecast_hour and config_date
+                call date_to_datestr_bracket(new_start_date_input,filename_EMEP(i_file),filename_EMEP(i_file))
+                call date_to_datestr_bracket(new_start_date_input,pathname_EMEP(i_file),pathname_EMEP(i_file))
+                call date_to_datestr_bracket(new_start_date_input,filename_EMEP(i_file),filename_EMEP(i_file))
+                call date_to_datestr_bracket(new_start_date_input,pathname_EMEP(i_file),pathname_EMEP(i_file))
+                pathfilename_EMEP(i_file)=trim(pathname_EMEP(i_file))//trim(filename_EMEP(i_file))
+                write(unit_logfile,'(A,A)') ' Trying: ', trim(pathfilename_EMEP(i_file))
+                inquire(file=trim(pathfilename_EMEP(i_file)),exist=exists)
+                if (exists) then
+                    found_file=.true.
+                    exit
+                else 
+                    found_file=.false.
+                endif
+            enddo
+        
+            if (.not.found_file) then
+                write(unit_logfile,'(A,A)') ' ERROR: Meteo netcdf file still does not exist: ', trim(pathfilename_EMEP(i_file))
+                write(unit_logfile,'(A)') ' STOPPING'
+                stop
+            else
+                write(unit_logfile,'(A,A)') ' Found earlier meteo netcdf file: ', trim(pathfilename_EMEP(i_file))
+                write(unit_logfile,'(A,2i6)') ' New start and end index: ', temp_start_time_meteo_nc_index,temp_end_time_meteo_nc_index
+            endif
+        
         endif
-
+    
+        endif
+    
         !Open the netcdf file for reading
         write(unit_logfile,'(2A)') ' Opening netcdf file: ',trim(pathfilename_EMEP(i_file))
         status_nc = NF90_OPEN (pathfilename_EMEP(i_file), nf90_nowrite, id_nc)
@@ -160,8 +230,12 @@
         
         if (i_file.eq.3) then
             if (subgrid_dim(t_dim_index).gt.dim_length_meteo_nc(time_dim_nc_index)) then
-            write(unit_logfile,'(A,2I)') 'ERROR: Specified time dimensions are greater than EMEP netcdf dimmensions. Stopping ',subgrid_dim(t_dim_index),dim_length_meteo_nc(time_dim_nc_index)
-            stop
+                write(unit_logfile,'(A,2I)') 'ERROR: Specified time dimensions are greater than meteo netcdf dimensions. Stopping ',subgrid_dim(t_dim_index),dim_length_meteo_nc(time_dim_nc_index)
+                stop
+            endif
+            if (temp_end_time_meteo_nc_index.gt.dim_length_meteo_nc(time_dim_nc_index)) then
+                write(unit_logfile,'(A,2I)') 'ERROR: Required meteo time dimension larger than available meteo time dimension. Stopping ',temp_end_time_meteo_nc_index,dim_length_meteo_nc(time_dim_nc_index)
+                stop
             endif
         endif
 
@@ -176,9 +250,9 @@
             dim_length_meteo_nc(time_dim_nc_index)=1
         endif
 
-        
         write(unit_logfile,'(A,6I)') ' New size of meteo dimensions (x,y,z,t): ',dim_length_meteo_nc
-                    
+        
+        
         !Calculate the necessary extent of the meteo_nc grid region and only read these grids
         if (reduce_EMEP_region_flag) then
             !Determine the LL cordinates of the target grid
@@ -300,8 +374,8 @@
         if (i_file.ge.3) then
             if (.not.allocated(meteo_var1d_nc)) allocate (meteo_var1d_nc(maxval(dim_length_meteo_nc),num_dims_meteo_nc)) !x, y, z and time maximum dimmensions
             if (.not.allocated(meteo_var2d_nc)) allocate (meteo_var2d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),2)) !Lat and lon
-            if (.not.allocated(meteo_var3d_nc)) allocate (meteo_var3d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index),num_var_meteo_nc))
-            if (.not.allocated(meteo_var4d_nc)) allocate (meteo_var4d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(z_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index),num_var_meteo_nc))
+            if (.not.allocated(meteo_var3d_nc)) allocate (meteo_var3d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),0:dim_length_meteo_nc(time_dim_nc_index),num_var_meteo_nc))
+            if (.not.allocated(meteo_var4d_nc)) allocate (meteo_var4d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(z_dim_nc_index),0:dim_length_meteo_nc(time_dim_nc_index),num_var_meteo_nc))
         endif
 
         !Read in the dimensions and check values of the dimensions.
@@ -369,7 +443,7 @@
                     !write(*,'(6i)') dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)
                     status_nc = nf90_get_att(id_nc, var_id_nc, "scale_factor", scale_factor_nc)
                     !write(*,*) 'scale_factor=',scale_factor_nc
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var3d_nc(:,:,:,i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)/))
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var3d_nc(:,:,1,i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)/))
                     meteo_var3d_nc(:,:,:,i)=real(meteo_var3d_nc(:,:,:,i)*scale_factor_nc)
                     !write(*,*) status_nc
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),i)),maxval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),i))
@@ -377,7 +451,7 @@
                     !write(*,*) dim_start_nc(z_dim_nc_index),dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1
                     !write(*,*) dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)
                     !write(*,*) dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(z_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)/))
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)-1/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(z_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)+1/))
                     !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !var4d_nc(:,val_dim_nc:,:,:,i,i_source)=real(temp_var4d_nc(:,:,:,:))
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i)),maxval(meteo_var4d_nc(1:dim_length_meteo_nc(x_dim_nc_index),1:dim_length_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i))
@@ -434,37 +508,47 @@
         write(unit_logfile,'(A,2f16.4)') ' Grid spacing meteo (x,y) in meters: ',meteo_dgrid_nc(lon_nc_index),meteo_dgrid_nc(lat_nc_index)
     endif
         
- 
+
         !Do manipulations when the additional meteorology is read in
         !Put everything in 3d data since it is all surface values
             write(unit_logfile,'(A)') ' Calculating alternative meteorological data'
-            write(unit_logfile,'(A,4i)') ' Dimmensions: ',dim_length_meteo_nc
+            write(unit_logfile,'(A,4i)') ' Dimensions: ',dim_length_meteo_nc
             !logz0 is read in as z0 and must be converted to logz0 
-            where (meteo_var3d_nc(:,:,:,logz0_nc_index).lt.0.01 ) meteo_var3d_nc(:,:,:,logz0_nc_index)=0.01 
+            do t=1,dim_length_meteo_nc(time_dim_nc_index)
+                meteo_var3d_nc(:,:,t,logz0_nc_index)=meteo_var3d_nc(:,:,1,logz0_nc_index)
+                !write(*,*) t,sum(meteo_var3d_nc(:,:,t,logz0_nc_index))/dim_length_meteo_nc(x_dim_nc_index)/dim_length_meteo_nc(y_dim_nc_index)
+            enddo
+            where (meteo_var3d_nc(:,:,:,logz0_nc_index).lt.0.001 ) meteo_var3d_nc(:,:,:,logz0_nc_index)=0.001 
             meteo_var3d_nc(:,:,:,logz0_nc_index)=log(meteo_var3d_nc(:,:,:,logz0_nc_index))
             
             meteo_var3d_nc(:,:,:,t2m_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,:,t2m_nc_index)
             !Assumes that the first step is 0 and data is hourly. So that the start time step for meteo must correspond to the second hour of any calculation
-            t=1
-            meteo_var3d_nc(:,:,t,Hflux_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,t,Hflux_nc_index)/3600.
-            meteo_var3d_nc(:,:,t,uw_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,t,uw_nc_index)/3600.
-            meteo_var3d_nc(:,:,t,vw_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,t,vw_nc_index)/3600.
-            do t=dim_length_meteo_nc(time_dim_nc_index),2,-1
+            !t=1
+            !meteo_var3d_nc(:,:,t,Hflux_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,t,Hflux_nc_index)/3600.
+            !meteo_var3d_nc(:,:,t,uw_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,t,uw_nc_index)/3600.
+            !meteo_var3d_nc(:,:,t,vw_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,t,vw_nc_index)/3600.
+            do t=dim_length_meteo_nc(time_dim_nc_index),1,-1
                 meteo_var3d_nc(:,:,t,Hflux_nc_index)=(meteo_var4d_nc(:,:,surface_level_nc,t,Hflux_nc_index)-meteo_var4d_nc(:,:,surface_level_nc,t-1,Hflux_nc_index))/3600.
                 meteo_var3d_nc(:,:,t,uw_nc_index)=(meteo_var4d_nc(:,:,surface_level_nc,t,uw_nc_index)-meteo_var4d_nc(:,:,surface_level_nc,t-1,uw_nc_index))/3600.
                 meteo_var3d_nc(:,:,t,vw_nc_index)=(meteo_var4d_nc(:,:,surface_level_nc,t,vw_nc_index)-meteo_var4d_nc(:,:,surface_level_nc,t-1,vw_nc_index))/3600.
-                !write(*,*) t,sum(meteo_var3d_nc(:,:,t,Hflux_nc_index))/dim_length_meteo_nc(x_dim_nc_index)/dim_length_meteo_nc(y_dim_nc_index),sum(meteo_var4d_nc(:,:,surface_level_nc,t,hmix_nc_index))/dim_length_meteo_nc(x_dim_nc_index)/dim_length_meteo_nc(y_dim_nc_index)
+                !write(*,*) t,sum(meteo_var3d_nc(:,:,t,Hflux_nc_index))/dim_length_meteo_nc(x_dim_nc_index)/dim_length_meteo_nc(y_dim_nc_index) &
+                !    ,sum(meteo_var4d_nc(:,:,surface_level_nc,t,hmix_nc_index))/dim_length_meteo_nc(x_dim_nc_index)/dim_length_meteo_nc(y_dim_nc_index)
             enddo
             !Approximate density of air used (1.2 kg/m^3 +/- 10%)
             meteo_var3d_nc(:,:,:,ustar_nc_index)=sqrt(sqrt(meteo_var3d_nc(:,:,:,uw_nc_index)**2+meteo_var3d_nc(:,:,:,vw_nc_index)**2)/1.2)
             where (meteo_var3d_nc(:,:,:,ustar_nc_index).lt.ustar_min) meteo_var3d_nc(:,:,:,ustar_nc_index)=ustar_min
-            
+            !do t=dim_length_meteo_nc(time_dim_nc_index),0,-1
+            !     write(*,*) t,sum(meteo_var3d_nc(:,:,t,ustar_nc_index))/dim_length_meteo_nc(x_dim_nc_index)/dim_length_meteo_nc(y_dim_nc_index) &
+            !        ,sum(meteo_var3d_nc(:,:,t,uw_nc_index))/dim_length_meteo_nc(x_dim_nc_index)/dim_length_meteo_nc(y_dim_nc_index) &
+            !        ,sum(meteo_var3d_nc(:,:,t,vw_nc_index))/dim_length_meteo_nc(x_dim_nc_index)/dim_length_meteo_nc(y_dim_nc_index) 
+            !enddo
+             
             !Approximate temperature (273 +/- 10%)
             !Have inserted the correct temperature now
-            meteo_var3d_nc(:,:,:,invL_nc_index)=(meteo_var3d_nc(:,:,:,Hflux_nc_index)/1.2/1004.*0.4*9.8/meteo_var3d_nc(:,:,:,t2m_nc_index))/meteo_var3d_nc(:,:,:,ustar_nc_index)**3
-            !Limit this to realistic values. Even these are extreme
-            where (meteo_var3d_nc(:,:,:,invL_nc_index).lt.-1.0) meteo_var3d_nc(:,:,:,invL_nc_index)=-1.0
-            where (meteo_var3d_nc(:,:,:,invL_nc_index).gt.1.0) meteo_var3d_nc(:,:,:,invL_nc_index)=1.0
+            meteo_var3d_nc(:,:,:,invL_nc_index)=meteo_var3d_nc(:,:,:,Hflux_nc_index)*0.4*9.8/1.2/1004./meteo_var3d_nc(:,:,:,t2m_nc_index)/meteo_var3d_nc(:,:,:,ustar_nc_index)**3
+            !Limit stable L to lowest_stable_L and to lowest_unstable_L (negative number) for unstable.
+            where (meteo_var3d_nc(:,:,:,invL_nc_index).lt.1.0/lowest_unstable_L) meteo_var3d_nc(:,:,:,invL_nc_index)=1.0/lowest_unstable_L
+            where (meteo_var3d_nc(:,:,:,invL_nc_index).gt.1.0/lowest_stable_L) meteo_var3d_nc(:,:,:,invL_nc_index)=1.0/lowest_stable_L
             
             !Put the 10 m wind vectors as the lowest grid level
             H_meteo=val_dim_meteo_nc(surface_level_nc,z_dim_nc_index)
