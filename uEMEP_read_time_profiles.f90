@@ -176,6 +176,9 @@
                         j_cross=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index_in(i_source))
                     endif
                     hdd_temp=max(0.,HDD_threshold_value-max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)))
+                    !write (*,*) hdd_temp,DMT_EMEP_grid_nc(i_cross,j_cross,1),max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)),HDD_threshold_value-max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1))
+                    
+                    !the heating emissions have already been normalised with RWC_grid_HDD in uEMEP_read_RWC_heating_data
                     emission_time_profile_subgrid(i,j,t,source_index_in(i_source),:)=val_hour_of_week_input(hour_of_week_index,i_source)/24.*hdd_temp
                     !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source)/24.,hdd_temp,HDD_threshold_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)
                     !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,emission_time_profile_subgrid(i,j,t,source_index_in(i_source),1)
