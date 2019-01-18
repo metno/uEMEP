@@ -376,6 +376,7 @@
             if (.not.allocated(meteo_var2d_nc)) allocate (meteo_var2d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),2)) !Lat and lon
             if (.not.allocated(meteo_var3d_nc)) allocate (meteo_var3d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),0:dim_length_meteo_nc(time_dim_nc_index),num_var_meteo_nc))
             if (.not.allocated(meteo_var4d_nc)) allocate (meteo_var4d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(z_dim_nc_index),0:dim_length_meteo_nc(time_dim_nc_index),num_var_meteo_nc))
+            
         endif
 
         !Read in the dimensions and check values of the dimensions.
@@ -455,6 +456,7 @@
                     !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !var4d_nc(:,val_dim_nc:,:,:,i,i_source)=real(temp_var4d_nc(:,:,:,:))
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i)),maxval(meteo_var4d_nc(1:dim_length_meteo_nc(x_dim_nc_index),1:dim_length_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i))
+                    !write(*,*) dim_start_meteo_nc(time_dim_nc_index)-1,dim_length_meteo_nc(time_dim_nc_index)+1,dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1
                 else
                     write(unit_logfile,'(8A,8A)') ' Cannot find a correct dimmension for: ',trim(var_name_nc_temp)
                 endif    

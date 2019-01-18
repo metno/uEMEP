@@ -90,7 +90,7 @@
         do i_source=1,n_source_index
         if (calculate_source(i_source)) then
             do i_subsource=1,n_subsource(i_source)
-            f_no2_loc=f_no2_loc+emission_factor_conversion(no2_index,i_source,i_subsource)/emission_factor_conversion(nox_index,i_source,i_subsource)*subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+            f_no2_loc=f_no2_loc+emission_factor(no2_index,i_source,i_subsource)/emission_factor(nox_index,i_source,i_subsource)*subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
             nox_loc=nox_loc+subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
             enddo         
         endif
@@ -242,7 +242,7 @@
             if (calculate_source(i_source)) then
                 if (remove_source.ne.i_source) then
                     do i_subsource=1,n_subsource(i_source)
-                    f_no2_loc=f_no2_loc+emission_factor_conversion(no2_index,i_source,i_subsource)/emission_factor_conversion(nox_index,i_source,i_subsource)*subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                    f_no2_loc=f_no2_loc+emission_factor(no2_index,i_source,i_subsource)/emission_factor(nox_index,i_source,i_subsource)*subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
                     nox_loc=nox_loc+subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
                     enddo       
                 endif
