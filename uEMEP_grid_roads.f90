@@ -170,7 +170,9 @@
                             do i_pollutant=1,n_pollutant_loop
                                 !write(*,*) i_pollutant,major_ro,inputdata_rl(major_ro,tunnel_length_rl_index)
                                 if (use_tunnel_deposition_flag.and.inputdata_rl(ro,tunnel_length_rl_index).gt.0) then
-                                    call tunnel_deposition_factor(pollutant_loop_index(i_pollutant),inputdata_rl(ro,tunnel_length_rl_index),tunnel_ratio)
+                                    call tunnel_deposition_factor(pollutant_loop_index(i_pollutant),inputdata_rl(ro,tunnel_length_rl_index) &
+                                        ,inputdata_rl(ro,ADT_rl_index)*inputdata_rl(ro,length_rl_index)/inputdata_rl(ro,tunnel_length_rl_index) &
+                                        ,ventilation_factor,min_ADT_ventilation_factor,min_length_ventilation_factor,tunnel_ratio)
                                 else
                                     tunnel_ratio=1.
                                 endif
@@ -239,14 +241,15 @@
 !==========================================================================
 !   uEMEP model tunnel_deposition_factor
 !==========================================================================
-    subroutine tunnel_deposition_factor(tunnel_pollutant_index,tunnel_length,ratio)
+    subroutine tunnel_deposition_factor(tunnel_pollutant_index,tunnel_length,tunnel_ADT,ventilation_fac,min_ADT_ventilation_fac,min_length_ventilation_fac,ratio)
     
     use uEMEP_definitions
 
     implicit none
     
     integer, intent(in) :: tunnel_pollutant_index
-    real, intent(in) :: tunnel_length
+    real, intent(in) :: tunnel_length,tunnel_ADT
+    real, intent(in) :: ventilation_fac,min_ADT_ventilation_fac,min_length_ventilation_fac
     real:: dep_velocity !(cm/s)
     real:: radius_tunnel=5. !Radius of the tunnel opening. Fixed
     real :: B
@@ -258,7 +261,6 @@
     if (tunnel_pollutant_index.eq.pm25_index) dep_velocity=0.05
     if (tunnel_pollutant_index.eq.pmex_index) dep_velocity=0.05
     if (tunnel_pollutant_index.eq.nox_index) dep_velocity=0.02
-    !if (tunnel_pollutant_index.eq.no2_index) dep_velocity=0.02
 
     B=2./radius_tunnel*dep_velocity/100.
 
@@ -266,7 +268,14 @@
     if (B*tunnel_length.lt.1e-5) then
         ratio=1-B*tunnel_length/2.
     else
-        ratio=1/B*(1-exp(-B*tunnel_length))/tunnel_length      
+        ratio=1/B*(1-exp(-B*tunnel_length))/tunnel_length
+    endif
+    
+    !Adjust for ventilation
+    if (tunnel_ADT.gt.min_ADT_ventilation_fac.and.tunnel_length.gt.min_length_ventilation_fac) then
+        !write(*,*) min_ADT_ventilation_fac,min_length_ventilation_fac,ratio,B
+        ratio=ratio*ventilation_fac
+        !write(*,*) tunnel_ADT,tunnel_length,ratio,ventilation_fac
     endif
     
     !write(*,*) tunnel_pollutant_index,tunnel_length,ratio

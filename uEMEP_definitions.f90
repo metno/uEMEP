@@ -640,6 +640,9 @@
     logical :: read_monthly_and_daily_shipping_data_flag=.false.
     
     logical :: use_tunnel_deposition_flag=.false.
+    real :: ventilation_factor=1.
+    real :: min_length_ventilation_factor=0.
+    real :: min_ADT_ventilation_factor=0.
     
     real :: sigy_0_subgid_width_scale=0.25
     real :: lowest_stable_L=1.e6

@@ -382,8 +382,13 @@
 
         read_weekly_shipping_data_flag=read_name_logical('read_weekly_shipping_data_flag',read_weekly_shipping_data_flag,unit_in,unit_logfile) 
         read_monthly_and_daily_shipping_data_flag=read_name_logical('read_monthly_and_daily_shipping_data_flag',read_monthly_and_daily_shipping_data_flag,unit_in,unit_logfile) 
-        use_tunnel_deposition_flag=read_name_logical('use_tunnel_deposition_flag',use_tunnel_deposition_flag,unit_in,unit_logfile) 
         
+        use_tunnel_deposition_flag=read_name_logical('use_tunnel_deposition_flag',use_tunnel_deposition_flag,unit_in,unit_logfile) 
+        ventilation_factor=read_name_real('ventilation_factor',ventilation_factor,unit_in,unit_logfile)
+        min_ADT_ventilation_factor=read_name_real('min_ADT_ventilation_factor',min_ADT_ventilation_factor,unit_in,unit_logfile)
+        min_length_ventilation_factor=read_name_real('min_length_ventilation_factor',min_length_ventilation_factor,unit_in,unit_logfile)
+
+                
         save_emissions_for_EMEP(traffic_index)=read_name_logical('save_emissions_for_EMEP(traffic_index)',save_emissions_for_EMEP(traffic_index),unit_in,unit_logfile)        
         save_emissions_for_EMEP(shipping_index)=read_name_logical('save_emissions_for_EMEP(shipping_index)',save_emissions_for_EMEP(shipping_index),unit_in,unit_logfile)        
         save_emissions_for_EMEP(industry_index)=read_name_logical('save_emissions_for_EMEP(industry_index)',save_emissions_for_EMEP(industry_index),unit_in,unit_logfile)        
