@@ -644,6 +644,10 @@
     real :: min_length_ventilation_factor=0.
     real :: min_ADT_ventilation_factor=0.
     
+    real :: tunnel_sig_z_00=5.
+    !Bridge height not in use yet
+    real :: bridge_h_emis=10.
+    
     real :: sigy_0_subgid_width_scale=0.25
     real :: lowest_stable_L=1.e6
     real :: lowest_unstable_L=-10.

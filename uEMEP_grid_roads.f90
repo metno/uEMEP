@@ -27,6 +27,7 @@
     integer major_ro
     integer t_start_temp,t_end_temp
     real tunnel_ratio
+    real sigma0_temp
         
     integer i_pollutant
     
@@ -187,10 +188,12 @@
 
                     !Set the sigma values according to traffic speed and road width using proxy weighting
                     if (use_traffic_for_sigma0_flag.and..not.save_emissions_for_EMEP(traffic_index)) then
+                        sigma0_temp=sigma0_traffic_func(inputdata_rl(ro,speed_rl_index))
+                        if (inputdata_rl(ro,tunnel_length_rl_index).gt.50.) sigma0_temp=tunnel_sig_z_00
                         emission_properties_subgrid(i,j,emission_sigy00_index,source_index)=emission_properties_subgrid(i,j,emission_sigy00_index,source_index) &
-                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro,1)*sqrt((inputdata_rl(ro,width_rl_index)/2.)**2+sigma0_traffic_func(inputdata_rl(ro,speed_rl_index))**2)
+                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro,1)*sqrt((inputdata_rl(ro,width_rl_index)/2.)**2+sigma0_temp**2)
                         emission_properties_subgrid(i,j,emission_sigz00_index,source_index)=emission_properties_subgrid(i,j,emission_sigz00_index,source_index) &
-                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro,1)*sigma0_traffic_func(inputdata_rl(ro,speed_rl_index))
+                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro,1)*sigma0_temp
                     endif
                     !Should not be used
 !                    if (use_traffic_for_minFF_flag) then

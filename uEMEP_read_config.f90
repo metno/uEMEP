@@ -420,7 +420,9 @@
         lowest_stable_L=read_name_real('lowest_stable_L',lowest_stable_L,unit_in,unit_logfile)
         lowest_unstable_L=read_name_real('lowest_unstable_L',lowest_unstable_L,unit_in,unit_logfile)
         
-        
+        tunnel_sig_z_00=read_name_real('tunnel_sig_z_00',tunnel_sig_z_00,unit_in,unit_logfile)
+        bridge_h_emis=read_name_real('bridge_h_emis',bridge_h_emis,unit_in,unit_logfile)
+    
     close (unit_in)
     
     !Call some error traps
