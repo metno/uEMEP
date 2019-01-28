@@ -633,7 +633,6 @@
     double precision date_to_number
 
     a=a_in
-    a(2)=2
     ref_year=2000
     b_start=0
     b_end=0
