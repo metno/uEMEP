@@ -139,10 +139,10 @@
         
         if (summer_time_europe(date_array)) then
             emission_time_shift_temp=emission_timeprofile_hour_shift+1
-            write(unit_logfile,'(a)') ' Emission profiles set to summer time: '
+            if (t.eq.1) write(unit_logfile,'(a)') ' Emission profiles set to summer time. '
         else
             emission_time_shift_temp=emission_timeprofile_hour_shift
-            write(unit_logfile,'(a)') ' Emission profiles set to winter time: '
+            if (t.eq.1) write(unit_logfile,'(a)') ' Emission profiles set to winter time. '
         endif
         
         hour_of_week_index=(week_day_temp-1)*24+date_array(4)+emission_time_shift_temp

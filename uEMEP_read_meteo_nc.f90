@@ -495,7 +495,10 @@
                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                 status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
                 if (temp_num_dims.eq.4) then
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc, DMT_EMEP_grid_nc(:,:,:),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),1,DMT_start_time_nc_index/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),1,DMT_dim_length_nc/))
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, DMT_EMEP_grid_nc(:,:,:),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),1,DMT_start_time_nc_index/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),1,DMT_dim_length_nc/))
+                elseif (temp_num_dims.eq.3) then
+                    !NBV meteo data
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, DMT_EMEP_grid_nc(:,:,:),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),DMT_start_time_nc_index/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),DMT_dim_length_nc/))
                 elseif (temp_num_dims.eq.5) then
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, DMT_EMEP_grid_nc(:,:,:),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),1,1,DMT_start_time_nc_index/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),1,1,DMT_dim_length_nc/))
                 else
