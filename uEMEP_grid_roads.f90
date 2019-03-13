@@ -229,9 +229,11 @@
     deallocate (adt_truck_temp)
     
  
-    !Deallocate road link arrays after gridding but not when the external time step is used and not when the multiple receptor grids are used
+    !Deallocate road link arrays after gridding but not when the external time step is used
+    !and not when the multiple receptor grids are used
+    !and not when the auto subgridding is used
     !because gridding roads is called again
-    if (use_single_time_loop_flag.or.use_multiple_receptor_grids_flag) then
+    if (use_single_time_loop_flag.or.use_multiple_receptor_grids_flag.or.use_emission_positions_for_auto_subgrid_flag(allsource_index)) then
         !Do not deallocate because they will be used again
     else
         if (allocated(inputdata_rl)) deallocate(inputdata_rl)

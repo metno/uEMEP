@@ -99,18 +99,19 @@
         call check(  nf90_put_att(ncid, proj_varid, "scale_factor_at_central_meridian", 0.9996 ) )
         call check(  nf90_put_att(ncid, proj_varid, "latitude_of_projection_origin", 0 ) )
         call check(  nf90_put_att(ncid, proj_varid, "false_easting", 500000. ) )
+        call check(  nf90_put_att(ncid, proj_varid, "false_northing", 0. ) )
         call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", utm_lon0 ) )
         !call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", 6378140.0 ) )
         !call check(  nf90_put_att(ncid, proj_varid, "semi_minor_axis", 6356750.0 ) )
   
-        !Define the dimmensions for the entire dataset
+        !Define the dimensions for the entire dataset
         !write(*,*) 'n_valid_receptor_in',n_valid_receptor_in
         !write(*,*) 'n_valid_receptor',n_valid_receptor
         call check(  nf90_def_dim(ncid,"station_id",n_valid_receptor_in, station_dimid) )
         call check(  nf90_def_dim(ncid,"charlen",n_char, charlen_dimid) )
         call check(  nf90_def_dim(ncid,"time",n_time_total, time_dimid) )
      
-        !Define the dimmension variables
+        !Define the dimension variables
         call check(  nf90_def_var(ncid, "station_id", NF90_INT, station_dimid, station_varid) )
         !call check(  nf90_def_var(ncid, "time", NF90_DOUBLE, time_dimid, time_varid) )
         call check(  nf90_def_var(ncid, "time", NF90_INT, time_dimid, time_varid) )
@@ -138,7 +139,7 @@
         call check(  nf90_put_att(ncid, station_name_varid, "long_name", "station name" ) )
         call check(  nf90_put_att(ncid, station_name_varid, "cf_role", "timeseries_id" ) )
 
-        !Specify other dimmension attributes
+        !Specify other dimension attributes
         !call check(  nf90_put_att(ncid, y_varid, "standard_name", "projection_y_axis") )
         !call check(  nf90_put_att(ncid, x_varid, "standard_name", "projection_x_axis") )
         !call check(  nf90_put_att(ncid, y_varid, "axis", "Y") )
@@ -166,7 +167,7 @@
    ! write(*,*) 'time_dimid ',time_dimid
     dimids2 = (/ station_dimid, time_dimid /)
 
-    !Get the size of the dimmensions
+    !Get the size of the dimensions
     call check( nf90_inquire_dimension(ncid, dimids2(1), temp_name, n_dims_length(1)) )
     call check( nf90_inquire_dimension(ncid, dimids2(2), temp_name, n_dims_length(2)) )
     !Set the starting point to 1

@@ -18,6 +18,7 @@
 	write(unit_logfile,'(A)') 'Define subgrids and buffer zones (uEMEP_define_subgrid)'
 	write(unit_logfile,'(A)') '================================================================'
 
+    
     !If annual calculations then always set time start and stop to 1
     if (annual_calculations) then
         start_time_nc_index=1
@@ -252,9 +253,16 @@
 
     !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
     if (allocated(use_subgrid)) deallocate (use_subgrid)
+    if (allocated(use_subgrid_val)) deallocate (use_subgrid_val)
+    if (allocated(use_subgrid_interpolation_index)) deallocate (use_subgrid_interpolation_index)
+    
     !Allocate the use_subgrid array and set to true for all subgrids
     if (.not.allocated(use_subgrid)) allocate (use_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_source_index))
+    if (.not.allocated(use_subgrid_val)) allocate (use_subgrid_val(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_source_index))
+    if (.not.allocated(use_subgrid_interpolation_index)) allocate (use_subgrid_interpolation_index(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_source_index))
+    
     use_subgrid=.true.
+    use_subgrid_val=1
     
     !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
     if (allocated(proxy_emission_subgrid)) deallocate (proxy_emission_subgrid) 

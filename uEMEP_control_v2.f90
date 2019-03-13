@@ -96,7 +96,7 @@
         !Set emission factors for the current subgrid
         call uEMEP_set_emission_factors
         
-        !Set the internal time loop (t_loop). If use_single_time_loop_flag=T then time array dimmensions are set to 1 and each time set of data
+        !Set the internal time loop (t_loop). If use_single_time_loop_flag=T then time array dimensions are set to 1 and each time set of data
         !is read individually. This mostly to save memory
    
         !Start the internal time loop
@@ -120,7 +120,8 @@
             endif
                 
             !Read EMEP data and meteo grid from netcdf files
-            !if (.not.use_multiple_receptor_grids_flag) then
+            !if (calculate_tiling_flag.or.calculate_region_tiling_flag) then
+            !else
             call uEMEP_read_EMEP
             if (use_alternative_meteorology_flag.or.use_alternative_z0_flag) call uEMEP_read_meteo_nc
             !endif
@@ -173,6 +174,9 @@
                     !Read and subgrid SSB dwelling data
                     !SSB_data_type=dwelling_index
                     !call uEMEP_read_SSB_data
+                    if (calculate_tiling_flag.or.calculate_region_tiling_flag) then
+                        use_RWC_emission_data=.false.
+                    endif
                     if (use_RWC_emission_data) then
                         call uEMEP_read_RWC_heating_data
                     else
@@ -189,15 +193,22 @@
                 endif
 
                 !Read in population data
-                if (calculate_population_exposure_flag) then
+                if (calculate_population_exposure_flag.or.use_population_positions_for_auto_subgrid_flag.or.save_population) then
                     !Read and subgrid SSB population data
                     SSB_data_type=population_data_type
                     call uEMEP_read_SSB_data
                 endif
 
                 !Autogrid setting for selecting which subgrids to calculate
-                call uEMEP_auto_subgrid
-    
+                if (use_emission_positions_for_auto_subgrid_flag(allsource_index)) then
+                    call uEMEP_grid_roads
+                    call uEMEP_auto_subgrid
+                endif
+                
+                if (use_region_select_and_mask_flag) then
+                    call uEMEP_region_mask
+                endif
+                
                 !Specify the subgrids sizes to be calculated using use_receptor_region
                 call uEMEP_grid_receptor_data
                 
@@ -205,6 +216,9 @@
                 if (calculate_tiling_flag) then
                     call uEMEP_grid_roads
                     call uEMEP_set_tile_grids
+                endif
+                if (calculate_region_tiling_flag) then
+                    call uEMEP_set_region_tile_grids
                 endif
 
             endif
@@ -231,6 +245,11 @@
                 call uEMEP_subgrid_dispersion(source_index)
             endif
             enddo
+            
+            !Interpolate local_subgrid if necessary
+            if (interpolate_subgrids_flag) then
+                call uEMEP_interpolate_auto_subgrid
+            endif
     
             !Diagnostic for comparing EMEP and proxy data emissions
             call uEMEP_aggregate_proxy_emission_in_EMEP_grid

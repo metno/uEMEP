@@ -1,6 +1,6 @@
 !uEMEP_save_emission_netcdf.f90
     !This routine saves the various emission sources in the EMEP grid
-    !It first reads in an example EMEP file (z0 file) to get projections and x,y grid dimmensions
+    !It first reads in an example EMEP file (z0 file) to get projections and x,y grid dimensions
     !Then extracts the emission data from its original form
     !It should run independently and stop when it is finished
     
@@ -67,8 +67,8 @@
     
     write(unit_logfile,'(a,3i6)') 'EMEP emission grid dimensions: ', emission_subgrid_dim(x_dim_index,allsource_index),emission_subgrid_dim(y_dim_index,allsource_index),dim_length_nc(time_dim_nc_index)
     
-    if (.not.allocated(val_dim_nc)) allocate (val_dim_nc(maxval(dim_length_nc),num_dims_nc)) !x, y, z and time dimmension values
-    if (.not.allocated(unit_dim_nc)) allocate (unit_dim_nc(num_dims_nc)) !x, y, z and time dimmension values
+    if (.not.allocated(val_dim_nc)) allocate (val_dim_nc(maxval(dim_length_nc),num_dims_nc)) !x, y, z and time dimension values
+    if (.not.allocated(unit_dim_nc)) allocate (unit_dim_nc(num_dims_nc)) !x, y, z and time dimension values
     !Define the emission subgrid to correspond to the EMEP grid
     if (.not.allocated(emission_subgrid)) allocate (emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop)) 
     if (.not.allocated(proxy_emission_subgrid)) allocate (proxy_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index,n_pollutant_loop)) 
@@ -388,7 +388,7 @@
         call check(  nf90_put_att(ncid, time_varid, "units", trim(unit_dim_nc(time_dim_nc_index))) )
 
         !write(*,*) 'here5'
-        !Specify other dimmension attributes
+        !Specify other dimension attributes
         call check(  nf90_put_att(ncid, y_varid, "standard_name", "projection_y_axis") )
         call check(  nf90_put_att(ncid, x_varid, "standard_name", "projection_x_axis") )
         call check(  nf90_put_att(ncid, y_varid, "axis", "Y") )

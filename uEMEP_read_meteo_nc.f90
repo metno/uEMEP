@@ -1,6 +1,6 @@
 !uEMEP_read_meteo_nc
     !Reads in AROME data in 2 files, 3 for meteo and 4 for z0
-    !These two files must have the same x,y dimmensions as they are placed in the same grid
+    !These two files must have the same x,y dimensions as they are placed in the same grid
     
     subroutine uEMEP_read_meteo_nc
     
@@ -26,7 +26,7 @@
     integer temp_start_time_nc_index,temp_end_time_nc_index
     integer temp_start_time_meteo_nc_index,temp_end_time_meteo_nc_index
     integer i_loop
-    integer valid_dim_length_meteo_nc(num_dims_meteo_nc) !dimmensions of file 3
+    integer valid_dim_length_meteo_nc(num_dims_meteo_nc) !dimensions of file 3
     integer numAtts_projection
     logical :: invert_levels_flag=.false.
     integer surface_level_nc_2
@@ -214,7 +214,7 @@
             meteo_nc_projection_type=LL_projection_index             
         endif
         
-        !Find the (x,y,z,time) dimmensions of the file
+        !Find the (x,y,z,time) dimensions of the file
         do i_dim=1,num_dims_meteo_nc
             status_nc = NF90_INQ_DIMID (id_nc,dim_name_meteo_nc(i_dim),dim_id_nc(i_dim))
             status_nc = NF90_INQUIRE_DIMENSION (id_nc,dim_id_nc(i_dim),dimname_temp,dim_length_meteo_nc(i_dim))
@@ -365,14 +365,14 @@
         endif
         
         !Allocate the nc arrays for reading
-        if (.not.allocated(val_dim_meteo_nc)) allocate (val_dim_meteo_nc(maxval(dim_length_meteo_nc),num_dims_meteo_nc)) !x, y, z and time dimmension values
-        if (.not.allocated(unit_dim_meteo_nc)) allocate (unit_dim_meteo_nc(num_dims_meteo_nc)) !x, y, z and time dimmension values
+        if (.not.allocated(val_dim_meteo_nc)) allocate (val_dim_meteo_nc(maxval(dim_length_meteo_nc),num_dims_meteo_nc)) !x, y, z and time dimension values
+        if (.not.allocated(unit_dim_meteo_nc)) allocate (unit_dim_meteo_nc(num_dims_meteo_nc)) !x, y, z and time dimension values
         if (.not.allocated(var1d_nc_dp)) allocate (var1d_nc_dp(maxval(dim_length_meteo_nc))) 
         if (.not.allocated(var2d_nc_dp)) allocate (var2d_nc_dp(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index))) !Lat and lon
 
         !Allocate array for the alternative meteo files
         if (i_file.ge.3) then
-            if (.not.allocated(meteo_var1d_nc)) allocate (meteo_var1d_nc(maxval(dim_length_meteo_nc),num_dims_meteo_nc)) !x, y, z and time maximum dimmensions
+            if (.not.allocated(meteo_var1d_nc)) allocate (meteo_var1d_nc(maxval(dim_length_meteo_nc),num_dims_meteo_nc)) !x, y, z and time maximum dimensions
             if (.not.allocated(meteo_var2d_nc)) allocate (meteo_var2d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),2)) !Lat and lon
             if (.not.allocated(meteo_var3d_nc)) allocate (meteo_var3d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),0:dim_length_meteo_nc(time_dim_nc_index),num_var_meteo_nc))
             if (.not.allocated(meteo_var4d_nc)) allocate (meteo_var4d_nc(dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(z_dim_nc_index),0:dim_length_meteo_nc(time_dim_nc_index),num_var_meteo_nc))
@@ -430,7 +430,7 @@
             !If a variable name is found in the file then go further
             if (status_nc.eq.NF90_NOERR) then
                 scale_factor_nc=1.
-                !Find the dimmensions of the variable (temp_num_dims)
+                !Find the dimensions of the variable (temp_num_dims)
                 status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
                 !write(*,*) temp_num_dims,status_nc
                 if (temp_num_dims.eq.2.and.i_file.eq.3) then
@@ -468,7 +468,7 @@
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i)),maxval(meteo_var4d_nc(1:dim_length_meteo_nc(x_dim_nc_index),1:dim_length_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i))
                     !write(*,*) dim_start_meteo_nc(time_dim_nc_index)-1,dim_length_meteo_nc(time_dim_nc_index)+1,dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1
                 else
-                    write(unit_logfile,'(8A,8A)') ' Cannot find a correct dimmension for: ',trim(var_name_nc_temp)
+                    write(unit_logfile,'(8A,8A)') ' Cannot find a correct dimension for: ',trim(var_name_nc_temp)
                 endif    
                 
             else
@@ -502,7 +502,7 @@
                 elseif (temp_num_dims.eq.5) then
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, DMT_EMEP_grid_nc(:,:,:),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),1,1,DMT_start_time_nc_index/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),1,1,DMT_dim_length_nc/))
                 else
-                    write(unit_logfile,'(8A,8A)') ' Cannot find a correct dimmension for: ',trim(var_name_nc_temp)
+                    write(unit_logfile,'(8A,8A)') ' Cannot find a correct dimension for: ',trim(var_name_nc_temp)
                 endif                    
                 
                 write(unit_logfile,'(A,i,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(DMT_EMEP_grid_nc),maxval(DMT_EMEP_grid_nc)
@@ -517,7 +517,7 @@
                     
     enddo !End file loop
     
-    !Set the correct time dimmensions to the first file value
+    !Set the correct time dimensions to the first file value
     dim_length_meteo_nc=valid_dim_length_meteo_nc
         
     !Set the grid spacing

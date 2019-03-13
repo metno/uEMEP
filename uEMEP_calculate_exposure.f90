@@ -17,14 +17,25 @@
     real val_limit(n_compound_nc_index)
     real pop_over_limit(subgrid_dim(t_dim_index),n_pollutant_loop)
     real grids_over_limit(subgrid_dim(t_dim_index),n_pollutant_loop)
+    !logical, allocatable :: use_subgrid_exposure(:,:,:)
     integer t
     
     integer i_pollutant
     
+    !if (.not.allocated(use_subgrid_exposure)) allocate (use_subgrid_exposure(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_source_index))
+
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Calculating exposure (uEMEP_calculate_exposure)'
 	write(unit_logfile,'(A)') '================================================================'
+
+    !use_subgrid_exposure=use_subgrid
+    
+    !Mask the regions if required
+    !if (use_region_select_and_mask_flag) then
+    !    use_subgrid_exposure=.true.
+    !    where (use_subgrid_val(:,:,allsource_index).eq.outside_region_index) use_subgrid_exposure(:,:,allsource_index)=.false.
+    !endif
 
     !Exposure will be calculated on the target grid
     !The target grid will always be equal to or of a higher resolution
@@ -46,9 +57,9 @@
     max_val=-1.
     pop_over_limit=0.
     grids_over_limit=0.
-    val_limit(no2_index)=200. !Need to fix this later
-    val_limit(pm10_index)=80. !Need to fix this later
-    val_limit(pm25_index)=40. !Need to fix this later
+    val_limit(no2_index)=100. !Need to fix this later
+    val_limit(pm10_index)=50. !Need to fix this later
+    val_limit(pm25_index)=30. !Need to fix this later
     i_max=0;j_max=0
     
     do j=1,subgrid_dim(y_dim_index)
@@ -90,14 +101,11 @@
                     max_val(i_pollutant)=sum(subgrid(i,j,:,total_subgrid_index,allsource_index,i_pollutant))/subgrid_dim(t_dim_index)
                     i_max(i_pollutant)=i;j_max(i_pollutant)=j
                 endif
-                if (sum(subgrid(i,j,:,total_subgrid_index,allsource_index,i_pollutant))/subgrid_dim(t_dim_index).gt.max_val(i_pollutant)) then
-                    max_val(i_pollutant)=sum(subgrid(i,j,:,total_subgrid_index,allsource_index,i_pollutant))/subgrid_dim(t_dim_index)
-                    i_max(i_pollutant)=i;j_max(i_pollutant)=j
-                endif
+                !write(*,'(5i,2f)') i_pollutant,i,j,i_max(i_pollutant),j_max(i_pollutant),sum(subgrid(i,j,:,total_subgrid_index,allsource_index,i_pollutant))/subgrid_dim(t_dim_index),max_val(i_pollutant)
             
+                i_cross_max(i_pollutant)=crossreference_target_to_population_subgrid(i_max(i_pollutant),j_max(i_pollutant),x_dim_index)
+                j_cross_max(i_pollutant)=crossreference_target_to_population_subgrid(i_max(i_pollutant),j_max(i_pollutant),y_dim_index)
             endif
-            i_cross_max(i_pollutant)=crossreference_target_to_population_subgrid(i_max(i_pollutant),j_max(i_pollutant),x_dim_index)
-            j_cross_max(i_pollutant)=crossreference_target_to_population_subgrid(i_max(i_pollutant),j_max(i_pollutant),y_dim_index)
         
         enddo
         
@@ -108,7 +116,7 @@
     do i_pollutant=1,n_pollutant_loop
         write(unit_logfile,'(A)') 'Population weighted concentration and max time average concentration (with population) by source per period for '//trim(input_comp_name)
         weighted_concentration(allsource_index,i_pollutant)=sum(exposure_subgrid(:,:,:,allsource_index,i_pollutant))/population_total(i_pollutant)/subgrid_dim(t_dim_index)
-        write(unit_logfile,'(A24,2f12.2,2f12.0)') 'Total: ',weighted_concentration(allsource_index,i_pollutant),max_val(i_pollutant),population_total(i_pollutant),population_subgrid(i_cross_max(i_pollutant),j_cross_max(i_pollutant),population_data_type)
+        write(unit_logfile,'(A24,2f12.2,2f12.0)') 'Total '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//': ',weighted_concentration(allsource_index,i_pollutant),max_val(i_pollutant),population_total(i_pollutant),population_subgrid(i_cross_max(i_pollutant),j_cross_max(i_pollutant),population_data_type)
     
         !Calculate population weighted values for each source
             do i_source=1,n_source_index
@@ -137,7 +145,7 @@
         enddo
        
         weighted_concentration(allsource_index,i_pollutant)=sum(exposure_subgrid(:,:,:,allsource_index,i_pollutant))/population_total(i_pollutant)/subgrid_dim(t_dim_index)
-        write(unit_logfile,'(A24,2f12.2)') 'Total no2: ',weighted_concentration(allsource_index,i_pollutant),sum(comp_subgrid(i_max,j_max,:,pollutant_loop_index(i_pollutant)))/subgrid_dim(t_dim_index)
+        write(unit_logfile,'(A24,2f12.2)') 'Total no2: ',weighted_concentration(allsource_index,i_pollutant),sum(comp_subgrid(i_max(i_pollutant),j_max(i_pollutant),:,no2_nc_index))/subgrid_dim(t_dim_index)
         write(unit_logfile,'(A24,f12.2)') 'Population over limit: ',maxval(pop_over_limit)
         write(unit_logfile,'(A24,f12.2)') 'Grids over limit: ',maxval(grids_over_limit)
     

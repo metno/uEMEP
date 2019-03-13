@@ -208,16 +208,21 @@
     logical exists
     integer subsource_index,source_index    
     integer i_pollutant,i_loop
+    integer i,j
         
     write(unit_logfile,'(A)')'Combining the local and nonlocal contributions at each subgrid'
 
-    if (interpolate_subgrids_flag) then
-        write(unit_logfile,'(a)') 'Interpolate routines not currently active. Stopping'
-        stop
+    !if (interpolate_subgrids_flag) then
+        !write(unit_logfile,'(a)') 'Interpolate routines not currently active. Doing nothing'
+        !call uEMEP_interpolate_auto_subgrid
+        !return
+        !stop
         !call uEMEP_interpolate_subgrids
         !call uEMEP_linear_interpolate_subgrids
         !call uEMEP_bilinear_interpolate_subgrids
-    endif
+        
+        !Remember to reset the use_subgrids val and logical so that everything will be used in the end
+    !endif
     
     !Calculate redistributed subgrid allsource concentrations
     subgrid(:,:,:,local_subgrid_index,allsource_index,:)=0.
@@ -226,6 +231,7 @@
              subgrid(:,:,:,local_subgrid_index,allsource_index,:)=subgrid(:,:,:,local_subgrid_index,allsource_index,:)+subgrid(:,:,:,local_subgrid_index,source_index,:)
         endif
     enddo
+    
     
     do i_pollutant=1,n_pollutant_loop
         !If the compound is PM2.5 or PM10 then add the non PPM part to the non-local
@@ -245,5 +251,22 @@
         
     enddo
     
+    !Only show results where all the subgrids and all sources are valid
+    !This is temporary
+    if (interpolate_subgrids_flag) then
+    do source_index=1,n_source_index
+        if (calculate_source(source_index)) then
+            do j=1,subgrid_dim(y_dim_index)
+            do i=1,subgrid_dim(x_dim_index)
+                if (.not.use_subgrid(i,j,source_index)) then
+                    !subgrid(i,j,:,total_subgrid_index,allsource_index,:)=NODATA_value
+                    !subgrid(i,j,:,total_subgrid_index,source_index,:)=NODATA_value
+                    !comp_subgrid(i,j,:,:)=NODATA_value
+                endif                
+            enddo
+            enddo
+        endif
+    enddo
+    endif
         
     end subroutine uEMEP_combine_local_source

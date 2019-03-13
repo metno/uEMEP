@@ -34,21 +34,28 @@
         filename_grid(proxy_file_index(i))=trim('proxy')//'_'//trim(source_file_str(i))
         filename_grid(proxy_integral_file_index(i))=trim('proxy_integral')//'_'//trim(source_file_str(i))
         filename_grid(emep_subgrid_file_index(i))=trim('EMEP')//'_'//trim(source_file_str(i))
-        filename_grid(emep_subgrid_nonlocal_file_index(i))=trim('EMEP_nonlocal_fraction')
-        filename_grid(emep_subgrid_local_file_index(i))=trim('EMEP_local_fraction')//'_'//trim(source_file_str(i))
-        filename_grid(emep_subgrid_frac_file_index(i))=trim('EMEP_fraction')//'_'//trim(source_file_str(i))
-        filename_grid(subgrid_local_file_index(i))=trim('local_fraction')//'_'//trim(source_file_str(i))
+        if (save_netcdf_fraction_as_contribution_flag) then
+            filename_grid(emep_subgrid_nonlocal_file_index(i))=trim('EMEP_nonlocal_contribution')
+            filename_grid(emep_subgrid_local_file_index(i))=trim('EMEP_local_contribution')//'_'//trim(source_file_str(i))
+            filename_grid(emep_subgrid_frac_file_index(i))=trim('EMEP_contribution')//'_'//trim(source_file_str(i))
+            filename_grid(subgrid_local_file_index(i))=trim('local_contribution')//'_'//trim(source_file_str(i))
+        else
+            filename_grid(emep_subgrid_nonlocal_file_index(i))=trim('EMEP_nonlocal_fraction')
+            filename_grid(emep_subgrid_local_file_index(i))=trim('EMEP_local_fraction')//'_'//trim(source_file_str(i))
+            filename_grid(emep_subgrid_frac_file_index(i))=trim('EMEP_fraction')//'_'//trim(source_file_str(i))
+            filename_grid(subgrid_local_file_index(i))=trim('local_fraction')//'_'//trim(source_file_str(i))           
+        endif
         filename_grid(subgrid_total_file_index(i))=trim('total')//'_'//trim(source_file_str(i))
         filename_grid(use_subgrid_file_index(i))=trim('use_subgrid')//'_'//trim(source_file_str(i))
         filename_grid(emep_emission_subgrid_file_index(i))=trim('EMEP_emission')//'_'//trim(source_file_str(i))       
     enddo
     
-    filename_grid(population_file_index(dwelling_index))=trim('dwelling_subgrid')
-    filename_grid(population_file_index(population_index))=trim('population_subgrid')
-    filename_grid(population_file_index(school_index))=trim('school_subgrid')
-    filename_grid(population_file_index(establishment_index))=trim('establishment_subgrid')
-    filename_grid(population_file_index(kindergaten_index))=trim('kindergaten_subgrid')
-    filename_grid(population_file_index(home_index))=trim('home_subgrid')
+    filename_grid(population_file_index(dwelling_index))=trim('dwelling')
+    filename_grid(population_file_index(population_index))=trim('population')
+    filename_grid(population_file_index(school_index))=trim('school')
+    filename_grid(population_file_index(establishment_index))=trim('establishment')
+    filename_grid(population_file_index(kindergaten_index))=trim('kindergaten')
+    filename_grid(population_file_index(home_index))=trim('home')
 
     !Meteo file names
     filename_grid(subgrid_ugrid_file_index)='xgrid_wind'

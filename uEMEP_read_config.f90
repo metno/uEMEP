@@ -124,7 +124,7 @@
         make_EMEP_grid_emission_data(agriculture_index)=read_name_logical('make_EMEP_grid_emission_data(agriculture_index)',make_EMEP_grid_emission_data(agriculture_index),unit_in,unit_logfile)
         make_EMEP_grid_emission_data(industry_index)=read_name_logical('make_EMEP_grid_emission_data(industry_index)',make_EMEP_grid_emission_data(industry_index),unit_in,unit_logfile)
         
-        replace_EMEP_local_with_subgrid_local(:)=read_name_logical('replace_EMEP_local_with_subgrid_local',replace_EMEP_local_with_subgrid_local(allsource_index),unit_in,unit_logfile)
+        !replace_EMEP_local_with_subgrid_local(:)=read_name_logical('replace_EMEP_local_with_subgrid_local',replace_EMEP_local_with_subgrid_local(allsource_index),unit_in,unit_logfile)
         replace_EMEP_local_with_subgrid_local(traffic_index)=read_name_logical('replace_EMEP_local_with_subgrid_local(traffic_index)',replace_EMEP_local_with_subgrid_local(traffic_index),unit_in,unit_logfile)
         replace_EMEP_local_with_subgrid_local(shipping_index)=read_name_logical('replace_EMEP_local_with_subgrid_local(shipping_index)',replace_EMEP_local_with_subgrid_local(shipping_index),unit_in,unit_logfile)
         replace_EMEP_local_with_subgrid_local(heating_index)=read_name_logical('replace_EMEP_local_with_subgrid_local(heating_index)',replace_EMEP_local_with_subgrid_local(heating_index),unit_in,unit_logfile)
@@ -153,12 +153,26 @@
         wind_level_integral_flag=read_name_integer('wind_level_integral_flag',wind_level_flag,unit_in,unit_logfile) !Default is wind_level_flag
         no2_chemistry_scheme_flag=read_name_integer('no2_chemistry_scheme_flag',no2_chemistry_scheme_flag,unit_in,unit_logfile)
         
-        use_emission_positions_for_auto_subgrid_flag=read_name_logical('use_emission_positions_for_auto_subgrid_flag',use_emission_positions_for_auto_subgrid_flag,unit_in,unit_logfile)
+        !use_emission_positions_for_auto_subgrid_flag(:)=read_name_logical('use_emission_positions_for_auto_subgrid_flag',use_emission_positions_for_auto_subgrid_flag(allsource_index),unit_in,unit_logfile)
+        use_emission_positions_for_auto_subgrid_flag(traffic_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(traffic_index)',use_emission_positions_for_auto_subgrid_flag(traffic_index),unit_in,unit_logfile)
+        use_emission_positions_for_auto_subgrid_flag(shipping_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(shipping_index)',use_emission_positions_for_auto_subgrid_flag(shipping_index),unit_in,unit_logfile)
+        use_emission_positions_for_auto_subgrid_flag(heating_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(heating_index)',use_emission_positions_for_auto_subgrid_flag(heating_index),unit_in,unit_logfile)
+        use_emission_positions_for_auto_subgrid_flag(agriculture_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(agriculture_index)',use_emission_positions_for_auto_subgrid_flag(agriculture_index),unit_in,unit_logfile)
+        use_emission_positions_for_auto_subgrid_flag(industry_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(industry_index)',use_emission_positions_for_auto_subgrid_flag(industry_index),unit_in,unit_logfile)
+
+        !Set all source index to true if any of the sources are to be auto gridded. allsource_index defines if the routine is called or not
+        do i_source=1,n_source_index
+            if (use_emission_positions_for_auto_subgrid_flag(i_source).and.i_source.ne.allsource_index) use_emission_positions_for_auto_subgrid_flag(allsource_index)=.true.
+        enddo
+        do i_source=1,n_source_index
+            write(*,*) 'Using auto subgrid for source ',trim(source_file_str(i_source)),use_emission_positions_for_auto_subgrid_flag(i_source)
+        enddo
+                    
         use_receptor_positions_for_auto_subgrid_flag=read_name_logical('use_receptor_positions_for_auto_subgrid_flag',use_receptor_positions_for_auto_subgrid_flag,unit_in,unit_logfile)
         use_population_positions_for_auto_subgrid_flag=read_name_logical('use_population_positions_for_auto_subgrid_flag',use_population_positions_for_auto_subgrid_flag,unit_in,unit_logfile)
         interpolate_subgrids_flag=read_name_logical('interpolate_subgrids_flag',interpolate_subgrids_flag,unit_in,unit_logfile)
 
-        use_trajectory_flag(:)=read_name_logical('use_trajectory_flag',use_trajectory_flag(allsource_index),unit_in,unit_logfile)
+        !use_trajectory_flag(:)=read_name_logical('use_trajectory_flag',use_trajectory_flag(allsource_index),unit_in,unit_logfile)
         use_trajectory_flag(shipping_index)=read_name_logical('use_trajectory_flag(shipping_index)',use_trajectory_flag(shipping_index),unit_in,unit_logfile)
         use_trajectory_flag(traffic_index)=read_name_logical('use_trajectory_flag(traffic_index)',use_trajectory_flag(traffic_index),unit_in,unit_logfile)
         use_trajectory_flag(heating_index)=read_name_logical('use_trajectory_flag(heating_index)',use_trajectory_flag(heating_index),unit_in,unit_logfile)
@@ -193,7 +207,7 @@
         init_subgrid_max(y_dim_index)=subgrid_max(y_dim_index)
         
         !Specifies the number of subsources for each source. Usually not used as default is 1
-        n_subsource(:)=read_name_integer('n_subsource(:)',n_subsource(allsource_index),unit_in,unit_logfile)
+        !n_subsource(:)=read_name_integer('n_subsource(:)',n_subsource(allsource_index),unit_in,unit_logfile)
         n_subsource(traffic_index)=read_name_integer('n_subsource(traffic_index)',n_subsource(traffic_index),unit_in,unit_logfile)
         n_subsource(shipping_index)=read_name_integer('n_subsource(shipping_index)',n_subsource(shipping_index),unit_in,unit_logfile)
         n_subsource(heating_index)=read_name_integer('n_subsource(heating_index)',n_subsource(heating_index),unit_in,unit_logfile)
@@ -352,8 +366,21 @@
         
         save_netcdf_file_flag=read_name_logical('save_netcdf_file_flag',save_netcdf_file_flag,unit_in,unit_logfile)
         save_netcdf_receptor_flag=read_name_logical('save_netcdf_receptor_flag',save_netcdf_receptor_flag,unit_in,unit_logfile)
+        save_netcdf_fraction_as_contribution_flag=read_name_logical('save_netcdf_fraction_as_contribution_flag',save_netcdf_fraction_as_contribution_flag,unit_in,unit_logfile)
+                
+        calculate_tiling_flag=read_name_logical('calculate_tiling_flag',calculate_tiling_flag,unit_in,unit_logfile)
+        calculate_region_tiling_flag=read_name_logical('calculate_region_tiling_flag',calculate_region_tiling_flag,unit_in,unit_logfile)
+ 
+        pathname_region_id=read_name_char('pathname_region_id','',unit_in,unit_logfile)
+        filename_region_id=read_name_char('filename_region_id','',unit_in,unit_logfile)
+        region_name=read_name_char('region_name','',unit_in,unit_logfile)
+        region_id=read_name_integer('region_id',region_id,unit_in,unit_logfile)
+        region_index=read_name_integer('region_index',region_index,unit_in,unit_logfile)
+        region_subgrid_delta=read_name_real('region_subgrid_delta',region_subgrid_delta,unit_in,unit_logfile)
+        use_region_select_and_mask_flag=read_name_logical('use_region_select_and_mask_flag',use_region_select_and_mask_flag,unit_in,unit_logfile) 
         
-        calculate_tiling_flag=read_name_logical('calculate_tiling_flag',calculate_tiling_flag,unit_in,unit_logfile)        
+        max_interpolation_subgrid_size=read_name_real('max_interpolation_subgrid_size',max_interpolation_subgrid_size,unit_in,unit_logfile)
+        
         pathname_tiles=read_name_char('pathname_tiles','',unit_in,unit_logfile)
         filename_tiles=read_name_char('filename_tiles','',unit_in,unit_logfile)
         tile_tag=read_name_char('tile_tag','',unit_in,unit_logfile)
@@ -416,7 +443,8 @@
         save_population=read_name_logical('save_population',save_population,unit_in,unit_logfile)
         save_no2_source_contributions=read_name_logical('save_no2_source_contributions',save_no2_source_contributions,unit_in,unit_logfile)
         save_o3_source_contributions=read_name_logical('save_o3_source_contributions',save_o3_source_contributions,unit_in,unit_logfile)
-
+        save_aqi=read_name_logical('save_aqi',save_aqi,unit_in,unit_logfile)
+        
         lowest_stable_L=read_name_real('lowest_stable_L',lowest_stable_L,unit_in,unit_logfile)
         lowest_unstable_L=read_name_real('lowest_unstable_L',lowest_unstable_L,unit_in,unit_logfile)
         

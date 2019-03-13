@@ -17,7 +17,7 @@
     parameter (n_col=5)
     character(256) header_str(n_col)
     integer source_index_in(n_col-1)
-    integer region_id
+    integer temp_region_id
     integer n_hours_in_week,n_months_in_year
     integer, allocatable :: time_month_of_year_input(:),time_hour_of_week_input(:)
     real, allocatable :: val_month_of_year_input(:,:),val_hour_of_week_input(:,:)
@@ -69,8 +69,8 @@
     write(unit_logfile,*) trim(temp_str),source_index_in
 
     !Read region
-    read(unit_in,*) temp_str,region_id
-    write(unit_logfile,'(a,i)') trim(temp_str),region_id
+    read(unit_in,*) temp_str,temp_region_id
+    write(unit_logfile,'(a,i)') trim(temp_str),temp_region_id
      
     !Read Hour_of_week
     read(unit_in,*) temp_str,n_hours_in_week
@@ -176,6 +176,8 @@
                     else
                         i_cross=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,source_index_in(i_source))
                         j_cross=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index_in(i_source))
+                        !i_cross=min(max(1,i_cross),dim_length_nc(x_dim_nc_index))
+                        !j_cross=min(max(1,j_cross),dim_length_nc(y_dim_nc_index))
                     endif
                     hdd_temp=max(0.,HDD_threshold_value-max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)))
                     !write (*,*) hdd_temp,DMT_EMEP_grid_nc(i_cross,j_cross,1),max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)),HDD_threshold_value-max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1))

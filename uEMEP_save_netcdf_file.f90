@@ -20,7 +20,6 @@
     
     integer ii,jj,tt
     
-    logical :: save_aqi=.true.
     real aqi_limits_temp(n_compound_index,1:5)
     real max_aqi
     integer n_aqi_pollutant_index
@@ -31,6 +30,8 @@
     logical :: receptor_available=.true.
     real scale_factor
     integer n_save_aqi_pollutant_index
+    real temp_sum_comp
+    integer count
     
     !Functions
     real DIRECTION
@@ -122,7 +123,22 @@
         
         var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_concentration'
         if (save_netcdf_file_flag) then
-            write(unit_logfile,'(a,f12.2)')'Writing netcdf array variable:    '//trim(var_name_temp),sum(comp_subgrid(:,:,:,i_comp))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            temp_sum_comp=0.
+            count=0
+            do j=1,subgrid_dim(y_dim_index)
+            do i=1,subgrid_dim(x_dim_index)
+            if (use_subgrid(i,j,allsource_index)) then
+                temp_sum_comp=temp_sum_comp+sum(comp_subgrid(i,j,:,i_comp))/subgrid_dim(t_dim_index)
+                count=count+1
+            endif
+            enddo
+            enddo
+            if (count.gt.0) then
+                temp_sum_comp=temp_sum_comp/count
+            else
+                temp_sum_comp=0
+            endif            
+            write(unit_logfile,'(a,f12.2)')'Writing netcdf array variable:    '//trim(var_name_temp),temp_sum_comp
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
             ,comp_subgrid(:,:,:,i_comp),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
             ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -147,8 +163,14 @@
     
     !Save the different local source contributions, not the total though
     if (save_source_contributions) then
-    variable_type='byte'
-    unit_str="%"   
+        if (save_netcdf_fraction_as_contribution_flag) then
+            variable_type='float'
+            unit_str="ug/m3"
+        else           
+            variable_type='byte'
+            unit_str="%"
+        endif
+        
     do i_pollutant=1,n_pollutant_loop
     do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
@@ -163,11 +185,20 @@
             else
             if (i_source.eq.traffic_index.and.(pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index)) then
                 var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//'_nonexhaust'
-                temp_subgrid=(subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)-subgrid(:,:,:,local_subgrid_index,i_source,pollutant_loop_back_index(pmex_index)))/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+                if (save_netcdf_fraction_as_contribution_flag) then
+                    temp_subgrid=(subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)-subgrid(:,:,:,local_subgrid_index,i_source,pollutant_loop_back_index(pmex_index)))
+                else
+                    temp_subgrid=(subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)-subgrid(:,:,:,local_subgrid_index,i_source,pollutant_loop_back_index(pmex_index)))/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+                endif
             else
                 var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
-                temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+                if (save_netcdf_fraction_as_contribution_flag) then
+                    temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)
+                else
+                    temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+                endif
             endif
+            !In case of any 0 concentrations
             where (subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant).eq.0) temp_subgrid=0
             
             if (save_netcdf_file_flag) then
@@ -201,9 +232,14 @@
                 exhaust_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)            
             endif
             
-            temp_subgrid=exhaust_subgrid/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+            if (save_netcdf_fraction_as_contribution_flag) then
+                var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//'local_contribution_traffic_exhaust'
+                temp_subgrid=exhaust_subgrid
+            else
+                var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//'local_fraction_traffic_exhaust'
+                temp_subgrid=exhaust_subgrid/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+            endif
             where (subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant).eq.0) temp_subgrid=0
-            var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//'local_fraction_traffic_exhaust'
               
             if (save_netcdf_file_flag) then
                 write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
@@ -231,7 +267,11 @@
                
                 i_file=emep_subgrid_nonlocal_file_index(i_source)
                 var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
-                temp_subgrid=subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+                if (save_netcdf_fraction_as_contribution_flag) then
+                    temp_subgrid=subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,i_pollutant)
+                else
+                    temp_subgrid=subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+                endif
                 where (subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant).eq.0) temp_subgrid=0
 
                 if (save_netcdf_file_flag) then
@@ -263,8 +303,13 @@
     
     if (save_no2_source_contributions) then
     
-    variable_type='byte'
-    unit_str="%"
+        if (save_netcdf_fraction_as_contribution_flag) then
+            variable_type='float'
+            unit_str="ug/m3"
+        else           
+            variable_type='byte'
+            unit_str="%"
+        endif
 
     do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
@@ -281,7 +326,12 @@
             else
                 var_name_temp=trim(var_name_nc(conc_nc_index,no2_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))
             endif
-            temp_subgrid=comp_source_fraction_subgrid(:,:,:,no2_index,i_source)*100.
+            if (save_netcdf_fraction_as_contribution_flag) then
+                temp_subgrid=comp_source_fraction_subgrid(:,:,:,no2_index,i_source)*comp_subgrid(:,:,:,no2_index)
+            else
+                temp_subgrid=comp_source_fraction_subgrid(:,:,:,no2_index,i_source)*100.
+            endif
+            
             
             if (save_netcdf_file_flag) then
                 write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
@@ -304,10 +354,16 @@
     
     endif
     
-   if (save_o3_source_contributions) then
+    if (save_o3_source_contributions) then
            
-    variable_type='byte'
-    unit_str="%"   
+        if (save_netcdf_fraction_as_contribution_flag) then
+            variable_type='float'
+            unit_str="ug/m3"
+        else           
+            variable_type='byte'
+            unit_str="%"
+        endif
+    
     valid_min=0.
 
     do i_source=1,n_source_index
@@ -330,7 +386,11 @@
             endif
              
             var_name_temp=trim(var_name_nc(conc_nc_index,o3_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))
-            temp_subgrid=comp_source_fraction_subgrid(:,:,:,o3_index,i_source)*100.
+            if (save_netcdf_fraction_as_contribution_flag) then
+                temp_subgrid=comp_subgrid(:,:,:,o3_index)
+            else
+                temp_subgrid=comp_source_fraction_subgrid(:,:,:,o3_index,i_source)*100.
+            endif
             
             if (save_netcdf_file_flag) then
                 write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
@@ -409,7 +469,7 @@
     !Save population interpolated to the target grid
     if (save_population) then
     variable_type='float'
-    unit_str="inhabitants/grid"   
+    unit_str="inhabitants/grid"
     
                 i_file=population_file_index(population_index)
                 var_name_temp=trim(filename_grid(i_file))
@@ -418,8 +478,7 @@
                 temp_subgrid=0.
                 do j=1,subgrid_dim(y_dim_index)
                 do i=1,subgrid_dim(x_dim_index)
-                
-                    
+                                   
                     ii=crossreference_target_to_population_subgrid(i,j,x_dim_index)
                     jj=crossreference_target_to_population_subgrid(i,j,y_dim_index)
             
@@ -609,7 +668,7 @@
         enddo
         
         do l=1,n_save_aqi_pollutant_index
-            write(unit_logfile,*)  'MAX AQI in time and space from '//trim(pollutant_file_str(aqi_pollutant_index(l)))//' = ',maxval(aqi_subgrid(:,:,:,aqi_pollutant_index(l)))
+            !write(unit_logfile,*)  'MAX AQI in time and space from '//trim(pollutant_file_str(aqi_pollutant_index(l)))//' = ',maxval(aqi_subgrid(:,:,:,aqi_pollutant_index(l)))
         enddo
         
         var_name_temp='AQI'
@@ -1132,6 +1191,7 @@
     integer n_dims(3)
     integer status
     integer nf90_type
+    integer t
     
 
     if (trim(variable_type).eq.'byte') nf90_type=NF90_BYTE
@@ -1142,6 +1202,13 @@
     !Assumes x and y are the dimensions   
     x_vector=x_array(:,1)
     y_vector=y_array(1,:)
+    
+    !Mask the regions if required
+    if (use_region_select_and_mask_flag) then
+        do t=1,nt
+            where (use_subgrid_val(:,:,allsource_index).eq.outside_region_index) val_array(:,:,t)=NODATA_value
+        enddo
+    endif
     
     if (create_file) then
         !Create a netcdf file
@@ -1163,6 +1230,7 @@
         call check(  nf90_put_att(ncid, proj_varid, "scale_factor_at_central_meridian", 0.9996 ) )
         call check(  nf90_put_att(ncid, proj_varid, "latitude_of_projection_origin", 0 ) )
         call check(  nf90_put_att(ncid, proj_varid, "false_easting", 500000. ) )
+        call check(  nf90_put_att(ncid, proj_varid, "false_northing", 0. ) )
         call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", utm_lon0 ) )
   
         !Define the dimensions
@@ -1189,7 +1257,7 @@
         call check(  nf90_put_att(ncid, x_varid, "units", "m") )
         call check(  nf90_put_att(ncid, time_varid, "units", trim(unit_dim_nc(time_dim_nc_index))) )
 
-        !Specify other dimmension attributes
+        !Specify other dimension attributes
         call check(  nf90_put_att(ncid, y_varid, "standard_name", "projection_y_axis") )
         call check(  nf90_put_att(ncid, x_varid, "standard_name", "projection_x_axis") )
         call check(  nf90_put_att(ncid, y_varid, "axis", "Y") )

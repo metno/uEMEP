@@ -42,7 +42,6 @@
     integer :: EMEP_meteo_grid_interpolation_flag=1
     real :: EMEP_grid_interpolation_size=1.
     integer :: local_subgrid_method_flag=1
-    logical :: use_emission_positions_for_auto_subgrid_flag=.false.
     
     !Single loop time variables
     integer t_loop
@@ -350,12 +349,17 @@
     integer integral_subgrid_loop_index(2)      !Number of integral subgrids to loop through, limitted by the size of the EMEP grid
     integer emission_subgrid_loop_index(2,n_source_index)      !Number of emission subgrids to loop through, limitted by the size of the EMEP grid
     logical, allocatable :: use_subgrid(:,:,:)    !Specifies if calculations are to be made at a particular set of target subgrids or not
+    integer, allocatable :: use_subgrid_val(:,:,:) !Same as use_subgrid but given a value to indicate if it is in the buffer zone of a region ore not
+    integer, allocatable :: use_subgrid_interpolation_index(:,:,:) !Assigns the resolution level for auto gridding to the target grid
+    integer n_use_subgrid_levels(n_source_index)
+    logical :: use_emission_positions_for_auto_subgrid_flag(n_source_index)=.false.
+
     real :: loop_index_scale=1.5
     real :: buffer_index_scale=1.5
     
     !Emission subgrid per source and subsource. Can be time dependent
     !Each source type has its own x and y and dim
-    !Each source may be of lesser dimmensions than the total array size (which is the same as the target grid)
+    !Each source may be of lesser dimensions than the total array size (which is the same as the target grid)
     integer n_possible_subsource
     parameter (n_possible_subsource=2)
     integer :: n_subsource(n_source_index)=1 !Initialise the number of actual emission subsources to 1 for all subsources
@@ -582,9 +586,11 @@
     logical :: use_emission_grid_gradient_flag=.false.
     logical :: use_alternative_meteorology_flag=.false.
     logical :: use_alternative_z0_flag=.false.
-    logical :: 	save_netcdf_file_flag=.false.
-    logical ::	save_netcdf_receptor_flag=.false.
+    logical :: save_netcdf_file_flag=.false.
+    logical :: save_netcdf_receptor_flag=.false.
+    logical :: save_netcdf_fraction_as_contribution_flag=.false.
     logical :: calculate_tiling_flag=.false.
+    logical :: calculate_region_tiling_flag=.false.
     
     !Some testing and scaling values
     real :: replace_z0=NODATA_value  !Will not replace z0 when it has a NODATA value
@@ -656,6 +662,22 @@
     logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.false.,save_other_meteo=.false.
     logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
     logical :: save_population=.false.,save_no2_source_contributions=.true.,save_o3_source_contributions=.true.
+    logical :: save_aqi=.true.
+
+    !Region ID file names
+    character(256) pathfilename_region_id,pathname_region_id,filename_region_id
+    character(256) region_name
+    integer :: region_id=0
+    integer :: region_index=0
+    real :: region_subgrid_delta=50.
+    logical :: use_region_select_and_mask_flag=.false.
+    real :: max_interpolation_subgrid_size=1000.
+    
+    !Set the scaling factors for the auto gridding routine
+    integer use_subgrid_step_delta(0:10)
+    
+    integer outside_region_index,outside_interpolation_region_index,inside_region_index
+    parameter (outside_region_index=-1,outside_interpolation_region_index=-2,inside_region_index=0)
 
 
     end module uEMEP_definitions

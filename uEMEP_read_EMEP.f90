@@ -23,7 +23,7 @@
     integer xdist_centre_nc,ydist_centre_nc
     integer temp_start_time_nc_index,temp_end_time_nc_index
     integer i_loop
-    integer valid_dim_length_nc(num_dims_nc) !dimmensions of file 1
+    integer valid_dim_length_nc(num_dims_nc) !dimensions of file 1
     integer numAtts_projection
     integer surface_level_nc_2
     
@@ -157,7 +157,7 @@
             EMEP_projection_type=LL_projection_index
         endif
         
-        !Find the (x,y,z,time,xdist,ydist) dimmensions of the file
+        !Find the (x,y,z,time,xdist,ydist) dimensions of the file
         do i_dim=1,num_dims_nc
             status_nc = NF90_INQ_DIMID (id_nc,dim_name_nc(i_dim),dim_id_nc(i_dim))
             status_nc = NF90_INQUIRE_DIMENSION (id_nc,dim_id_nc(i_dim),dimname_temp,dim_length_nc(i_dim))
@@ -168,7 +168,7 @@
         enddo
             
         if (subgrid_dim(t_dim_index).gt.dim_length_nc(time_dim_nc_index)) then
-            write(unit_logfile,'(A,2I)') 'ERROR: Specified time dimensions are greater than EMEP netcdf dimmensions. Stopping ',subgrid_dim(t_dim_index),dim_length_nc(time_dim_nc_index)
+            write(unit_logfile,'(A,2I)') 'ERROR: Specified time dimensions are greater than EMEP netcdf dimensions. Stopping ',subgrid_dim(t_dim_index),dim_length_nc(time_dim_nc_index)
             stop
         endif 
               
@@ -180,14 +180,14 @@
         write(unit_logfile,'(A,6I)') ' New size of dimensions (x,y,z,t,xdist,ydist): ',dim_length_nc
 
         if (mod(dim_length_nc(xdist_dim_nc_index),2).ne.1.or.mod(dim_length_nc(ydist_dim_nc_index),2).ne.1) then
-            write(unit_logfile,'(A,2I)') ' ERROR: Even sized dimmensions for local contribution. Must be odd: ',dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index)
+            write(unit_logfile,'(A,2I)') ' ERROR: Even sized dimensions for local contribution. Must be odd: ',dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index)
             stop
         endif
             
         if (i_file.eq.2) then
             xdist_centre_nc=1+dim_length_nc(xdist_dim_nc_index)/2
             ydist_centre_nc=1+dim_length_nc(ydist_dim_nc_index)/2
-            write(unit_logfile,'(A,2I)') ' Centre index of local contribution dimmensions: ',xdist_centre_nc,ydist_centre_nc
+            write(unit_logfile,'(A,2I)') ' Centre index of local contribution dimensions: ',xdist_centre_nc,ydist_centre_nc
         endif
         
         !Calculate the necessary extent of the EMEP grid region and only read these grids
@@ -275,9 +275,9 @@
         
 
         !Allocate the nc arrays for reading
-        if (.not.allocated(val_dim_nc)) allocate (val_dim_nc(maxval(dim_length_nc),num_dims_nc)) !x, y, z and time dimmension values
-        if (.not.allocated(unit_dim_nc)) allocate (unit_dim_nc(num_dims_nc)) !x, y, z and time dimmension values
-        if (.not.allocated(var1d_nc)) allocate (var1d_nc(maxval(dim_length_nc),num_dims_nc)) !x, y, z and time maximum dimmensions
+        if (.not.allocated(val_dim_nc)) allocate (val_dim_nc(maxval(dim_length_nc),num_dims_nc)) !x, y, z and time dimension values
+        if (.not.allocated(unit_dim_nc)) allocate (unit_dim_nc(num_dims_nc)) !x, y, z and time dimension values
+        if (.not.allocated(var1d_nc)) allocate (var1d_nc(maxval(dim_length_nc),num_dims_nc)) !x, y, z and time maximum dimensions
         if (.not.allocated(var2d_nc)) allocate (var2d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),2)) !Lat and lon
         if (.not.allocated(var3d_nc)) then
             allocate (var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),num_var_nc,n_source_nc_index,n_pollutant_loop))
@@ -317,7 +317,7 @@
         !write(*,*) x_dim_nc_index,y_dim_nc_index
         !write(*,*) shape(var1d_nc_dp)
         !write(*,*) dim_length_nc
-        !Read in the dimensions and check values of the dimmensions. Not necessary but diagnostic
+        !Read in the dimensions and check values of the dimensions. Not necessary but diagnostic
         do i=1,num_dims_nc
             status_nc = NF90_INQ_VARID (id_nc, trim(dim_name_nc(i)), var_id_nc)
             !write(*,*) id_nc, trim(dim_name_nc(i)), var_id_nc(i),dim_length_nc(i)
@@ -401,7 +401,7 @@
             !If a variable name is found in the file then go further
             if (status_nc.eq.NF90_NOERR) then
                 scale_factor_nc=1.
-                !Find the dimmensions of the variable (temp_num_dims)
+                !Find the dimensions of the variable (temp_num_dims)
                 status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
                 !write(*,*) temp_num_dims,status_nc
                 if (temp_num_dims.eq.2.and.i_file.eq.1) then
@@ -457,7 +457,7 @@
                     !write(*,*) maxval(lc_var4d_nc(3,3,:,:,:,1,lc_frac_nc_index,i_source)),maxval(lc_var4d_nc(3,3,:,:,:,2,lc_frac_nc_index,i_source))
 
                 else
-                    write(unit_logfile,'(8A,8A)') ' Cannot find a correct dimmension for: ',trim(var_name_nc_temp)
+                    write(unit_logfile,'(8A,8A)') ' Cannot find a correct dimension for: ',trim(var_name_nc_temp)
                 endif    
                 
             else
@@ -484,7 +484,7 @@
             !If a variable name is found in the file then go further
             if (status_nc.eq.NF90_NOERR) then
 
-                !Find the dimmensions of the variable (temp_num_dims)
+                !Find the dimensions of the variable (temp_num_dims)
                 status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
 
                 if (temp_num_dims.eq.3) then
@@ -546,7 +546,7 @@
         
     enddo !End file loop
     
-    !Set the correct time dimmensions tot he first file value
+    !Set the correct time dimensions tot he first file value
     dim_length_nc(time_dim_nc_index)=valid_dim_length_nc(time_dim_nc_index)
         
     !Set the grid spacing
@@ -695,7 +695,7 @@
         !Check EMEP time
         date_num_temp=dble(ceiling(val_dim_nc(1,time_dim_nc_index)*24.))/24.
         call number_to_date(date_num_temp,date_array,ref_year_EMEP)
-        write(unit_logfile,'(a,i6)') ' Time dimmension EMEP:  ',dim_length_nc(time_dim_nc_index)
+        write(unit_logfile,'(a,i6)') ' Time dimension EMEP:  ',dim_length_nc(time_dim_nc_index)
         write(unit_logfile,'(a,6i6)') ' Date start EMEP =  ',date_array
         date_num_temp=dble(ceiling(val_dim_nc(dim_length_nc(time_dim_nc_index),time_dim_nc_index)*24.))/24.
         call number_to_date(date_num_temp,date_array,ref_year_EMEP)

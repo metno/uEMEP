@@ -7,7 +7,31 @@
     implicit none
 
     integer i 
+    real dim_check(2)
     
+    !In the case of interpolation and auto subgridding we need to extend the domain by dx and dy to get the different grids to fit
+    !Assume the maximum is 1 km
+    if (use_emission_positions_for_auto_subgrid_flag(allsource_index)) then
+        !Check that it is divisable by the largest grid size
+        dim_check(x_dim_index)=mod((subgrid_max(x_dim_index)-subgrid_min(x_dim_index)),max_interpolation_subgrid_size)
+        dim_check(y_dim_index)=mod((subgrid_max(y_dim_index)-subgrid_min(y_dim_index)),max_interpolation_subgrid_size)
+        if (dim_check(x_dim_index).eq.0) then
+            subgrid_max(x_dim_index)=subgrid_max(x_dim_index)+subgrid_delta(x_dim_index)
+            write(unit_logfile,'(A,f12.2)') 'Setting subgrids for auto emission gridding. Adding to x grid max: ',subgrid_delta(x_dim_index)
+        else
+            subgrid_max(x_dim_index)=subgrid_max(x_dim_index)+(max_interpolation_subgrid_size-dim_check(x_dim_index)+subgrid_delta(x_dim_index))
+            write(unit_logfile,'(A,f12.2)') 'Setting subgrids for auto emission gridding. Adding to x grid max: ',(max_interpolation_subgrid_size-dim_check(x_dim_index)+subgrid_delta(x_dim_index))
+        endif
+        if (dim_check(x_dim_index).eq.0) then
+            subgrid_max(y_dim_index)=subgrid_max(y_dim_index)+subgrid_delta(y_dim_index)
+            write(unit_logfile,'(A,f12.2)') 'Setting subgrids for auto emission gridding. Adding to y grid max: ',subgrid_delta(y_dim_index)
+        else
+            subgrid_max(y_dim_index)=subgrid_max(y_dim_index)+(max_interpolation_subgrid_size-dim_check(y_dim_index)+subgrid_delta(y_dim_index))
+            write(unit_logfile,'(A,f12.2)') 'Setting subgrids for auto emission gridding. Adding to y grid max: ',(max_interpolation_subgrid_size-dim_check(y_dim_index)+subgrid_delta(y_dim_index))
+        endif
+
+    endif
+
     !Reset min and max with the buffer and calculate dimensions
     !subgrid_min(x_dim_index)=subgrid_min(x_dim_index)-buffer(x_dim_index);subgrid_min(y_dim_index)=subgrid_min(y_dim_index)-buffer(y_dim_index)
     !subgrid_max(x_dim_index)=subgrid_max(x_dim_index)+buffer(x_dim_index);subgrid_max(y_dim_index)=subgrid_max(y_dim_index)+buffer(y_dim_index)
@@ -36,12 +60,12 @@
     integral_subgrid_dim(y_dim_index)=min(integral_subgrid_dim(y_dim_index),subgrid_dim(y_dim_index))
 
     !Set all population subgrids relative to the target subgrid
-    if (population_data_type.eq.population_index) then
-        !When 250 m population data is used then set this as a limit
+    if (population_data_type.eq.population_index.and..not.use_region_select_and_mask_flag) then
+        !When not using regional mask then 250 m population data is used then set this as a limit
         population_subgrid_delta(x_dim_index)=max(subgrid_delta(x_dim_index),limit_population_delta)
         population_subgrid_delta(y_dim_index)=max(subgrid_delta(y_dim_index),limit_population_delta)
     else
-        !Allow the point population data to have the same grid as the target grid
+        !Allow the population data to have the same grid as the target grid
         population_subgrid_delta(x_dim_index)=subgrid_delta(x_dim_index)
         population_subgrid_delta(y_dim_index)=subgrid_delta(y_dim_index)
     endif        
@@ -75,7 +99,7 @@
     emission_subgrid_delta(x_dim_index,industry_index)=max(subgrid_delta(x_dim_index),limit_industry_delta)
     emission_subgrid_delta(y_dim_index,industry_index)=max(subgrid_delta(y_dim_index),limit_industry_delta)
     
-    !Set all the emission subgrid dimmensions after changes
+    !Set all the emission subgrid dimensions after changes
     do i=1,n_source_index
         emission_subgrid_dim(x_dim_index,i)=floor((emission_subgrid_max(x_dim_index,i)-emission_subgrid_min(x_dim_index,i))/emission_subgrid_delta(x_dim_index,i))
         emission_subgrid_dim(y_dim_index,i)=floor((emission_subgrid_max(y_dim_index,i)-emission_subgrid_min(y_dim_index,i))/emission_subgrid_delta(y_dim_index,i))

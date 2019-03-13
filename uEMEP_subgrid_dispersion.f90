@@ -36,6 +36,8 @@
     real            xpos_emission_subgrid,ypos_emission_subgrid
     real            temp_subgrid_internal
     real            internal_subgrid_emission_factor,distance_emission_subgrid_min
+    real            temp_sum_subgrid(n_pollutant_loop)
+    integer         count
     
     real, allocatable :: temp_emission_subgrid(:,:,:)
     real, allocatable :: temp_subgrid(:,:,:)
@@ -108,6 +110,17 @@
     
     do subsource_index=1,n_subsource(source_index)
 
+        !Do not use target subgrid if the grid is auto selected
+        !if (emission_subgrid_delta(x_dim_index,source_index).le.subgrid_delta(x_dim_index).or. &
+        if (use_emission_positions_for_auto_subgrid_flag(source_index).or. &
+        (use_population_positions_for_auto_subgrid_flag.or.use_receptor_positions_for_auto_subgrid_flag)) then
+            use_target_subgrid=.false.
+            write(*,*) 'Using auto subgrid for source ',trim(source_file_str(source_index))
+        else
+            use_target_subgrid=.true.
+        endif
+        
+        
         call uEMEP_set_dispersion_params_simple(source_index,subsource_index)
     
         !Set local dispersion parameters to be used only in the annual calculation, overwritten in the hourly files
@@ -643,7 +656,7 @@
                 
             
             else
-                !Set to nodata value for grids that should not be used
+                !Set to nodata value for grids that should not be used for all pollutants
                 temp_subgrid(i,j,:)=NODATA_value
             endif
             
@@ -676,7 +689,22 @@
         endif
         !write(unit_logfile,'(a,3f12.3)') 'Mean, min and max grid concentration: ',sum(temp_subgrid)/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index),minval(temp_subgrid),maxval(temp_subgrid)
         do i_pollutant=1,n_pollutant_loop
-        write(unit_logfile,'(a,3f12.3)') 'Mean concentration '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//': ',sum(temp_subgrid(:,:,i_pollutant))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)
+            temp_sum_subgrid(i_pollutant)=0.
+            count=0
+            do j=1,subgrid_dim(y_dim_index)
+            do i=1,subgrid_dim(x_dim_index)
+            if (use_subgrid(i,j,source_index)) then
+                temp_sum_subgrid(i_pollutant)=temp_sum_subgrid(i_pollutant)+temp_subgrid(i,j,i_pollutant)
+                count=count+1
+            endif
+            enddo
+            enddo
+            if (count.gt.0) then
+                temp_sum_subgrid(i_pollutant)=temp_sum_subgrid(i_pollutant)/count
+            else
+                temp_sum_subgrid(i_pollutant)=0
+            endif            
+            write(unit_logfile,'(a,3f12.3)') 'Mean concentration '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//': ',temp_sum_subgrid(i_pollutant)
         enddo
         subgrid(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid
 
