@@ -307,7 +307,7 @@
             meteo_subgrid(i,j,:,ugrid_subgrid_index)=u_utm
             meteo_subgrid(i,j,:,vgrid_subgrid_index)=v_utm
             
-            !Create cos and sin's of the lowest level wind direction  for efficient use in the dispersion equations
+            !Create cos and sin's of the lowest level wind direction for efficient use in the dispersion equations
             ff=sqrt(meteo_subgrid(i,j,:,vgrid_subgrid_index)*meteo_subgrid(i,j,:,vgrid_subgrid_index)+meteo_subgrid(i,j,:,ugrid_subgrid_index)*meteo_subgrid(i,j,:,ugrid_subgrid_index))
             meteo_subgrid(i,j,:,sin_subgrid_index)=meteo_subgrid(i,j,:,vgrid_subgrid_index)/ff
             meteo_subgrid(i,j,:,cos_subgrid_index)=meteo_subgrid(i,j,:,ugrid_subgrid_index)/ff

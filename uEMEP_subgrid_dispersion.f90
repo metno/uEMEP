@@ -41,6 +41,7 @@
     
     real, allocatable :: temp_emission_subgrid(:,:,:)
     real, allocatable :: temp_subgrid(:,:,:)
+    real, allocatable :: diagnostic_subgrid(:,:,:)
     real, allocatable :: temp_FF_subgrid(:,:)
     real, allocatable :: temp_FF_emission_subgrid(:,:)
     real, allocatable :: trajectory_subgrid(:,:,:,:)
@@ -88,6 +89,7 @@
  
     allocate (temp_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_pollutant_loop)) 
     allocate (temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_pollutant_loop)) 
+    allocate (diagnostic_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_pollutant_loop)) 
     allocate (temp_FF_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
     allocate (temp_FF_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
     allocate (angle_diff(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
@@ -115,9 +117,17 @@
         if (use_emission_positions_for_auto_subgrid_flag(source_index).or. &
         (use_population_positions_for_auto_subgrid_flag.or.use_receptor_positions_for_auto_subgrid_flag)) then
             use_target_subgrid=.false.
-            write(*,*) 'Using auto subgrid for source ',trim(source_file_str(source_index))
+            write(unit_logfile,*) 'Using auto subgrid for source ',trim(source_file_str(source_index))
+        elseif (emission_subgrid_delta(x_dim_index,source_index).le.subgrid_delta(x_dim_index)) then
+            use_target_subgrid=.false.
         else
             use_target_subgrid=.true.
+        endif
+
+        if (use_target_subgrid) then
+            write(unit_logfile,*) 'Using emission subgrid with interpolation for source ',trim(source_file_str(source_index))
+        else
+            write(unit_logfile,*) 'Using normal subgrid with no interpolation for source ',trim(source_file_str(source_index))
         endif
         
         
@@ -180,6 +190,7 @@
         temp_emission_subgrid=emission_subgrid(:,:,tt,source_index,:)
         temp_subgrid=0.
         temp_FF_subgrid=0.
+        diagnostic_subgrid=0.
         
         !Set the last meteo data subgrid in the case when the internal time loop is used
         if (.not.use_single_time_loop_flag) then
@@ -428,7 +439,9 @@
                        
                             !Set the integral meteorological grid position for the emission position
                             i_cross_integral=crossreference_emission_to_integral_subgrid(ii,jj,x_dim_index,source_index)
-                            j_cross_integral=crossreference_emission_to_integral_subgrid(ii,jj,y_dim_index,source_index)                            
+                            j_cross_integral=crossreference_emission_to_integral_subgrid(ii,jj,y_dim_index,source_index)
+                            i_cross_integral=min(max(1,i_cross_integral),integral_subgrid_dim(x_dim_index))
+                            j_cross_integral=min(max(1,j_cross_integral),integral_subgrid_dim(y_dim_index))
                             
                             if (hourly_calculations) then 
                             
@@ -557,6 +570,11 @@
                                     !Calculate the dispersion
                                     temp_subgrid_internal=gauss_plume_cartesian_sigma_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc)
                                     
+                                    !if (ii.eq.i_cross.and.jj.eq.j_cross) write(*,'(9es12.2)') x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,temp_subgrid_internal
+                                    if (tt.ge.18.and.tt.le.18.and.temp_subgrid_internal.gt.1.e-3) then
+                                        !write(*,'(2i,12es12.2)') ii,jj,x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,temp_emission_subgrid(ii,jj,1),temp_subgrid_internal,sin_subgrid_loc,cos_subgrid_loc
+                                    endif
+                                    
                                     !When the target grid is within the emitting grid then reduce the 'seen' emissions according to distance from centre
                                     if (use_emission_grid_gradient_flag) then
                                         internal_subgrid_emission_factor=min(x_loc/(distance_emission_subgrid_min*2.),1.)
@@ -567,9 +585,14 @@
                                     !if (internal_subgrid_emission_factor.lt.1.) write(*,*) internal_subgrid_emission_factor,x_loc,distance_emission_subgrid_min
                                     !if (x_loc.eq.distance_emission_subgrid_min) write(*,*) internal_subgrid_emission_factor,x_loc,distance_emission_subgrid_min
                                     
+                                    !For diagnostics only!!
+                                    diagnostic_subgrid(i,j,1)=diagnostic_subgrid(i,j,1)+temp_subgrid_internal
+                                    diagnostic_subgrid(i,j,2)=diagnostic_subgrid(i,j,2)+temp_emission_subgrid(ii,jj,1)
+                                    
                                     do i_pollutant=1,n_pollutant_loop
                                     !Multiply by the emission factor
                                     temp_subgrid_internal_pollutant(i_pollutant)=temp_subgrid_internal*temp_emission_subgrid(ii,jj,i_pollutant)*internal_subgrid_emission_factor
+                                    
                                     
                                     !Add to the receptor subgrid position
                                     if (use_target_subgrid) then
@@ -577,7 +600,6 @@
                                     else
                                     temp_subgrid(i,j,i_pollutant)=temp_subgrid(i,j,i_pollutant)+temp_subgrid_internal_pollutant(i_pollutant)
                                     endif
-                                    
                                     enddo
                                     
                                     !Determine the distance for the travel time calculation
@@ -596,7 +618,7 @@
                                         
                                     distance_subgrid=max(distance_subgrid,distance_subgrid_min)
 
-                                    !Take weighted average (weighted by concentration) of the time if nox
+                                    !Take weighted average (weighted by concentration) of the time
                                     time_weight(tt,:)=time_weight(tt,:)+distance_subgrid/FF_loc*temp_subgrid_internal_pollutant
                                     
                                     !Calculate sum of the concentration for normalisation
@@ -658,6 +680,11 @@
             else
                 !Set to nodata value for grids that should not be used for all pollutants
                 temp_subgrid(i,j,:)=NODATA_value
+            endif
+            if (.not.use_target_subgrid) then             
+                !write(*,'(3i,3es12.2)') tt,i,j,temp_subgrid(i,j,pollutant_loop_index(nox_index)),diagnostic_subgrid(i,j,1),diagnostic_subgrid(i,j,2)
+            else
+                !write(*,'(3i,3es12.2)') tt,i,j,temp_target_subgrid(i,j,pollutant_loop_index(nox_index)),diagnostic_subgrid(i,j,1),diagnostic_subgrid(i,j,2)
             endif
             
         enddo

@@ -8,7 +8,7 @@
     implicit none
     
     integer i,j,k,t
-    integer ii,jj
+    integer ii,jj,iii,jjj
     logical exists
     character(256) pathfilename_nc
     integer status_nc     !Error message
@@ -44,6 +44,7 @@
     
     integer DMT_start_time_nc_index,DMT_end_time_nc_index,DMT_dim_length_nc
 
+    logical nonzero_wind_notfound
 
     !Temporary reading variables
     double precision, allocatable :: var1d_nc_dp(:)
@@ -647,6 +648,40 @@
 
         where (var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index).lt.ustar_min) var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)=ustar_min
 
+
+        !Test for 0 wind speed components
+        do j=1,dim_length_nc(y_dim_nc_index)
+        do i=1,dim_length_nc(x_dim_nc_index)
+        do t=1,dim_length_nc(time_dim_nc_index)
+            if (var4d_nc(i,j,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index).eq.0..and.var4d_nc(i,j,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index).eq.0.) then
+                write(unit_logfile,'(a,3i)') 'Zero wind fields at (i,j,t): ',i,j,t
+                !Search for the nearest non double zero value
+                k=0
+                nonzero_wind_notfound=.true.
+                do while (k.lt.20.and.nonzero_wind_notfound)
+                k=k+1
+                    do ii=-k,k
+                    do jj =-k,k
+                        iii=i+ii
+                        jjj=j+jj
+                        iii=min(max(1,iii),dim_length_nc(x_dim_nc_index))
+                        jjj=min(max(1,jjj),dim_length_nc(y_dim_nc_index))
+                        if (var4d_nc(iii,jjj,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index).ne.0. &
+                            .or.var4d_nc(iii,jjj,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index).ne.0.) then
+                            nonzero_wind_notfound=.false.
+                            var4d_nc(i,j,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index)=var4d_nc(iii,jjj,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index)
+                            var4d_nc(i,j,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index)=var4d_nc(iii,jjj,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index)
+                            write(unit_logfile,'(a,4i,2f10.2)') 'Wind found for (i,j,t): ',k,i,j,t,var4d_nc(i,j,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index),var4d_nc(i,j,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index)
+                        endif
+                    enddo
+                    enddo
+                        
+                enddo
+                
+            endif
+        enddo
+        enddo
+        enddo
 
         !If no logz0 available. Set to log(0.1)
         !For urban areas a value of 0.3 is used
