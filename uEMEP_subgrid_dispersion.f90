@@ -35,13 +35,13 @@
     real            xpos_subgrid,ypos_subgrid
     real            xpos_emission_subgrid,ypos_emission_subgrid
     real            temp_subgrid_internal
-    real            internal_subgrid_emission_factor,distance_emission_subgrid_min
+    real            distance_emission_subgrid_min
     real            temp_sum_subgrid(n_pollutant_loop)
     integer         count
     
     real, allocatable :: temp_emission_subgrid(:,:,:)
     real, allocatable :: temp_subgrid(:,:,:)
-    real, allocatable :: diagnostic_subgrid(:,:,:)
+    !real, allocatable :: diagnostic_subgrid(:,:,:)
     real, allocatable :: temp_FF_subgrid(:,:)
     real, allocatable :: temp_FF_emission_subgrid(:,:)
     real, allocatable :: trajectory_subgrid(:,:,:,:)
@@ -89,7 +89,7 @@
  
     allocate (temp_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_pollutant_loop)) 
     allocate (temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_pollutant_loop)) 
-    allocate (diagnostic_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_pollutant_loop)) 
+    !allocate (diagnostic_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_pollutant_loop)) 
     allocate (temp_FF_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
     allocate (temp_FF_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
     allocate (angle_diff(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
@@ -190,7 +190,7 @@
         temp_emission_subgrid=emission_subgrid(:,:,tt,source_index,:)
         temp_subgrid=0.
         temp_FF_subgrid=0.
-        diagnostic_subgrid=0.
+        !diagnostic_subgrid=0.
         
         !Set the last meteo data subgrid in the case when the internal time loop is used
         if (.not.use_single_time_loop_flag) then
@@ -455,13 +455,7 @@
                                     call uEMEP_minimum_distance_trajectory(x_subgrid(i,j),y_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
                                     traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                     endif
-                                    
-                                    !Set the starting point of the dispersion to be at (near) the edge of an emission subgrid
-                                    if (abs(x_loc).le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
-                                        !x_loc=x_loc+distance_emission_subgrid_min
-                                        x_loc=distance_emission_subgrid_min
-                                    endif
-                                
+                                                                 
                                 else
                                                                 
                                     !Set the local wind cos and sin values
@@ -477,13 +471,7 @@
                                     y_loc=-(x_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index))*sin_subgrid_loc+(y_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index))*cos_subgrid_loc
                                     endif
                                     !write(*,*) x_loc,x_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index),y_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index)
-                                   
-                                    !Set the starting point of the dispersion to be at (near) the edge of an emission subgrid for calculations within the emission grid
-                                    if (abs(x_loc).le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
-                                        !x_loc=x_loc+distance_emission_subgrid_min
-                                        x_loc=distance_emission_subgrid_min
-                                    endif
-                                    
+                                                                       
                                     !If x is downwind then it is valid
                                     if (x_loc.ge.0.) then
                                         valid_traj=.true.
@@ -544,7 +532,7 @@
                                         !Add the meandering and change in wind angle to the plume since not included in Kz calculation
                                         sig_y_loc=sig_y_loc+x_loc*angle_diff(i_cross_integral,j_cross_integral)
                                         
-                                        !Use the average of the emisiion height and zc to determine wind speed. Is set to true if wind_level_flag=6
+                                        !Use the average of the emision height and zc to determine wind speed. Is set to true if wind_level_flag=6
                                         if (wind_level_flag.eq.6) then
                                             !FF_loc=FF_zc_loc
                                             !Set the minimum wind speed 
@@ -575,23 +563,14 @@
                                         !write(*,'(2i,12es12.2)') ii,jj,x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,temp_emission_subgrid(ii,jj,1),temp_subgrid_internal,sin_subgrid_loc,cos_subgrid_loc
                                     endif
                                     
-                                    !When the target grid is within the emitting grid then reduce the 'seen' emissions according to distance from centre
-                                    if (use_emission_grid_gradient_flag) then
-                                        internal_subgrid_emission_factor=min(x_loc/(distance_emission_subgrid_min*2.),1.)
-                                    else
-                                        internal_subgrid_emission_factor=1.
-                                    endif
-                                    
-                                    !if (internal_subgrid_emission_factor.lt.1.) write(*,*) internal_subgrid_emission_factor,x_loc,distance_emission_subgrid_min
-                                    !if (x_loc.eq.distance_emission_subgrid_min) write(*,*) internal_subgrid_emission_factor,x_loc,distance_emission_subgrid_min
-                                    
+                                                                        
                                     !For diagnostics only!!
-                                    diagnostic_subgrid(i,j,1)=diagnostic_subgrid(i,j,1)+temp_subgrid_internal
-                                    diagnostic_subgrid(i,j,2)=diagnostic_subgrid(i,j,2)+temp_emission_subgrid(ii,jj,1)
+                                    !diagnostic_subgrid(i,j,1)=diagnostic_subgrid(i,j,1)+temp_subgrid_internal
+                                    !diagnostic_subgrid(i,j,2)=diagnostic_subgrid(i,j,2)+temp_emission_subgrid(ii,jj,1)
                                     
                                     do i_pollutant=1,n_pollutant_loop
                                     !Multiply by the emission factor
-                                    temp_subgrid_internal_pollutant(i_pollutant)=temp_subgrid_internal*temp_emission_subgrid(ii,jj,i_pollutant)*internal_subgrid_emission_factor
+                                    temp_subgrid_internal_pollutant(i_pollutant)=temp_subgrid_internal*temp_emission_subgrid(ii,jj,i_pollutant)
                                     
                                     
                                     !Add to the receptor subgrid position
@@ -691,7 +670,7 @@
         !if (mod(j,10).eq.0) write(*,'(3a,i5,a,i5,a,i3,a,i3)') 'Gridding ',trim(source_file_str(source_index)),' proxy',j,' of ',subgrid_dim(2),' and ',subsource_index,' of ',n_subsource(source_index)
         enddo
       
-        if (mod(j,1).eq.0) write(*,'(3a,i5,a,i5,a,i3,a,i3)') 'Gridding ',trim(source_file_str(source_index)),' proxy for hour ',tt,' of ',subgrid_dim(t_dim_index),' and ',subsource_index,' of ',n_subsource(source_index)
+        if (mod(j,1).eq.0) write(*,'(3a,i5,a,i5,a,i3,a,i3)') 'Gridding ',trim(source_file_str(source_index)),' proxy for hour ',tt,' of ',subgrid_dim(t_dim_index),' and subsource ',subsource_index,' of ',n_subsource(source_index)
         
         !Put the temporary subgrid back into the subgrid array
         if (use_target_subgrid) then
@@ -792,7 +771,6 @@
     real            xpos_subgrid,ypos_subgrid
     real            xpos_emission_subgrid,ypos_emission_subgrid
     real            xpos_integral_subgrid,ypos_integral_subgrid
-    real            internal_subgrid_emission_factor
     real            distance_emission_subgrid_min
 
     integer         traj_max_index
@@ -1060,11 +1038,6 @@
                                     call uEMEP_minimum_distance_trajectory(x_integral_subgrid(i,j),y_integral_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
                                     traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                 
-                                    !Set the starting point of the dispersion to be at (near) the edge of an emission subgrid for calculations within the emission grid
-                                    if (abs(x_loc).le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
-                                        x_loc=x_loc+distance_emission_subgrid_min
-                                    endif
-
                                 else
                                                                 
                                     !Set the local wind cos and sin values
@@ -1074,12 +1047,7 @@
                                     !Determine the rotated along wind values
                                     x_loc=(x_integral_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index))*cos_subgrid_loc+(y_integral_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index))*sin_subgrid_loc
                                     y_loc=-(x_integral_subgrid(i,j)-x_emission_subgrid(ii,jj,source_index))*sin_subgrid_loc+(y_integral_subgrid(i,j)-y_emission_subgrid(ii,jj,source_index))*cos_subgrid_loc
-                                    
-                                   !Set the starting point of the dispersion to be at (near) the edge of an emission subgrid for calculations within the emission grid
-                                    if (abs(x_loc).le.distance_emission_subgrid_min.and.use_emission_grid_gradient_flag) then
-                                        x_loc=x_loc+distance_emission_subgrid_min
-                                    endif
-                                    
+                                                                        
                                    !If x is downwind then it is valid
                                     if (x_loc.ge.0) then
                                         valid_traj=.true.
@@ -1147,16 +1115,12 @@
                                         FF_loc=sqrt(FF_zc_loc*FF_zc_loc+FF_min_dispersion*FF_min_dispersion)
                                     endif
                                     
-                                    !When the target grid is within the emitting grid then reduce the 'seen' emissions according to distance from centre
-                                    internal_subgrid_emission_factor=min((x_loc/emission_subgrid_delta(x_dim_index,source_index)),1.)
-
                                     !Calculate the dispersion
                                     integral_subgrid(i,j,tt,source_index,:)=integral_subgrid(i,j,tt,source_index,:) &
                                         + gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,H_emep) &
-                                        * emission_subgrid(ii,jj,tt,source_index,:)*internal_subgrid_emission_factor
+                                        * emission_subgrid(ii,jj,tt,source_index,:)
                                                                         
                                 endif
-                                
                                 
                             else
                                 !If annual calculations

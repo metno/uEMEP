@@ -3,7 +3,9 @@
 !
 !   Bruce rolstad Denby (brucerd@met.no)
 !   MET Norway
-!
+! To add this library to your linker input in the IDE, open the context menu for the project node, choose Properties, then in the Project Properties dialog box, choose Linker
+! , and edit the Linker Input to add legacy_stdio_definitions.lib to the semi-colon-separated list
+! Tools/options/intel compilers and tools/visual fortran/compilers and add bin, include and lib, e.g. C:\Program Files (x86)\netcdf 4.3.3.1\bin;
 !   Control programme for running the downscaling routine uEMEP
 !****************************************************************************
 
@@ -34,6 +36,9 @@
     !Read the configuration files. Hard coded to be up to 5 files. Log file opened in this routine
     call uEMEP_read_config
     
+    !Reset any constants needed based on the configuration input
+    call uEMEP_reset_constants
+    
     !Set the pollutant and compound loop definitions
     call uEMEP_set_pollutant_loop
     
@@ -43,7 +48,7 @@
     !Read positions of receptor points (usually observations) for specifying multiple receptor grids or calculation points within a single grid
     call uEMEP_read_receptor_data
     
-    !Enter the routine for saving emissions to EMEP. Will stop after this
+    !Enter the routine for saving emissions used in uEMEP for EMEP in netcdf files defined for the Norwegian domain in Lambert coordinates. Will stop after this
     if (save_emissions_for_EMEP(allsource_index)) then
         call uEMEP_calculate_emissions_for_EMEP
     endif
@@ -65,22 +70,19 @@
     
     first_g_loop=.true.
     
-        if (use_single_time_loop_flag) then
-            start_time_loop_index=1
-            end_time_loop_index=end_time_nc_index-start_time_nc_index+1
-            subgrid_dim(t_dim_index)=1
-            dim_length_nc(time_dim_nc_index)=1
-        else
-            start_time_loop_index=1
-            end_time_loop_index=1
-            subgrid_dim(t_dim_index)=end_time_nc_index-start_time_nc_index+1
-            dim_length_nc(time_dim_nc_index)=subgrid_dim(t_dim_index)
-        endif
+    !If the use_single_time_loop_flag is true (Reads and calculates one time step at a time to save memory) then set these parameters
+    if (use_single_time_loop_flag) then
+        start_time_loop_index=1
+        end_time_loop_index=end_time_nc_index-start_time_nc_index+1
+        subgrid_dim(t_dim_index)=1
+        dim_length_nc(time_dim_nc_index)=1
+    else
+        start_time_loop_index=1
+        end_time_loop_index=1
+        subgrid_dim(t_dim_index)=end_time_nc_index-start_time_nc_index+1
+        dim_length_nc(time_dim_nc_index)=subgrid_dim(t_dim_index)
+    endif
  
-        !if (use_multiple_receptor_grids_flag) then
-        !call uEMEP_read_EMEP
-        !if (use_alternative_meteorology_flag.or.use_alternative_z0_flag) call uEMEP_read_meteo_nc
-        !endif
    
     !Start internal grid receptor loop using only those receptor grids specified in uEMEP_read_receptor_data
     do g_loop=start_grid_loop_index,end_grid_loop_index
@@ -96,9 +98,6 @@
         !Set emission factors for the current subgrid
         call uEMEP_set_emission_factors
         
-        !Set the internal time loop (t_loop). If use_single_time_loop_flag=T then time array dimensions are set to 1 and each time set of data
-        !is read individually. This mostly to save memory
-   
         !Start the internal time loop
         do t_loop=start_time_loop_index,end_time_loop_index
    
@@ -111,20 +110,20 @@
             if (unit_logfile.ne.0) then 
                 write(unit_logfile,*) 'TIME LOOP=',t_loop,' OF ',end_time_loop_index
             endif
-        
-            
+                 
             !For the first time loop set the initial subgrid range values used in reading EMEP and meteo data
             if (t_loop.ge.start_time_loop_index) then
                 init_subgrid_min=subgrid_min
                 init_subgrid_max=subgrid_max
             endif
                 
-            !Read EMEP data and meteo grid from netcdf files
-            !if (calculate_tiling_flag.or.calculate_region_tiling_flag) then
-            !else
+            !Read EMEP data from netcdf files. Time stamps based on this
             call uEMEP_read_EMEP
-            if (use_alternative_meteorology_flag.or.use_alternative_z0_flag) call uEMEP_read_meteo_nc
-            !endif
+            
+            !Read meteo grid from netcdf files if required
+            if (use_alternative_meteorology_flag.or.use_alternative_z0_flag) then
+                call uEMEP_read_meteo_nc
+            endif
             
             !Set the following for the first internal time step only
             if (t_loop.eq.start_time_loop_index) then
@@ -141,17 +140,15 @@
                     if (first_g_loop) then
                         call uEMEP_read_roadlink_data_ascii
                         call uEMEP_change_road_data
-                        !Read in the emission data for traffic in the first g_loop if required
+                        !Read in the NORTRIP emission data for traffic in the first g_loop if required
                         if (use_NORTRIP_emission_data) then
                             call uEMEP_read_roadlink_emission_data
                         endif       
                     endif
-                    !Sub-grid traffic data for every receptor grid loop   
-                    !call uEMEP_grid_roads
                 endif
  
-                if (calculate_source(industry_index)) then
-                    !Read in and grid industry data
+                !Read in and grid industry data
+                if (calculate_source(industry_index)) then                    
                     call uEMEP_read_industry_data
                 endif
 
@@ -169,17 +166,17 @@
                     endif
                 endif
 
-                !Read in proxy data fro home heating. Currently dwelling density
+                !Read in proxy data for home heating. Currently dwelling density
                 if (calculate_source(heating_index)) then
-                    !Read and subgrid SSB dwelling data
-                    !SSB_data_type=dwelling_index
-                    !call uEMEP_read_SSB_data
+                    !If calculating tiles then read only the dwelling data
                     if (calculate_tiling_flag.or.calculate_region_tiling_flag) then
                         use_RWC_emission_data=.false.
                     endif
+                    !Read the Residential Wood Combustion data from MetVed
                     if (use_RWC_emission_data) then
                         call uEMEP_read_RWC_heating_data
                     else
+                        !Read and subgrid SSB dwelling data
                         SSB_data_type=dwelling_index
                         call uEMEP_read_SSB_data
                     endif
@@ -217,6 +214,7 @@
                     call uEMEP_grid_roads
                     call uEMEP_set_tile_grids
                 endif
+                !Carry out regional tiling. Programme will stop here
                 if (calculate_region_tiling_flag) then
                     call uEMEP_set_region_tile_grids
                 endif
@@ -238,8 +236,9 @@
             !Convert proxies to emissions including time profiles
             call uEMEP_convert_proxy_to_emissions
     
-            !Grid dispersion
+            !Set travel_time values to 0 outside of the source loop as these are aggregated over all sources
             traveltime_subgrid=0.
+            !Subgrid dispersion calculation
             do source_index=1,n_source_index
             if (calculate_source(source_index)) then
                 call uEMEP_subgrid_dispersion(source_index)
@@ -251,8 +250,10 @@
                 call uEMEP_interpolate_auto_subgrid
             endif
     
-            !Diagnostic for comparing EMEP and proxy data emissions
-            call uEMEP_aggregate_proxy_emission_in_EMEP_grid
+            !Old diagnostic for comparing EMEP and proxy data emissions. Working only on lat lon EMEP grids
+            if (make_EMEP_grid_emission_data(allsource_index)) then
+                call uEMEP_aggregate_proxy_emission_in_EMEP_grid
+            endif    
     
             !Put EMEP data into subgrids for all sources
             call uEMEP_subgrid_EMEP
@@ -260,9 +261,9 @@
             !Interpolate EMEP to sub-grid
             do source_index=1,n_source_index
             if (calculate_source(source_index)) then
-                !Redistributes dispersed proxies into the EMEP grid concentrations only when local_subgrid_method_flag=1
+                !Redistributes proxy subgrid data into the EMEP grid concentrations only when local_subgrid_method_flag=1 (based on EMEP concentration redistribution scaling factor)
                 call uEMEP_redistribute_local_source(source_index)
-                !Places dispersed proxies into the local subgrid concentrations when local_subgrid_method_flag<>1
+                !Places the proxy_subgrid data into the local_subgrid when local_subgrid_method_flag<>1
                 call uEMEP_disperse_local_source(source_index)
             endif
             enddo
@@ -270,7 +271,7 @@
             !Combine and save sources in local and total values
             call uEMEP_combine_local_source
     
-            !Calculate chemistry for NO2
+            !Calculate chemistry for NO2 and O3
             call uEMEP_chemistry
 
             !Calculate exposure
@@ -278,22 +279,18 @@
                 call uEMEP_calculate_exposure
             endif
     
-            !if (t_loop.eq.end_time_loop_index.and.g_loop.eq.end_grid_loop_index) then
-            !    call CPU_TIME(end_time_cpu)
-            !    write(*,*) ''
-            !    write(*,'(a,i3,a,i2)') 'CPU time taken until saving (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
-            !endif
-            
+            !Save results to netcdf
             if (save_netcdf_file_flag.or.save_netcdf_receptor_flag) then
                 call uEMEP_save_netcdf_control
-            endif
-            
+            endif         
     
         enddo !t_loop
     
+        !Update first_g_loop flag
         if (first_g_loop) first_g_loop=.false.
     
     endif !use_receptor
+    
     enddo !g_loop
 
     call CPU_TIME(end_time_cpu)
@@ -301,7 +298,7 @@
     if (unit_logfile.ne.0) then 
     write(unit_logfile,*) ''
     write(unit_logfile,*) '------------------------------------------------------------------------'
-    write(unit_logfile,*) 'Ending programm uEMEP'
+    write(unit_logfile,*) 'Ending program uEMEP'
     write(unit_logfile,'(a,i3,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
     write(unit_logfile,*) '------------------------------------------------------------------------'
     endif
@@ -313,7 +310,7 @@
 
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
-    write(*,*) 'Ending programm uEMEP'
+    write(*,*) 'Ending program uEMEP'
     write(*,'(a,i3,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
     write(*,*) '------------------------------------------------------------------------'
 

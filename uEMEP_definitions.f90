@@ -318,7 +318,7 @@
     
     character(256) source_file_postfix(n_source_index)
     logical calculate_source(n_source_index)
-    logical make_EMEP_grid_emission_data(n_source_index)
+    logical :: make_EMEP_grid_emission_data(n_source_index)=.false.
     logical replace_EMEP_local_with_subgrid_local(n_source_index)
     !logical combine_emission_subsources_during_dispersion(n_source_index)
 
@@ -583,8 +583,8 @@
     logical :: use_meandering_in_dispersion=.false.
     logical :: use_traffic_for_sigma0_flag=.false.
 !    logical :: use_traffic_for_minFF_flag=.false.
-    logical :: use_emission_grid_gradient_flag=.false.
     logical :: use_alternative_meteorology_flag=.false.
+    character(256) :: alternative_meteorology_type='meps'
     logical :: use_alternative_z0_flag=.false.
     logical :: save_netcdf_file_flag=.false.
     logical :: save_netcdf_receptor_flag=.false.

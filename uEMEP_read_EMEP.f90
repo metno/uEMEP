@@ -522,7 +522,7 @@
         
         enddo !pollutant loop
            
-        !Read in 2m temperature completely to get the daily average for home heating
+        !Read in 2m temperature over the whole period to get the daily average for home heating
         if (use_RWC_emission_data) then
             DMT_start_time_nc_index=start_time_nc_index
             DMT_end_time_nc_index=end_time_nc_index
@@ -535,7 +535,7 @@
                 status_nc = NF90_GET_VAR (id_nc, var_id_nc, DMT_EMEP_grid_nc,start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),DMT_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),DMT_dim_length_nc/))
                 write(unit_logfile,'(3A,2f16.4)') ' Reading: ',trim(var_name_nc_temp),' (min, max): ',minval(DMT_EMEP_grid_nc),maxval(DMT_EMEP_grid_nc)
                 DMT_EMEP_grid_nc(:,:,1)=sum(DMT_EMEP_grid_nc,3)/DMT_dim_length_nc-273.13
-                write(unit_logfile,'(3A,2f16.4)') ' Calculating mean: ',trim(var_name_nc_temp),' (min, max): ',minval(DMT_EMEP_grid_nc(:,:,1)),maxval(DMT_EMEP_grid_nc(:,:,1))
+                write(unit_logfile,'(3A,2f16.4,a,i)') ' Calculating mean: ',trim(var_name_nc_temp),' (min, max): ',minval(DMT_EMEP_grid_nc(:,:,1)),maxval(DMT_EMEP_grid_nc(:,:,1)),' over this number of time steps: ',DMT_dim_length_nc
             
             endif
         
@@ -671,17 +671,33 @@
                             nonzero_wind_notfound=.false.
                             var4d_nc(i,j,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index)=var4d_nc(iii,jjj,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index)
                             var4d_nc(i,j,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index)=var4d_nc(iii,jjj,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index)
-                            write(unit_logfile,'(a,4i,2f10.2)') 'Wind found for (i,j,t): ',k,i,j,t,var4d_nc(i,j,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index),var4d_nc(i,j,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index)
+                            !write(unit_logfile,'(a,4i,2f10.2)') 'Wind found for (i,j,t): ',k,i,j,t,var4d_nc(i,j,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index),var4d_nc(i,j,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index)
                         endif
                     enddo
                     enddo
                         
                 enddo
-                
+                if (nonzero_wind_notfound) then
+                    write(unit_logfile,'(a,4i,2f10.2)') 'Wind not found for (loop,i,j,t): ',k,i,j,t,var4d_nc(i,j,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index),var4d_nc(i,j,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index)
+                else
+                    write(unit_logfile,'(a,4i,2f10.2)') 'Wind found for (loop,i,j,t): ',k,i,j,t,var4d_nc(i,j,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index),var4d_nc(i,j,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index)
+                endif
             endif
         enddo
         enddo
         enddo
+
+        do j=1,dim_length_nc(y_dim_nc_index)
+        do i=1,dim_length_nc(x_dim_nc_index)
+        do t=1,dim_length_nc(time_dim_nc_index)
+            if (var4d_nc(i,j,surface_level_nc,t,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index).eq.0..and.var4d_nc(i,j,surface_level_nc,t,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index).eq.0.) then
+                write(unit_logfile,'(a,3i)') 'ERROR: Found zero wind fields in both components (i,j,t). Stopping: ',i,j,t
+                stop
+            endif
+        enddo
+        enddo
+        enddo
+            
 
         !If no logz0 available. Set to log(0.1)
         !For urban areas a value of 0.3 is used
@@ -698,6 +714,9 @@
             write(unit_logfile,'(A,f8.4)') ' Replacing HMIX everywhere with: ',replace_hmix
             var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=replace_hmix
         endif
+        
+        where (var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index).lt.hmix_min) var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=hmix_min
+        
         if (FF_scale.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Rescaling wind fields everywhere with factor: ',FF_scale
             var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)*FF_scale

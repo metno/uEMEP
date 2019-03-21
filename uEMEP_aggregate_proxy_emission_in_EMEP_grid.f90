@@ -148,5 +148,10 @@
     
     enddo
     
+    if (allocated(EMEP_aggregated_subgid_emission_count)) deallocate (EMEP_aggregated_subgid_emission_count)
+    if (allocated(EMEP_aggregated_subgid_emission)) deallocate (EMEP_aggregated_subgid_emission)
+    if (allocated(EMEP_aggregated_emission)) deallocate (EMEP_aggregated_emission)
+    if (allocated(lon_array)) deallocate (lon_array)
+    if (allocated(lat_array)) deallocate (lat_array)
     
     end subroutine uEMEP_aggregate_proxy_emission_in_EMEP_grid

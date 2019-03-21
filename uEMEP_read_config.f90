@@ -115,6 +115,9 @@
         calculate_source(heating_index)=read_name_logical('calculate_source(heating_index)',calculate_source(heating_index),unit_in,unit_logfile)
         calculate_source(agriculture_index)=read_name_logical('calculate_source(agriculture_index)',calculate_source(agriculture_index),unit_in,unit_logfile)
         calculate_source(industry_index)=read_name_logical('calculate_source(industry_index)',calculate_source(industry_index),unit_in,unit_logfile)
+        !do i_source=1,n_source_index
+        !    if (calculate_source(i_source)) calculate_source(allsource_index)=.true.
+        !enddo
 
         !For aggregating proxy emission data to EMEP grids
         !make_EMEP_grid_emission_data(:)=read_name_logical('make_EMEP_grid_emission_data(:)',make_EMEP_grid_emission_data(allsource_index),unit_in,unit_logfile)
@@ -123,6 +126,9 @@
         make_EMEP_grid_emission_data(heating_index)=read_name_logical('make_EMEP_grid_emission_data(heating_index)',make_EMEP_grid_emission_data(heating_index),unit_in,unit_logfile)
         make_EMEP_grid_emission_data(agriculture_index)=read_name_logical('make_EMEP_grid_emission_data(agriculture_index)',make_EMEP_grid_emission_data(agriculture_index),unit_in,unit_logfile)
         make_EMEP_grid_emission_data(industry_index)=read_name_logical('make_EMEP_grid_emission_data(industry_index)',make_EMEP_grid_emission_data(industry_index),unit_in,unit_logfile)
+        do i_source=1,n_source_index
+            if (make_EMEP_grid_emission_data(i_source)) make_EMEP_grid_emission_data(allsource_index)=.true.
+        enddo
         
         !replace_EMEP_local_with_subgrid_local(:)=read_name_logical('replace_EMEP_local_with_subgrid_local',replace_EMEP_local_with_subgrid_local(allsource_index),unit_in,unit_logfile)
         replace_EMEP_local_with_subgrid_local(traffic_index)=read_name_logical('replace_EMEP_local_with_subgrid_local(traffic_index)',replace_EMEP_local_with_subgrid_local(traffic_index),unit_in,unit_logfile)
@@ -159,7 +165,6 @@
         use_emission_positions_for_auto_subgrid_flag(heating_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(heating_index)',use_emission_positions_for_auto_subgrid_flag(heating_index),unit_in,unit_logfile)
         use_emission_positions_for_auto_subgrid_flag(agriculture_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(agriculture_index)',use_emission_positions_for_auto_subgrid_flag(agriculture_index),unit_in,unit_logfile)
         use_emission_positions_for_auto_subgrid_flag(industry_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(industry_index)',use_emission_positions_for_auto_subgrid_flag(industry_index),unit_in,unit_logfile)
-
         !Set all source index to true if any of the sources are to be auto gridded. allsource_index defines if the routine is called or not
         do i_source=1,n_source_index
             if (use_emission_positions_for_auto_subgrid_flag(i_source).and.i_source.ne.allsource_index) use_emission_positions_for_auto_subgrid_flag(allsource_index)=.true.
@@ -323,13 +328,13 @@
         
         use_traffic_for_sigma0_flag=read_name_logical('use_traffic_for_sigma0_flag',use_traffic_for_sigma0_flag,unit_in,unit_logfile)
 !        use_traffic_for_minFF_flag=read_name_logical('use_traffic_for_minFF_flag',use_traffic_for_minFF_flag,unit_in,unit_logfile)
-        use_emission_grid_gradient_flag=read_name_logical('use_emission_grid_gradient_flag',use_emission_grid_gradient_flag,unit_in,unit_logfile)
 
         use_alternative_meteorology_flag=read_name_logical('use_alternative_meteorology_flag',use_alternative_meteorology_flag,unit_in,unit_logfile)
         ustar_min=read_name_real('ustar_min',ustar_min,unit_in,unit_logfile)
         hmix_min=read_name_real('hmix_min',hmix_min,unit_in,unit_logfile)
         hmix_max=read_name_real('hmix_max',hmix_max,unit_in,unit_logfile)
-        !use_alternative_z0_flag=read_name_logical('use_alternative_z0_flag',use_alternative_z0_flag,unit_in,unit_logfile)
+        use_alternative_z0_flag=read_name_logical('use_alternative_z0_flag',use_alternative_z0_flag,unit_in,unit_logfile)
+        alternative_meteorology_type=read_name_char('alternative_meteorology_type',alternative_meteorology_type,unit_in,unit_logfile)
        
         
         !Read emission factors
@@ -420,8 +425,7 @@
         save_emissions_for_EMEP(shipping_index)=read_name_logical('save_emissions_for_EMEP(shipping_index)',save_emissions_for_EMEP(shipping_index),unit_in,unit_logfile)        
         save_emissions_for_EMEP(industry_index)=read_name_logical('save_emissions_for_EMEP(industry_index)',save_emissions_for_EMEP(industry_index),unit_in,unit_logfile)        
         save_emissions_for_EMEP(heating_index)=read_name_logical('save_emissions_for_EMEP(heating_index)',save_emissions_for_EMEP(heating_index),unit_in,unit_logfile)        
-        save_emissions_for_EMEP(agriculture_index)=read_name_logical('save_emissions_for_EMEP(agriculture_index)',save_emissions_for_EMEP(agriculture_index),unit_in,unit_logfile)        
-        
+        save_emissions_for_EMEP(agriculture_index)=read_name_logical('save_emissions_for_EMEP(agriculture_index)',save_emissions_for_EMEP(agriculture_index),unit_in,unit_logfile)               
         !Set all source index to true if any of the sources are to be saved. allsource_index defines if the routine is called or not
         do i_source=1,n_source_index
             if (save_emissions_for_EMEP(i_source)) save_emissions_for_EMEP(allsource_index)=.true.
@@ -450,7 +454,10 @@
         
         tunnel_sig_z_00=read_name_real('tunnel_sig_z_00',tunnel_sig_z_00,unit_in,unit_logfile)
         bridge_h_emis=read_name_real('bridge_h_emis',bridge_h_emis,unit_in,unit_logfile)
-    
+
+        !Input variable names. Only some selected few
+        var_name_nc(hmix_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(hmix_nc_index)',var_name_nc(hmix_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+
     close (unit_in)
     
     !Call some error traps

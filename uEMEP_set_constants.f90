@@ -341,3 +341,31 @@
         enddo
         
     end subroutine uEMEP_set_pollutant_loop
+
+    subroutine uEMEP_reset_constants
+    !Reset some constants based on the configuration file input
+    use uEMEP_definitions
+    implicit none
+    
+     if (index(alternative_meteorology_type,'nortrip').gt.0) then
+        var_name_meteo_nc(lon_nc_index)='lon'
+        var_name_meteo_nc(lat_nc_index)='lat'
+     endif
+     
+    !Reset meteorological names
+    if (index(alternative_meteorology_type,'nbv').gt.0) then
+        dim_name_meteo_nc(z_dim_nc_index)='height4'
+        var_name_meteo_nc(lon_nc_index)='lon'
+        var_name_meteo_nc(lat_nc_index)='lat'
+        var_name_meteo_nc(hmix_nc_index)='boundary_layer_height'
+        var_name_meteo_nc(logz0_nc_index)='surface_roughness_momentum' !Needs to be converted to log(Z0)
+        var_name_meteo_nc(Hflux_nc_index)='surface_upward_sensible_heat_flux'     !Note this is upward not downward so must have a negative when read 
+    endif
+    
+    !Reset emission names so they will not be read if they are not used
+    if (make_EMEP_grid_emission_data(allsource_index).or.local_subgrid_method_flag.ne.2) then
+    else
+        var_name_nc(emis_nc_index,:,:)=''        
+    endif
+    
+    end subroutine uEMEP_reset_constants

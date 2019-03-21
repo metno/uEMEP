@@ -314,7 +314,7 @@
             !In case where no wind. Hopefully this never happens
             where (ff.eq.0.)
                 meteo_subgrid(i,j,:,sin_subgrid_index)=0.
-                meteo_subgrid(i,j,:,cos_subgrid_index)=0.
+                meteo_subgrid(i,j,:,cos_subgrid_index)=1.
             endwhere             
             
         enddo
