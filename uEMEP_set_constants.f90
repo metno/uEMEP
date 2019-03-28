@@ -290,8 +290,8 @@
 
     !Not properly defined
     aqi_annual_limits(no2_index,1)=0.;aqi_annual_limits(no2_index,2)=40.;aqi_annual_limits(no2_index,3)=40.;
-    aqi_annual_limits(pm10_index,1)=0.;aqi_annual_limits(pm10_index,2)=35.;aqi_annual_limits(pm10_index,3)=35.;
-    aqi_annual_limits(pm25_index,1)=0.;aqi_annual_limits(pm25_index,2)=25.;aqi_annual_limits(pm25_index,3)=25.;
+    aqi_annual_limits(pm10_index,1)=0.;aqi_annual_limits(pm10_index,2)=25.;aqi_annual_limits(pm10_index,3)=35.;
+    aqi_annual_limits(pm25_index,1)=0.;aqi_annual_limits(pm25_index,2)=15.;aqi_annual_limits(pm25_index,3)=25.;
 
     end subroutine uEMEP_set_constants
     

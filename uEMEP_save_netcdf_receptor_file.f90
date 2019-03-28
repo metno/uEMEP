@@ -1,6 +1,6 @@
 !Saves receptor data in netcdf format
     
-    subroutine uEMEP_save_netcdf_receptor_file(unit_logfile_in,filename_netcdf,nx,ny,nt,val_array,x_array,y_array,lon_array,lat_array,name_array,unit_array,title_str,create_file,valid_min &
+    subroutine uEMEP_save_netcdf_receptor_file(unit_logfile_in,filename_netcdf,nx,ny,nt_in,val_array_in,x_array,y_array,lon_array,lat_array,name_array,unit_array,title_str,create_file,valid_min &
         ,x_rec,y_rec,lon_rec,lat_rec,height_rec,name_rec_in,nr,variable_type,scale_factor)
     
     use uEMEP_definitions
@@ -10,13 +10,13 @@
     
     character(256) filename_netcdf,name_array,unit_array,title_str,temp_name,temp_name3(3)
     integer unit_logfile_in
-    integer nx,ny,nt,nr
-    real val_array(nx,ny,nt)!,val_array_temp(nx,ny,nt)
+    integer nx,ny,nt_in,nr
+    real val_array(nx,ny,nt_in),val_array_in(nx,ny,nt_in)!,val_array_temp(nx,ny,nt_in)
     real x_array(nx,ny)
     real y_array(nx,ny)
     real lon_array(nx,ny)
     real lat_array(nx,ny)!,lat_array_temp(nx,ny)
-    !real time_array(nt)
+    !real time_array(nt_in)
     !real x_vector(nx)
     !real y_vector(ny)
     logical create_file
@@ -39,11 +39,13 @@
     parameter (n_char=7)
     character(1) name_rec(n_char,nr)
     integer n_time_total
-    real val_rec(nr,nt)
+    real val_rec(nr,nt_in)
     real delta(2)
     real area_weighted_interpolation_function
     integer id_rec(nr)
     integer nf90_type
+    integer nt
+    integer(8) time_seconds_output_nc(nt_in)
 
     !Do not save if no receptor position data is available
     if (nr.eq.0) then
@@ -54,6 +56,38 @@
     if (trim(variable_type).eq.'float') nf90_type=NF90_FLOAT
     if (trim(variable_type).eq.'double') nf90_type=NF90_DOUBLE
     
+    nt=nt_in
+    val_array=val_array_in
+    time_seconds_output_nc=time_seconds_output
+    
+    !Save averages only
+    if (save_netcdf_average_flag) then        
+        counter_av=counter_av+1
+        if (counter_av.gt.n_var_av) then
+            write(unit_logfile_in,*) 'ERROR: Array size for saving averages (n_var_av) not large enough. Stopping'
+            stop
+        endif
+        if (use_single_time_loop_flag) then
+            val_array_av(:,:,counter_av)=val_array_av(:,:,counter_av)+val_array(:,:,nt) !nt=1 in this case
+            time_seconds_output_av(counter_av)=time_seconds_output_av(counter_av)+time_seconds_output_nc(nt)
+            if (t_loop.eq.end_time_loop_index) then
+                val_array(:,:,nt)=val_array_av(:,:,counter_av)/end_time_loop_index
+                time_seconds_output_nc(nt)=time_seconds_output_av(counter_av)/end_time_loop_index
+            endif
+            !write(unit_logfile_in,*) 'Saving as average single time loop (nt,counter_av):',nt,counter_av
+        else
+            !write(unit_logfile_in,*) 'Saving as average multiple time loop (nt,counter_av):',nt,counter_av,time_seconds_output_nc(1),time_seconds_output_nc(nt)
+            !write(*,*) time_seconds_output_nc(1:nt)
+            val_array_av(:,:,counter_av)=sum(val_array(:,:,1:nt),3)/nt
+            time_seconds_output_av(counter_av)=sum(time_seconds_output_nc(1:nt),1)/nt
+            !write(*,*) sum(time_seconds_output_nc(1:nt),1)
+            nt=1
+            val_array(:,:,nt)=val_array_av(:,:,counter_av)
+            time_seconds_output_nc(nt)=time_seconds_output_av(counter_av)
+            !write(unit_logfile_in,*) 'Saving as average multiple time loop (nt,counter_av):',nt,counter_av,time_seconds_output_nc(nt),time_seconds_output_av(counter_av)
+        endif
+        
+    endif
 
     !Interpolate to receptor position given the input array
     !write(unit_logfile,'(a)')' Interpolating to receptor point '
@@ -76,7 +110,13 @@
     enddo
     enddo
     
-    n_time_total=end_time_nc_index-start_time_nc_index+1
+    if (save_netcdf_average_flag) then  
+        n_time_total=1
+    else
+        n_time_total=end_time_nc_index-start_time_nc_index+1
+    endif
+        
+    
     
     if (create_file) then
         !Create a netcdf file
@@ -208,8 +248,14 @@
         !call check( nf90_inq_varid(ncid, "time", time_varid) )
         !call check( nf90_inquire_dimension(ncid, time_dimid, temp_name, n_dims(3)) )
         !n_dims(3)=n_dims(3)+1
-        n_dims_start(2)=t_loop
-        n_dims_length(2)=1
+    
+        if (save_netcdf_average_flag) then
+            n_dims_start(2)=1
+            n_dims_length(2)=1
+        else
+            n_dims_start(2)=t_loop
+            n_dims_length(2)=1
+        endif
         !call check( nf90_put_var(ncid, time_varid, val_dim_nc(1,time_dim_nc_index), start = (/n_dims(2)/) ) )
         !write(*,*) n_dims(3),val_dim_nc(1,time_dim_nc_index)
         !write(*,*) n_dims
@@ -257,7 +303,7 @@
         !Write time to the file
 
         !call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )
-        call check( nf90_put_var(ncid, time_varid, time_seconds_output(1:dim_length_nc(time_dim_nc_index)), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )
+        call check( nf90_put_var(ncid, time_varid, time_seconds_output_nc(1:nt), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )
         !call check( nf90_put_var(ncid, station_varid, name_rec(:), start = (/1,1/), count=(/n_dims(1),n_char/)) )
         
         !Write station index and name
@@ -268,9 +314,9 @@
       
         !Write the variable to file
         if (nf90_type.eq.NF90_byte) then
-            call check( nf90_put_var(ncid, val_varid, int1(val_rec), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
+            call check( nf90_put_var(ncid, val_varid, int1(val_rec(:,1:nt)), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
         else
-            call check( nf90_put_var(ncid, val_varid, val_rec, start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) ) 
+            call check( nf90_put_var(ncid, val_varid, val_rec(:,1:nt), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) ) 
         endif
 
         !Write position data to the file

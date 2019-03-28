@@ -679,7 +679,14 @@
     integer outside_region_index,outside_interpolation_region_index,inside_region_index
     parameter (outside_region_index=-1,outside_interpolation_region_index=-2,inside_region_index=0)
 
+    !Variables for saving averages
+    integer :: n_var_av=100  !Maximum number of variables to be saved as averages
+    logical :: save_netcdf_average_flag=.false.
+    real, allocatable :: val_array_av(:,:,:)
+    integer(8), allocatable :: time_seconds_output_av(:)
+    integer :: counter_av=0
 
+    
     end module uEMEP_definitions
     
     

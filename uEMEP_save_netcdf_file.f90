@@ -80,7 +80,11 @@
     
     temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
     temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
-
+    if (save_netcdf_average_flag) then
+    temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
+    temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
+    endif
+    
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Saving netcdf data (uEMEP_save_netcdf_control)'
@@ -93,7 +97,21 @@
             receptor_available=.false.
         endif
     endif
-        
+    
+    if (save_netcdf_average_flag) then
+        if (.not.allocated(val_array_av)) then
+            allocate(val_array_av(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_var_av))
+            val_array_av=0.
+        endif
+        if (.not.allocated(time_seconds_output_av)) then
+            allocate(time_seconds_output_av(n_var_av))
+            time_seconds_output_av=0
+        endif
+        !Reset average file counter for every time step saving occurs
+        counter_av=0
+        write(unit_logfile,*) 'Saving as mean data'
+    endif
+    
     !Save the final result of the subgrid calculation
     if (save_compounds) then
     variable_type='float'
@@ -1158,10 +1176,18 @@
     
     endif
     
+    !Deallocate the averaging arrays with each receptor grid
+    if (use_multiple_receptor_grids_flag.and..not.use_single_time_loop_flag.and.save_netcdf_average_flag) then
+        if (allocated(val_array_av)) deallocate(val_array_av)
+        if (allocated(time_seconds_output_av)) deallocate(time_seconds_output_av)
+        counter_av=0
+    endif
+   
+
     end subroutine uEMEP_save_netcdf_control
     
     
-    subroutine uEMEP_save_netcdf_file(unit_logfile_in,filename_netcdf,nx,ny,nt,val_array,x_array,y_array,lon_array,lat_array,name_array,unit_array,title_str,create_file,valid_min,variable_type,scale_factor)
+    subroutine uEMEP_save_netcdf_file(unit_logfile_in,filename_netcdf,nx,ny,nt_in,val_array_in,x_array,y_array,lon_array,lat_array,name_array,unit_array,title_str,create_file,valid_min,variable_type,scale_factor)
     
     use uEMEP_definitions
     use netcdf
@@ -1170,8 +1196,8 @@
     
     character(256) filename_netcdf,name_array,unit_array,title_str,temp_name
     integer unit_logfile_in
-    integer nx,ny,nt
-    real val_array(nx,ny,nt)!,val_array_temp(nx,ny,nt)
+    integer nx,ny,nt_in
+    real val_array(nx,ny,nt_in),val_array_in(nx,ny,nt_in)!,val_array_temp(nx,ny,nt)
     real x_array(nx,ny)
     real y_array(nx,ny)
     real lon_array(nx,ny)
@@ -1192,7 +1218,9 @@
     integer status
     integer nf90_type
     integer t
-    
+    integer n_time_total
+    integer nt
+    integer(8) time_seconds_output_nc(nt_in) !Need integer 8 for the averaging
 
     if (trim(variable_type).eq.'byte') nf90_type=NF90_BYTE
     if (trim(variable_type).eq.'short') nf90_type=NF90_SHORT
@@ -1202,6 +1230,38 @@
     !Assumes x and y are the dimensions   
     x_vector=x_array(:,1)
     y_vector=y_array(1,:)
+    
+    n_time_total=end_time_nc_index-start_time_nc_index+1
+    nt=nt_in
+    val_array=val_array_in
+    time_seconds_output_nc=time_seconds_output
+    
+    !Save averages only
+    if (save_netcdf_average_flag) then
+        counter_av=counter_av+1
+        if (counter_av.gt.n_var_av) then
+            write(unit_logfile_in,*) 'ERROR: Array size for saving averages (n_var_av) not large enough. Stopping'
+            stop
+        endif
+        if (use_single_time_loop_flag) then
+            val_array_av(:,:,counter_av)=val_array_av(:,:,counter_av)+val_array(:,:,nt) !nt=1 in this case
+            time_seconds_output_av(counter_av)=time_seconds_output_av(counter_av)+time_seconds_output_nc(nt)
+            if (t_loop.eq.end_time_loop_index) then
+                val_array(:,:,nt)=val_array_av(:,:,counter_av)/n_time_total
+                time_seconds_output_nc(nt)=time_seconds_output_av(counter_av)/n_time_total
+            endif
+            !write(unit_logfile_in,'(a,3i)') 'Saving as average single time loop (nt,counter_av):',nt,counter_av,time_seconds_output_nc(nt)
+        else
+            val_array_av(:,:,counter_av)=sum(val_array,3)/size(val_array,3)
+            time_seconds_output_av(counter_av)=sum(time_seconds_output_nc)/size(time_seconds_output_nc,1)
+            nt=1
+            val_array(:,:,nt)=val_array_av(:,:,counter_av)
+            time_seconds_output_nc(nt)=time_seconds_output_av(counter_av)
+            !write(unit_logfile_in,'(a,3i)') 'Saving as average multiple time loop (nt,counter_av):',nt,counter_av,time_seconds_output_nc(nt)
+            
+        endif
+        
+    endif
     
     !Mask the regions if required
     if (use_region_select_and_mask_flag) then
@@ -1267,7 +1327,8 @@
         call check( nf90_enddef(ncid) )
         
         !call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index)) )
-        call check( nf90_put_var(ncid, time_varid, time_seconds_output(1:dim_length_nc(time_dim_nc_index))) )
+        !call check( nf90_put_var(ncid, time_varid, time_seconds_output(1:dim_length_nc(time_dim_nc_index))) )
+        call check( nf90_put_var(ncid, time_varid, time_seconds_output_nc(1:nt)) )
         call check( nf90_put_var(ncid, y_varid, y_vector) )
         call check( nf90_put_var(ncid, x_varid, x_vector) )
         call check( nf90_put_var(ncid, lat_varid, lat_array) )
@@ -1275,6 +1336,12 @@
 
         call check( nf90_close(ncid) )
     
+    endif
+        
+    !Do not save any average data for single time loops until the last time step where it will save the average
+    if (save_netcdf_average_flag.and.use_single_time_loop_flag.and.t_loop.ne.end_time_loop_index) then
+        !call check( nf90_close(ncid) )
+        return
     endif
         
     !Add to the existing file
@@ -1329,30 +1396,34 @@
         call check( nf90_inq_varid(ncid, "time", time_varid) )
         !call check( nf90_inquire_dimension(ncid, time_dimid, temp_name, n_dims(3)) )
         !n_dims(3)=n_dims(3)+1
-        n_dims(3)=t_loop
-        call check( nf90_put_var(ncid, time_varid, time_seconds_output(1), start = (/n_dims(3)/) ) )
+        if (save_netcdf_average_flag) then
+            n_dims(3)=nt
+        else
+            n_dims(3)=t_loop
+        endif
+        call check( nf90_put_var(ncid, time_varid, time_seconds_output_nc(1), start = (/n_dims(3)/) ) )
         !write(*,*) n_dims(3),val_dim_nc(1,time_dim_nc_index)
         !write(*,*) n_dims
         
         !Add dimension and array to existing
         call check( nf90_inq_varid(ncid, trim(name_array), val_varid) )
         if (nf90_type.eq.NF90_byte) then
-            call check( nf90_put_var(ncid, val_varid, int1(val_array), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
+            call check( nf90_put_var(ncid, val_varid, int1(val_array(:,:,1:nt)), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
         elseif (nf90_type.eq.NF90_short) then
-            call check( nf90_put_var(ncid, val_varid, int2(val_array), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
+            call check( nf90_put_var(ncid, val_varid, int2(val_array(:,:,1:nt)), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
         else
             call check( nf90_put_var(ncid, val_varid, val_array, start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
         endif
         
     else
         
-        !Write the variable to file. Default is float
+        !Write the whole variable to file. Default is float
         if (nf90_type.eq.NF90_byte) then
-            call check( nf90_put_var(ncid, val_varid, int1(val_array)) )
+            call check( nf90_put_var(ncid, val_varid, int1(val_array(:,:,1:nt))) )
         elseif (nf90_type.eq.NF90_short) then
-            call check( nf90_put_var(ncid, val_varid, int2(val_array)) )
+            call check( nf90_put_var(ncid, val_varid, int2(val_array(:,:,1:nt))) )
         else
-            call check( nf90_put_var(ncid, val_varid, val_array) )
+            call check( nf90_put_var(ncid, val_varid, val_array(:,:,1:nt)) )
         endif
 
     endif

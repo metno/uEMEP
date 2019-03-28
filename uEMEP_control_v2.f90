@@ -24,7 +24,7 @@
     
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
-    write(*,*) 'Starting programm uEMEP_v3.1'
+    write(*,*) 'Starting program uEMEP_v3.1'
     write(*,*) '------------------------------------------------------------------------'
     
     !Read the command line, assigning the configuration file names and the substitution date_str
