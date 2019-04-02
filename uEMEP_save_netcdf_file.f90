@@ -1267,6 +1267,7 @@
     if (use_region_select_and_mask_flag) then
         do t=1,nt
             where (use_subgrid_val(:,:,allsource_index).eq.outside_region_index) val_array(:,:,t)=NODATA_value
+            where (.not.use_subgrid(:,:,allsource_index)) val_array(:,:,t)=NODATA_value
         enddo
     endif
     

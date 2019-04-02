@@ -114,16 +114,21 @@
 
         !Do not use target subgrid if the grid is auto selected
         !if (emission_subgrid_delta(x_dim_index,source_index).le.subgrid_delta(x_dim_index).or. &
-        if (use_emission_positions_for_auto_subgrid_flag(source_index).or. &
-        (use_population_positions_for_auto_subgrid_flag.or.use_receptor_positions_for_auto_subgrid_flag)) then
+        if (use_emission_positions_for_auto_subgrid_flag(source_index)) then
+            !If auto positions using emissions for that source then do not use the interpolation target grid
             use_target_subgrid=.false.
             write(unit_logfile,*) 'Using auto subgrid for source ',trim(source_file_str(source_index))
         elseif (emission_subgrid_delta(x_dim_index,source_index).le.subgrid_delta(x_dim_index)) then
+            !If the subgrid emissions are less than or equal to the dispersion grid then do not use the target interpolation grid
+            !No matter what auto subgrid is used
             use_target_subgrid=.false.
         else
+            !Use the target subgrid even when the other auto subgrids are on. Slows it down but is necessary to get the right interpolation
+            !(use_population_positions_for_auto_subgrid_flag.or.use_receptor_positions_for_auto_subgrid_flag)
             use_target_subgrid=.true.
         endif
 
+        
         if (use_target_subgrid) then
             write(unit_logfile,*) 'Using emission subgrid with interpolation for source ',trim(source_file_str(source_index))
         else
@@ -672,13 +677,14 @@
       
         if (mod(j,1).eq.0) write(*,'(3a,i5,a,i5,a,i3,a,i3)') 'Gridding ',trim(source_file_str(source_index)),' proxy for hour ',tt,' of ',subgrid_dim(t_dim_index),' and subsource ',subsource_index,' of ',n_subsource(source_index)
         
-        !Put the temporary subgrid back into the subgrid array
+        !Put the temporary subgrid back into the subgrid array only for the selected grids
         if (use_target_subgrid) then
             !write(*,*) 'Mean temp traveltime target grid',tt,sum(traveltime_temp_target_subgrid(i_target_start:i_target_end,j_target_start:j_target_end,1))/temp_target_subgrid_dim_length(x_dim_index)/temp_target_subgrid_dim_length(y_dim_index)
             !write(*,*) 'Mean temp target grid',tt,sum(temp_target_subgrid(i_target_start:i_target_end,j_target_start:j_target_end,n_target_comp))/temp_target_subgrid_dim_length(x_dim_index)/temp_target_subgrid_dim_length(y_dim_index)
             !write(*,*) shape(traveltime_temp_target_subgrid),shape(traveltime_subgrid)
             do j=1,subgrid_dim(y_dim_index)
             do i=1,subgrid_dim(x_dim_index)
+            if (use_subgrid(i,j,source_index)) then
                 do i_pollutant=1,n_pollutant_loop
                 temp_subgrid(i,j,i_pollutant)=area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,temp_target_subgrid(:,:,i_pollutant) &
                     ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
@@ -690,6 +696,10 @@
                     ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
                 !write(*,*) tt,i,j,temp_subgrid(i,j)
                 enddo
+            else
+                temp_subgrid(i,j,:)=NODATA_value
+                traveltime_subgrid(i,j,tt,:,:)=NODATA_value
+            endif
             enddo
             enddo
         endif
