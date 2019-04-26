@@ -362,11 +362,11 @@
 
      
         
-        !Loop through the pollutants
-        do p_loop=1,n_pollutant_loop+1
+        !Loop through the pollutants.
+        do p_loop=1,n_emep_pollutant_loop+1
 
             !Set the compound index for this pollutant
-        if (p_loop.le.n_pollutant_loop) then
+        if (p_loop.le.n_emep_pollutant_loop) then
             i_pollutant=pollutant_loop_index(p_loop)
             p_loop_index=p_loop
         else

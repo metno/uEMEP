@@ -244,7 +244,11 @@
     
         subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,local_subgrid_index,allsource_index,i_pollutant)+subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)
      
-        !Place the results in the compound results
+    enddo
+    
+    
+     do i_pollutant=1,n_pollutant_loop
+       !Place the results in the compound results
         !do i_loop=1,n_pollutant_compound_loop(i_pollutant)
             comp_subgrid(:,:,:,pollutant_loop_index(i_pollutant))=subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)
         !enddo

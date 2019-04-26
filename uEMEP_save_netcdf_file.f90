@@ -117,7 +117,9 @@
     variable_type='float'
     unit_str="ug/m3"
     do i_pollutant=1,n_pollutant_loop
-        if (pollutant_loop_index(i_pollutant).ne.pmex_index) then
+        if (pollutant_loop_index(i_pollutant).ne.pmex_index &
+            .and.pollutant_loop_index(i_pollutant).ne.pm25_sand_index.and.pollutant_loop_index(i_pollutant).ne.pm10_sand_index &
+            .and.pollutant_loop_index(i_pollutant).ne.pm25_salt_index.and.pollutant_loop_index(i_pollutant).ne.pm10_salt_index) then
         do i_loop=1,n_pollutant_compound_loop(i_pollutant)
             
         i_comp=pollutant_compound_loop_index(i_pollutant,i_loop)
@@ -192,8 +194,10 @@
     do i_pollutant=1,n_pollutant_loop
     do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-        !Don't save any exhaust pollutant sources
-        if (calculate_source(i_source).and.i_source.ne.allsource_index.and.pollutant_loop_index(i_pollutant).ne.pmex_index) then
+        !Don't save any exhaust, sand or salt pollutant sources. Dealt with later
+        if (calculate_source(i_source).and.i_source.ne.allsource_index.and.pollutant_loop_index(i_pollutant).ne.pmex_index &
+            .and.pollutant_loop_index(i_pollutant).ne.pm25_sand_index.and.pollutant_loop_index(i_pollutant).ne.pm10_sand_index &
+            .and.pollutant_loop_index(i_pollutant).ne.pm25_salt_index.and.pollutant_loop_index(i_pollutant).ne.pm10_salt_index) then
         
             i_file=subgrid_local_file_index(i_source)
             
@@ -277,9 +281,51 @@
             endif
             
             endif
-        endif
+            endif
             
-        if (pollutant_loop_index(i_pollutant).ne.pmex_index) then
+            !Special case for salt and sand
+            if (pollutant_loop_index(i_pollutant).eq.pm25_sand_index.or.pollutant_loop_index(i_pollutant).eq.pm10_sand_index &
+            .or.pollutant_loop_index(i_pollutant).eq.pm25_salt_index.or.pollutant_loop_index(i_pollutant).eq.pm10_salt_index) then
+            !Save the total nonlocal part from EMEP
+            if (i_source.eq.traffic_index) then
+               
+                i_file=subgrid_local_file_index(i_source)
+                var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
+                if (save_netcdf_fraction_as_contribution_flag) then
+                    temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)
+                else
+                    if (pollutant_loop_index(i_pollutant).eq.pm10_sand_index.or.pollutant_loop_index(i_pollutant).eq.pm10_salt_index) then
+                        temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,total_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_index))*100.
+                    else
+                        temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,total_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_index))*100.
+                    endif
+                    
+                endif
+                where (subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant).eq.0) temp_subgrid=0
+
+                if (save_netcdf_file_flag) then
+                    write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                        ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                        ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+                endif
+                if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                    write(unit_logfile,'(a)')'Writing netcdf receptor variable: '//trim(var_name_temp)
+                    call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                        ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                        ,unit_str,title_str_rec,create_file_rec,valid_min &
+                        ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,z_rec(allsource_index,1) &
+                        ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+                endif
+                
+            endif
+            endif
+            
+            if (pollutant_loop_index(i_pollutant).ne.pmex_index &
+            .and.pollutant_loop_index(i_pollutant).ne.pm25_sand_index.and.pollutant_loop_index(i_pollutant).ne.pm10_sand_index &
+            .and.pollutant_loop_index(i_pollutant).ne.pm25_salt_index.and.pollutant_loop_index(i_pollutant).ne.pm10_salt_index) then
             !Save the total nonlocal part from EMEP
             if (i_source.eq.allsource_index) then
                
@@ -590,7 +636,7 @@
     !Save the other interpolated EMEP compounds used for nox chemistry as well
     if (save_for_chemistry) then
     variable_type='float'
-    do i_pollutant=1,n_pollutant_loop
+    do i_pollutant=1,n_emep_pollutant_loop
     if (pollutant_loop_index(i_pollutant).ne.pmex_index) then
         do i_loop=1,n_pollutant_compound_loop(i_pollutant)
             
@@ -623,7 +669,7 @@
     !Save the original EMEP compounds
     if (save_emep_original) then
     variable_type='float'
-    do i_pollutant=1,n_pollutant_loop
+    do i_pollutant=1,n_emep_pollutant_loop
     if (pollutant_loop_index(i_pollutant).ne.pmex_index) then
     do i_loop=1,n_pollutant_compound_loop(i_pollutant)
 

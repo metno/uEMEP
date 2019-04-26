@@ -89,10 +89,16 @@
     
     integer compound_index
 
-    integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index,so2_nc_index,pmex_nc_index,pmco_nc_index,all_nc_index,pm_nc_index
-    parameter (no2_nc_index=1,nox_nc_index=2,pm25_nc_index=3,pm10_nc_index=4,nh3_nc_index=5,o3_nc_index=6,so2_nc_index=7,pmex_nc_index=8,pmco_nc_index=9,all_nc_index=10,pm_nc_index=11)
+    integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index,so2_nc_index,pmex_nc_index
+    parameter (no2_nc_index=1,nox_nc_index=2,pm25_nc_index=3,pm10_nc_index=4,nh3_nc_index=5,o3_nc_index=6,so2_nc_index=7,pmex_nc_index=8)
+    !Additional NORTRIP specific compounds
+    integer pm25_sand_nc_index,pm10_sand_nc_index,pm25_salt_nc_index,pm10_salt_nc_index
+    parameter (pm25_sand_nc_index=9,pm10_sand_nc_index=10,pm25_salt_nc_index=11,pm10_salt_nc_index=12)
+    !These are only used in names
+    integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index
+    parameter (pmco_nc_index=13,all_nc_index=14,pm_nc_index=15,all_sand_nc_index=16,all_salt_nc_index=17,all_sand_salt_nc_index=18)
     integer n_compound_nc_index
-    parameter (n_compound_nc_index=8)
+    parameter (n_compound_nc_index=12)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
     integer allsource_nc_index,traffic_nc_index,shipping_nc_index,heating_nc_index,agriculture_nc_index,industry_nc_index
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
@@ -106,8 +112,9 @@
     !Loop for all pollutants to be calculated
     integer pollutant_index
     integer n_pollutant_nc_index
-    parameter (n_pollutant_nc_index=11) !Includes the two addition all and pm index
+    parameter (n_pollutant_nc_index=18) !Includes the addition naming indexes index
     integer :: n_pollutant_loop = 1
+    integer :: n_emep_pollutant_loop = 1
     integer pollutant_loop_index(n_pollutant_nc_index)
     integer pollutant_loop_back_index(n_pollutant_nc_index)
     
@@ -306,14 +313,17 @@
     parameter (n_meteo_subgrid_index=15)
 
     !Declare compound indexes for the subgrid. Same as nc_index values for compounds. Must be converted when necessary
-    integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,so2_index,pmex_index,traveltime_index,no_index
-    parameter (no2_index=1,nox_index=2,pm25_index=3,pm10_index=4,nh3_index=5,o3_index=6,so2_index=7,pmex_index=8,traveltime_index=9)
+    integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,so2_index,pmex_index,no_index
+    parameter (no2_index=1,nox_index=2,pm25_index=3,pm10_index=4,nh3_index=5,o3_index=6,so2_index=7,pmex_index=8)
     !parameter (no2_index=no2_nc_index,nox_index=nox_nc_index,pm25_index=pm25_nc_index,pm10_index=pm10_nc_index,nh3_index=nh3_nc_index,o3_index=o3_nc_index,so2_index=so2_nc_index,pmex_index=pmex_nc_index,traveltime_index=9)
+    integer pm25_sand_index,pm10_sand_index,pm25_salt_index,pm10_salt_index
+    parameter (pm25_sand_index=9,pm10_sand_index=10,pm25_salt_index=11,pm10_salt_index=12)
+
     !Declare source indexes (type_source)
     integer allsource_index,traffic_index,shipping_index,heating_index,agriculture_index,industry_index
     parameter (allsource_index=1,traffic_index=2,shipping_index=3,heating_index=4,agriculture_index=5,industry_index=6)
     integer n_compound_index,n_source_index
-    parameter (n_compound_index=9,n_source_index=6)
+    parameter (n_compound_index=12,n_source_index=6)
     integer compound_source_index(n_compound_index,n_source_index)
     
     character(256) source_file_postfix(n_source_index)

@@ -31,7 +31,15 @@
         var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)='pmco'
         var_name_nc(conc_nc_index,pmex_nc_index,allsource_nc_index)='pmex'
         var_name_nc(conc_nc_index,all_nc_index,allsource_nc_index)='all'
+        var_name_nc(conc_nc_index,all_sand_nc_index,allsource_nc_index)='all_sand'
+        var_name_nc(conc_nc_index,all_sand_salt_nc_index,allsource_nc_index)='all_sand_salt'
+        var_name_nc(conc_nc_index,all_salt_nc_index,allsource_nc_index)='all_salt'
        
+        var_name_nc(conc_nc_index,pm25_sand_nc_index,allsource_nc_index)='pm25_sand'
+        var_name_nc(conc_nc_index,pm10_sand_nc_index,allsource_nc_index)='pm10_sand'
+        var_name_nc(conc_nc_index,pm25_salt_nc_index,allsource_nc_index)='pm25_salt'
+        var_name_nc(conc_nc_index,pm10_salt_nc_index,allsource_nc_index)='pm10_salt'
+        
         !Local fractions
         var_name_nc(frac_nc_index,nox_nc_index,traffic_nc_index)='nox_sec07_local_fraction'
         var_name_nc(frac_nc_index,pmco_nc_index,traffic_nc_index)='pmco_sec07_local_fraction'
@@ -152,6 +160,11 @@
         comp_name_nc(pmex_nc_index)='Exhaust'
         !comp_name_nc(pm25_nc_index)='SURF_ug_PM25_rh50'
 
+        comp_name_nc(pm25_sand_nc_index)='PM25_sand'
+        comp_name_nc(pm10_sand_nc_index)='PM10_sand'
+        comp_name_nc(pm25_salt_nc_index)='PM25_salt'
+        comp_name_nc(pm10_salt_nc_index)='PM10_salt'
+        
         comp_scale_nc(:)=1.
         comp_scale_nc(nox_nc_index)=(14.+2.*16.)/14. !Value read in is in ugN
         
@@ -304,7 +317,57 @@
     integer p_loop
     
         !Set the pollutant index loops after reading in pollutant_index
-        if (pollutant_index.eq.all_nc_index) then
+        if (pollutant_index.eq.all_sand_salt_nc_index) then
+            n_emep_pollutant_loop=3
+            n_pollutant_loop=8
+            pollutant_loop_index(1)=nox_nc_index
+            pollutant_loop_index(2)=pm25_nc_index
+            pollutant_loop_index(3)=pm10_nc_index
+            pollutant_loop_index(4)=pmex_nc_index
+            pollutant_loop_index(5)=pm25_sand_nc_index
+            pollutant_loop_index(6)=pm10_sand_nc_index
+            pollutant_loop_index(7)=pm25_salt_nc_index
+            pollutant_loop_index(8)=pm10_salt_nc_index
+            pollutant_loop_back_index(nox_nc_index)=1
+            pollutant_loop_back_index(pm25_nc_index)=2
+            pollutant_loop_back_index(pm10_nc_index)=3
+            pollutant_loop_back_index(pmex_nc_index)=4
+            pollutant_loop_back_index(pm25_sand_nc_index)=5
+            pollutant_loop_back_index(pm10_sand_nc_index)=6
+            pollutant_loop_back_index(pm25_salt_nc_index)=7
+            pollutant_loop_back_index(pm10_salt_nc_index)=8
+        elseif (pollutant_index.eq.all_salt_nc_index) then
+            n_emep_pollutant_loop=3
+            n_pollutant_loop=6
+            pollutant_loop_index(1)=nox_nc_index
+            pollutant_loop_index(2)=pm25_nc_index
+            pollutant_loop_index(3)=pm10_nc_index
+            pollutant_loop_index(4)=pmex_nc_index
+            pollutant_loop_index(5)=pm25_salt_nc_index
+            pollutant_loop_index(6)=pm10_salt_nc_index
+            pollutant_loop_back_index(nox_nc_index)=1
+            pollutant_loop_back_index(pm25_nc_index)=2
+            pollutant_loop_back_index(pm10_nc_index)=3
+            pollutant_loop_back_index(pmex_nc_index)=4
+            pollutant_loop_back_index(pm25_salt_nc_index)=5
+            pollutant_loop_back_index(pm10_salt_nc_index)=6
+        elseif (pollutant_index.eq.all_sand_nc_index) then
+            n_emep_pollutant_loop=3
+            n_pollutant_loop=6
+            pollutant_loop_index(1)=nox_nc_index
+            pollutant_loop_index(2)=pm25_nc_index
+            pollutant_loop_index(3)=pm10_nc_index
+            pollutant_loop_index(4)=pmex_nc_index
+            pollutant_loop_index(5)=pm25_sand_nc_index
+            pollutant_loop_index(6)=pm10_sand_nc_index
+            pollutant_loop_back_index(nox_nc_index)=1
+            pollutant_loop_back_index(pm25_nc_index)=2
+            pollutant_loop_back_index(pm10_nc_index)=3
+            pollutant_loop_back_index(pmex_nc_index)=4
+            pollutant_loop_back_index(pm25_sand_nc_index)=5
+            pollutant_loop_back_index(pm10_sand_nc_index)=6
+        elseif (pollutant_index.eq.all_nc_index) then
+            n_emep_pollutant_loop=3
             n_pollutant_loop=4
             pollutant_loop_index(1)=nox_nc_index
             pollutant_loop_index(2)=pm25_nc_index
@@ -315,6 +378,7 @@
             pollutant_loop_back_index(pm10_nc_index)=3
             pollutant_loop_back_index(pmex_nc_index)=4
         elseif (pollutant_index.eq.pm_nc_index) then
+            n_emep_pollutant_loop=2
             n_pollutant_loop=3
             pollutant_loop_index(1)=pm25_nc_index
             pollutant_loop_index(2)=pm10_nc_index
@@ -323,11 +387,13 @@
             pollutant_loop_back_index(pm10_nc_index)=2
             pollutant_loop_back_index(pmex_nc_index)=3
         else
+            n_emep_pollutant_loop=1
             n_pollutant_loop=1
             pollutant_loop_index(1)=pollutant_index
             pollutant_loop_back_index(pollutant_index)=1
         endif
         !Set indexing for additional compounds. Only used when reading in EMEP data
+        
         do p_loop=1,n_pollutant_loop
         if (pollutant_loop_index(p_loop).eq.nox_nc_index) then
             n_pollutant_compound_loop(p_loop)=3
@@ -339,6 +405,9 @@
             pollutant_compound_loop_index(p_loop,1)=pollutant_loop_index(p_loop)
         endif       
         enddo
+        
+        write(unit_logfile,'(a,i)') 'Number of pollutants=',n_pollutant_loop
+        write(unit_logfile,'(a,i)') 'Number of EMEP pollutants=',n_emep_pollutant_loop
         
     end subroutine uEMEP_set_pollutant_loop
 

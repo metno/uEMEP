@@ -77,6 +77,8 @@
     !Convert from uEMEP to NORTRIP
     if (use_NORTRIP_emission_data) then
 
+        !This links the order of the NORTRIP output to the pollutants
+        !Order is: pm10,pm2.5,pmex,nox,pm10_sand/salt,pm2.5_sand/salt,pm10_salt,pm2.5_salt
         do i_pollutant=1,n_pollutant_loop
             if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index) then
                 i_roadlink_emission_compound(i_pollutant)=1
@@ -86,8 +88,22 @@
                 i_roadlink_emission_compound(i_pollutant)=3
             elseif (pollutant_loop_index(i_pollutant).eq.nox_nc_index) then
                 i_roadlink_emission_compound(i_pollutant)=4
+            elseif (pollutant_loop_index(i_pollutant).eq.pm10_sand_nc_index.and.(pollutant_index.eq.all_sand_nc_index.or.pollutant_index.eq.all_sand_salt_nc_index)) then
+                i_roadlink_emission_compound(i_pollutant)=5
+            elseif (pollutant_loop_index(i_pollutant).eq.pm25_sand_nc_index.and.(pollutant_index.eq.all_sand_nc_index.or.pollutant_index.eq.all_sand_salt_nc_index)) then
+                i_roadlink_emission_compound(i_pollutant)=6
+            elseif (pollutant_loop_index(i_pollutant).eq.pm10_salt_nc_index.and.(pollutant_index.eq.all_salt_nc_index)) then
+                i_roadlink_emission_compound(i_pollutant)=5
+            elseif (pollutant_loop_index(i_pollutant).eq.pm25_sand_nc_index.and.(pollutant_index.eq.all_salt_nc_index)) then
+                i_roadlink_emission_compound(i_pollutant)=6
+            elseif (pollutant_loop_index(i_pollutant).eq.pm10_salt_nc_index.and.(pollutant_index.eq.all_sand_salt_nc_index)) then
+                i_roadlink_emission_compound(i_pollutant)=7
+            elseif (pollutant_loop_index(i_pollutant).eq.pm25_salt_nc_index.and.(pollutant_index.eq.all_sand_salt_nc_index)) then
+                i_roadlink_emission_compound(i_pollutant)=8
             else
-                write(unit_logfile,*) 'STOPPING: No valid compound chosen for NORTRIP. Stopping uEMEP_grid_roads'
+                write(unit_logfile,'(a,2i)') 'STOPPING: No valid compound chosen for NORTRIP. Stopping uEMEP_grid_roads. Pollutant index=',pollutant_index,pollutant_loop_index(i_pollutant)
+                !write(*,*) n_pollutant_loop
+                !write(*,*) pollutant_loop_index(1:n_pollutant_loop)
                 stop
             endif             
         enddo
