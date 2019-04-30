@@ -90,14 +90,16 @@
                 i_roadlink_emission_compound(i_pollutant)=4
             elseif (pollutant_loop_index(i_pollutant).eq.pm10_sand_nc_index.and.(pollutant_index.eq.all_sand_nc_index.or.pollutant_index.eq.all_sand_salt_nc_index)) then
                 i_roadlink_emission_compound(i_pollutant)=5
-            elseif (pollutant_loop_index(i_pollutant).eq.pm25_sand_nc_index.and.(pollutant_index.eq.all_sand_nc_index.or.pollutant_index.eq.all_sand_salt_nc_index)) then
+            elseif (pollutant_loop_index(i_pollutant).eq.pm10_salt_nc_index.and.(pollutant_index.eq.all_sand_salt_nc_index)) then
                 i_roadlink_emission_compound(i_pollutant)=6
             elseif (pollutant_loop_index(i_pollutant).eq.pm10_salt_nc_index.and.(pollutant_index.eq.all_salt_nc_index)) then
                 i_roadlink_emission_compound(i_pollutant)=5
-            elseif (pollutant_loop_index(i_pollutant).eq.pm25_sand_nc_index.and.(pollutant_index.eq.all_salt_nc_index)) then
+            elseif (pollutant_loop_index(i_pollutant).eq.pm25_sand_nc_index.and.(pollutant_index.eq.all_sand_nc_index)) then
                 i_roadlink_emission_compound(i_pollutant)=6
-            elseif (pollutant_loop_index(i_pollutant).eq.pm10_salt_nc_index.and.(pollutant_index.eq.all_sand_salt_nc_index)) then
+            elseif (pollutant_loop_index(i_pollutant).eq.pm25_sand_nc_index.and.(pollutant_index.eq.all_sand_salt_nc_index)) then
                 i_roadlink_emission_compound(i_pollutant)=7
+            elseif (pollutant_loop_index(i_pollutant).eq.pm25_salt_nc_index.and.(pollutant_index.eq.all_salt_nc_index)) then
+                i_roadlink_emission_compound(i_pollutant)=6
             elseif (pollutant_loop_index(i_pollutant).eq.pm25_salt_nc_index.and.(pollutant_index.eq.all_sand_salt_nc_index)) then
                 i_roadlink_emission_compound(i_pollutant)=8
             else

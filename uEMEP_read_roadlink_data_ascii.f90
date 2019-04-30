@@ -429,7 +429,9 @@
             !write(*,*) i,inputdata_int_rl_id(i)
             do j=1,n_roadlink_emission_compound
                 read(unit_in,*) inputdata_rl_temp(1:n_roadlink_emission_time)
+                if (j.le.n_pollutant_loop) then
                 inputdata_rl_emissions(counter,1:time_index_temp,j)=inputdata_rl_temp(t_match_index:t_match_index+time_index_temp-1)
+                endif
             enddo
             !write(*,*) counter,inputdata_rl_emissions(counter,10,1),inputdata_rl_emissions(counter,10,2)
         else

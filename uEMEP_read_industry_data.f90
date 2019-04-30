@@ -122,7 +122,7 @@
     count=0
     do while(.not.eof(unit_in))
         read(unit_in,*) industry_emission_year,industry_emission_num,industry_emission_comp_str,industry_emission_comp_val,industry_emission_unit
-        !write(unit_logfile,'(i12,2a16,f12.2,a16)' ) industry_emission_year,industry_emission_num,trim(industry_emission_comp_str),industry_emission_comp_val,industry_emission_unit
+        !write(unit_logfile,'(i12,2a16,f12.2,a16)' ) industry_emission_year,trim(industry_emission_num),trim(industry_emission_comp_str),industry_emission_comp_val,trim(industry_emission_unit)
         !count=count+1
 
         !Find index for the industry
@@ -183,8 +183,13 @@
                 !If this is done then emission heights can be different for different compounds
                 !Chane the second index of h_emis to be pollutant, add an emission property subgrid dimension that is pollutant
                 !Find out how high the chimneys need to be for any particular emission. Depends how many there are I guess
-                !emission_properties_subgrid(i_industry_index,j_industry_index,emission_h_index,source_index)=industry_height(industry_number)
-                emission_properties_subgrid(i_industry_index,j_industry_index,emission_h_index,source_index)=h_emis(industry_index,1)
+                emission_properties_subgrid(i_industry_index,j_industry_index,emission_h_index,source_index)=industry_height(industry_number)
+                !emission_properties_subgrid(i_industry_index,j_industry_index,emission_h_index,source_index)=h_emis(industry_index,1)
+                !Chnage the industry emission heights if a replacement industry height is given
+                if (h_emis(industry_index,1).ge.0) then
+                    emission_properties_subgrid(i_industry_index,j_industry_index,emission_h_index,source_index)=h_emis(industry_index,1)
+                endif
+                    
 
             enddo
             count=count+1
@@ -198,7 +203,7 @@
     do i_pollutant=1,n_pollutant_loop   
     write(unit_logfile,'(A,es12.3)') 'Total emission '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//' = ',sum(proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,i_pollutant))
     enddo    
-    
+    write(unit_logfile,'(A,f)') 'Average industry emission height = ',sum(industry_height(1:n_industries))/n_industries
     
     close(unit_in)
     
