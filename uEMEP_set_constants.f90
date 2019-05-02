@@ -433,9 +433,10 @@
     endif
     
     !Reset emission names so they will not be read if they are not used
-    if (make_EMEP_grid_emission_data(allsource_index).or.local_subgrid_method_flag.ne.2) then
+    if (make_EMEP_grid_emission_data(allsource_index).or.local_subgrid_method_flag.ne.2.or.save_emissions_for_EMEP(allsource_index)) then
     else
         var_name_nc(emis_nc_index,:,:)=''        
+        write(unit_logfile,'(a,i)') 'Will not read or write any EMEP emission data'
     endif
     
     end subroutine uEMEP_reset_constants

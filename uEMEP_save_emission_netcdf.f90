@@ -266,8 +266,9 @@
         write(unit_logfile,'(a,a)') 'Saving netcdf file: ',trim(temp_name)
         
         do i_pollutant=1,n_pollutant_loop
-        if (pollutant_loop_index(i_pollutant).ne.pmex_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm10_sand_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm10_salt_nc_index &
-            .and.pollutant_loop_index(i_pollutant).ne.pm25_sand_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm25_salt_nc_index) then
+        !if (pollutant_loop_index(i_pollutant).ne.pmex_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm10_sand_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm10_salt_nc_index &
+        !    .and.pollutant_loop_index(i_pollutant).ne.pm25_sand_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm25_salt_nc_index) then
+        if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index.or.pollutant_loop_index(i_pollutant).eq.pm25_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_nc_index) then
                 i_file=emission_file_index(i_source)
                 var_name_temp=trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),allsource_index)) !//'_'//trim(filename_grid(i_file))
                 
@@ -282,7 +283,9 @@
 
                 !Subgrid emissions are in units ug/sec/subgrid. Convert to mg/m2/hour. Acount for the difference in subgrid sizes here
                 temp_subgrid(:,:,:)=1.0e-3*3600.*temp_subgrid(:,:,:)/(emission_subgrid_delta(y_dim_index,i_source)*emission_subgrid_delta(x_dim_index,i_source))
- 
+                
+                !write(*,'(4i,a)') i_pollutant,i_file,i_source,pollutant_loop_index(i_pollutant),trim(var_name_temp)
+                
                 if (save_netcdf_file_flag.or.save_netcdf_receptor_flag) then
                     write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
                     call uEMEP_save_for_EMEP_netcdf_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,i_source),emission_subgrid_dim(y_dim_index,i_source),temp_time_dim &
