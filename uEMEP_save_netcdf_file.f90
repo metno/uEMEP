@@ -77,6 +77,8 @@
     else
         temp_compound_str='_'//trim(var_name_nc(conc_nc_index,compound_index,allsource_index))
     endif
+    !Do not write anything about the compounds
+    temp_compound_str=''
     
     temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
     temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
