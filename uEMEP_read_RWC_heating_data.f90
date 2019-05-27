@@ -27,7 +27,7 @@
     real :: f_easting=2.e6
     real :: ssb_dx=250.,ssb_dy=250.
     integer RWC_compound_index
-    real sum_RWC_grid_emission(n_pollutant_loop)
+    real sum_RWC_grid_emission(3)
     integer :: subsource_index=1
     real emission_scaling(3)
     
@@ -54,11 +54,12 @@
         stop
     endif
      
-
+    subsource_index=1
+    
     !Emission scaling for nox compared to pm25.
     emission_scaling=1.
     emission_scaling(RWC_nox_index)=emission_factor(nox_index,heating_index,subsource_index)/emission_factor(pm25_index,heating_index,subsource_index)
-    
+    write(unit_logfile,'(A,f12.4,2es12.2)') 'NOx/PM2.5 emission ratio =',emission_scaling(RWC_nox_index),emission_factor(nox_index,heating_index,subsource_index),emission_factor(pm25_index,heating_index,subsource_index)
     
     source_index=heating_index
     n_subsource(source_index)=1

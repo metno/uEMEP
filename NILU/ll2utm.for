@@ -1,5 +1,7 @@
       SUBROUTINE LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
 
+      implicit none
+      
       INTEGER IUTM
       INTEGER ISONE
       INTEGER ISONE_IN
@@ -33,6 +35,7 @@ C Local variables
       DOUBLE PRECISION SCALE
       DOUBLE PRECISION LATV
       DOUBLE PRECISION LONV
+      DOUBLE PRECISION LON0
 
 C A     - Big semiaxis
 C B     - Intermediate value

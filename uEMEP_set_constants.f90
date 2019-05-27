@@ -317,7 +317,7 @@
     integer p_loop
     
         !Set the pollutant index loops after reading in pollutant_index
-        !Remove the sand and salt PM2.5, not necessary. Fixed ratio if needed
+        !Remove the sand and salt PM2.5, not necessary. Fixed ratio if needed n_pollutant_loop=6
         if (pollutant_index.eq.all_sand_salt_nc_index) then
             n_emep_pollutant_loop=3
             n_pollutant_loop=6
