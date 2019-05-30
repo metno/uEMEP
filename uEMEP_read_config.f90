@@ -396,15 +396,17 @@
         use_NORTRIP_emission_pollutant(pm10_index)=read_name_logical('use_NORTRIP_emission_pollutant(pm10_index)',use_NORTRIP_emission_pollutant(pm10_index),unit_in,unit_logfile) 
         use_NORTRIP_emission_pollutant(pm25_index)=read_name_logical('use_NORTRIP_emission_pollutant(pm25_index)',use_NORTRIP_emission_pollutant(pm25_index),unit_in,unit_logfile) 
         use_NORTRIP_emission_pollutant(pmex_index)=read_name_logical('use_NORTRIP_emission_pollutant(pmex_index)',use_NORTRIP_emission_pollutant(pmex_index),unit_in,unit_logfile) 
+        
         use_RWC_emission_data=read_name_logical('use_RWC_emission_data',use_RWC_emission_data,unit_in,unit_logfile) 
         HDD_threshold_value=read_name_integer('HDD_threshold_value',HDD_threshold_value,unit_in,unit_logfile)
         DMT_min_value=read_name_real('DMT_min_value',DMT_min_value,unit_in,unit_logfile)
-        
+        inpath_region_heating_scaling=read_name_char('inpath_region_heating_scaling',inpath_region_heating_scaling,unit_in,unit_logfile)
+        infile_region_heating_scaling=read_name_char('infile_region_heating_scaling',infile_region_heating_scaling,unit_in,unit_logfile)        
         
         integral_subgrid_delta_ref=read_name_real('integral_subgrid_delta_ref',integral_subgrid_delta_ref,unit_in,unit_logfile)
         
-        pathname_rl_change=read_name_char('pathname_rl_change','',unit_in,unit_logfile)
-        filename_rl_change=read_name_char('filename_rl_change','',unit_in,unit_logfile)
+        pathname_rl_change=read_name_char('pathname_rl_change',pathname_rl_change,unit_in,unit_logfile)
+        filename_rl_change=read_name_char('filename_rl_change',filename_rl_change,unit_in,unit_logfile)
 
         forecast_hour_str=read_name_char('forecast_hour_str',forecast_hour_str,unit_in,unit_logfile)
         
@@ -415,6 +417,7 @@
         read_weekly_shipping_data_flag=read_name_logical('read_weekly_shipping_data_flag',read_weekly_shipping_data_flag,unit_in,unit_logfile) 
         read_monthly_and_daily_shipping_data_flag=read_name_logical('read_monthly_and_daily_shipping_data_flag',read_monthly_and_daily_shipping_data_flag,unit_in,unit_logfile) 
         
+        use_tunnel_emissions_flag=read_name_logical('use_tunnel_emissions_flag',use_tunnel_emissions_flag,unit_in,unit_logfile) 
         use_tunnel_deposition_flag=read_name_logical('use_tunnel_deposition_flag',use_tunnel_deposition_flag,unit_in,unit_logfile) 
         ventilation_factor=read_name_real('ventilation_factor',ventilation_factor,unit_in,unit_logfile)
         min_ADT_ventilation_factor=read_name_real('min_ADT_ventilation_factor',min_ADT_ventilation_factor,unit_in,unit_logfile)

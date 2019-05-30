@@ -30,6 +30,15 @@
     real sum_RWC_grid_emission(3)
     integer :: subsource_index=1
     real emission_scaling(3)
+    logical :: read_file_with_nox_and_kommune_number=.true.
+    integer :: n_region_max,n_region_back_max
+    parameter (n_region_max=1000,n_region_back_max=10000)
+    integer :: region_scaling_id(n_region_max)=0
+    real total_emissions(n_compound_nc_index)
+    integer region_scaling_id_back_index(n_region_back_max)
+    real, allocatable :: region_heating_scaling(:,:)
+    integer n_region,k,k_index
+    
     
     integer i_pollutant
     
@@ -98,6 +107,7 @@
         allocate (RWC_grid_emission(n_RWC_grids,3))
         allocate (RWC_grid_HDD(n_RWC_grids,2))
         allocate (RWC_grid_id(n_RWC_grids))
+        allocate (RWC_region_id(n_RWC_grids))
     
         !Read header      SSBID    PM25_2016    PM10_2016       HDD_11       HDD_15
         read(unit_in,*) header_str
@@ -105,13 +115,24 @@
 
         count=0
         RWC_grid_emission=0.
+        if (read_file_with_nox_and_kommune_number) then
+        !Read new version
+        do while(.not.eof(unit_in))
+            count=count+1
+            read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
+            !write(*,'(i,5es,i)') RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
+        enddo
+        else
+        !Read old version
         do while(.not.eof(unit_in))
             count=count+1
             !read(unit_in,'(i,4es)') RWC_grid_id(count),RWC_grid_val(count,1:4)
             read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index)
             !write(*,'(2i,4es)') count,RWC_grid_id(count),RWC_grid_val(count,1:4)
             RWC_grid_emission(count,RWC_nox_index)=RWC_grid_emission(count,RWC_pm25_index)*emission_scaling(RWC_nox_index)
-        enddo
+            RWC_region_id(count)=1
+        enddo        
+        endif
     
         if (count.ne.n_RWC_grids) then
             write(unit_logfile,'(A,2i)') 'ERROR: Total number of RWC grids in file is not the same as given. Stopping: ',n_RWC_grids,count
@@ -119,9 +140,58 @@
         endif
         
         write(unit_logfile,'(A,i)') 'Total number of RWC grids read =',count
-        write(unit_logfile,'(A,2f12.2)') 'Total emissions PM2.5 and PM10 (tonne/year) =',sum(RWC_grid_emission(:,RWC_pm25_index))/1.e6,sum(RWC_grid_emission(:,RWC_pm10_index))/1.e6
+        write(unit_logfile,'(A,3f12.2)') 'Total emissions PM2.5, PM10 and NOX (tonne/year) =',sum(RWC_grid_emission(:,RWC_pm25_index))/1.e6,sum(RWC_grid_emission(:,RWC_pm10_index))/1.e6,sum(RWC_grid_emission(:,RWC_nox_index))/1.e6
    
     endif
+    
+    !Read in regional scaling data if available
+    pathfilename_region_heating_scaling=trim(inpath_region_heating_scaling)//trim(infile_region_heating_scaling)
+
+    !Test existence of the filename. If does not exist then use default
+    inquire(file=trim(pathfilename_region_heating_scaling),exist=exists)
+    if (.not.exists) then
+        write(unit_logfile,'(A,A)') ' WARNING: Regional heating scaling data file does not exist and no scaling will be applied: ', trim(pathfilename_region_heating_scaling)
+        n_region=1
+        region_scaling_id_back_index=n_region
+        allocate (region_heating_scaling(n_region,n_compound_nc_index))
+        region_heating_scaling=1.
+    else
+    
+        unit_in=20
+        open(unit_in,file=pathfilename_region_heating_scaling,access='sequential',status='old',readonly)  
+        write(unit_logfile,'(a)') ' Opening regional scaling heating file: '//trim(pathfilename_region_heating_scaling)
+    
+        !Skip over header lines starting with *
+        rewind(unit_in)
+        call NXTDAT(unit_in,nxtdat_flag)
+       
+        !Read the data
+        read(unit_in,*,ERR=10) n_region
+        write(unit_logfile,'(a,i)') ' Number of regions read: ',n_region
+        
+        if (allocated(region_heating_scaling)) deallocate (region_heating_scaling)
+        allocate (region_heating_scaling(n_region,n_compound_nc_index))
+        
+        call NXTDAT(unit_in,nxtdat_flag)
+        do k=1,n_region          
+            read(unit_in,*,ERR=10) &
+                k_index,region_scaling_id(k), &
+                total_emissions(pm25_index),total_emissions(pm10_index),total_emissions(nox_index), &
+                region_heating_scaling(k,pm25_nc_index),region_heating_scaling(k,pm10_nc_index),region_heating_scaling(k,nox_nc_index)
+            write(*,'(2i,3es10.2,3f10.3)')  &
+                k_index,region_scaling_id(k), &
+                total_emissions(pm25_index),total_emissions(pm10_index),total_emissions(nox_index), &
+                region_heating_scaling(k,pm25_nc_index),region_heating_scaling(k,pm10_nc_index),region_heating_scaling(k,nox_nc_index)
+            
+            !Set a back referencing value for speed. Note the region_scaling_id cannot be larger than the hardcoded dimensions
+            region_scaling_id_back_index(region_scaling_id(k))=k
+            
+        enddo
+         
+        close(unit_in,status='keep')
+
+    endif
+
     
     !Put the data into the subgrid for all g_loop calls
     count_grid=0
@@ -137,8 +207,15 @@
         if (save_emissions_for_EMEP(heating_index)) then
             call UTM2LL(utm_zone,y_ssb,x_ssb,lat_ssb,lon_ssb)
             call lb2lambert2_uEMEP(x_ssb,y_ssb,lon_ssb,lat_ssb,EMEP_projection_attributes)
-         endif
+        endif
                 
+        k=region_scaling_id_back_index(RWC_region_id(count))
+        if (k.lt.1.or.k.gt.n_region) then
+            write(unit_logfile,'(A,3i)') ' ERROR: Region index out of bounds, stopping: ',count,RWC_region_id(count),k
+            stop
+        endif
+            
+        
         !Find the grid index it belongs to
         i_ssb_index=1+floor((x_ssb-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
         j_ssb_index=1+floor((y_ssb-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
@@ -153,17 +230,17 @@
                 if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index) then
                     RWC_compound_index=RWC_pm10_index
                     proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,i_pollutant)=proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,i_pollutant) &
-                    +RWC_grid_emission(count,RWC_compound_index)/RWC_grid_HDD(count,threshold_index)
+                    +RWC_grid_emission(count,RWC_compound_index)/RWC_grid_HDD(count,threshold_index)*region_heating_scaling(k,pm10_nc_index)
                     sum_RWC_grid_emission(RWC_compound_index)=sum_RWC_grid_emission(RWC_compound_index)+RWC_grid_emission(count,RWC_compound_index)
                 elseif (pollutant_loop_index(i_pollutant).eq.pm25_nc_index) then
                     RWC_compound_index=RWC_pm25_index
                     proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,i_pollutant)=proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,i_pollutant) &
-                    +RWC_grid_emission(count,RWC_compound_index)/RWC_grid_HDD(count,threshold_index)
+                    +RWC_grid_emission(count,RWC_compound_index)/RWC_grid_HDD(count,threshold_index)*region_heating_scaling(k,pm25_nc_index)
                     sum_RWC_grid_emission(RWC_compound_index)=sum_RWC_grid_emission(RWC_compound_index)+RWC_grid_emission(count,RWC_compound_index)
                 elseif (pollutant_loop_index(i_pollutant).eq.nox_nc_index) then
                     RWC_compound_index=RWC_nox_index
                     proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,i_pollutant)=proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,i_pollutant) &
-                    +RWC_grid_emission(count,RWC_compound_index)/RWC_grid_HDD(count,threshold_index)
+                    +RWC_grid_emission(count,RWC_compound_index)/RWC_grid_HDD(count,threshold_index)*region_heating_scaling(k,nox_nc_index)
                     sum_RWC_grid_emission(RWC_compound_index)=sum_RWC_grid_emission(RWC_compound_index)+RWC_grid_emission(count,RWC_compound_index)
                 endif
             
@@ -192,4 +269,10 @@
         endif
     enddo
              
+    if (allocated(region_heating_scaling)) deallocate(region_heating_scaling)
+    
+    return
+10  write(unit_logfile,'(A)') 'ERROR reading scaling heating file'
+    stop 
+
     end subroutine uEMEP_read_RWC_heating_data

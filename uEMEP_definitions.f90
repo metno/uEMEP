@@ -627,16 +627,21 @@
     real, allocatable :: RWC_grid_emission(:,:)
     real, allocatable :: RWC_grid_HDD(:,:)
     integer*8, allocatable :: RWC_grid_id(:)
+    integer, allocatable :: RWC_region_id(:)
     real, allocatable :: DMT_EMEP_grid_nc(:,:,:)
     integer :: HDD_threshold_value=15
     real :: DMT_min_value=-20. !Minimum allowable daily mean temperature for heating degree day calculation
     logical :: use_RWC_emission_data=.false.
+    character(256) :: pathfilename_region_heating_scaling=''
+    character(256) :: inpath_region_heating_scaling=''
+    character(256) :: infile_region_heating_scaling=''
     
     !Forecast hour string for writing to files
     character(256) :: forecast_hour_str='00'
     
     !Scenario calculator variables
-    character(256) pathname_rl_change,filename_rl_change
+    character(256) :: pathname_rl_change=''
+    character(256) :: filename_rl_change=''
     
     real aqi_hourly_limits(n_compound_index,1:3),aqi_daily_limits(n_compound_index,1:3),aqi_annual_limits(n_compound_index,1:3)
     
@@ -656,6 +661,7 @@
     logical :: read_monthly_and_daily_shipping_data_flag=.false.
     
     logical :: use_tunnel_deposition_flag=.false.
+    logical :: use_tunnel_emissions_flag=.true.
     real :: ventilation_factor=1.
     real :: min_length_ventilation_factor=0.
     real :: min_ADT_ventilation_factor=0.
