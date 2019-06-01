@@ -668,6 +668,36 @@
     enddo
     endif
     
+    if (save_emep_species) then
+        variable_type='float'
+        do i_pollutant=1,n_sp_index-1
+        do i_loop=1,n_pmxx_sp_index
+        if (i_loop.eq.pm25_sp_index.or.i_loop.eq.pm10_sp_index) then            
+
+        var_name_temp=trim(species_name_nc(i_loop,i_pollutant))//'_contribution_to_EMEP_nonlocal'
+        unit_str="ug/m3"
+        temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_pollutant)
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid(:,:,:))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+        endif
+        enddo
+        enddo
+    endif
+
     !Save the original EMEP compounds
     if (save_emep_original) then
     variable_type='float'

@@ -46,6 +46,8 @@
 
     logical nonzero_wind_notfound
 
+    integer i_sp,pmxx_sp_index
+    
     !Temporary reading variables
     double precision, allocatable :: var1d_nc_dp(:)
     double precision, allocatable :: var2d_nc_dp(:,:)
@@ -58,6 +60,8 @@
     !Temporary PM arrays for reading in PM10
     real, allocatable :: pm_var4d_nc(:,:,:,:,:,:,:)
     real, allocatable :: pm_lc_var4d_nc(:,:,:,:,:,:,:,:,:)
+    
+    real, allocatable :: species_temp_var3d_nc(:,:,:)
     
     !Functions
     double precision date_to_number
@@ -101,7 +105,8 @@
         if (allocated(lc_var3d_nc)) deallocate (lc_var3d_nc)
         if (allocated(lc_var4d_nc)) deallocate (lc_var4d_nc)
         if (allocated(DMT_EMEP_grid_nc)) deallocate (DMT_EMEP_grid_nc) !Daily mean temperature
-        
+        if (allocated(species_var3d_nc)) deallocate (species_var3d_nc)
+       
     !Loop through the EMEP files containing the data
 
     n_file=2
@@ -294,6 +299,15 @@
         if (.not.allocated(var2d_nc_dp)) allocate (var2d_nc_dp(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index))) !Lat and lon
         !if (.not.allocated(var3d_nc_dp)) allocate (var3d_nc_dp(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)))
         !allocate (var4d_nc_dp(dim_length_nc(x_index),dim_length_nc(y_index),1,dim_length_nc(time_index)))
+        
+        if (save_emep_species) then
+        if (.not.allocated(species_var3d_nc)) then
+            allocate (species_var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),n_pmxx_sp_index,n_sp_index))
+            species_var3d_nc=0
+        endif
+        if (.not.allocated(species_temp_var3d_nc)) allocate (species_temp_var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)))        
+        endif
+        
         if (i_file.eq.2.and..not.allocated(lc_var3d_nc)) then
             allocate (lc_var3d_nc(dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),num_lc_var_nc,n_source_nc_index,n_pollutant_loop))
             lc_var3d_nc=0.
@@ -365,7 +379,7 @@
         !Loop through the pollutants.
         do p_loop=1,n_emep_pollutant_loop+1
 
-            !Set the compound index for this pollutant
+        !Set the compound index for this pollutant
         if (p_loop.le.n_emep_pollutant_loop) then
             i_pollutant=pollutant_loop_index(p_loop)
             p_loop_index=p_loop
@@ -389,7 +403,6 @@
             
             !Identify the variable name and ID in the nc file
             var_name_nc_temp=var_name_nc(i,i_pollutant,i_source)
-            
             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
             !write(*,*) 'Status1: ',status_nc,var_id_nc,trim(var_name_nc_temp),i_source
             !Exception for pm10
@@ -502,6 +515,9 @@
                 endif
                 if (temp_num_dims.eq.4) then
                     if (i_file.eq.1) then
+                        !write(*,'(4i)') dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index
+                        !write(*,'(4i)') dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)
+                        
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,:,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     comp_var4d_nc(:,:,:,:,i_conc)=comp_var4d_nc(:,:,:,:,i_conc)*comp_scale_nc(i_conc)
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading compound file 1: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,:,:,i_conc)),maxval(comp_var4d_nc(:,:,:,:,i_conc))
@@ -517,11 +533,238 @@
                  write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
             endif    
                 
+        enddo !pollutant
         enddo !compound loop
         !endif
-        
-        enddo !pollutant loop
-           
+
+        !Loop through the species
+        if (save_emep_species.and.i_file.eq.1) then
+            write(unit_logfile,'(A)') ' Reading species data from EMEP: '
+
+            do i_sp=1,n_sp_index
+
+                if (i_sp.eq.sp_soa_index) then
+                    !Read a and b soa
+                    pmxx_sp_index=pm25_sp_index
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_asoa_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pm25_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_bsoa_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pmxx_sp_index,i_sp)),' (min, max): ',minval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pm25_sp_index,i_sp))
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+                    species_var3d_nc(:,:,:,pm10_sp_index,i_sp)=species_var3d_nc(:,:,:,pm25_sp_index,i_sp)
+                
+                endif
+                
+                if (i_sp.eq.sp_sia_index) then
+                    !Read pm10 sia, but this is not PM10 but total course. Factor of 0.6 for the NO3 needed. So this is not used but NO3 is read seperately and added to fine
+                    !Note that we have been using PMfine not PM25 so we stick to that
+                    pmxx_sp_index=pm10_sp_index
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_sia_in_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+
+                    pmxx_sp_index=pmco_sp_index
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_no3_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+
+                    !Read pm25 sia
+                    pmxx_sp_index=pm25_sp_index
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_no3_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_so4_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_nh4_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+                    
+                    species_var3d_nc(:,:,:,pm25_sp_index,i_sp)=species_var3d_nc(:,:,:,pm25_sp_index,i_sp)!+0.27*species_var3d_nc(:,:,:,pmco_sp_index,i_sp) !Not PM2.5 but PMfine
+                    species_var3d_nc(:,:,:,pm10_sp_index,i_sp)=species_var3d_nc(:,:,:,pm25_sp_index,i_sp)+0.6*species_var3d_nc(:,:,:,pmco_sp_index,i_sp)
+                    write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pm25_sp_index,i_sp)),' (min, max): ',minval(species_var3d_nc(:,:,:,pm25_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pm25_sp_index,i_sp))
+                    write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pm10_sp_index,i_sp)),' (min, max): ',minval(species_var3d_nc(:,:,:,pm10_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pm10_sp_index,i_sp))
+                endif
+
+            
+               if (i_sp.eq.sp_dust_index) then
+                    !Read dust
+                    do pmxx_sp_index=1,n_pmxx_sp_index
+                    if (pmxx_sp_index.eq.pm25_sp_index.or.pmco_sp_index.eq.pmxx_sp_index) then
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_dust_sah_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_dust_wb_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pmxx_sp_index,i_sp)),' (min, max): ',minval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp))
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif
+                    endif
+                    enddo
+                    species_var3d_nc(:,:,:,pm10_sp_index,i_sp)=species_var3d_nc(:,:,:,pm25_sp_index,i_sp)+species_var3d_nc(:,:,:,pmco_sp_index,i_sp)
+                    write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pm10_sp_index,i_sp)),' (min, max): ',minval(species_var3d_nc(:,:,:,pm10_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pm10_sp_index,i_sp))
+                    
+               endif
+  
+               if (i_sp.eq.sp_seasalt_index) then
+                    !Read dust
+                    do pmxx_sp_index=1,n_pmxx_sp_index
+                    if (pmxx_sp_index.eq.pm25_sp_index.or.pmco_sp_index.eq.pmxx_sp_index) then
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_seasalt_in_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+                    endif
+                    enddo
+                    species_var3d_nc(:,:,:,pm10_sp_index,i_sp)=species_var3d_nc(:,:,:,pm25_sp_index,i_sp)+species_var3d_nc(:,:,:,pmco_sp_index,i_sp)
+                    write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pm10_sp_index,i_sp)),' (min, max): ',minval(species_var3d_nc(:,:,:,pm10_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pm10_sp_index,i_sp))
+                    
+               endif
+            
+               if (i_sp.eq.sp_ffire_index) then
+                    !Read dust
+                    pmxx_sp_index=pm25_sp_index
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_ffire_bc_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_ffire_rem_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pmxx_sp_index,i_sp)),' (min, max): ',minval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp))
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif
+                    species_var3d_nc(:,:,:,pm10_sp_index,i_sp)=species_var3d_nc(:,:,:,pm25_sp_index,i_sp)
+                    
+               endif
+
+               if (i_sp.eq.sp_ppm_index) then
+                    !Read dust
+                    do pmxx_sp_index=1,n_pmxx_sp_index
+                    if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_ppm_in_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+                    endif
+                    enddo
+                    
+               endif
+               
+               if (i_sp.eq.sp_pm_index) then
+                    !Read dust
+                    do pmxx_sp_index=1,n_pmxx_sp_index
+                    if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
+                    var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_pm_in_index)
+                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                    if (status_nc.eq.NF90_NOERR) then
+                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                        write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                        species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
+                    else
+                         write(unit_logfile,'(8A,8A)') ' Cannot read compound: ',trim(var_name_nc_temp)
+                    endif    
+                    endif
+                    enddo
+                    
+               endif
+
+            
+            enddo !sp_index
+            
+            !Calculate the total of the parts by adding all and subtracting the total          
+            write(unit_logfile,'(A)') ' Cross check average of species'
+            do i_sp=1,n_sp_index-1
+            write(unit_logfile,'(A,2A,2f16.4)') ' Average of species: ',trim(species_name_nc(pm10_sp_index,i_sp)),' (pm25, pm10): ', &
+                sum(species_var3d_nc(:,:,:,pm25_sp_index,i_sp))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
+                sum(species_var3d_nc(:,:,:,pm10_sp_index,i_sp))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
+            enddo
+            species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm25_sp_index,1:n_sp_index),4)-species_var3d_nc(:,:,:,pm25_sp_index,sp_pm_index)
+            write(unit_logfile,'(A,2A,2f16.4)') ' Average of: ','pm25',' (sum species, total): ', &
+                sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
+                sum(species_var3d_nc(:,:,:,pm25_sp_index,sp_pm_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
+            species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm10_sp_index,1:n_sp_index),4)-species_var3d_nc(:,:,:,pm10_sp_index,sp_pm_index)
+            write(unit_logfile,'(A,2A,2f16.4)') ' Average of: ','pm10',' (sum species, total): ', &
+                sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
+                sum(species_var3d_nc(:,:,:,pm10_sp_index,sp_pm_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
+            
+
+        endif
+                  
         !Read in 2m temperature over the whole period to get the daily average for home heating
         if (use_RWC_emission_data) then
             DMT_start_time_nc_index=start_time_nc_index
@@ -790,6 +1033,7 @@
         if (allocated(var3d_nc_dp)) deallocate (var3d_nc_dp)
         if (allocated(var4d_nc_dp)) deallocate (var4d_nc_dp)
         if (allocated(temp_var4d_nc)) deallocate (temp_var4d_nc)
+        if (allocated(species_temp_var3d_nc)) deallocate (species_temp_var3d_nc)
  
     end subroutine uEMEP_read_EMEP
     

@@ -164,6 +164,50 @@
         comp_name_nc(pm10_sand_nc_index)='PM10_sand'
         comp_name_nc(pm25_salt_nc_index)='PM25_salt'
         comp_name_nc(pm10_salt_nc_index)='PM10_salt'
+
+        !Additional speciation of PM from EMEP
+        species_name_nc(pm10_sp_index,sp_soa_index)='pm10_EMEP_soa'
+        species_name_nc(pm25_sp_index,sp_soa_index)='pm25_EMEP_soa'
+            species_name_nc(pm25_sp_index,sp_asoa_index)='SURF_ug_ASOA'
+            species_name_nc(pm25_sp_index,sp_bsoa_index)='SURF_ug_BSOA'
+        
+        species_name_nc(pm10_sp_index,sp_sia_index)='pm10_EMEP_sia'
+        species_name_nc(pm25_sp_index,sp_sia_index)='pm25_EMEP_sia'
+            species_name_nc(pm10_sp_index,sp_sia_in_index)='SURF_ug_SIA'
+            species_name_nc(pm25_sp_index,sp_no3_index)='SURF_ug_NO3_F'
+            species_name_nc(pm25_sp_index,sp_so4_index)='SURF_ug_SO4'
+            species_name_nc(pm25_sp_index,sp_nh4_index)='SURF_ug_NH4_F'
+            species_name_nc(pmco_sp_index,sp_no3_index)='SURF_ug_NO3_C'
+
+        species_name_nc(pm10_sp_index,sp_dust_index)='pm10_EMEP_dust'
+        species_name_nc(pm25_sp_index,sp_dust_index)='pm25_EMEP_dust'
+        species_name_nc(pmco_sp_index,sp_dust_index)='pmco_EMEP_dust'
+            species_name_nc(pmco_sp_index,sp_dust_sah_index)='SURF_ug_DUST_SAH_C'
+            species_name_nc(pm25_sp_index,sp_dust_sah_index)='SURF_ug_DUST_SAH_F'
+            species_name_nc(pmco_sp_index,sp_dust_wb_index)='SURF_ug_DUST_WB_C'
+            species_name_nc(pm25_sp_index,sp_dust_wb_index)='SURF_ug_DUST_WB_F'
+        
+        species_name_nc(pm25_sp_index,sp_seasalt_index)='pm25_EMEP_seasalt'
+        species_name_nc(pm10_sp_index,sp_seasalt_index)='pm10_EMEP_seasalt'
+            species_name_nc(pm25_sp_index,sp_seasalt_in_index)='SURF_ug_SEASALT_F'
+            species_name_nc(pmco_sp_index,sp_seasalt_in_index)='SURF_ug_SEASALT_C'
+
+        species_name_nc(pm10_sp_index,sp_ffire_index)='pm10_EMEP_fire'
+        species_name_nc(pm25_sp_index,sp_ffire_index)='pm25_EMEP_fire'
+            species_name_nc(pm25_sp_index,sp_ffire_bc_index)='SURF_ug_FFIRE_BC'
+            species_name_nc(pm25_sp_index,sp_ffire_rem_index)='SURF_ug_FFIRE_REMPPM25'
+
+        species_name_nc(pm10_sp_index,sp_ppm_index)='pm10_EMEP_ppm'
+        species_name_nc(pm25_sp_index,sp_ppm_index)='pm25_EMEP_ppm'
+        species_name_nc(pm10_sp_index,sp_ppm_in_index)='SURF_ug_PPM10'
+        species_name_nc(pm25_sp_index,sp_ppm_in_index)='SURF_ug_PPM25'
+
+        species_name_nc(pm10_sp_index,sp_pm_index)='pm10_EMEP_total'
+        species_name_nc(pm25_sp_index,sp_pm_index)='pm25_EMEP_ptotal'
+        species_name_nc(pm10_sp_index,sp_pm_in_index)='SURF_ug_PM10'
+        !species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PMFINE'
+        species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PM25'
+
         
         comp_scale_nc(:)=1.
         comp_scale_nc(nox_nc_index)=(14.+2.*16.)/14. !Value read in is in ugN

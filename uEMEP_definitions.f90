@@ -679,6 +679,7 @@
     logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.
     logical :: save_population=.false.,save_no2_source_contributions=.true.,save_o3_source_contributions=.true.
     logical :: save_aqi=.true.
+    logical :: save_emep_species=.false.
 
     !Region ID file names
     character(256) pathfilename_region_id,pathname_region_id,filename_region_id
@@ -702,6 +703,22 @@
     integer(8), allocatable :: time_seconds_output_av(:)
     integer :: counter_av=0
 
+    !Species variables
+    integer pm10_sp_index,pm25_sp_index,pmco_sp_index,n_pmxx_sp_index
+    parameter (pm10_sp_index=1,pm25_sp_index=2,pmco_sp_index=3,n_pmxx_sp_index=3) !pmco_sp_index is just for reading
+    integer sp_soa_index,sp_sia_index,sp_dust_index,sp_seasalt_index,sp_ffire_index,sp_ppm_index,sp_pm_index,n_sp_index
+    parameter (sp_soa_index=1,sp_sia_index=2,sp_dust_index=3,sp_seasalt_index=4,sp_ffire_index=5,sp_ppm_index=6,sp_pm_index=7,n_sp_index=7)
+    !These are used just for reading
+    integer sp_no3_index,sp_so4_index,sp_nh4_index,sp_dust_sah_index,sp_dust_wb_index,sp_ffire_bc_index,sp_ffire_rem_index,sp_asoa_index,sp_bsoa_index,n_sp_all_index
+    parameter (sp_no3_index=8,sp_so4_index=9,sp_nh4_index=10,sp_dust_sah_index=11,sp_dust_wb_index=12,sp_ffire_bc_index=13,sp_ffire_rem_index=14,sp_asoa_index=15,sp_bsoa_index=16)
+    !Alternative input names so the other names are reserved for otuput
+    integer sp_soa_in_index,sp_sia_in_index,sp_dust_in_index,sp_seasalt_in_index,sp_ffire_in_index,sp_ppm_in_index,sp_pm_in_index
+    parameter (sp_soa_in_index=17,sp_sia_in_index=18,sp_dust_in_index=19,sp_seasalt_in_index=20,sp_ffire_in_index=21,sp_ppm_in_index=22,sp_pm_in_index=23,n_sp_all_index=23)
+    
+    real, allocatable :: species_var3d_nc(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_sp_index)
+    real, allocatable :: species_EMEP_subgrid(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_sp_index)
+
+    character(256) species_name_nc(n_pmxx_sp_index,n_sp_all_index)
     
     end module uEMEP_definitions
     

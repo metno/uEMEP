@@ -168,12 +168,16 @@
     if (allocated(comp_subgrid)) deallocate (comp_subgrid)
     if (allocated(comp_EMEP_subgrid)) deallocate (comp_EMEP_subgrid)
     if (allocated(orig_EMEP_subgrid)) deallocate (orig_EMEP_subgrid)
-
+    if (allocated(species_EMEP_subgrid)) deallocate (species_EMEP_subgrid)
+    
     !Define compound subgrid. Same as target in dimensions
     if (.not.allocated(comp_subgrid)) allocate (comp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
     if (.not.allocated(comp_EMEP_subgrid)) allocate (comp_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
     if (.not.allocated(orig_EMEP_subgrid)) allocate (orig_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
-
+    if (.not.allocated(species_EMEP_subgrid).and.save_emep_species) then
+        allocate (species_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_pmxx_sp_index,n_sp_index))
+    endif
+    
     do j=1,subgrid_dim(y_dim_index)
     do i=1,subgrid_dim(x_dim_index)                   
         x_subgrid(i,j)=subgrid_min(x_dim_index)+subgrid_delta(x_dim_index)*(i-0.5)

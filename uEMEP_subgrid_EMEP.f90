@@ -78,6 +78,7 @@
     subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)=0
     comp_EMEP_subgrid(:,:,:,:)=0
     orig_EMEP_subgrid(:,:,:,:)=0
+    if (save_emep_species) species_EMEP_subgrid(:,:,:,:,:)=0
     
     !Set value used later
     EMEP_grid_interpolation_size_sqr=EMEP_grid_interpolation_size*EMEP_grid_interpolation_size
@@ -138,6 +139,14 @@
             enddo
             enddo
 
+            if (save_emep_species) then
+            do i_pollutant=1,n_sp_index
+            do i_loop=1,n_pmxx_sp_index
+                species_EMEP_subgrid(i,j,:,i_loop,i_pollutant)=species_var3d_nc(ii,jj,:,i_loop,i_pollutant)
+            enddo
+            enddo
+            endif
+
         endif
         enddo
         enddo
@@ -175,6 +184,7 @@
         subgrid(:,:,tt,emep_local_subgrid_index,:,:)=0
         subgrid(:,:,tt,emep_nonlocal_subgrid_index,:,:)=0
         comp_EMEP_subgrid(:,:,tt,:)=0
+        species_EMEP_subgrid(:,:,tt,:,:)=0
         
         !Cover the search area necessary for the surounding EMEP grids
         jj_start=-1-floor(0.5*(EMEP_grid_interpolation_size-1.))
@@ -245,11 +255,16 @@
                         enddo
                         
                     enddo
-                    !do i_comp=1,n_compound_loop
-                    !    comp_EMEP_subgrid(i,j,tt,compound_loop_index(i_comp))=comp_EMEP_subgrid(i,j,tt,compound_loop_index(i_comp)) &
-                    !    +comp_var3d_nc(ii_nc,jj_nc,tt,compound_loop_index(i_comp))*weighting_nc(ii_w,jj_w,tt_dim,allsource_index)
-                    !enddo
-                    
+
+                    if (save_emep_species) then
+                    do i_pollutant=1,n_sp_index
+                    do i_loop=1,n_pmxx_sp_index
+                        species_EMEP_subgrid(i,j,tt,i_loop,i_pollutant)=species_EMEP_subgrid(i,j,tt,i_loop,i_pollutant) &
+                            +species_var3d_nc(ii_nc,jj_nc,tt,i_loop,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,allsource_index)
+                    enddo
+                    enddo
+                    endif
+
             enddo
             enddo
             

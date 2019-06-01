@@ -451,6 +451,7 @@
         save_no2_source_contributions=read_name_logical('save_no2_source_contributions',save_no2_source_contributions,unit_in,unit_logfile)
         save_o3_source_contributions=read_name_logical('save_o3_source_contributions',save_o3_source_contributions,unit_in,unit_logfile)
         save_aqi=read_name_logical('save_aqi',save_aqi,unit_in,unit_logfile)
+        save_emep_species=read_name_logical('save_emep_species',save_emep_species,unit_in,unit_logfile)
         
         lowest_stable_L=read_name_real('lowest_stable_L',lowest_stable_L,unit_in,unit_logfile)
         lowest_unstable_L=read_name_real('lowest_unstable_L',lowest_unstable_L,unit_in,unit_logfile)

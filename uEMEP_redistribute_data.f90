@@ -209,6 +209,8 @@
     integer subsource_index,source_index    
     integer i_pollutant,i_loop
     integer i,j
+    integer i_sp
+    real sum_temp(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index))
         
     write(unit_logfile,'(A)')'Combining the local and nonlocal contributions at each subgrid'
 
@@ -236,10 +238,10 @@
     do i_pollutant=1,n_pollutant_loop
         !If the compound is PM2.5 or PM10 then add the non PPM part to the non-local
         if (pollutant_loop_index(i_pollutant).eq.pm25_index.or.pollutant_loop_index(i_pollutant).eq.pm10_index) then
-            write(*,*) 'MEAN PPM NONLOCAL: ',sum((subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            write(unit_logfile,'(A,f12.2)') 'MEAN PPM NONLOCAL: ',sum((subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
             subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant) &
             +(comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant))
-            write(*,*) 'MEAN ADD NONLOCAL: ',sum((comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            write(unit_logfile,'(A,f12.2)') 'MEAN ADD REST NONLOCAL: ',sum((comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
         endif
     
         subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,local_subgrid_index,allsource_index,i_pollutant)+subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)
@@ -253,8 +255,79 @@
             comp_subgrid(:,:,:,pollutant_loop_index(i_pollutant))=subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)
         !enddo
         
-    enddo
-    
+     enddo
+
+     !Replace the species PPM with the actual species PPM used in the local fraction and then replace this with the nonlocal part.
+     if (save_emep_species) then
+         !Replace the primary species value with the one used in the calculations for consistency
+         write(unit_logfile,'(A)') 'ppm read from surf and read emep. Difference should just be surface grid'
+         write(unit_logfile,'(A,2f12.2)') 'PPM25 (tot_sp,comp)',sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+         write(unit_logfile,'(A,2f12.2)') 'PPM10 (tot_sp,comp)',sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+         write(unit_logfile,'(A)') 'pm summed species, surf total species (should be the same but are not) and read emep'
+         write(unit_logfile,'(A,3f12.2)') 'PM25 (tot_sp,sum_sp,comp)',sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_pm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(comp_EMEP_subgrid(:,:,:,pm25_nc_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+         write(unit_logfile,'(A,3f12.2)') 'PM10 (tot_sp,sum_sp,comp)',sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_pm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(comp_EMEP_subgrid(:,:,:,pm10_nc_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+         !The remaining species will not, most likely, be normalised with the total. This is done here but the total ppm is kept
+         !Something weird is going on here. Need to check
+         if (1.eq.1) then
+         !Normalise the species surface values with the total grid values
+         sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index),4)
+         do i_sp=1,sp_ppm_index
+             species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp) &
+                *(comp_EMEP_subgrid(:,:,:,pm25_nc_index)) &
+                /sum_temp
+         enddo
+         sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
+         do i_sp=1,sp_ppm_index
+            species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp) &
+                *(comp_EMEP_subgrid(:,:,:,pm10_nc_index)) &
+                /sum_temp
+         enddo
+         write(unit_logfile,'(A)') 'sum_sp should be the same as comp'
+         write(unit_logfile,'(A,3f12.2)') 'PM25 (tot_sp,sum_sp,comp)',sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_pm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(comp_EMEP_subgrid(:,:,:,pm25_nc_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+         write(unit_logfile,'(A,3f12.2)') 'PM10 (tot_sp,sum_sp,comp)',sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_pm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(comp_EMEP_subgrid(:,:,:,pm10_nc_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+         !Replace the ppm values in the species with the emep read version
+         species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)=subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index))
+         species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)=subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index))
+         !Normalise the species other than ppm again after subtracting the ppm
+         sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index-1),4)
+         do i_sp=1,sp_ppm_index-1
+             species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp) &
+                *(comp_EMEP_subgrid(:,:,:,pm25_nc_index)-species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)) &
+                /sum_temp
+         enddo
+         sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index-1),4)
+         do i_sp=1,sp_ppm_index-1
+            species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp) &
+                *(comp_EMEP_subgrid(:,:,:,pm10_nc_index)-species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)) &
+                /sum_temp
+         enddo
+         endif
+         !Remove the primary based on the local contribution.
+         species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)=species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index))
+         species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)=species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index))
+         
+         write(unit_logfile,'(A)') 'sum_sp should be the same as nonlocal, comp should be larger'
+         write(unit_logfile,'(A,4f12.2)') 'PM25 (tot_sp,sum_sp,comp,nonlocal)',sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_pm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(comp_EMEP_subgrid(:,:,:,pm25_nc_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+         write(unit_logfile,'(A,4f12.2)') 'PM10 (tot_sp,sum_sp,comp,nonlocal)',sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_pm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(comp_EMEP_subgrid(:,:,:,pm10_nc_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
+             ,sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+    endif
+     
+     
     !Only show results where all the subgrids and all sources are valid
     !This is temporary
     if (interpolate_subgrids_flag) then

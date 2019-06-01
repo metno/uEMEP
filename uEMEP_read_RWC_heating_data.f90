@@ -178,10 +178,10 @@
                 k_index,region_scaling_id(k), &
                 total_emissions(pm25_index),total_emissions(pm10_index),total_emissions(nox_index), &
                 region_heating_scaling(k,pm25_nc_index),region_heating_scaling(k,pm10_nc_index),region_heating_scaling(k,nox_nc_index)
-            write(*,'(2i,3es10.2,3f10.3)')  &
-                k_index,region_scaling_id(k), &
-                total_emissions(pm25_index),total_emissions(pm10_index),total_emissions(nox_index), &
-                region_heating_scaling(k,pm25_nc_index),region_heating_scaling(k,pm10_nc_index),region_heating_scaling(k,nox_nc_index)
+            !write(*,'(2i,3es10.2,3f10.3)')  &
+            !    k_index,region_scaling_id(k), &
+            !    total_emissions(pm25_index),total_emissions(pm10_index),total_emissions(nox_index), &
+            !    region_heating_scaling(k,pm25_nc_index),region_heating_scaling(k,pm10_nc_index),region_heating_scaling(k,nox_nc_index)
             
             !Set a back referencing value for speed. Note the region_scaling_id cannot be larger than the hardcoded dimensions
             region_scaling_id_back_index(region_scaling_id(k))=k
