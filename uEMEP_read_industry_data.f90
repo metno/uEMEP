@@ -21,6 +21,7 @@
     real, allocatable :: industry_lb_pos(:,:)
     real, allocatable :: industry_xy_pos(:,:)
     real, allocatable :: industry_height(:)
+    real, allocatable :: industry_emission(:,:)
     character(256), allocatable :: industry_code(:)
     integer industry_emission_year
     character(256) industry_emission_num,industry_emission_comp_str,industry_emission_unit
@@ -30,10 +31,17 @@
     real ratio_industry_pm25_to_pm10
     real x_industry,y_industry
     integer, allocatable :: count_subgrid(:,:,:)
+    real, allocatable :: emission_height_subgrid(:,:,:)
+    integer pollutant_count
 
     
     subsource_index=1
     source_index=industry_index
+    
+    !Set default pm25/pm10 ratio for when pm10 is given but not pm25. Value of 1 appropriate for exhaust but not for fugitive dust emissions
+    ratio_industry_pm25_to_pm10=1.0
+    
+
 
     write(unit_logfile,'(A)') ''
 	write(unit_logfile,'(A)') '================================================================'
@@ -82,6 +90,8 @@
     allocate(industry_xy_pos(n_industries,2))
     allocate(industry_height(n_industries))
     allocate(industry_code(n_industries))
+    allocate(industry_emission(n_industries,n_compound_index))
+    
     
     rewind(unit_in)
     !Read header again
@@ -98,49 +108,81 @@
     
     write(unit_logfile,'(a,i)') ' Number of industries: ',n_industries
     
-    !Read in emission file
+    !Read in emission file and write emisions to industry array
     allocate (count_subgrid(emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),n_pollutant_loop))
+    allocate (emission_height_subgrid(emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index),n_pollutant_loop))
     count_subgrid=0
+    emission_height_subgrid=0.
 
-    !Open the metadata file for reading
+    
+    !Open the emission file for reading
+    industry_emission=0.
+    
     unit_in=20
     open(unit_in,file=pathfilename_industry(2),access='sequential',status='old',readonly)  
-    write(unit_logfile,'(a)') ' Opening industry metadata file '//trim(pathfilename_industry(2))
+        write(unit_logfile,'(a)') ' Opening industry emission file '//trim(pathfilename_industry(2))
     
-    rewind(unit_in)
+        rewind(unit_in)
     
-    !Read header: År	AnleggNummer	Komponent	Samlet_mengde	Enhet
-    read(unit_in,'(A)') temp_str
+        !Read header: År	AnleggNummer	Komponent	Samlet_mengde	Enhet
+        read(unit_in,'(A)') temp_str
 
-    !write(*,*) trim(temp_str)
-    
+        do while(.not.eof(unit_in))
+            read(unit_in,*) industry_emission_year,industry_emission_num,industry_emission_comp_str,industry_emission_comp_val,industry_emission_unit
+            !write(unit_logfile,'(i12,2a16,f12.2,a16)' ) industry_emission_year,trim(industry_emission_num),trim(industry_emission_comp_str),industry_emission_comp_val,trim(industry_emission_unit)
+
+            !Find index for the industry
+            industry_number=0
+            do i=1,n_industries
+                if (trim(industry_emission_num).eq.trim(industry_num(i))) then
+                    industry_number=i
+                    exit
+                endif
+            enddo
+        
+            if (industry_number.eq.0) then
+                write(unit_logfile,*) 'No matching industry ID for the emissions: '//trim(industry_emission_num)
+            else
+                !write(unit_logfile,*) 'Matching industry ID found: '//trim(industry_emission_num)
+            endif
+
+            !If an industry is found then put the emissions in the industry_emission array
+            if (industry_number.gt.0) then
+                if  (trim(industry_emission_comp_str).eq.'nox') then
+                    industry_emission(industry_number,nox_index)=industry_emission(industry_number,nox_index)+industry_emission_comp_val
+                endif
+                if  (trim(industry_emission_comp_str).eq.'pm10') then
+                    industry_emission(industry_number,pm10_index)=industry_emission(industry_number,pm10_index)+industry_emission_comp_val
+                endif
+                if  (trim(industry_emission_comp_str).eq.'pm25') then
+                    industry_emission(industry_number,pm25_index)=industry_emission(industry_number,pm25_index)+industry_emission_comp_val
+                endif
+        
+            endif         
+        enddo
+
+    close(unit_in)    
+ 
+    !Adjust pm10 and pm25 dependent on if they exist or not
+    do i=1,n_industries
+        !Set pm10 to pm25 in the case when it is less than pm25.
+        if (industry_emission(i,pm10_index).lt.industry_emission(i,pm25_index)) then
+            industry_emission(i,pm10_index)=industry_emission(i,pm25_index)
+        endif
+        !Set pm25 to pm10*ratio in cases where pm10 exists but pm25 does not
+        if (industry_emission(i,pm25_index).eq.0.and.industry_emission(i,pm10_index).gt.0) then
+            industry_emission(i,pm25_index)=industry_emission(i,pm10_index)*ratio_industry_pm25_to_pm10
+        endif
+    enddo
+
+    !Initialise the industry emission arrays
     proxy_emission_subgrid(:,:,source_index,:)=0.
     emission_properties_subgrid(:,:,emission_h_index,source_index)=0.
-    ratio_industry_pm25_to_pm10=1.0
     
-    !Count how many lines for allocation of arrays
+    !Count the number of industry emission grid placements
     count=0
-    do while(.not.eof(unit_in))
-        read(unit_in,*) industry_emission_year,industry_emission_num,industry_emission_comp_str,industry_emission_comp_val,industry_emission_unit
-        !write(unit_logfile,'(i12,2a16,f12.2,a16)' ) industry_emission_year,trim(industry_emission_num),trim(industry_emission_comp_str),industry_emission_comp_val,trim(industry_emission_unit)
-        !count=count+1
-
-        !Find index for the industry
-        industry_number=0
-        do i=1,n_industries
-            if (trim(industry_emission_num).eq.trim(industry_num(i))) then
-                industry_number=i
-                exit
-            endif
-        enddo
-        
-        if (industry_number.eq.0) then
-            write(unit_logfile,*) 'No matching industry ID for the emissions: '//trim(industry_emission_num)
-        else
-            !write(unit_logfile,*) 'Matching industry ID found: '//trim(industry_emission_num)
-        endif
-
-        if (industry_number.gt.0) then
+    
+    do industry_number=1,n_industries
         
         !Convert lat lon to utm coords
         call LL2UTM(1,utm_zone,industry_lb_pos(industry_number,2),industry_lb_pos(industry_number,1),y_industry,x_industry)
@@ -149,61 +191,72 @@
         i_industry_index=1+floor((x_industry-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
         j_industry_index=1+floor((y_industry-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
         
-        !Add to subgrid       
+        !Add to subgrid if it is within the subgrid range
         if (i_industry_index.ge.1.and.i_industry_index.le.emission_subgrid_dim(x_dim_index,source_index) &
             .and.j_industry_index.ge.1.and.j_industry_index.le.emission_subgrid_dim(y_dim_index,source_index)) then
             do i_pollutant=1,n_pollutant_loop
-                if  (trim(industry_emission_comp_str).eq.'nox'.and.pollutant_loop_index(i_pollutant).eq.nox_nc_index) then
+                if (pollutant_loop_index(i_pollutant).eq.nox_nc_index.and.industry_emission(industry_number,nox_index).gt.0) then
                     proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
-                        +industry_emission_comp_val
+                        +industry_emission(industry_number,nox_index)
+                    emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)=emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)+industry_height(industry_number)*industry_emission(industry_number,nox_index)
                     count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
+                    count=count+1
+                    write(*,'(a,3i,f)') 'Industry height nox: ',industry_number,i_industry_index,j_industry_index,industry_height(industry_number)
                 endif
-                if (trim(industry_emission_comp_str).eq.'pm10'.and.(pollutant_loop_index(i_pollutant).eq.pm25_nc_index)) then
+                if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index.and.industry_emission(industry_number,pm10_index).gt.0) then
                     proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
-                        +industry_emission_comp_val*ratio_industry_pm25_to_pm10
-                    count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1    
-                endif
-                if (trim(industry_emission_comp_str).eq.'pm10'.and.pollutant_loop_index(i_pollutant).eq.pm10_nc_index) then
-                    proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
-                        +industry_emission_comp_val
+                        +industry_emission(industry_number,pm10_index)
+                    emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)=emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)+industry_height(industry_number)*industry_emission(industry_number,pm10_index)
                     count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
-                 endif
-                if (trim(industry_emission_comp_str).eq.'pm25'.and.(pollutant_loop_index(i_pollutant).eq.pm25_nc_index)) then
+                    count=count+1
+                    write(*,'(a,3i,f)') 'Industry height pm10: ',industry_number,i_industry_index,j_industry_index,industry_height(industry_number)
+               endif
+                if (pollutant_loop_index(i_pollutant).eq.pm25_nc_index.and.industry_emission(industry_number,pm25_index).gt.0) then
                     proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
-                        +industry_emission_comp_val
+                        +industry_emission(industry_number,pm25_index)
+                    emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)=emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)+industry_height(industry_number)*industry_emission(industry_number,pm25_index)
                     count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
-                endif
-                if (trim(industry_emission_comp_str).eq.'pm25'.and.(pollutant_loop_index(i_pollutant).eq.pm10_nc_index)) then
-                    proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
-                        +industry_emission_comp_val
-                    count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
+                    count=count+1
+                    write(*,'(a,3i,f)') 'Industry height pm25: ',industry_number,i_industry_index,j_industry_index,industry_height(industry_number)
                 endif
                 
-                !Needs to be changed to be an average if there are more in a grid, or a weighted average based on emission strengths from one of the compounds?
-                !If this is done then emission heights can be different for different compounds
-                !Chane the second index of h_emis to be pollutant, add an emission property subgrid dimension that is pollutant
-                !Find out how high the chimneys need to be for any particular emission. Depends how many there are I guess
-                emission_properties_subgrid(i_industry_index,j_industry_index,emission_h_index,source_index)=industry_height(industry_number)
-                !emission_properties_subgrid(i_industry_index,j_industry_index,emission_h_index,source_index)=h_emis(industry_index,1)
-                !Chnage the industry emission heights if a replacement industry height is given
-                if (h_emis(industry_index,1).ge.0) then
-                    emission_properties_subgrid(i_industry_index,j_industry_index,emission_h_index,source_index)=h_emis(industry_index,1)
-                endif
+            enddo                
                     
-
-            enddo
-            count=count+1
-            endif
-        
         endif
-        
+                
     enddo
 
+    !Loop through the emission subgrid and take the average emission height
+    !This is not weighted as it is averaged over all pollutants as well. Could do this but will not.
+    !Probably need a pollutant dependent emission property
+    do j=1,emission_subgrid_dim(y_dim_index,source_index)
+    do i=1,emission_subgrid_dim(x_dim_index,source_index)
+        pollutant_count=0
+        do i_pollutant=1,n_pollutant_loop
+        if (proxy_emission_subgrid(i,j,source_index,i_pollutant).gt.0) then
+            emission_height_subgrid(i,j,i_pollutant)=emission_height_subgrid(i,j,i_pollutant)/proxy_emission_subgrid(i,j,source_index,i_pollutant)
+            write(unit_logfile,'(2a,2i6,f12.2)') 'Emission height: ',trim(pollutant_file_str(pollutant_loop_index(i_pollutant))),i,j,emission_height_subgrid(i,j,i_pollutant)
+            !Take the average of the pollutants
+            emission_properties_subgrid(i,j,emission_h_index,source_index)=emission_properties_subgrid(i,j,emission_h_index,source_index)+emission_height_subgrid(i,j,i_pollutant)
+            pollutant_count=pollutant_count+1
+        endif
+        enddo
+        if (pollutant_count.gt.0) then
+            emission_properties_subgrid(i,j,emission_h_index,source_index)=emission_properties_subgrid(i,j,emission_h_index,source_index)/pollutant_count
+            write(unit_logfile,'(2a,2i6,f12.2)') 'Final emission height: ',trim('mean'),i,j,emission_properties_subgrid(i,j,emission_h_index,source_index)
+        endif
+        !Set the industry emission heights to that given in the config file if it is > 0
+        if (h_emis(industry_index,1).ge.0) then
+            emission_properties_subgrid(i,j,emission_h_index,source_index)=h_emis(industry_index,1)
+        endif
+    enddo
+    enddo
+    
     write(unit_logfile,'(A,I)') 'Industry counts = ',count
     do i_pollutant=1,n_pollutant_loop   
     write(unit_logfile,'(A,es12.3)') 'Total emission '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//' = ',sum(proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,i_pollutant))
     enddo    
-    write(unit_logfile,'(A,f)') 'Average industry emission height = ',sum(industry_height(1:n_industries))/n_industries
+    write(unit_logfile,'(A,f)') 'Average industry emission height for all industries = ',sum(industry_height(1:n_industries))/n_industries
     
     close(unit_in)
     
@@ -214,6 +267,7 @@
     deallocate(industry_height)
     deallocate(industry_code)
     deallocate (count_subgrid)
+    deallocate(industry_emission)
 
     
     end subroutine uEMEP_read_industry_data

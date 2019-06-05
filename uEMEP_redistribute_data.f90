@@ -276,18 +276,30 @@
          !Something weird is going on here. Need to check
          if (1.eq.1) then
          !Normalise the species surface values with the total grid values
-         sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index),4)
+         !Because t can have dimension 1 and 'sum' function does not think it is a dimension anymore then need to do the sum over the time loop. This turned out to not be the case so they are the same           
+         if (use_single_time_loop_flag) then
+             sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index),4)
+         else
+             sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index),4)
+         endif
          do i_sp=1,sp_ppm_index
              species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp) &
                 *(comp_EMEP_subgrid(:,:,:,pm25_nc_index)) &
                 /sum_temp
+            where (sum_temp.eq.0) species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=0
          enddo
-         sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
+         if (use_single_time_loop_flag) then
+             sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
+         else
+             sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
+         endif
          do i_sp=1,sp_ppm_index
             species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp) &
                 *(comp_EMEP_subgrid(:,:,:,pm10_nc_index)) &
                 /sum_temp
+            where (sum_temp.eq.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
          enddo
+         
          write(unit_logfile,'(A)') 'sum_sp should be the same as comp'
          write(unit_logfile,'(A,3f12.2)') 'PM25 (tot_sp,sum_sp,comp)',sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_pm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
              ,sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
@@ -299,17 +311,27 @@
          species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)=subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index))
          species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)=subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index))
          !Normalise the species other than ppm again after subtracting the ppm
-         sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index-1),4)
+         if (use_single_time_loop_flag) then
+            sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index-1),4)
+         else
+            sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index-1),4)
+         endif
          do i_sp=1,sp_ppm_index-1
              species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp) &
                 *(comp_EMEP_subgrid(:,:,:,pm25_nc_index)-species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)) &
                 /sum_temp
+            where (sum_temp.eq.0) species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=0
          enddo
-         sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index-1),4)
+         if (use_single_time_loop_flag) then
+            sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index-1),4)
+         else
+            sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index-1),4)
+         endif
          do i_sp=1,sp_ppm_index-1
             species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp) &
                 *(comp_EMEP_subgrid(:,:,:,pm10_nc_index)-species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)) &
                 /sum_temp
+            where (sum_temp.eq.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
          enddo
          endif
          !Remove the primary based on the local contribution.
@@ -327,7 +349,7 @@
              ,sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
     endif
      
-     
+
     !Only show results where all the subgrids and all sources are valid
     !This is temporary
     if (interpolate_subgrids_flag) then

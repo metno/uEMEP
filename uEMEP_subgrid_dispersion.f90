@@ -270,9 +270,6 @@
             
             !Setting a minimum value for wind for dispersion purposes (cannot be zero)
             temp_FF_subgrid(i_cross,j_cross)=sqrt(temp_FF_subgrid(i_cross,j_cross)*temp_FF_subgrid(i_cross,j_cross)+FF_min_dispersion*FF_min_dispersion)
-            !temp_FF_subgrid(i_cross,j_cross)=sqrt(temp_FF_subgrid(i_cross,j_cross)*temp_FF_subgrid(i_cross,j_cross))
-!            temp_FF_subgrid(i_cross,j_cross)=sqrt(temp_FF_subgrid(i_cross,j_cross)*temp_FF_subgrid(i_cross,j_cross) &
-!                +emission_properties_subgrid(ii,jj,emission_minFF_index,source_index,subsource_index)*emission_properties_subgrid(ii,jj,emission_minFF_index,source_index,subsource_index))
                     
             if (temp_FF_subgrid(i_cross,j_cross).eq.0) then
                 write(unit_logfile,'(a,2i)') 'Zero wind speed at integral grid (stopping): ',i_cross,j_cross

@@ -56,12 +56,6 @@
         emission_properties_subgrid(:,:,emission_sigy00_index,source_index)=0.
         emission_properties_subgrid(:,:,emission_sigz00_index,source_index)=0.
     endif
- !   emission_properties_subgrid(:,:,emission_minFF_index,source_index)=0.
- !   if (use_traffic_for_minFF_flag) then
- !       emission_properties_subgrid(:,:,emission_minFF_index,source_index)=0.
- !   endif
-    !write(*,*) n_roadlinks
-    !write(*,*) shape(inputdata_rl)
     
     !Possible to split the traffic source into different subsources at this point if necessary, e.g. light and heavy traffic
     !Here we weight the adt by the emission ratio and give an emission factor valid for cars
@@ -218,11 +212,7 @@
                         emission_properties_subgrid(i,j,emission_sigz00_index,source_index)=emission_properties_subgrid(i,j,emission_sigz00_index,source_index) &
                             +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro,1)*sigma0_temp
                     endif
-                    !Should not be used
-!                    if (use_traffic_for_minFF_flag) then
-!                        emission_properties_subgrid(i,j,emission_minFF_index,source_index,subsource_index)=emission_properties_subgrid(i,j,emission_minFF_index,source_index,subsource_index) &
-!                            +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*adt_temp(ro)*minFF_traffic_func(inputdata_rl(ro,speed_rl_index),adt_temp(ro),inputdata_rl(ro,width_rl_index))
-!                    endif
+
                     
                 !enddo
                 !write(*,*) ro,i,j,f_subgrid(ro)
@@ -242,9 +232,6 @@
         emission_properties_subgrid(:,:,emission_sigy00_index,source_index)=emission_properties_subgrid(:,:,emission_sigy00_index,source_index)/proxy_emission_subgrid(:,:,source_index,1)
         emission_properties_subgrid(:,:,emission_sigz00_index,source_index)=emission_properties_subgrid(:,:,emission_sigz00_index,source_index)/proxy_emission_subgrid(:,:,source_index,1)
     endif
-!    if (use_traffic_for_minFF_flag) then
-!        emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)=emission_properties_subgrid(:,:,emission_minFF_index,source_index,:)/proxy_emission_subgrid(:,:,source_index,:)
-!     endif
     
     deallocate (f_subgrid)
     deallocate (adt_temp)

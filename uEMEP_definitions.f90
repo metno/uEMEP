@@ -385,7 +385,7 @@
     real, allocatable :: emission_subgrid(:,:,:,:,:)
     real, allocatable :: proxy_emission_subgrid(:,:,:,:) !No time dependence
     real, allocatable :: emission_time_profile_subgrid(:,:,:,:,:)
-    real, allocatable :: emission_properties_subgrid(:,:,:,:) !No time dependence and no pollutant dependence
+    real, allocatable :: emission_properties_subgrid(:,:,:,:) !No time dependence and no pollutant dependence. Would then need to do the gaussian calculation for each pollutant
     !x_emission_subgrid (i,j,n_source)
     real, allocatable :: x_emission_subgrid(:,:,:)
     real, allocatable :: y_emission_subgrid(:,:,:)
@@ -706,14 +706,14 @@
     !Species variables
     integer pm10_sp_index,pm25_sp_index,pmco_sp_index,n_pmxx_sp_index
     parameter (pm10_sp_index=1,pm25_sp_index=2,pmco_sp_index=3,n_pmxx_sp_index=3) !pmco_sp_index is just for reading
-    integer sp_soa_index,sp_sia_index,sp_dust_index,sp_seasalt_index,sp_ffire_index,sp_ppm_index,sp_pm_index,n_sp_index
-    parameter (sp_soa_index=1,sp_sia_index=2,sp_dust_index=3,sp_seasalt_index=4,sp_ffire_index=5,sp_ppm_index=6,sp_pm_index=7,n_sp_index=7)
+    integer sp_soa_index,sp_sia_index,sp_dust_index,sp_seasalt_index,sp_ffire_index,sp_ppm_index,sp_water_index,sp_pm_index,n_sp_index
+    parameter (sp_soa_index=1,sp_sia_index=2,sp_dust_index=3,sp_seasalt_index=4,sp_ffire_index=5,sp_ppm_index=6,sp_water_index=7,sp_pm_index=8,n_sp_index=8)
     !These are used just for reading
     integer sp_no3_index,sp_so4_index,sp_nh4_index,sp_dust_sah_index,sp_dust_wb_index,sp_ffire_bc_index,sp_ffire_rem_index,sp_asoa_index,sp_bsoa_index,n_sp_all_index
-    parameter (sp_no3_index=8,sp_so4_index=9,sp_nh4_index=10,sp_dust_sah_index=11,sp_dust_wb_index=12,sp_ffire_bc_index=13,sp_ffire_rem_index=14,sp_asoa_index=15,sp_bsoa_index=16)
+    parameter (sp_no3_index=9,sp_so4_index=10,sp_nh4_index=11,sp_dust_sah_index=12,sp_dust_wb_index=13,sp_ffire_bc_index=14,sp_ffire_rem_index=15,sp_asoa_index=16,sp_bsoa_index=17)
     !Alternative input names so the other names are reserved for otuput
-    integer sp_soa_in_index,sp_sia_in_index,sp_dust_in_index,sp_seasalt_in_index,sp_ffire_in_index,sp_ppm_in_index,sp_pm_in_index
-    parameter (sp_soa_in_index=17,sp_sia_in_index=18,sp_dust_in_index=19,sp_seasalt_in_index=20,sp_ffire_in_index=21,sp_ppm_in_index=22,sp_pm_in_index=23,n_sp_all_index=23)
+    integer sp_soa_in_index,sp_sia_in_index,sp_dust_in_index,sp_seasalt_in_index,sp_ffire_in_index,sp_ppm_in_index,sp_water_in_index,sp_pm_in_index
+    parameter (sp_soa_in_index=18,sp_sia_in_index=19,sp_dust_in_index=20,sp_seasalt_in_index=21,sp_ffire_in_index=22,sp_ppm_in_index=23,sp_water_in_index=24,sp_pm_in_index=25,n_sp_all_index=25)
     
     real, allocatable :: species_var3d_nc(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_sp_index)
     real, allocatable :: species_EMEP_subgrid(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_sp_index)

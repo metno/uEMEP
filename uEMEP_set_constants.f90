@@ -201,13 +201,20 @@
         species_name_nc(pm25_sp_index,sp_ppm_index)='pm25_EMEP_ppm'
         species_name_nc(pm10_sp_index,sp_ppm_in_index)='SURF_ug_PPM10'
         species_name_nc(pm25_sp_index,sp_ppm_in_index)='SURF_ug_PPM25'
+        species_name_nc(pmco_sp_index,sp_ppm_in_index)='SURF_ug_PPM_C'
 
         species_name_nc(pm10_sp_index,sp_pm_index)='pm10_EMEP_total'
-        species_name_nc(pm25_sp_index,sp_pm_index)='pm25_EMEP_ptotal'
+        species_name_nc(pm25_sp_index,sp_pm_index)='pm25_EMEP_total'
         species_name_nc(pm10_sp_index,sp_pm_in_index)='SURF_ug_PM10'
-        !species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PMFINE'
-        species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PM25'
+        species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PMFINE'
+        !species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PM25'
+        species_name_nc(pmco_sp_index,sp_pm_in_index)='SURF_ug_PMCO'
 
+        species_name_nc(pm10_sp_index,sp_water_index)='pm10_EMEP_water'
+        species_name_nc(pm25_sp_index,sp_water_index)='pm25_EMEP_water'
+        species_name_nc(pm10_sp_index,sp_water_in_index)=''
+        !species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PMFINE'
+        species_name_nc(pm25_sp_index,sp_water_in_index)='SURF_PM25water'
         
         comp_scale_nc(:)=1.
         comp_scale_nc(nox_nc_index)=(14.+2.*16.)/14. !Value read in is in ugN
