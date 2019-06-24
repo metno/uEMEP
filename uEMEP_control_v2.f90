@@ -267,7 +267,11 @@
                 call uEMEP_disperse_local_source(source_index)
             endif
             enddo
-    
+
+            if (use_traffic_nox_emission_temperature_dependency) then
+                call uEMEP_nox_emission_temperature
+            endif
+        
             !Combine and save sources in local and total values
             call uEMEP_combine_local_source
     

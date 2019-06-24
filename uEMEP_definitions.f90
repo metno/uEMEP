@@ -674,6 +674,10 @@
     real :: lowest_stable_L=1.e6
     real :: lowest_unstable_L=-10.
     
+    logical :: use_traffic_nox_emission_temperature_dependency=.false.
+    real :: traffic_nox_emission_temperature_ref_temperature(2)
+    real :: traffic_nox_emission_temperature_ref_scaling(2)
+    
     !Output data saving flags
     logical :: save_compounds=.true.,save_source_contributions=.true.,save_wind_vectors=.false.,save_other_meteo=.false.
     logical :: save_emep_source_contributions=.false.,save_emep_original=.true.,save_emissions=.false.,save_for_chemistry=.false.

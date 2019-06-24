@@ -357,6 +357,13 @@
     aqi_annual_limits(pm10_index,1)=0.;aqi_annual_limits(pm10_index,2)=25.;aqi_annual_limits(pm10_index,3)=35.;
     aqi_annual_limits(pm25_index,1)=0.;aqi_annual_limits(pm25_index,2)=15.;aqi_annual_limits(pm25_index,3)=25.;
 
+    !For temperature scaling
+    traffic_nox_emission_temperature_ref_temperature(1)=-15.
+    traffic_nox_emission_temperature_ref_temperature(2)=5.
+    traffic_nox_emission_temperature_ref_scaling(1)=3.
+    traffic_nox_emission_temperature_ref_scaling(2)=1.
+    
+
     end subroutine uEMEP_set_constants
     
     subroutine uEMEP_set_pollutant_loop
