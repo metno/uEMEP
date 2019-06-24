@@ -662,7 +662,7 @@
         
         subgrid(i,j,t,local_subgrid_index,traffic_index,pollutant_loop_back_index(nox_nc_index))=emission_scaling*subgrid(i,j,t,local_subgrid_index,traffic_index,pollutant_loop_back_index(nox_nc_index))
         
-        write(*,'(3i,2f12.2)') i,j,t,temperature,emission_scaling
+        !write(*,'(3i,2f12.2)') i,j,t,temperature,emission_scaling
     endif
     enddo
     enddo
