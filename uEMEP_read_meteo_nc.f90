@@ -582,11 +582,13 @@
                 meteo_var3d_nc(:,:,:,Hflux_nc_index)=-meteo_var4d_nc(:,:,surface_level_nc,:,Hflux_nc_index)
                 meteo_var3d_nc(:,:,:,uw_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,:,uw_nc_index)
                 meteo_var3d_nc(:,:,:,vw_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,:,vw_nc_index)
+                meteo_var3d_nc(:,:,:,precip_nc_index)=meteo_var4d_nc(:,:,surface_level_nc,:,precip_nc_index)
             else
                 do t=dim_length_meteo_nc(time_dim_nc_index),1,-1
                 meteo_var3d_nc(:,:,t,Hflux_nc_index)=(meteo_var4d_nc(:,:,surface_level_nc,t,Hflux_nc_index)-meteo_var4d_nc(:,:,surface_level_nc,t-1,Hflux_nc_index))/3600.
                 meteo_var3d_nc(:,:,t,uw_nc_index)=(meteo_var4d_nc(:,:,surface_level_nc,t,uw_nc_index)-meteo_var4d_nc(:,:,surface_level_nc,t-1,uw_nc_index))/3600.
                 meteo_var3d_nc(:,:,t,vw_nc_index)=(meteo_var4d_nc(:,:,surface_level_nc,t,vw_nc_index)-meteo_var4d_nc(:,:,surface_level_nc,t-1,vw_nc_index))/3600.
+                meteo_var3d_nc(:,:,t,precip_nc_index)=(meteo_var4d_nc(:,:,surface_level_nc,t,precip_nc_index)-meteo_var4d_nc(:,:,surface_level_nc,t-1,precip_nc_index))
                 !write(*,*) t,sum(meteo_var3d_nc(:,:,t,Hflux_nc_index))/dim_length_meteo_nc(x_dim_nc_index)/dim_length_meteo_nc(y_dim_nc_index) &
                 !    ,sum(meteo_var4d_nc(:,:,surface_level_nc,t,hmix_nc_index))/dim_length_meteo_nc(x_dim_nc_index)/dim_length_meteo_nc(y_dim_nc_index)
                 enddo

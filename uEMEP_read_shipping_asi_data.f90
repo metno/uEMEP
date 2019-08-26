@@ -91,10 +91,15 @@
     do i=1,ship_counts
         read(unit_in,*) x_ship,y_ship,totalnoxemission,totalparticulatematteremission
  
-        !Convert to EMEP coordinates if it is to be saved. emission grids are already in the EMEP coordinate system
+        !Special case when saving emissions, convert to either latlon or lambert
         if (save_emissions_for_EMEP(shipping_index)) then
             call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
-            call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
+            if (projection_type.eq.LL_projection_index) then
+                x_ship=lon_ship
+                y_ship=lat_ship       
+            elseif (projection_type.eq.LCC_projection_index) then
+                call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
+            endif
         endif
 
         i_ship_index=1+floor((x_ship-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
@@ -223,10 +228,15 @@
     do i=1,ship_counts
         read(unit_in,*) x_ship,y_ship,totalnoxemission,totalparticulatematteremission
  
-        !Convert to EMEP coordinates if it is to be saved. emission grids are already in the EMEP coordinate system
+        !Special case when saving emissions, convert to either latlon or lambert
         if (save_emissions_for_EMEP(shipping_index)) then
             call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
-            call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
+            if (projection_type.eq.LL_projection_index) then
+                x_ship=lon_ship
+                y_ship=lat_ship       
+            elseif (projection_type.eq.LCC_projection_index) then
+                call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
+            endif
         endif
 
         i_ship_index=1+floor((x_ship-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))

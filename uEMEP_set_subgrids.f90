@@ -91,7 +91,7 @@
         emission_subgrid_dim(:,i)=subgrid_dim
     enddo
 
-    !Set shipping data to a minimum vale for all sources (Cannot be smaller than the target subgrid)
+    !Set shipping data to a minimum value for all sources (Cannot be smaller than the target subgrid)
     emission_subgrid_delta(x_dim_index,shipping_index)=max(subgrid_delta(x_dim_index),limit_shipping_delta)
     emission_subgrid_delta(y_dim_index,shipping_index)=max(subgrid_delta(y_dim_index),limit_shipping_delta)
     emission_subgrid_delta(x_dim_index,heating_index)=max(subgrid_delta(x_dim_index),limit_heating_delta)
@@ -105,10 +105,40 @@
         emission_subgrid_dim(y_dim_index,i)=floor((emission_subgrid_max(y_dim_index,i)-emission_subgrid_min(y_dim_index,i))/emission_subgrid_delta(y_dim_index,i))
         write(unit_logfile,'(A,I6,A5,2I6)') 'Emission grid dimensions for source ',i,': ',emission_subgrid_dim(1:2,i)
     enddo
+
+   !Set the landuse and deposition grids to have the same extent as the target grid
+    if (calculate_deposition_flag) then
+    if (deposition_subgrid_delta(x_dim_index).eq.0) deposition_subgrid_delta(x_dim_index)=subgrid_delta(x_dim_index)
+    if (deposition_subgrid_delta(y_dim_index).eq.0) deposition_subgrid_delta(y_dim_index)=subgrid_delta(y_dim_index)
+    deposition_subgrid_min(:)=subgrid_min
+    deposition_subgrid_max(:)=subgrid_max
+    deposition_subgrid_dim(x_dim_index)=floor((subgrid_max(x_dim_index)-subgrid_min(x_dim_index))/deposition_subgrid_delta(x_dim_index))
+    deposition_subgrid_dim(y_dim_index)=floor((subgrid_max(y_dim_index)-subgrid_min(y_dim_index))/deposition_subgrid_delta(y_dim_index))
+    deposition_subgrid_dim(t_dim_index)=subgrid_dim(t_dim_index)
+    endif
     
-    write(unit_logfile,'(A,2I6)') 'Target grid dimensions: ',subgrid_dim(1:2)
+    if (read_landuse_flag) then
+    if (landuse_subgrid_delta(x_dim_index).eq.0) landuse_subgrid_delta(x_dim_index)=subgrid_delta(x_dim_index)
+    if (landuse_subgrid_delta(y_dim_index).eq.0) landuse_subgrid_delta(y_dim_index)=subgrid_delta(y_dim_index)
+    landuse_subgrid_min(:)=subgrid_min
+    landuse_subgrid_max(:)=subgrid_max
+    landuse_subgrid_dim(x_dim_index)=floor((subgrid_max(x_dim_index)-subgrid_min(x_dim_index))/landuse_subgrid_delta(x_dim_index))
+    landuse_subgrid_dim(y_dim_index)=floor((subgrid_max(y_dim_index)-subgrid_min(y_dim_index))/landuse_subgrid_delta(y_dim_index))
+    landuse_subgrid_dim(t_dim_index)=subgrid_dim(t_dim_index)
+    endif
+    
+    write(unit_logfile,'(A,2I6)') 'Concentration grid dimensions: ',subgrid_dim(1:2)
     write(unit_logfile,'(A,2I6)') 'Integral grid dimensions: ',integral_subgrid_dim(1:2) 
-    write(unit_logfile,'(A,2f10.1)') 'Target subgrid grid sizes: ',subgrid_delta
+    write(unit_logfile,'(A,2f10.1)') 'Concentration subgrid grid sizes: ',subgrid_delta
     write(unit_logfile,'(A,I6,2f10.1)') 'Integral subgrid step and grid sizes: ',integral_subgrid_step,integral_subgrid_delta
+
+    if (calculate_deposition_flag) then
+    write(unit_logfile,'(A,2I6)') 'Deposition grid dimensions: ',deposition_subgrid_dim(1:2)
+    write(unit_logfile,'(A,2f10.1)') 'Deposition subgrid grid sizes: ',deposition_subgrid_delta
+    endif
+    if (read_landuse_flag) then
+    write(unit_logfile,'(A,2I6)') 'Landuse grid dimensions: ',landuse_subgrid_dim(1:2) 
+    write(unit_logfile,'(A,2f10.1)') 'Landuse subgrid grid sizes: ',landuse_subgrid_delta
+    endif
     
     end subroutine uEMEP_set_subgrids

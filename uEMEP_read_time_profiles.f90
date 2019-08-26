@@ -14,9 +14,9 @@
     double precision date_num_temp
 
     integer n_col
-    parameter (n_col=5)
-    character(256) header_str(n_col)
-    integer source_index_in(n_col-1)
+    !parameter (n_col=5)
+    character(256), allocatable :: header_str(:)
+    integer, allocatable :: source_index_in(:)
     integer temp_region_id
     integer n_hours_in_week,n_months_in_year
     integer, allocatable :: time_month_of_year_input(:),time_hour_of_week_input(:)
@@ -28,6 +28,7 @@
     
     integer i_cross,j_cross
     real hdd_temp
+    integer col_val,index_val
     
     !Functions
     integer day_of_week
@@ -60,10 +61,29 @@
     open(unit_in,file=pathfilename_timeprofile,access='sequential',status='old',readonly)  
     write(unit_logfile,'(a)') ' Opening time profile file: '//trim(pathfilename_timeprofile)
     
+    !Find the number of commas in the header to determine columns
+    read(unit_in,'(a)') temp_str
+    !write(*,*) trim(temp_str),index(temp_str,',')
+    col_val=0
+    do while (index(temp_str,',').ne.0)
+        index_val=index(temp_str,',')
+        temp_str=temp_str(index_val+1:)
+        col_val=col_val+1
+        !write(*,*) col_val,trim(temp_str)
+    enddo    
+    
+    n_col=col_val+1
+    allocate(header_str(n_col))
+    allocate(source_index_in(n_col-1))
+    write(unit_logfile,'(a,i)') ' Number of columns read: ',n_col
+
+    !stop
+    
+    rewind(unit_in)
+    
     !Read source header string
     read(unit_in,*) header_str
     !write(unit_logfile,*) header_str
-    
     !Read source index, correpsonding to uEMEP source indexes (change to SNAP or NFR later)
     read(unit_in,*) temp_str,source_index_in
     write(unit_logfile,*) trim(temp_str),source_index_in
@@ -138,8 +158,13 @@
         !write(*,*) t,date_array
         
         if (summer_time_europe(date_array)) then
-            emission_time_shift_temp=emission_timeprofile_hour_shift+1
-            if (t.eq.1) write(unit_logfile,'(a)') ' Emission profiles set to summer time. '
+            if (auto_adjustment_for_summertime) then
+                emission_time_shift_temp=emission_timeprofile_hour_shift+1
+                if (t.eq.1) write(unit_logfile,'(a)') ' Emission profiles set to summer time. '
+            else
+                emission_time_shift_temp=emission_timeprofile_hour_shift
+                if (t.eq.1) write(unit_logfile,'(a)') ' Emission profiles not adjusted for summer time. '               
+            endif            
         else
             emission_time_shift_temp=emission_timeprofile_hour_shift
             if (t.eq.1) write(unit_logfile,'(a)') ' Emission profiles set to winter time. '
@@ -150,6 +175,7 @@
         if (hour_of_week_index.lt.1) hour_of_week_index=hour_of_week_index+n_hours_in_week
         
         do i_source=1,n_col-1
+        if (calculate_source(source_index_in(i_source))) then    
             if (source_index_in(i_source).eq.shipping_index.and.read_monthly_and_daily_shipping_data_flag) then
                 !Do nothing as the time profile has already been set in uEMEP_read_monthly_and_daily_shipping_asi_data subroutine
                 !write(unit_logfile,'(a,i,es16.6)') 'Not resetting shipping time profiles: ',t,sum(emission_time_profile_subgrid(:,:,t,source_index_in(i_source),1))
@@ -176,8 +202,8 @@
                     else
                         i_cross=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,source_index_in(i_source))
                         j_cross=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index_in(i_source))
-                        !i_cross=min(max(1,i_cross),dim_length_nc(x_dim_nc_index))
-                        !j_cross=min(max(1,j_cross),dim_length_nc(y_dim_nc_index))
+                        i_cross=min(max(1,i_cross),dim_length_nc(x_dim_nc_index))
+                        j_cross=min(max(1,j_cross),dim_length_nc(y_dim_nc_index))
                     endif
                     hdd_temp=max(0.,HDD_threshold_value-max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)))
                     !write (*,*) hdd_temp,DMT_EMEP_grid_nc(i_cross,j_cross,1),max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)),HDD_threshold_value-max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1))
@@ -189,7 +215,8 @@
                 enddo
                 enddo
             endif
-            
+        
+        endif    
         enddo
         
         if (annual_calculations) then

@@ -1,6 +1,47 @@
 !read_esri_ascii_file.f90
     
-    subroutine read_esri_ascii_file(unit_logfile,filename_ascii_sub,ncols_sub,nrows_sub,cellsize_sub,val_array,x_array,y_array)
+    subroutine read_esri_ascii_header(unit_logfile,filename_ascii_sub,ncols_sub,nrows_sub,cellsize_sub,xllcorner,yllcorner,read_nodata_flag)
+    
+    implicit none
+    character(*) filename_ascii_sub
+    character(256) temp_str
+    integer i,j,ii,jj
+    integer ncols_sub,nrows_sub
+    integer ncols_sub_temp,nrows_sub_temp
+    real cellsize_sub
+    real xllcorner
+    real yllcorner
+    real :: NODATA_value=-999.
+    integer :: unit_in=20
+    integer unit_logfile
+    logical read_nodata_flag
+
+    !write(unit_logfile,'(a)') ' Opening ascii file: '//trim(filename_ascii_sub)
+    open(unit_in,file=filename_ascii_sub,access='sequential',form='formatted',status='old',readonly)
+    
+        rewind(unit_in)
+
+        read(unit_in,*)temp_str,ncols_sub
+        !write(*,*)trim(temp_str),ncols
+        read(unit_in,*)temp_str,nrows_sub
+        !write(*,*)trim(temp_str),nrows
+        read(unit_in,*)temp_str,xllcorner
+        !write(*,*)trim(temp_str),xllcorner
+        read(unit_in,*)temp_str,yllcorner
+        !write(*,*)trim(temp_str),yllcorner
+        read(unit_in,*)temp_str,cellsize_sub
+        !write(*,*)trim(temp_str),cellsize
+        if (read_nodata_flag) read(unit_in,*)temp_str,NODATA_value
+        !write(*,*)trim(temp_str),NODATA_value
+        write(unit_logfile,'(2a10,4a12)')'ncols','nrows','xllcorner','yllcorner','cellsize','NODATA_val'
+        write(unit_logfile,'(2i10,4f12.1)')ncols_sub,nrows_sub,xllcorner,yllcorner,cellsize_sub,NODATA_value
+    
+        close(unit_in)
+
+    end subroutine read_esri_ascii_header
+
+    
+    subroutine read_esri_ascii_file(unit_logfile,filename_ascii_sub,ncols_sub,nrows_sub,cellsize_sub,val_array,x_array,y_array,read_nodata_flag)
     
     implicit none
     character(*) filename_ascii_sub
@@ -17,6 +58,7 @@
     real x_array(ncols_sub,nrows_sub)
     real y_array(ncols_sub,nrows_sub)
     integer unit_logfile
+    logical read_nodata_flag
 
     !write(unit_logfile,'(a)') ' Opening ascii file: '//trim(filename_ascii_sub)
     open(unit_in,file=filename_ascii_sub,access='sequential',form='formatted',status='old',readonly)
@@ -33,7 +75,7 @@
         !write(*,*)trim(temp_str),yllcorner
         read(unit_in,*)temp_str,cellsize_sub
         !write(*,*)trim(temp_str),cellsize
-        read(unit_in,*)temp_str,NODATA_value
+        if (read_nodata_flag) read(unit_in,*)temp_str,NODATA_value
         !write(*,*)trim(temp_str),NODATA_value
         !write(unit_logfile,'(2a10,4a12)')'ncols','nrows','xllcorner','yllcorner','cellsize','NODATA_val'
         !write(unit_logfile,'(2i10,4f12.1)')ncols_sub,nrows_sub,xllcorner,yllcorner,cellsize_sub,NODATA_value

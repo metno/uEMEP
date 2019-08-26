@@ -211,6 +211,12 @@
         init_subgrid_max(x_dim_index)=subgrid_max(x_dim_index)
         init_subgrid_max(y_dim_index)=subgrid_max(y_dim_index)
         
+        !These will probably be set by the input data
+        deposition_subgrid_delta(x_dim_index)=read_name_real('deposition_subgrid_delta(x_dim_index)',deposition_subgrid_delta(x_dim_index),unit_in,unit_logfile)
+        deposition_subgrid_delta(y_dim_index)=read_name_real('deposition_subgrid_delta(y_dim_index)',deposition_subgrid_delta(y_dim_index),unit_in,unit_logfile)
+        landuse_subgrid_delta(x_dim_index)=read_name_real('landuse_subgrid_delta(x_dim_index)',landuse_subgrid_delta(x_dim_index),unit_in,unit_logfile)
+        landuse_subgrid_delta(y_dim_index)=read_name_real('landuse_subgrid_delta(y_dim_index)',landuse_subgrid_delta(y_dim_index),unit_in,unit_logfile)
+
         !Specifies the number of subsources for each source. Usually not used as default is 1
         !n_subsource(:)=read_name_integer('n_subsource(:)',n_subsource(allsource_index),unit_in,unit_logfile)
         n_subsource(traffic_index)=read_name_integer('n_subsource(traffic_index)',n_subsource(traffic_index),unit_in,unit_logfile)
@@ -422,6 +428,7 @@
         ventilation_factor=read_name_real('ventilation_factor',ventilation_factor,unit_in,unit_logfile)
         min_ADT_ventilation_factor=read_name_real('min_ADT_ventilation_factor',min_ADT_ventilation_factor,unit_in,unit_logfile)
         min_length_ventilation_factor=read_name_real('min_length_ventilation_factor',min_length_ventilation_factor,unit_in,unit_logfile)
+        windspeed_tunnel=read_name_real('windspeed_tunnel',windspeed_tunnel,unit_in,unit_logfile)
 
                 
         save_emissions_for_EMEP(traffic_index)=read_name_logical('save_emissions_for_EMEP(traffic_index)',save_emissions_for_EMEP(traffic_index),unit_in,unit_logfile)        
@@ -438,7 +445,10 @@
         
         save_emissions_start_index=read_name_integer('save_emissions_start_index',save_emissions_start_index,unit_in,unit_logfile)
         save_emissions_end_index=read_name_integer('save_emissions_end_index',save_emissions_end_index,unit_in,unit_logfile)
-
+        
+        save_emissions_for_EMEP_projection=read_name_char('save_emissions_for_EMEP_projection',save_emissions_for_EMEP_projection,unit_in,unit_logfile)
+        save_emissions_for_EMEP_region=read_name_char('save_emissions_for_EMEP_region',save_emissions_for_EMEP_region,unit_in,unit_logfile)
+        
         save_compounds=read_name_logical('save_compounds',save_compounds,unit_in,unit_logfile)
         save_source_contributions=read_name_logical('save_source_contributions',save_source_contributions,unit_in,unit_logfile)
         save_wind_vectors=read_name_logical('save_wind_vectors',save_wind_vectors,unit_in,unit_logfile)
@@ -452,7 +462,9 @@
         save_o3_source_contributions=read_name_logical('save_o3_source_contributions',save_o3_source_contributions,unit_in,unit_logfile)
         save_aqi=read_name_logical('save_aqi',save_aqi,unit_in,unit_logfile)
         save_emep_species=read_name_logical('save_emep_species',save_emep_species,unit_in,unit_logfile)
+        save_deposition=read_name_logical('save_deposition',save_deposition,unit_in,unit_logfile)
         
+ 
         lowest_stable_L=read_name_real('lowest_stable_L',lowest_stable_L,unit_in,unit_logfile)
         lowest_unstable_L=read_name_real('lowest_unstable_L',lowest_unstable_L,unit_in,unit_logfile)
         
@@ -470,6 +482,19 @@
         traffic_nox_emission_temperature_ref_scaling(1)=read_name_real('traffic_nox_emission_temperature_ref_scaling(1)',traffic_nox_emission_temperature_ref_scaling(1),unit_in,unit_logfile)
         traffic_nox_emission_temperature_ref_scaling(2)=read_name_real('traffic_nox_emission_temperature_ref_scaling(2)',traffic_nox_emission_temperature_ref_scaling(2),unit_in,unit_logfile)
        
+        calculate_deposition_flag=read_name_logical('calculate_deposition_flag',calculate_deposition_flag,unit_in,unit_logfile)
+        calculate_source_depletion_flag=read_name_logical('calculate_source_depletion_flag',calculate_source_depletion_flag,unit_in,unit_logfile)
+        read_landuse_flag=read_name_logical('read_landuse_flag',read_landuse_flag,unit_in,unit_logfile)
+        use_plume_dispersion_deposition_flag=read_name_logical('use_plume_dispersion_deposition_flag',use_plume_dispersion_deposition_flag,unit_in,unit_logfile)
+        
+        pathname_landuse=read_name_char('pathname_landuse',pathname_landuse,unit_in,unit_logfile)
+        filename_landuse=read_name_char('filename_landuse',filename_landuse,unit_in,unit_logfile)
+
+        adjust_wetdepo_integral_to_lowest_layer_flag=read_name_logical('adjust_wetdepo_integral_to_lowest_layer_flag',adjust_wetdepo_integral_to_lowest_layer_flag,unit_in,unit_logfile)
+        
+        auto_adjustment_for_summertime=read_name_logical('auto_adjustment_for_summertime',auto_adjustment_for_summertime,unit_in,unit_logfile)
+        
+        
     close (unit_in)
     
     !Call some error traps

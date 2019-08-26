@@ -341,7 +341,7 @@
                 where (subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant).eq.0) temp_subgrid=0
 
                 if (save_netcdf_file_flag) then
-                    write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                    write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                     call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                         ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -484,7 +484,7 @@
     !Save the emissions interpolated to the target grid
     if (save_emissions) then
     variable_type='float'
-    unit_str="ug/m3"   
+    unit_str="g/s"   
     do i_pollutant=1,n_pollutant_loop
     do i_source=1,n_source_index
         if (calculate_source(i_source)) then
@@ -509,15 +509,14 @@
                 enddo
                 enddo
                 
-                unit_str='g/s'
                 if (save_netcdf_file_flag) then
-                    write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                    write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                     call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                         ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
                 endif
                 if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-                write(unit_logfile,'(a,f12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+                write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                     call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                         ,unit_str,title_str_rec,create_file_rec,valid_min &
@@ -577,7 +576,7 @@
     endif
 
     !Save the EMEP data interpolated to the subgrid
-    if (save_EMEP_source_contributions) then
+    if (save_emep_source_contributions) then
     do i_pollutant=1,n_pollutant_loop
     do i_source=1,n_source_index
         if (calculate_source(i_source).or.i_source.eq.allsource_index) then
@@ -589,7 +588,7 @@
                 var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
                 unit_str='ug/m3'
                 if (save_netcdf_file_flag) then
-                    write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                    write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(subgrid(:,:,:,emep_subgrid_index,i_source,i_pollutant))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
                     call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,subgrid(:,:,:,emep_subgrid_index,i_source,i_pollutant),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                         ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -607,13 +606,22 @@
                 
             endif
     
-                variable_type='byte'
-                unit_str="%"
+                if (save_netcdf_fraction_as_contribution_flag) then
+                    variable_type='float'
+                    unit_str="ug/m3"
+                else           
+                    variable_type='byte'
+                    unit_str="%"
+                endif
                 i_file=emep_subgrid_local_file_index(i_source)
                 var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
-                temp_subgrid=subgrid(:,:,:,emep_local_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)*100.
+                if (save_netcdf_fraction_as_contribution_flag) then
+                    temp_subgrid=subgrid(:,:,:,emep_local_subgrid_index,i_source,i_pollutant)
+                else
+                    temp_subgrid=subgrid(:,:,:,emep_local_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)*100.
+                endif
                 if (save_netcdf_file_flag) then
-                    write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                    write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                     call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                         ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -711,7 +719,7 @@
         var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_original_EMEP_concentration'
         unit_str="ug/m3"
         if (save_netcdf_file_flag) then
-            write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+            write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(orig_EMEP_subgrid(:,:,:,i_comp))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,orig_EMEP_subgrid(:,:,:,i_comp),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                 ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -818,6 +826,251 @@
     !Reset scale_factor
     scale_factor=1.
     
+    endif
+
+    !Save deposition
+    if (save_deposition.and.calculate_deposition_flag) then
+    variable_type='float'
+    do i_pollutant=1,n_pollutant_loop
+    do i_source=1,n_source_index
+    if (calculate_source(i_source)) then
+
+        i_comp=pollutant_loop_index(i_pollutant)
+
+        var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_local_dry_deposition_'//source_file_str(i_source)
+        unit_str="mg/m2/hr"
+        !Save in mg per hour, conversition from ug/m2/s
+        temp_subgrid=subgrid(:,:,:,drydepo_local_subgrid_index,i_source,i_pollutant)/1000.*3600.
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+
+        var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_local_wet_deposition_'//source_file_str(i_source)
+        unit_str="mg/m2/hr"
+        !Save in mg per hour, conversition from ug/m2/s
+        temp_subgrid=subgrid(:,:,:,wetdepo_local_subgrid_index,i_source,i_pollutant)/1000.*3600.
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+
+    endif
+    enddo 
+    
+        var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_nonlocal_dry_deposition_'//source_file_str(allsource_index)
+        unit_str="mg/m2/hr"
+        !Save in mg per hour, conversition from ug/m2/s
+        temp_subgrid=subgrid(:,:,:,drydepo_nonlocal_subgrid_index,allsource_index,i_pollutant)/1000.*3600.
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+
+        var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_total_dry_deposition_'//source_file_str(allsource_index)
+        unit_str="mg/m2/hr"
+        !Save in mg per hour, conversition from ug/m2/s
+        temp_subgrid=(subgrid(:,:,:,drydepo_nonlocal_subgrid_index,allsource_index,i_pollutant)+subgrid(:,:,:,drydepo_local_subgrid_index,allsource_index,i_pollutant))/1000.*3600.
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+
+        var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_nonlocal_wet_deposition_'//source_file_str(allsource_index)
+        unit_str="mg/m2/hr"
+        !Save in mg per hour, conversition from ug/m2/s
+        temp_subgrid=subgrid(:,:,:,wetdepo_nonlocal_subgrid_index,allsource_index,i_pollutant)/1000.*3600.
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+
+        var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_total_wet_deposition_'//source_file_str(allsource_index)
+        unit_str="mg/m2/hr"
+        !Save in mg per hour, conversition from ug/m2/s
+        temp_subgrid=(subgrid(:,:,:,wetdepo_nonlocal_subgrid_index,allsource_index,i_pollutant)+subgrid(:,:,:,wetdepo_local_subgrid_index,allsource_index,i_pollutant))/1000.*3600.
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+
+        !Deposition velocity
+        temp_subgrid=0.
+        do j=1,subgrid_dim(y_dim_index)
+        do i=1,subgrid_dim(x_dim_index)
+            ii=crossreference_target_to_deposition_subgrid(i,j,x_dim_index);jj=crossreference_target_to_deposition_subgrid(i,j,y_dim_index)
+            temp_subgrid(i,j,:)=deposition_subgrid(ii,jj,:,vd_index,i_pollutant)
+        enddo
+        enddo
+        var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_deposition_velocity_'//source_file_str(allsource_index)
+        unit_str="cm/s"
+        !Save in cm/s, conversition from ug/m2/s
+        temp_subgrid=temp_subgrid*100.
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+
+        !Landuse category
+        if (read_landuse_flag) then
+        temp_subgrid=0.
+        do j=1,subgrid_dim(y_dim_index)
+        do i=1,subgrid_dim(x_dim_index)
+            ii=crossreference_target_to_deposition_subgrid(i,j,x_dim_index);jj=crossreference_target_to_deposition_subgrid(i,j,y_dim_index)
+            temp_subgrid(i,j,:)=landuse_subgrid(ii,jj,grid_index)
+        enddo
+        enddo
+        var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_EMEP_landuse_category'
+        unit_str="1"
+        variable_type='byte'
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+        endif
+    
+        variable_type='float'
+
+        !Save the original emep wet and dry deposition
+        var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_original_EMEP_wet_deposition_'//source_file_str(allsource_index)
+        unit_str="mg/m2/hr"
+        !Save in mg per hour, conversition from ug/m2/s
+        temp_subgrid=orig_emep_deposition_subgrid(:,:,:,wetdepo_index,i_pollutant)
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+        var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_original_EMEP_dry_deposition_'//source_file_str(allsource_index)
+        unit_str="mg/m2/hr"
+        !Save in mg per hour, conversition from ug/m2/s
+        temp_subgrid=orig_emep_deposition_subgrid(:,:,:,drydepo_index,i_pollutant)
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+
+    enddo
+
     endif
 
     !Save weighted travel time
@@ -962,7 +1215,36 @@
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
         endif
         !The same for all--------------------
-    
+
+        variable_type='float'
+        i_file=subgrid_hmix_file_index
+        i_meteo=precip_subgrid_index
+        unit_str="mm/hr"
+        !The same for all--------------------
+        var_name_temp='precipitation'!trim(filename_grid(i_file))
+        temp_subgrid=0.
+        do j=1,subgrid_dim(y_dim_index)
+        do i=1,subgrid_dim(x_dim_index)
+            ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
+        enddo
+        enddo
+        if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+        endif
+        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                write(unit_logfile,'(a,f12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
+                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                ,z_rec(allsource_index,1) &
+                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+        !The same for all--------------------
+
+        
         i_file=subgrid_kz_file_index
         i_meteo=kz_subgrid_index
         unit_str="m2/s"
@@ -1360,7 +1642,8 @@
         call check(  nf90_put_att(ncid, nf90_global, "title", trim(title_str)) )
         call check(  nf90_put_att(ncid, nf90_global, "Model", "uEMEP" ) )        
     
-        !Projection data          
+        !Projection data
+        if (projection_type.eq.UTM_projection_index) then
         call check(  nf90_def_var(ncid, "projection_utm", NF90_int, proj_varid) )
         call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", 6378137.0 ) )
         call check(  nf90_put_att(ncid, proj_varid, "inverse_flattening", 298.257222101 ) )
@@ -1371,7 +1654,8 @@
         call check(  nf90_put_att(ncid, proj_varid, "false_easting", 500000. ) )
         call check(  nf90_put_att(ncid, proj_varid, "false_northing", 0. ) )
         call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", utm_lon0 ) )
-  
+        endif
+        
         !Define the dimensions
         call check(  nf90_def_dim(ncid,"time",NF90_UNLIMITED, time_dimid) )
         call check(  nf90_def_dim(ncid, "y", ny, y_dimid) )

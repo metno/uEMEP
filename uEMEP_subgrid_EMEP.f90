@@ -192,7 +192,7 @@
         jj_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
         ii_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
         
-        !Set the size of the region surorunding the target grid that is searched
+        !Set the size of the region surounding the target grid that is searched
         xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
         ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size
         
@@ -298,6 +298,14 @@
             subgrid(i,j,tt,emep_local_subgrid_index,:,:)=subgrid(i,j,tt,emep_local_subgrid_index,:,:)-nonlocal_correction(tt_dim,:,:)
             subgrid(i,j,tt,emep_subgrid_index,:,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)+subgrid(i,j,tt,emep_local_subgrid_index,:,:)
 
+            !Take the already calculated nonlocal depositions to be the fraction of the nonlocal/total EMEP values
+            if (calculate_deposition_flag) then
+                subgrid(i,j,tt,drydepo_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,drydepo_nonlocal_subgrid_index,:,:) &
+                                                                    *subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)/subgrid(i,j,tt,emep_subgrid_index,:,:)
+                subgrid(i,j,tt,wetdepo_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,wetdepo_nonlocal_subgrid_index,:,:) &
+                                                                    *subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)/subgrid(i,j,tt,emep_subgrid_index,:,:)
+            endif
+            
             !Put the area weighting in the larger array for use later in the emission proxy weighting (if needed)
             area_weighting_nc(i,j,:,:,tt_dim,:)=weighting_nc(:,:,tt_dim,:)
             
@@ -389,7 +397,7 @@
                 weighting_subgrid_dim(:,i_source)=integral_subgrid_dim(1:2)
             enddo
             !Set the weighting subgrid to the sum of all subsource integral emissions
-            weighting_subgrid(:,:,tt_dim,:,:)=integral_subgrid(:,:,tt,:,:)
+            weighting_subgrid(:,:,tt_dim,:,:)=integral_subgrid(:,:,tt,hsurf_integral_subgrid_index,:,:)
             
         endif
         
@@ -599,8 +607,8 @@
                 do j=1,subgrid_dim(y_dim_index)
                 do i=1,subgrid_dim(x_dim_index)
                     where (subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,:).lt.0.) 
-                        subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,:)=0.
                         subgrid(i,j,:,emep_local_subgrid_index,i_source,:)=subgrid(i,j,:,emep_local_subgrid_index,i_source,:)-subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,:)
+                        subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,:)=0.
                     endwhere
                 enddo
                 enddo
@@ -618,18 +626,17 @@
                 endif
                 enddo
                 
-        
         endif
         enddo
                 
         !Set the allsource nonlocal value to the average of the remainder. This can be negative
         if (count.gt.0) then
-        subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid(:,:,:,emep_subgrid_index,allsource_index,:)/count-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))
+        subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid(:,:,:,emep_subgrid_index,allsource_index,:)/real(count)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))
         endif
         
         do i_pollutant=1,n_emep_pollutant_loop
         if (minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)).lt.0.0) then
-            write(unit_logfile,'(A,f12.4,A)') 'WARNING: Min nonlocal allsource less than 0 with '//trim(source_file_str(allsource_index))//' '//trim(pollutant_file_str(i_pollutant)),minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)),' Setting to 0'  
+            write(unit_logfile,'(A,f12.4,A)') 'WARNING: Min nonlocal allsource less than 0 with '//trim(source_file_str(allsource_index))//' '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant))),minval(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)),' Setting to 0'  
         endif
         enddo
         

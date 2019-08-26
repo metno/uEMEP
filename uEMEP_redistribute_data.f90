@@ -110,7 +110,7 @@
                         .and.ypos_integral_subgrid.ge.ypos_area_min.and.ypos_integral_subgrid.le.ypos_area_max) then                  
 
                         !do i_pollutant=1,n_pollutant_loop
-                            sum_integral(:)=sum_integral(:)+integral_subgrid(ii,jj,tt,source_index,:)
+                            sum_integral(:)=sum_integral(:)+integral_subgrid(ii,jj,tt,hsurf_average_subgrid_index,source_index,:)
                         !enddo
                         
                         integral_counter=integral_counter+1
@@ -139,6 +139,12 @@
         write(*,*) 'Redistribution time ',tt,' of ',subgrid_dim(t_dim_index)
     enddo
 
+    do i_pollutant=1,n_pollutant_loop
+    write(unit_logfile,'(A,f12.4)') 'Max scaling factor for pollutant  =',maxval(subgrid(:,:,:,scaling_factor_subgrid_index,source_index,i_pollutant))
+    write(unit_logfile,'(A,f12.4)') 'Mean scaling factor for pollutant =',sum(subgrid(:,:,:,scaling_factor_subgrid_index,source_index,i_pollutant)) &
+        /subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+    enddo
+    
     !Calculate redistributed subgrid source concentrations
     subgrid(:,:,:,local_subgrid_index,source_index,:)=subgrid(:,:,:,scaling_factor_subgrid_index,source_index,:)*subgrid(:,:,:,emep_local_subgrid_index,source_index,:)
    

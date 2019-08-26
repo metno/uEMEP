@@ -48,6 +48,8 @@
 
     integer i_sp,pmxx_sp_index
     
+    integer i_depo
+    
     !Temporary reading variables
     double precision, allocatable :: var1d_nc_dp(:)
     double precision, allocatable :: var2d_nc_dp(:,:)
@@ -62,6 +64,9 @@
     real, allocatable :: pm_lc_var4d_nc(:,:,:,:,:,:,:,:,:)
     
     real, allocatable :: species_temp_var3d_nc(:,:,:)
+    
+    !NOTE: temporary for nh3
+    logical :: use_comp_temporary=.false.
     
     !Functions
     double precision date_to_number
@@ -106,6 +111,7 @@
         if (allocated(lc_var4d_nc)) deallocate (lc_var4d_nc)
         if (allocated(DMT_EMEP_grid_nc)) deallocate (DMT_EMEP_grid_nc) !Daily mean temperature
         if (allocated(species_var3d_nc)) deallocate (species_var3d_nc)
+        if (allocated(depo_var3d_nc)) deallocate (depo_var3d_nc)
        
     !Loop through the EMEP files containing the data
 
@@ -198,15 +204,32 @@
         
         !Calculate the necessary extent of the EMEP grid region and only read these grids
         if (reduce_EMEP_region_flag) then
+            write(unit_logfile,'(A)') 'Reducing EMEP domain'
             !Determine the LL cordinates of the target grid
             !if (EMEP_projection_type.eq.LCC_projection_index) then
                 !Retrieve the four corners of the target grid in lat and lon
+            if (projection_type.eq.RDM_projection_index) then
+                call RDM2LL(init_subgrid_min(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(1),temp_lon(1))
+                call RDM2LL(init_subgrid_max(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(2),temp_lon(2))
+                call RDM2LL(init_subgrid_max(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(3),temp_lon(3))
+                call RDM2LL(init_subgrid_min(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(4),temp_lon(4))
+            elseif (projection_type.eq.UTM_projection_index) then
                 call UTM2LL(utm_zone,init_subgrid_min(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(1),temp_lon(1))
                 call UTM2LL(utm_zone,init_subgrid_max(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(2),temp_lon(2))
                 call UTM2LL(utm_zone,init_subgrid_max(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(3),temp_lon(3))
                 call UTM2LL(utm_zone,init_subgrid_min(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(4),temp_lon(4))
-                !write(*,*) temp_lat
-                !write(*,*) temp_lon
+            endif   
+                
+                !This did not work because it was almost all of the grid and because the min and max lat lon did not cover all stations
+                !if (read_EMEP_only_once_flag.and.use_multiple_receptor_grids_flag) then
+                !    temp_lat(1)=minval(lat_receptor(1:n_receptor_in));temp_lon(1)=minval(lon_receptor(1:n_receptor_in))
+                !    temp_lat(2)=maxval(lat_receptor(1:n_receptor_in));temp_lon(2)=maxval(lon_receptor(1:n_receptor_in))
+                !    temp_lat(3)=maxval(lat_receptor(1:n_receptor_in));temp_lon(3)=minval(lon_receptor(1:n_receptor_in))
+                !    temp_lat(4)=minval(lat_receptor(1:n_receptor_in));temp_lon(4)=maxval(lon_receptor(1:n_receptor_in))
+                !    write(*,*) temp_lat
+                !    write(*,*) temp_lon
+                !endif
+                
                 temp_x_min=1.e32;temp_y_min=1.e32
                 temp_x_max=-1.e32;temp_y_max=-1.e32
 
@@ -300,6 +323,13 @@
         !if (.not.allocated(var3d_nc_dp)) allocate (var3d_nc_dp(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)))
         !allocate (var4d_nc_dp(dim_length_nc(x_index),dim_length_nc(y_index),1,dim_length_nc(time_index)))
         
+        if (calculate_deposition_flag) then
+        if (.not.allocated(depo_var3d_nc)) then
+            allocate (depo_var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),n_landuse_index,n_pollutant_loop))
+            depo_var3d_nc=0
+        endif
+        endif
+
         if (save_emep_species) then
         if (.not.allocated(species_var3d_nc)) then
             allocate (species_var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),n_pmxx_sp_index,n_sp_index))
@@ -429,6 +459,7 @@
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, var3d_nc(:,:,:,i,i_source,p_loop_index),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !write(*,*) status_nc
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var3d_nc(:,:,:,i,i_source,p_loop_index)),maxval(var3d_nc(:,:,:,i,i_source,p_loop_index))
+                    !if (i.eq.emis_nc_index) write(*,*) 'HERE',sum(var3d_nc(:,:,:,i,i_source,p_loop_index)),i_source,p_loop_index
                 elseif (temp_num_dims.eq.4) then
                     if (i_file.eq.2.and.i.eq.ZTOP_nc_index) then
                         !Don't try to read
@@ -449,6 +480,11 @@
                     !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !var4d_nc(:,:,:,:,i,i_source)=real(temp_var4d_nc(:,:,:,:))
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var4d_nc(:,:,:,:,i,i_source,p_loop_index)),maxval(var4d_nc(:,:,:,:,i,i_source,p_loop_index))
+                    !if (i.eq.precip_nc_index) then 
+                    !    write(*,*) maxval(var4d_nc(:,:,:,:,i,i_source,p_loop_index))
+                    !    stop
+                    !endif
+                    
                     endif
                     !write(*,*) shape(var4d_nc)
                     !write(*,*) dim_start_nc(z_dim_nc_index),dim_length_nc(z_dim_nc_index)
@@ -523,6 +559,7 @@
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,:,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     comp_var4d_nc(:,:,:,:,i_conc)=comp_var4d_nc(:,:,:,:,i_conc)*comp_scale_nc(i_conc)
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading compound file 1: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,:,:,i_conc)),maxval(comp_var4d_nc(:,:,:,:,i_conc))
+                    
                     elseif (i_file.eq.2) then
                     !In case the comp data is in the uEMEP file then read it here with no vertical extent
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,1,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),1,temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index)/))
@@ -539,6 +576,30 @@
         enddo !compound loop
         !endif
 
+        if (calculate_deposition_flag.and.i_file.eq.1) then
+            write(unit_logfile,'(A)') ' Reading deposition velocity data from EMEP (cm/s) and converting to m/s: '
+            do i_depo=1,n_landuse_index
+            do p_loop=1,n_emep_pollutant_loop
+
+                i_pollutant=pollutant_loop_index(p_loop)
+                var_name_nc_temp=deposition_name_nc(i_depo,i_pollutant)
+                    
+                status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                if (status_nc.eq.NF90_NOERR) then
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, depo_var3d_nc(:,:,:,i_depo,p_loop),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading deposition velocity: ',trim(var_name_nc_temp),' (min, max): ',minval(depo_var3d_nc(:,:,:,i_depo,p_loop)),maxval(depo_var3d_nc(:,:,:,i_depo,p_loop))
+                    !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
+                else
+                    !write(unit_logfile,'(8A,8A)') ' Cannot read deposition velocity: ',trim(var_name_nc_temp)
+                endif    
+            enddo    
+            enddo
+            
+            !Converting to m/s
+            depo_var3d_nc=depo_var3d_nc/100.
+            
+        endif
+        
         !Loop through the species
         if (save_emep_species.and.i_file.eq.1) then
             write(unit_logfile,'(A)') ' Reading species data from EMEP: '
@@ -876,6 +937,12 @@
         if (allocated(lc_var4d_nc)) deallocate(lc_var4d_nc)
         if (allocated(comp_var4d_nc)) deallocate(comp_var4d_nc)
 
+        !Adjust the depositions to be total depositions and not just, for example, N
+        do i_pollutant=1,n_emep_pollutant_loop
+        var3d_nc(:,:,:,drydepo_nc_index,:,i_pollutant)=var3d_nc(:,:,:,drydepo_nc_index,:,i_pollutant)*depo_scale_nc(pollutant_loop_index(i_pollutant))
+        var3d_nc(:,:,:,wetdepo_nc_index,:,i_pollutant)=var3d_nc(:,:,:,wetdepo_nc_index,:,i_pollutant)*depo_scale_nc(pollutant_loop_index(i_pollutant))
+        enddo
+        
         !Use average lowest level grid thickness
         H_emep_temp=sum(var4d_nc(:,:,surface_level_nc_2,:,ZTOP_nc_index,allsource_index,meteo_p_loop_index))/dim_length_nc(x_dim_nc_index)/dim_length_nc(y_dim_nc_index)/dim_length_nc(time_dim_nc_index)
         if (H_emep_temp.ne.0) then
@@ -888,8 +955,19 @@
         H_meteo=H_emep/2.
         write(unit_logfile,'(A,f8.2)')' Setting lowest meteo grid height = ',H_meteo
         
-        var3d_nc(:,:,:,conc_nc_index,:,:)=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,:)
+        !var3d_nc(:,:,:,conc_nc_index,:,:)=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,:)
         
+        !For nh3 only use the comp value not the value in the local fraction file
+        !NOTE: TEMPORARY
+        if (use_comp_temporary) then
+            write(*,*) 'WARNING: TEMPORARILLY USING COMP FOR LF SOURCE SCALING FOR NH3',pollutant_loop_back_index(nh3_nc_index),nh3_nc_index
+            do i_source=1,n_source_index
+            if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+            var3d_nc(:,:,:,conc_nc_index,i_source,pollutant_loop_back_index(nh3_nc_index))=comp_var3d_nc(:,:,:,nh3_nc_index)               
+            endif
+            enddo
+        endif
+
         !At the moment the local contribution based on fraction. Convert to local contributions here
         !Remove this if we read local contributions in a later version
         do j=1,dim_length_nc(ydist_dim_nc_index)
@@ -907,8 +985,10 @@
             !lc_var4d_nc(i,j,:,:,:,:,lc_local_nc_index,:)=var4d_nc(:,:,:,:,conc_nc_index,:)*lc_var4d_nc(i,j,:,:,:,:,lc_frac_nc_index,:)
             lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=var3d_nc(:,:,:,conc_nc_index,:,p_loop)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop)
             !write(*,*) sum(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)),sum(var3d_nc(:,:,:,conc_nc_index,:,p_loop)),sum(lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop))
+            
             endif
         enddo
+            
         
         enddo
         enddo
@@ -924,7 +1004,7 @@
         !do i_pollutant=1,n_pollutant_loop
         var3d_nc(:,:,:,frac_nc_index,:,:)=lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_frac_nc_index,:,:)
         var3d_nc(:,:,:,local_nc_index,:,:)=var3d_nc(:,:,:,conc_nc_index,:,:)*var3d_nc(:,:,:,frac_nc_index,:,:)
-        
+                
         !write(*,*) minval(var4d_nc(:,:,:,:,local_nc_index,:)),maxval(var4d_nc(:,:,:,:,local_nc_index,:))
         !write(*,*) minval(var4d_nc(:,:,:,:,frac_nc_index,:)),maxval(var4d_nc(:,:,:,:,frac_nc_index,:))
         !write(*,*) minval(var3d_nc(:,:,:,frac_nc_index,:)),maxval(var3d_nc(:,:,:,frac_nc_index,:))
@@ -1077,6 +1157,7 @@
         !stop
         endif
         
+        !Deallocate temporary arrays
         if (allocated(var1d_nc_dp)) deallocate (var1d_nc_dp)
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
         if (allocated(var3d_nc_dp)) deallocate (var3d_nc_dp)

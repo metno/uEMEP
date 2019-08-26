@@ -6,6 +6,8 @@
     
     integer i,j
     integer count
+    character(256) deposition_str
+    
     
     !Initialise some array flags
 	replace_EMEP_local_with_subgrid_local=.false.
@@ -98,6 +100,7 @@
         var_name_nc(J_nc_index,all_nc_index,allsource_nc_index)='J(NO2)'
         var_name_nc(ZTOP_nc_index,all_nc_index,allsource_nc_index)='Z_TOP'
         var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index)='met2d_t2m'
+        var_name_nc(precip_nc_index,all_nc_index,allsource_nc_index)='WDEP_PREC'!'precipitations'
         surface_level_nc=7 !Will be reset as length of 'lev' dimension
 
         !Alternative meteorology.
@@ -127,6 +130,7 @@
         var_name_meteo_nc(J_nc_index)=''
         var_name_meteo_nc(ZTOP_nc_index)=''
         var_name_meteo_nc(t2m_nc_index)='air_temperature_2m'
+        var_name_meteo_nc(precip_nc_index)='precipitation_amount_acc'
         
         !Additional     parameter (u10_nc_subgrid_index=22,v10_nc_subgrid_index=23,uw_nc_subgrid_index=24,vw_nc_subgrid_index=25,Hflux_nc_subgrid_index=26)
         var_name_meteo_nc(u10_nc_index)='x_wind_10m' !10 m wind not grid. Replaces ugrid. Used for direction
@@ -215,11 +219,40 @@
         species_name_nc(pm10_sp_index,sp_water_in_index)=''
         !species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PMFINE'
         species_name_nc(pm25_sp_index,sp_water_in_index)='SURF_PM25water'
+
+        !Deposition names
+        deposition_name_nc=''
+            i=nh3_nc_index
+            if (i.eq.nh3_nc_index) deposition_str='NH3'
+            deposition_name_nc(temp_conif_index,i)='MSC_VG_'//trim(deposition_str)//'_CF'
+            deposition_name_nc(temp_decid_index,i)='MSC_VG_'//trim(deposition_str)//'_DF'
+            deposition_name_nc(med_needle_index,i)='MSC_VG_'//trim(deposition_str)//'_NF'
+            deposition_name_nc(med_broadleaf_index,i)='MSC_VG_'//trim(deposition_str)//'_BF'
+            deposition_name_nc(temp_crop_index,i)='MSC_VG_'//trim(deposition_str)//'_TC'
+            deposition_name_nc(med_crop_index,i)='MSC_VG_'//trim(deposition_str)//'_MC'
+            deposition_name_nc(root_crop_index,i)='MSC_VG_'//trim(deposition_str)//'_RC'
+            deposition_name_nc(moorland_index,i)='MSC_VG_'//trim(deposition_str)//'_SNL'
+            deposition_name_nc(grass_index,i)='MSC_VG_'//trim(deposition_str)//'_GR'
+            deposition_name_nc(medscrub_index,i)='MSC_VG_'//trim(deposition_str)//'_MS'
+            deposition_name_nc(wetlands_index,i)='MSC_VG_'//trim(deposition_str)//'_WE'
+            deposition_name_nc(tundra_index,i)='MSC_VG_'//trim(deposition_str)//'_TU'
+            deposition_name_nc(desert_index,i)='MSC_VG_'//trim(deposition_str)//'_DE'
+            deposition_name_nc(water_index,i)='MSC_VG_'//trim(deposition_str)//'_W'
+            deposition_name_nc(ice_index,i)='MSC_VG_'//trim(deposition_str)//'_ICE'
+            deposition_name_nc(urban_index,i)='MSC_VG_'//trim(deposition_str)//'_U'
+            deposition_name_nc(grid_index,i)='MSC_VG_'//trim(deposition_str)//'_Grid'
         
+            var_name_nc(wetdepo_nc_index,i,allsource_nc_index)='WDEP_'//trim(deposition_str)
+            var_name_nc(drydepo_nc_index,i,allsource_nc_index)='DDEP_'//trim(deposition_str)//'_m2Grid'
+
         comp_scale_nc(:)=1.
-        comp_scale_nc(nox_nc_index)=(14.+2.*16.)/14. !Value read in is in ugN
+        comp_scale_nc(nox_nc_index)=(14.+2.*16.)/14. !Value read in is in ugN converted to nh3
+        depo_scale_nc(:)=1.
+        depo_scale_nc(nh3_nc_index)=(14.+3.*1.)/14. !Value read in is in ugN converted to nh3
+
+
         
-    !Allocate the indexes for specifying compound and sources together. Never used and not correct either!!!
+        !Allocate the indexes for specifying compound and sources together. Never used and not correct either!!!
     count=0
     do i=1,size(compound_source_index,1)
         do j=1,size(compound_source_index,2)
@@ -230,7 +263,7 @@
     
      
     !Allocate source strings for writing to files
-    source_file_str(allsource_index)='allsource'
+    source_file_str(allsource_index)='allsources'
     source_file_str(traffic_index)='traffic'
     source_file_str(shipping_index)='shipping'
     source_file_str(agriculture_index)='agriculture'
@@ -488,6 +521,7 @@
         var_name_meteo_nc(hmix_nc_index)='boundary_layer_height'
         var_name_meteo_nc(logz0_nc_index)='surface_roughness_momentum' !Needs to be converted to log(Z0)
         var_name_meteo_nc(Hflux_nc_index)='surface_upward_sensible_heat_flux'     !Note this is upward not downward so must have a negative when read 
+        var_name_meteo_nc(precip_nc_index)='precipitation_amount'      
     endif
     
     !Reset emission names so they will not be read if they are not used

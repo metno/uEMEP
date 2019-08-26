@@ -451,10 +451,10 @@
                                 
                                     !Calculate the minimum distance to the trajectory. Time consuming
                                     if (use_target_subgrid) then
-                                    call uEMEP_minimum_distance_trajectory(x_target_subgrid(i,j),y_target_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
+                                    call uEMEP_minimum_distance_trajectory_fast(x_target_subgrid(i,j),y_target_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index), &
                                     traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                     else
-                                    call uEMEP_minimum_distance_trajectory(x_subgrid(i,j),y_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
+                                    call uEMEP_minimum_distance_trajectory_fast(x_subgrid(i,j),y_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index), &
                                     traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                     endif
                                                                  
@@ -843,7 +843,7 @@
         !Loop through the time
         do tt=t_start,t_end
         
-        integral_subgrid(:,:,tt,source_index,:)=0.
+        integral_subgrid(:,:,tt,:,source_index,:)=0.
         temp_FF_subgrid=0.
         
          !Set the last meteo data subgrid in the case when the internal time loop is used
@@ -1026,7 +1026,8 @@
                 do ii=i_start,i_end
                             
                     if (sum(emission_subgrid(ii,jj,tt,source_index,:)).ne.0) then
-
+                
+                        !
                         xpos_emission_subgrid=xproj_emission_subgrid(ii,jj,source_index)
                         ypos_emission_subgrid=yproj_emission_subgrid(ii,jj,source_index)
                                                 
@@ -1042,7 +1043,7 @@
                                 if (use_trajectory_flag(source_index)) then
                                 
                                     !Calculate the minimum distance to the trajectory. Time consuming
-                                    call uEMEP_minimum_distance_trajectory(x_integral_subgrid(i,j),y_integral_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
+                                    call uEMEP_minimum_distance_trajectory_fast(x_integral_subgrid(i,j),y_integral_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index), &
                                     traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                 
                                 else
@@ -1123,7 +1124,7 @@
                                     endif
                                     
                                     !Calculate the dispersion
-                                    integral_subgrid(i,j,tt,source_index,:)=integral_subgrid(i,j,tt,source_index,:) &
+                                    integral_subgrid(i,j,tt,hsurf_integral_subgrid_index,source_index,:)=integral_subgrid(i,j,tt,hsurf_integral_subgrid_index,source_index,:) &
                                         + gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,H_emep) &
                                         * emission_subgrid(ii,jj,tt,source_index,:)
                                                                         
@@ -1140,7 +1141,7 @@
                                     FF_loc=temp_FF_subgrid(i_cross_integral,j_cross_integral)
                                 endif
 
-                                integral_subgrid(i,j,tt,source_index,:)=integral_subgrid(i,j,tt,source_index,:) &
+                                integral_subgrid(i,j,tt,hsurf_integral_subgrid_index,source_index,:)=integral_subgrid(i,j,hsurf_integral_subgrid_index,tt,source_index,:) &
                                     +emission_subgrid(ii,jj,tt,source_index,:) &
                                     *gauss_plume_second_order_rotated_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,0.,H_emep) &
                                     /FF_loc
@@ -1165,7 +1166,7 @@
                
     !if (combine_emission_subsources_during_dispersion(source_index).and.n_subsource(source_index).gt.1) then
     !    do subsource_index=2,n_subsource(n_source_index)
-    !        integral_subgrid(:,:,:,source_index,1)=integral_subgrid(:,:,:,source_index,1)+integral_subgrid(:,:,:,source_index,subsource_index)
+    !        integral_subgrid(:,:,:,:,source_index,1)=integral_subgrid(:,:,:,:,source_index,1)+integral_subgrid(:,:,:,:,source_index,subsource_index)
     !    enddo
     !    n_subsource(source_index)=1
     !endif

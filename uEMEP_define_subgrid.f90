@@ -44,7 +44,7 @@
 
     !Allocate buffers and adjust the dimensions appropriately
     !Calculate the max loop size to cover the nearest EMEP grids. This avoids looping through all the grids
-    loop_index_scale=1.5*EMEP_grid_interpolation_size/2. !Was 1.5
+    loop_index_scale=1.2*EMEP_grid_interpolation_size/2. !Was 1.5
     
     !Define the centre of the subgrid
     !ii=int(subgrid_dim(x_dim_index)/2)
@@ -77,6 +77,15 @@
     endif
     enddo
 
+    if (calculate_deposition_flag) then
+    deposition_subgrid_loop_index(x_dim_index)=floor(dx_temp/deposition_subgrid_delta(x_dim_index)*loop_index_scale)
+    deposition_subgrid_loop_index(y_dim_index)=floor(dy_temp/deposition_subgrid_delta(y_dim_index)*loop_index_scale)
+    endif
+    if (read_landuse_flag) then
+    landuse_subgrid_loop_index(x_dim_index)=floor(dx_temp/landuse_subgrid_delta(x_dim_index)*loop_index_scale)
+    landuse_subgrid_loop_index(y_dim_index)=floor(dy_temp/landuse_subgrid_delta(y_dim_index)*loop_index_scale)
+    endif
+    
     !Set the buffer sizes according to these loops for emissions only
     !This will remove edge effects for dispersion but will only remove edge effects for moving window only when emissions are used for redistribution
     buffer_index_scale=loop_index_scale
@@ -96,17 +105,31 @@
             emission_buffer_index(y_dim_index,i_source)=floor(dy_temp/emission_subgrid_delta(y_dim_index,i_source)*(buffer_index_scale+0.5))       
         endif
         enddo
-        !buffer_index=subgrid_loop_index
-        !emission_buffer_index=emission_subgrid_loop_index
-        !integral_buffer_index=integral_subgrid_loop_index
+
+        if (calculate_deposition_flag) then
+        deposition_buffer_index(x_dim_index)=floor(dx_temp/deposition_subgrid_delta(x_dim_index)*buffer_index_scale)
+        deposition_buffer_index(y_dim_index)=floor(dy_temp/deposition_subgrid_delta(y_dim_index)*buffer_index_scale)
+        endif
+        if (read_landuse_flag) then
+        landuse_buffer_index(x_dim_index)=floor(dx_temp/landuse_subgrid_delta(x_dim_index)*buffer_index_scale)
+        landuse_buffer_index(y_dim_index)=floor(dy_temp/landuse_subgrid_delta(y_dim_index)*buffer_index_scale)
+        endif
     else
         buffer_index=0
         emission_buffer_index=0
         integral_buffer_index=0
+        deposition_buffer_index=0
+        landuse_buffer_index=0
     endif
     buffer_size=buffer_index*subgrid_delta
     emission_buffer_size=emission_buffer_index*emission_subgrid_delta
     integral_buffer_size=integral_buffer_index*integral_subgrid_delta
+    if (calculate_deposition_flag) then
+        deposition_buffer_size=deposition_buffer_index*deposition_subgrid_delta
+    endif
+    if (read_landuse_flag) then
+        landuse_buffer_size=landuse_buffer_index*landuse_subgrid_delta
+    endif
     
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
@@ -122,9 +145,27 @@
     integral_subgrid_min(1:2)=integral_subgrid_min(1:2)-integral_buffer_size(1:2)
     integral_subgrid_max(1:2)=integral_subgrid_max(1:2)+integral_buffer_size(1:2)
 
+    if (calculate_deposition_flag) then
+    deposition_subgrid_dim(1:2)=deposition_subgrid_dim(1:2)+deposition_buffer_index(1:2)*2
+    deposition_subgrid_min(1:2)=deposition_subgrid_min(1:2)-deposition_buffer_size(1:2)
+    deposition_subgrid_max(1:2)=deposition_subgrid_max(1:2)+deposition_buffer_size(1:2)
+    endif
+    if (read_landuse_flag) then
+    landuse_subgrid_dim(1:2)=landuse_subgrid_dim(1:2)+landuse_buffer_index(1:2)*2
+    landuse_subgrid_min(1:2)=landuse_subgrid_min(1:2)-landuse_buffer_size(1:2)
+    landuse_subgrid_max(1:2)=landuse_subgrid_max(1:2)+landuse_buffer_size(1:2)
+    endif
+    
     write(unit_logfile,'(A,2I5)')'Number of target grids to be looped for each EMEP grid:',subgrid_loop_index(1:2)
     write(unit_logfile,'(A,2I5)')'Number of integral grids to be looped for each EMEP grid:',integral_subgrid_loop_index(1:2)
     write(unit_logfile,'(A,2I5)')'Size of integral grid buffer zone:',integral_buffer_index(1:2)
+    if (calculate_deposition_flag) then
+    write(unit_logfile,'(A,2I5)')'Size of deposition grid buffer zone:',deposition_buffer_index(1:2)
+    endif
+    if (read_landuse_flag) then
+    write(unit_logfile,'(A,2I5)')'Size of landuse grid buffer zone:',landuse_buffer_index(1:2)
+    endif
+    
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
     write(unit_logfile,'(A,A,2I5)')'Size of emission grid buffer zone: ',trim(source_file_str(i_source)),emission_buffer_index(1:2,i_source)        
@@ -133,6 +174,10 @@
 
     write(unit_logfile,'(A,2I5)')'Number of target grids:',subgrid_dim(1:2)
     write(unit_logfile,'(A,2I5)')'Number of integral grids:',integral_subgrid_dim(1:2)
+    write(unit_logfile,'(A,2I5)')'Number of integral grids:',integral_subgrid_dim(1:2)
+    if (calculate_deposition_flag) then
+    write(unit_logfile,'(A,2I5)')'Number of deposition grids:',deposition_subgrid_dim(1:2)
+    endif
     write(unit_logfile,'(A,2I5)')'Max number of emission grids:',emission_max_subgrid_dim(1:2)
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
@@ -209,7 +254,7 @@
     if (allocated(meteo_nc_yproj_integral_subgrid)) deallocate (meteo_nc_yproj_integral_subgrid)
 
     !Define integral grid
-    if (.not.allocated(integral_subgrid)) allocate (integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+    if (.not.allocated(integral_subgrid)) allocate (integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_integral_subgrid_index,n_source_index,n_pollutant_loop))
     if (.not.allocated(x_integral_subgrid)) allocate (x_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
     if (.not.allocated(y_integral_subgrid)) allocate (y_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
     if (.not.allocated(lon_integral_subgrid)) allocate (lon_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
@@ -220,6 +265,7 @@
         if (.not.allocated(meteo_nc_xproj_integral_subgrid)) allocate (meteo_nc_xproj_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
         if (.not.allocated(meteo_nc_yproj_integral_subgrid)) allocate (meteo_nc_yproj_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
     endif
+    integral_subgrid=0.
     
     do j=1,integral_subgrid_dim(y_dim_index)
     do i=1,integral_subgrid_dim(x_dim_index)                 
@@ -372,6 +418,92 @@
     enddo
     enddo
 
+    !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
+    if (calculate_deposition_flag) then
+    if (allocated(orig_EMEP_deposition_subgrid)) deallocate (orig_EMEP_deposition_subgrid)
+    if (allocated(deposition_subgrid)) deallocate (deposition_subgrid)
+    if (allocated(x_deposition_subgrid)) deallocate (x_deposition_subgrid)
+    if (allocated(y_deposition_subgrid)) deallocate (y_deposition_subgrid)
+    if (allocated(lon_deposition_subgrid)) deallocate (lon_deposition_subgrid)
+    if (allocated(lat_deposition_subgrid)) deallocate (lat_deposition_subgrid)
+    if (allocated(xproj_deposition_subgrid)) deallocate (xproj_deposition_subgrid)
+    if (allocated(yproj_deposition_subgrid)) deallocate (yproj_deposition_subgrid)
+
+    !Define deposition grid
+    if (.not.allocated(orig_EMEP_deposition_subgrid)) allocate (orig_EMEP_deposition_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_deposition_index,n_compound_index))
+    if (.not.allocated(deposition_subgrid)) allocate (deposition_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index),deposition_subgrid_dim(t_dim_index),n_deposition_index,n_pollutant_loop))
+    if (.not.allocated(x_deposition_subgrid)) allocate (x_deposition_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index)))
+    if (.not.allocated(y_deposition_subgrid)) allocate (y_deposition_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index)))
+    if (.not.allocated(lon_deposition_subgrid)) allocate (lon_deposition_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index)))
+    if (.not.allocated(lat_deposition_subgrid)) allocate (lat_deposition_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index)))
+    if (.not.allocated(xproj_deposition_subgrid)) allocate (xproj_deposition_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index)))
+    if (.not.allocated(yproj_deposition_subgrid)) allocate (yproj_deposition_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index)))
+
+    do j=1,deposition_subgrid_dim(y_dim_index)
+    do i=1,deposition_subgrid_dim(x_dim_index)                 
+
+        x_deposition_subgrid(i,j)=deposition_subgrid_min(x_dim_index)+deposition_subgrid_delta(x_dim_index)*(i-0.5)
+        y_deposition_subgrid(i,j)=deposition_subgrid_min(y_dim_index)+deposition_subgrid_delta(y_dim_index)*(j-0.5)
+        !Set the lat-lon coordinates of the deposition
+        if (projection_type.eq.RDM_projection_index) then
+            call RDM2LL(y_deposition_subgrid(i,j),x_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),lon_deposition_subgrid(i,j))
+        elseif (projection_type.eq.UTM_projection_index) then
+            call UTM2LL(utm_zone,y_deposition_subgrid(i,j),x_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),lon_deposition_subgrid(i,j))
+        endif
+        !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
+        if (EMEP_projection_type.eq.LCC_projection_index) then
+            call lb2lambert2_uEMEP(xproj_deposition_subgrid(i,j),yproj_deposition_subgrid(i,j),lon_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),EMEP_projection_attributes)
+        else
+            xproj_deposition_subgrid(i,j)=lon_deposition_subgrid(i,j)
+            yproj_deposition_subgrid(i,j)=lat_deposition_subgrid(i,j)            
+        endif
+
+    enddo
+    enddo
+    endif
+    
+    if (read_landuse_flag) then
+    !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
+    if (allocated(landuse_subgrid)) deallocate (landuse_subgrid)
+    if (allocated(x_landuse_subgrid)) deallocate (x_landuse_subgrid)
+    if (allocated(y_landuse_subgrid)) deallocate (y_landuse_subgrid)
+    if (allocated(lon_landuse_subgrid)) deallocate (lon_landuse_subgrid)
+    if (allocated(lat_landuse_subgrid)) deallocate (lat_landuse_subgrid)
+    if (allocated(xproj_landuse_subgrid)) deallocate (xproj_landuse_subgrid)
+    if (allocated(yproj_landuse_subgrid)) deallocate (yproj_landuse_subgrid)
+    
+    !Define landuse grid
+    if (.not.allocated(landuse_subgrid)) allocate (landuse_subgrid(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index),n_landuse_index))
+    if (.not.allocated(x_landuse_subgrid)) allocate (x_landuse_subgrid(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index)))
+    if (.not.allocated(y_landuse_subgrid)) allocate (y_landuse_subgrid(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index)))
+    if (.not.allocated(lon_landuse_subgrid)) allocate (lon_landuse_subgrid(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index)))
+    if (.not.allocated(lat_landuse_subgrid)) allocate (lat_landuse_subgrid(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index)))
+    if (.not.allocated(xproj_landuse_subgrid)) allocate (xproj_landuse_subgrid(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index)))
+    if (.not.allocated(yproj_landuse_subgrid)) allocate (yproj_landuse_subgrid(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index)))
+    
+    do j=1,landuse_subgrid_dim(y_dim_index)
+    do i=1,landuse_subgrid_dim(x_dim_index)                 
+
+        x_landuse_subgrid(i,j)=landuse_subgrid_min(x_dim_index)+landuse_subgrid_delta(x_dim_index)*(i-0.5)
+        y_landuse_subgrid(i,j)=landuse_subgrid_min(y_dim_index)+landuse_subgrid_delta(y_dim_index)*(j-0.5)
+        !Set the lat-lon coordinates of the landuse
+        if (projection_type.eq.RDM_projection_index) then
+            call RDM2LL(y_landuse_subgrid(i,j),x_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),lon_landuse_subgrid(i,j))
+        elseif (projection_type.eq.UTM_projection_index) then
+            call UTM2LL(utm_zone,y_landuse_subgrid(i,j),x_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),lon_landuse_subgrid(i,j))
+        endif
+        !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
+        if (EMEP_projection_type.eq.LCC_projection_index) then
+            call lb2lambert2_uEMEP(xproj_landuse_subgrid(i,j),yproj_landuse_subgrid(i,j),lon_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),EMEP_projection_attributes)
+        else
+            xproj_landuse_subgrid(i,j)=lon_landuse_subgrid(i,j)
+            yproj_landuse_subgrid(i,j)=lat_landuse_subgrid(i,j)            
+        endif
+
+    enddo
+    enddo
+    endif
+    
     !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
     if (allocated(exposure_subgrid)) deallocate (exposure_subgrid)
     !Define exposure subgrid

@@ -92,6 +92,8 @@
                 call lb2lambert2_uEMEP(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1),EMEP_projection_attributes)
                 !write(*,*) sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1)
             endif
+                !write(*,*) sub_nodes_x(1),sub_nodes_y(1)
+                !write(*,*) x_grid_min,x_grid_max,y_grid_min,y_grid_max
             
             !Test position within emission region
             if (sub_nodes_x(1).ge.x_grid_min.and.sub_nodes_x(1).le.x_grid_max &

@@ -113,6 +113,7 @@
     integer i_integral,j_integral
     logical exit_traj
     
+
     k=1
     !Set the initial trajectory position to the emission source
     x_traj(k)=x_emis
@@ -142,27 +143,27 @@
     end subroutine uEMEP_calculate_all_trajectory
     
     
-    subroutine uEMEP_minimum_distance_trajectory(x_r,y_r,x_emis,y_emis,t,traj_max_index,dr_traj,x_traj,y_traj,x_loc,y_loc,valid_traj)
+    subroutine uEMEP_minimum_distance_trajectory(x_r,y_r,x_emis,y_emis,traj_max_index_in,dr_traj,x_traj,y_traj,x_loc,y_loc,valid_traj)
     
     use uEMEP_definitions
     
     implicit none
     
-    real x_loc,y_loc
+    real, intent(out) ::  x_loc,y_loc
+    logical, intent(out) ::  valid_traj
+    real, intent(in) ::  dr_traj
+    real, intent(in) ::  x_r,y_r,x_emis,y_emis
+    integer, intent(in) :: traj_max_index_in
+    !real, intent(in) ::  x_traj(traj_max_index_in),y_traj(traj_max_index_in)
+    real, intent(in) ::  x_traj(*),y_traj(*)
     
-    integer i,j,k
-    !integer i_rec,j_rec,i_emis,j_emis
-    integer t,traj_max_index
-    !integer i_source
-    real dr_traj
-    real x_r,y_r,x_emis,y_emis
-    real x_traj(traj_max_index),y_traj(traj_max_index)
-    real distance_traj(traj_max_index),distance_intercept_traj(traj_max_index)
-    real x_intercept_traj(traj_max_index),y_intercept_traj(traj_max_index),frac_length_traj(traj_max_index)
-    logical valid_traj
-    integer i_integral,j_integral
-    !real x_r,y_r
+    integer k
+    real distance_traj(traj_max_index_in),distance_intercept_traj(traj_max_index_in)
+    real x_intercept_traj(traj_max_index_in),y_intercept_traj(traj_max_index_in),frac_length_traj(traj_max_index_in)
+
     real distance_intercept_min
+    
+    !write(*,*) traj_max_index_in
     
     k=1
     !Set the initial trajectory position to the emission source
@@ -174,6 +175,7 @@
     !Set the position of the receptor
     !x_r=x_subgrid(i_rec,j_rec)
     !y_r=y_subgrid(i_rec,j_rec)
+    return
     
     !Set the distances for the initial emission grid
     !distance_traj(k)=sqrt((x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r))
@@ -194,7 +196,7 @@
     
     distance_intercept_min=distance_traj(k)
     
-    do k=2,traj_max_index
+    do k=2,traj_max_index_in
         
         if (x_traj(k).ne.NODATA_value) then
             call DISTRL_SQR(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj(k),y_intercept_traj(k),distance_intercept_traj(k),frac_length_traj(k))
@@ -216,3 +218,67 @@
     y_loc=sqrt(y_loc)
     
     end subroutine uEMEP_minimum_distance_trajectory
+    
+    subroutine uEMEP_minimum_distance_trajectory_fast(x_r,y_r,x_emis,y_emis,traj_max_index_in,dr_traj,x_traj,y_traj,x_loc,y_loc,valid_traj)
+    
+    use uEMEP_definitions
+    
+    implicit none
+    
+    real, intent(out) ::  x_loc,y_loc
+    logical, intent(out) ::  valid_traj
+    real, intent(in) ::  dr_traj
+    real, intent(in) ::  x_r,y_r,x_emis,y_emis
+    integer, intent(in) :: traj_max_index_in
+    !real, intent(in) ::  x_traj(traj_max_index_in),y_traj(traj_max_index_in)
+    real, intent(in) ::  x_traj(*),y_traj(*)
+    
+    integer k
+    real distance_traj,distance_intercept_traj
+    real x_intercept_traj,y_intercept_traj,frac_length_traj
+
+    real distance_intercept_min
+        
+    k=1
+    !return
+    
+    !Set the distances for the initial emission grid
+    !distance_traj(k)=sqrt((x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r))
+    distance_traj=(x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r)
+    
+    !Leave the routine because the receptor is the same as the emission grid
+    if (distance_traj.eq.0) then
+        y_loc=0.
+        x_loc=0.
+        valid_traj=.true.
+        return
+    endif
+    
+    !distance_intercept_traj(k)=distance_traj(k)
+    y_loc=0.
+    x_loc=0.
+    valid_traj=.false.
+    
+    distance_intercept_min=distance_traj
+    
+    do k=2,traj_max_index_in     
+        if (x_traj(k).ne.NODATA_value) then
+            call DISTRL_SQR(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj,y_intercept_traj,distance_intercept_traj,frac_length_traj)
+            
+            if (distance_intercept_traj.lt.distance_intercept_min) then
+                distance_intercept_min=distance_intercept_traj
+                y_loc=distance_intercept_traj
+                x_loc=dr_traj*(k-2)+frac_length_traj*dr_traj
+                valid_traj=.true.
+            endif
+        endif
+    enddo
+    
+    !Remove most of the results because they are upwind
+    if (x_loc.eq.0.and.y_loc.gt.dr_traj) then
+        valid_traj=.false.
+    endif    
+   
+    y_loc=sqrt(y_loc)
+    
+    end subroutine uEMEP_minimum_distance_trajectory_fast

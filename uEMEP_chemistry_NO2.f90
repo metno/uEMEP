@@ -639,6 +639,11 @@
     real :: emission_scaling
     real :: temperature
     
+    write(unit_logfile,'(A)') ''
+    write(unit_logfile,'(A)') '================================================================'
+	write(unit_logfile,'(A)') 'Using temperature dependency of NOx traffic emissions (uEMEP_nox_emission_temperature)'
+	write(unit_logfile,'(A)') '================================================================'
+
     t_start=1
     t_end=subgrid_dim(t_dim_index)
     ref_temperature1=traffic_nox_emission_temperature_ref_temperature(1)

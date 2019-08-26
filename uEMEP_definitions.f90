@@ -23,6 +23,7 @@
     logical :: use_single_time_loop_flag=.false.
     logical :: reduce_EMEP_region_flag=.false.
     logical :: reduce_roadlink_region_flag=.true.
+    logical :: read_EMEP_only_once_flag=.false. !Note can lead to virtual memory overflow
     
     !Nodata value
     !Changed to -99 so it can be used with int1 variables
@@ -70,15 +71,15 @@
     integer hmix_nc_index,kz_nc_index,invL_nc_index,ustar_nc_index,logz0_nc_index,J_nc_index
     integer conc_nc_index,frac_nc_index,local_nc_index,emis_nc_index
     integer x_nc_index,y_nc_index,ZTOP_nc_index
-    integer u10_nc_index,v10_nc_index,uw_nc_index,vw_nc_index,Hflux_nc_index,t2m_nc_index
+    integer u10_nc_index,v10_nc_index,uw_nc_index,vw_nc_index,Hflux_nc_index,t2m_nc_index,precip_nc_index,wetdepo_nc_index,drydepo_nc_index
     parameter (lon_nc_index=1,lat_nc_index=2)
     parameter (ugrid_nc_index=3,vgrid_nc_index=4,FF10_nc_index=5,FFgrid_nc_index=6,inv_FFgrid_nc_index=7,inv_FF10_nc_index=8)
     parameter (hmix_nc_index=9,kz_nc_index=10,invL_nc_index=11,ustar_nc_index=12,logz0_nc_index=13,J_nc_index=14)
     parameter (conc_nc_index=15,frac_nc_index=16,local_nc_index=17,emis_nc_index=18)
     parameter (x_nc_index=19,y_nc_index=20,ZTOP_nc_index=21)
-    parameter (u10_nc_index=22,v10_nc_index=23,uw_nc_index=24,vw_nc_index=25,Hflux_nc_index=26,t2m_nc_index=27)
+    parameter (u10_nc_index=22,v10_nc_index=23,uw_nc_index=24,vw_nc_index=25,Hflux_nc_index=26,t2m_nc_index=27,precip_nc_index=28,wetdepo_nc_index=29,drydepo_nc_index=30)
     integer num_var_nc
-    parameter (num_var_nc=27)                  ! number of readable variables
+    parameter (num_var_nc=30)                  ! number of readable variables
     integer num_var_meteo_nc
     parameter (num_var_meteo_nc=num_var_nc)
     
@@ -298,19 +299,21 @@
     integer proxy_subgrid_index,proxy_integral_subgrid_index
     integer scaling_factor_subgrid_index,local_subgrid_index,nonlocal_subgrid_index,total_subgrid_index
     integer emep_subgrid_index,emep_frac_subgrid_index,emep_local_subgrid_index,emep_nonlocal_subgrid_index,proxy_average_integral_subgrid_index
+    integer drydepo_local_subgrid_index,wetdepo_local_subgrid_index,drydepo_nonlocal_subgrid_index,wetdepo_nonlocal_subgrid_index
     parameter (proxy_subgrid_index=1,proxy_integral_subgrid_index=2)
     parameter (scaling_factor_subgrid_index=3,local_subgrid_index=4,nonlocal_subgrid_index=5,total_subgrid_index=6)
     parameter (emep_subgrid_index=7,emep_frac_subgrid_index=8,emep_local_subgrid_index=9,emep_nonlocal_subgrid_index=10,proxy_average_integral_subgrid_index=11)
+    parameter (drydepo_local_subgrid_index=12,wetdepo_local_subgrid_index=13,drydepo_nonlocal_subgrid_index=14,wetdepo_nonlocal_subgrid_index=15)
     integer n_subgrid_index
-    parameter (n_subgrid_index=11)
+    parameter (n_subgrid_index=15)
 
     !Declare meteo subgrid variables. Does nothave to be the same as the nc version
     integer ugrid_subgrid_index,vgrid_subgrid_index,FF10_subgrid_index,FFgrid_subgrid_index,inv_FFgrid_subgrid_index,inv_FF10_subgrid_index
-    integer hmix_subgrid_index,kz_subgrid_index,invL_subgrid_index,ustar_subgrid_index,logz0_subgrid_index,J_subgrid_index,t2m_subgrid_index,cos_subgrid_index,sin_subgrid_index
+    integer hmix_subgrid_index,kz_subgrid_index,invL_subgrid_index,ustar_subgrid_index,logz0_subgrid_index,J_subgrid_index,t2m_subgrid_index,cos_subgrid_index,sin_subgrid_index,precip_subgrid_index
     parameter (ugrid_subgrid_index=1,vgrid_subgrid_index=2,FF10_subgrid_index=3,FFgrid_subgrid_index=4,inv_FFgrid_subgrid_index=5,inv_FF10_subgrid_index=6)
-    parameter (hmix_subgrid_index=7,kz_subgrid_index=8,invL_subgrid_index=9,ustar_subgrid_index=10,logz0_subgrid_index=11,J_subgrid_index=12,t2m_subgrid_index=13,cos_subgrid_index=14,sin_subgrid_index=15)
+    parameter (hmix_subgrid_index=7,kz_subgrid_index=8,invL_subgrid_index=9,ustar_subgrid_index=10,logz0_subgrid_index=11,J_subgrid_index=12,t2m_subgrid_index=13,cos_subgrid_index=14,sin_subgrid_index=15,precip_subgrid_index=16)
     integer n_meteo_subgrid_index
-    parameter (n_meteo_subgrid_index=15)
+    parameter (n_meteo_subgrid_index=16)
 
     !Declare compound indexes for the subgrid. Same as nc_index values for compounds. Must be converted when necessary
     integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,so2_index,pmex_index,no_index
@@ -402,12 +405,15 @@
     integer integral_buffer_index(2)
     real    integral_buffer_size(2)
 
+    integer  hsurf_integral_subgrid_index,hmix_integral_subgrid_index,hsurf_average_subgrid_index,n_integral_subgrid_index
+    parameter (hsurf_integral_subgrid_index=1,hmix_integral_subgrid_index=2,hsurf_average_subgrid_index=3,n_integral_subgrid_index=3)
+
     integer integral_subgrid_dim(n_dim_index)
     real :: integral_subgrid_delta_ref=0.
     real :: integral_subgrid_delta(2)=0.
     real integral_subgrid_min(2),integral_subgrid_max(2)  !Only x and y
-    !emission_subgrid (i,j,t,n_source,n_pollutant)
-    real, allocatable :: integral_subgrid(:,:,:,:,:)
+    !emission_subgrid (i,j,t,n_inegral_type,n_source,n_pollutant)
+    real, allocatable :: integral_subgrid(:,:,:,:,:,:)
     !x_emission_subgrid (i,j,n_source)
     real, allocatable :: x_integral_subgrid(:,:)
     real, allocatable :: y_integral_subgrid(:,:)
@@ -466,6 +472,10 @@
     !integer, allocatable :: crossreference_shipping_emission_subgrid(:,:,:)
     !integer, allocatable :: crossreference_agriculture_emission_subgrid(:,:,:)
     !integer, allocatable :: crossreference_heating_emission_subgrid(:,:,:)
+    integer, allocatable :: crossreference_emission_to_deposition_subgrid(:,:,:,:) !(i,j,dim,n_source)
+    integer, allocatable :: crossreference_emission_to_landuse_subgrid(:,:,:) !(i,j,dim)
+    integer, allocatable :: crossreference_target_to_deposition_subgrid(:,:,:)!(i,j,dim)
+    integer, allocatable :: crossreference_deposition_to_emep_subgrid(:,:,:) !(i,j,dim)
     
     real :: min_link_size=50.
     real :: min_adt=1000.
@@ -656,13 +666,16 @@
     character(256) :: pathname_emissions_for_EMEP=''
     integer :: save_emissions_start_index=1
 	integer :: save_emissions_end_index=24
-    
+    character(256) :: save_emissions_for_EMEP_projection='lambert'
+    character(256) :: save_emissions_for_EMEP_region='NO'
+
     logical :: read_weekly_shipping_data_flag=.false.
     logical :: read_monthly_and_daily_shipping_data_flag=.false.
     
     logical :: use_tunnel_deposition_flag=.false.
     logical :: use_tunnel_emissions_flag=.true.
     real :: ventilation_factor=1.
+    real :: windspeed_tunnel=1.
     real :: min_length_ventilation_factor=0.
     real :: min_ADT_ventilation_factor=0.
     
@@ -684,6 +697,7 @@
     logical :: save_population=.false.,save_no2_source_contributions=.true.,save_o3_source_contributions=.true.
     logical :: save_aqi=.true.
     logical :: save_emep_species=.false.
+    logical :: save_deposition=.false.
 
     !Region ID file names
     character(256) pathfilename_region_id,pathname_region_id,filename_region_id
@@ -723,6 +737,64 @@
     real, allocatable :: species_EMEP_subgrid(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_sp_index)
 
     character(256) species_name_nc(n_pmxx_sp_index,n_sp_all_index)
+    
+    !Deposition and land use
+    real, allocatable :: orig_EMEP_deposition_subgrid(:,:,:,:,:)
+    real, allocatable :: depo_var3d_nc(:,:,:,:,:)
+    integer deposition_subgrid_dim(n_dim_index)
+    real :: deposition_subgrid_delta(2)=0
+    real deposition_subgrid_min(2),deposition_subgrid_max(2)  !Only x and y
+    !deposition_subgrid (i,j,t,n_deposition_index,n_pollutant_loop)
+    integer vd_index,drydepo_index,wetdepo_index,n_deposition_index
+    parameter (vd_index=1,drydepo_index=2,wetdepo_index=3,n_deposition_index=3)
+    real, allocatable :: deposition_subgrid(:,:,:,:,:)
+    real, allocatable :: x_deposition_subgrid(:,:)
+    real, allocatable :: y_deposition_subgrid(:,:)
+    real, allocatable :: lon_deposition_subgrid(:,:)
+    real, allocatable :: lat_deposition_subgrid(:,:)
+    real, allocatable :: xproj_deposition_subgrid(:,:)
+    real, allocatable :: yproj_deposition_subgrid(:,:)
+    integer deposition_subgrid_loop_index(2)
+    integer deposition_buffer_index(2)
+    real deposition_buffer_size(2)
+    
+    real wetdepo_scavanging_rate(n_compound_index)
+    real drydepo_vd_default(n_compound_index)
+    
+    integer landuse_subgrid_dim(n_dim_index)
+    real :: landuse_subgrid_delta(2)=0
+    real landuse_subgrid_min(2),landuse_subgrid_max(2)  !Only x and y
+    !landuse_subgrid (i,j,n_landuse_index) Fraction of landuse type
+    integer temp_conif_index,temp_decid_index,med_needle_index,med_broadleaf_index,temp_crop_index,med_crop_index,root_crop_index
+    integer moorland_index,grass_index,medscrub_index,wetlands_index,tundra_index,desert_index,water_index,ice_index,urban_index,grid_index,n_landuse_index
+    parameter (temp_conif_index=1,temp_decid_index=2,med_needle_index=3,med_broadleaf_index=4,temp_crop_index=5,med_crop_index=6,root_crop_index=7)
+    parameter (moorland_index=8,grass_index=9,medscrub_index=10,wetlands_index=11,tundra_index=12,desert_index=13,water_index=13,ice_index=14,urban_index=15,grid_index=16,n_landuse_index=16)
+    real, allocatable :: landuse_subgrid(:,:,:)
+    real, allocatable :: x_landuse_subgrid(:,:)
+    real, allocatable :: y_landuse_subgrid(:,:)
+    real, allocatable :: lon_landuse_subgrid(:,:)
+    real, allocatable :: lat_landuse_subgrid(:,:)
+    real, allocatable :: xproj_landuse_subgrid(:,:)
+    real, allocatable :: yproj_landuse_subgrid(:,:)
+    integer landuse_subgrid_loop_index(2)
+    integer landuse_buffer_index(2)
+    real landuse_buffer_size(2)
+
+    logical :: calculate_deposition_flag=.false.
+    logical :: calculate_source_depletion_flag=.false.
+    logical :: read_landuse_flag=.false.
+    logical :: adjust_wetdepo_integral_to_lowest_layer_flag=.false.
+    logical :: use_plume_dispersion_deposition_flag=.false.
+
+    !Definition of the landuse file to be read.
+    character(256) filename_landuse
+    character(256) pathname_landuse
+    character(256) pathfilename_landuse  !Combined path and filename
+
+    character(256) deposition_name_nc(n_landuse_index,n_compound_nc_index)
+
+    real depo_scale_nc(n_compound_nc_index)
+    logical :: auto_adjustment_for_summertime=.true.
     
     end module uEMEP_definitions
     

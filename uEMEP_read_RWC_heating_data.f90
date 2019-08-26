@@ -206,7 +206,12 @@
         !Convert to EMEP coordinates
         if (save_emissions_for_EMEP(heating_index)) then
             call UTM2LL(utm_zone,y_ssb,x_ssb,lat_ssb,lon_ssb)
-            call lb2lambert2_uEMEP(x_ssb,y_ssb,lon_ssb,lat_ssb,EMEP_projection_attributes)
+            if (projection_type.eq.LL_projection_index) then
+                x_ssb=lon_ssb
+                y_ssb=lat_ssb
+            elseif (projection_type.eq.LCC_projection_index) then
+                call lb2lambert2_uEMEP(x_ssb,y_ssb,lon_ssb,lat_ssb,EMEP_projection_attributes)
+            endif
         endif
                 
         k=region_scaling_id_back_index(RWC_region_id(count))

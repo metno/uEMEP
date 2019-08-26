@@ -121,11 +121,16 @@
         x_line_in=inputdata_rl(ro,x1_rl_index:x2_rl_index)
         y_line_in=inputdata_rl(ro,y1_rl_index:y2_rl_index)
         
-        !Convert to EMEP coordinates from UTM to lambert. No choices here
+        !Convert to EMEP coordinates from UTM to lambert or latlon. Not certain if the fraction is correctly calculated in lat lon coordinates but otherwise very complicated
         if (save_emissions_for_EMEP(traffic_index)) then
             do i=1,2
                 call UTM2LL(utm_zone,y_line_in(i),x_line_in(i),lat_line_in(i),lon_line_in(i))
-                call lb2lambert2_uEMEP(x_line_in(i),y_line_in(i),lon_line_in(i),lat_line_in(i),EMEP_projection_attributes)
+                if (projection_type.eq.LL_projection_index) then
+                    x_line_in(i)=lon_line_in(i)
+                    y_line_in(i)=lat_line_in(i)        
+                elseif (projection_type.eq.LCC_projection_index) then
+                    call lb2lambert2_uEMEP(x_line_in(i),y_line_in(i),lon_line_in(i),lat_line_in(i),EMEP_projection_attributes)
+                endif   
             enddo
             !write(*,*) x_line_in(1),y_line_in(1),lon_line_in(1),lat_line_in(1)
         endif
@@ -185,7 +190,7 @@
                                 if (use_tunnel_deposition_flag.and.inputdata_rl(ro,tunnel_length_rl_index).gt.0) then
                                     call tunnel_deposition_factor(pollutant_loop_index(i_pollutant),inputdata_rl(ro,tunnel_length_rl_index) &
                                         ,inputdata_rl(ro,ADT_rl_index)*inputdata_rl(ro,length_rl_index)/inputdata_rl(ro,tunnel_length_rl_index) &
-                                        ,ventilation_factor,min_ADT_ventilation_factor,min_length_ventilation_factor,tunnel_ratio)
+                                        ,ventilation_factor,min_ADT_ventilation_factor,min_length_ventilation_factor,windspeed_tunnel,tunnel_ratio)
                                 else
                                     tunnel_ratio=1.
                                 endif
@@ -256,7 +261,7 @@
 !==========================================================================
 !   uEMEP model tunnel_deposition_factor
 !==========================================================================
-    subroutine tunnel_deposition_factor(tunnel_pollutant_index,tunnel_length,tunnel_ADT,ventilation_fac,min_ADT_ventilation_fac,min_length_ventilation_fac,ratio)
+    subroutine tunnel_deposition_factor(tunnel_pollutant_index,tunnel_length,tunnel_ADT,ventilation_fac,min_ADT_ventilation_fac,min_length_ventilation_fac,windspeed_tunnel_in,ratio)
     
     use uEMEP_definitions
 
@@ -265,6 +270,7 @@
     integer, intent(in) :: tunnel_pollutant_index
     real, intent(in) :: tunnel_length,tunnel_ADT
     real, intent(in) :: ventilation_fac,min_ADT_ventilation_fac,min_length_ventilation_fac
+    real, intent(in) :: windspeed_tunnel_in !(m/s)
     real:: dep_velocity !(cm/s)
     real:: radius_tunnel=5. !Radius of the tunnel opening. Fixed
     real :: B
@@ -277,7 +283,7 @@
     if (tunnel_pollutant_index.eq.pmex_index) dep_velocity=0.05
     if (tunnel_pollutant_index.eq.nox_index) dep_velocity=0.02
 
-    B=2./radius_tunnel*dep_velocity/100.
+    B=2./radius_tunnel*dep_velocity/100./max(windspeed_tunnel_in,0.1)
 
     ratio=1.
     if (B*tunnel_length.lt.1e-5) then

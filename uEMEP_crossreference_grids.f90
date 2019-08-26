@@ -23,6 +23,14 @@
     if (use_alternative_meteorology_flag) then
         if (allocated(crossreference_integral_to_meteo_nc_subgrid)) deallocate (crossreference_integral_to_meteo_nc_subgrid)
     endif
+    if (calculate_deposition_flag) then
+    if (allocated(crossreference_emission_to_deposition_subgrid)) deallocate (crossreference_emission_to_deposition_subgrid)
+    if (allocated(crossreference_target_to_deposition_subgrid)) deallocate (crossreference_target_to_deposition_subgrid)
+    if (allocated(crossreference_deposition_to_emep_subgrid)) deallocate (crossreference_deposition_to_emep_subgrid)
+    endif
+    if (read_landuse_flag) then
+    if (allocated(crossreference_emission_to_landuse_subgrid)) deallocate (crossreference_emission_to_landuse_subgrid)
+    endif
     
     allocate (crossreference_target_to_emep_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2))
     allocate (crossreference_integral_to_emep_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),2))
@@ -35,6 +43,14 @@
 
     if (use_alternative_meteorology_flag) then
         allocate (crossreference_integral_to_meteo_nc_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),2))
+    endif
+    if (calculate_deposition_flag) then
+    allocate (crossreference_emission_to_deposition_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),2,n_source_index))
+    allocate (crossreference_target_to_deposition_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2))
+    allocate (crossreference_deposition_to_emep_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index),2))
+    endif
+    if (read_landuse_flag) then
+    allocate (crossreference_emission_to_landuse_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),2))
     endif
     
     write(unit_logfile,'(A)')'Allocating EMEP grid index to subgrid index'
@@ -77,6 +93,7 @@
         crossreference_target_to_population_subgrid(i,j,y_dim_index)=1+floor((y_subgrid(i,j)-population_subgrid_min(y_dim_index))/population_subgrid_delta(y_dim_index))      
     enddo
     enddo
+    
     write(unit_logfile,'(A)')'Allocating EMEP grid index to integral subgrid index'
     do j=1,integral_subgrid_dim(y_dim_index)
     do i=1,integral_subgrid_dim(x_dim_index)
@@ -199,9 +216,74 @@
         crossreference_integral_to_emission_subgrid(i,j,y_dim_index,i_source)=1+floor((y_integral_subgrid(i,j)-emission_subgrid_min(y_dim_index,i_source))/emission_subgrid_delta(y_dim_index,i_source))      
     enddo
     enddo
+
+    if (calculate_deposition_flag) then
+        
+    do j=1,emission_subgrid_dim(y_dim_index,i_source)
+    do i=1,emission_subgrid_dim(x_dim_index,i_source)
+        crossreference_emission_to_deposition_subgrid(i,j,x_dim_index,i_source)=1+floor((x_emission_subgrid(i,j,i_source)-deposition_subgrid_min(x_dim_index))/deposition_subgrid_delta(x_dim_index))
+        crossreference_emission_to_deposition_subgrid(i,j,y_dim_index,i_source)=1+floor((y_emission_subgrid(i,j,i_source)-deposition_subgrid_min(y_dim_index))/deposition_subgrid_delta(y_dim_index))       
+        !At edge this can return negative distances due to the different sizes of emission and integral grids and buffer zones. Set the limits here. Should not be a problem 
+        crossreference_emission_to_deposition_subgrid(i,j,x_dim_index,i_source)=max(min(crossreference_emission_to_deposition_subgrid(i,j,x_dim_index,i_source),deposition_subgrid_dim(x_dim_index)),1)
+        crossreference_emission_to_deposition_subgrid(i,j,y_dim_index,i_source)=max(min(crossreference_emission_to_deposition_subgrid(i,j,y_dim_index,i_source),deposition_subgrid_dim(y_dim_index)),1)                    
+    enddo
+    enddo
+    endif
     
+    if (read_landuse_flag) then
+    do j=1,emission_subgrid_dim(y_dim_index,i_source)
+    do i=1,emission_subgrid_dim(x_dim_index,i_source)
+        crossreference_emission_to_landuse_subgrid(i,j,x_dim_index)=1+floor((x_emission_subgrid(i,j,i_source)-landuse_subgrid_min(x_dim_index))/landuse_subgrid_delta(x_dim_index))
+        crossreference_emission_to_landuse_subgrid(i,j,y_dim_index)=1+floor((y_emission_subgrid(i,j,i_source)-landuse_subgrid_min(y_dim_index))/landuse_subgrid_delta(y_dim_index))       
+        !At edge this can return negative distances due to the different sizes of emission and integral grids and buffer zones. Set the limits here. Should not be a problem 
+        crossreference_emission_to_landuse_subgrid(i,j,x_dim_index)=max(min(crossreference_emission_to_landuse_subgrid(i,j,x_dim_index),landuse_subgrid_dim(x_dim_index)),1)
+        crossreference_emission_to_landuse_subgrid(i,j,y_dim_index)=max(min(crossreference_emission_to_landuse_subgrid(i,j,y_dim_index),landuse_subgrid_dim(y_dim_index)),1)                    
+    enddo
+    enddo
+    endif
+
     endif
     enddo
+    
+    if (calculate_deposition_flag) then
+    
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        crossreference_target_to_deposition_subgrid(i,j,x_dim_index)=1+floor((x_subgrid(i,j)-deposition_subgrid_min(x_dim_index))/deposition_subgrid_delta(x_dim_index))
+        crossreference_target_to_deposition_subgrid(i,j,y_dim_index)=1+floor((y_subgrid(i,j)-deposition_subgrid_min(y_dim_index))/deposition_subgrid_delta(y_dim_index))       
+        !At edge this can return negative distances due to the different sizes of emission and integral grids and buffer zones. Set the limits here. Should not be a problem 
+        crossreference_target_to_deposition_subgrid(i,j,x_dim_index)=max(min(crossreference_target_to_deposition_subgrid(i,j,x_dim_index),deposition_subgrid_dim(x_dim_index)),1)
+        crossreference_target_to_deposition_subgrid(i,j,y_dim_index)=max(min(crossreference_target_to_deposition_subgrid(i,j,y_dim_index),deposition_subgrid_dim(y_dim_index)),1)                    
+    enddo
+    enddo
+    
+    write(unit_logfile,'(A)')'Allocating EMEP grid index to deposition subgrid index'
+    do j=1,deposition_subgrid_dim(y_dim_index)
+    do i=1,deposition_subgrid_dim(x_dim_index)
+        if (EMEP_projection_type.eq.LL_projection_index) then
+            ii=1+floor((lon_deposition_subgrid(i,j)-var1d_nc(1,lon_nc_index))/dgrid_nc(lon_nc_index)+0.5)
+            jj=1+floor((lat_deposition_subgrid(i,j)-var1d_nc(1,lat_nc_index))/dgrid_nc(lat_nc_index)+0.5)     
+            crossreference_deposition_to_emep_subgrid(i,j,x_dim_index)=ii
+            crossreference_deposition_to_emep_subgrid(i,j,y_dim_index)=jj
+        elseif (EMEP_projection_type.eq.LCC_projection_index) then
+            !When EMEP is read as x,y projection then var1d_nc(:,lon/lat_nc_index) are the x, y projection indexes, actually
+            !if (use_alternative_LCC_projection_flag) then
+                call lb2lambert2_uEMEP(x_temp,y_temp,lon_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),EMEP_projection_attributes)
+            !else
+            !    call lb2lambert_uEMEP(x_temp,y_temp,lon_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            !endif
+            !call lb2lambert_uEMEP(x_temp,y_temp,lon_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            ii=1+floor((x_temp-var1d_nc(1,lon_nc_index))/dgrid_nc(lon_nc_index)+0.5)
+            jj=1+floor((y_temp-var1d_nc(1,lat_nc_index))/dgrid_nc(lat_nc_index)+0.5)     
+            crossreference_deposition_to_emep_subgrid(i,j,x_dim_index)=ii
+            crossreference_deposition_to_emep_subgrid(i,j,y_dim_index)=jj            
+        else
+            write(unit_logfile,'(A)')'No valid projection in use. Stopping'
+            stop
+        endif
+    enddo
+    enddo
+    endif
     
 
     

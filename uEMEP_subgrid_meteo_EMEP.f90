@@ -83,6 +83,8 @@
             meteo_subgrid(i,j,:,ustar_subgrid_index)=var3d_nc(i_nc,j_nc,:,ustar_nc_index,allsource_index,meteo_p_loop_index)
             meteo_subgrid(i,j,:,J_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,J_nc_index,allsource_index,meteo_p_loop_index)
             meteo_subgrid(i,j,:,t2m_subgrid_index)=var3d_nc(i_nc,j_nc,:,t2m_nc_index,allsource_index,meteo_p_loop_index)
+            !meteo_subgrid(i,j,:,precip_subgrid_index)=var4d_nc(i_nc,j_nc,surface_level_nc,:,precip_nc_index,allsource_index,meteo_p_loop_index)
+            meteo_subgrid(i,j,:,precip_subgrid_index)=var3d_nc(i_nc,j_nc,:,precip_nc_index,allsource_index,meteo_p_loop_index)
                   
             if (use_alternative_meteorology_flag) then
             i_nc=crossreference_integral_to_meteo_nc_subgrid(i,j,x_dim_index)
@@ -98,6 +100,7 @@
             !meteo_subgrid(i,j,t_start:t_end,inv_FF10_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,inv_FF10_nc_index)
             meteo_subgrid(i,j,t_start:t_end,ustar_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,ustar_nc_index)
             meteo_subgrid(i,j,t_start:t_end,t2m_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,t2m_nc_index)
+            meteo_subgrid(i,j,t_start:t_end,precip_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,precip_nc_index)
             endif
             
             !Not properly implemented. Always false
@@ -105,9 +108,13 @@
             meteo_subgrid(i,j,t_start:t_end,logz0_subgrid_index)=meteo_var3d_nc(i_nc,j_nc,t_start:t_end,logz0_nc_index)
             endif
             
-                    
+            !        write(*,*) meteo_subgrid(i,j,t_start:t_end,precip_subgrid_index),var4d_nc(i_nc,j_nc,surface_level_nc,:,precip_nc_index,allsource_index,meteo_p_loop_index)
         enddo
         enddo
+        
+        !write(*,*) maxval(meteo_subgrid(:,:,t_start:t_end,precip_subgrid_index))
+        !write(*,*) maxval(var4d_nc(:,:,surface_level_nc,:,precip_nc_index,allsource_index,meteo_p_loop_index))
+        !stop
     endif
     
     !Area weighted interpolation of meteorology to integral grid
@@ -121,7 +128,7 @@
         do j=1,integral_subgrid_dim(y_dim_index)
         do i=1,integral_subgrid_dim(x_dim_index)
         
-            !Assumes it is never on the edge of the EMEP grid, not limitted
+            !Assumes it is never on the edge of the EMEP grid. Something wrong if it fails
             i_nc=crossreference_integral_to_emep_subgrid(i,j,x_dim_index)
             j_nc=crossreference_integral_to_emep_subgrid(i,j,y_dim_index)
 
@@ -161,12 +168,18 @@
                 meteo_subgrid(i,j,:,ustar_subgrid_index)=meteo_subgrid(i,j,:,ustar_subgrid_index)+var3d_nc(ii,jj,:,ustar_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
                 meteo_subgrid(i,j,:,J_subgrid_index)=meteo_subgrid(i,j,:,J_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,J_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
                 meteo_subgrid(i,j,:,t2m_subgrid_index)=meteo_subgrid(i,j,:,t2m_subgrid_index)+var3d_nc(ii,jj,:,t2m_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
-
+                !meteo_subgrid(i,j,:,precip_subgrid_index)=meteo_subgrid(i,j,:,precip_subgrid_index)+var4d_nc(ii,jj,surface_level_nc,:,precip_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,:,precip_subgrid_index)=meteo_subgrid(i,j,:,precip_subgrid_index)+var3d_nc(ii,jj,:,precip_nc_index,allsource_index,meteo_p_loop_index)*weighting_nc(ii,jj)
+                !if (var4d_nc(ii,jj,surface_level_nc,1,precip_nc_index,allsource_index,meteo_p_loop_index).gt.0) write(*,*) var4d_nc(ii,jj,surface_level_nc,1,precip_nc_index,allsource_index,meteo_p_loop_index) 
             enddo
             enddo
-            
+                !if (meteo_subgrid(i,j,1,precip_subgrid_index).gt.0.) write(*,*) i,j,meteo_subgrid(i,j,:,precip_subgrid_index)
+           
         enddo
         enddo
+        !write(*,*) maxval(meteo_subgrid(:,:,t_start:t_end,precip_subgrid_index))
+        !write(*,*) maxval(var4d_nc(:,:,surface_level_nc,:,precip_nc_index,allsource_index,meteo_p_loop_index))
+        !stop
         
         if (use_alternative_meteorology_flag.or.use_alternative_z0_flag) then
 
@@ -188,6 +201,7 @@
         !meteo_subgrid(:,:,:,inv_FF10_subgrid_index)=0.
         meteo_subgrid(:,:,:,ustar_subgrid_index)=0.
         meteo_subgrid(:,:,:,t2m_subgrid_index)=0.
+        meteo_subgrid(:,:,:,precip_subgrid_index)=0.
         endif
         
         if (use_alternative_z0_flag) then
@@ -238,6 +252,7 @@
                 !meteo_subgrid(i,j,t_start:t_end,inv_FF10_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,inv_FF10_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,inv_FF10_nc_index)*weighting_nc(ii,jj)
                 meteo_subgrid(i,j,t_start:t_end,ustar_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,ustar_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,ustar_nc_index)*weighting_nc(ii,jj)
                 meteo_subgrid(i,j,t_start:t_end,t2m_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,t2m_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,t2m_nc_index)*weighting_nc(ii,jj)
+                meteo_subgrid(i,j,t_start:t_end,precip_subgrid_index)=meteo_subgrid(i,j,t_start:t_end,precip_subgrid_index)+meteo_var3d_nc(ii,jj,t_start:t_end,precip_nc_index)*weighting_nc(ii,jj)
                 endif
                 
                 if (use_alternative_z0_flag) then

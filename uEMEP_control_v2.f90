@@ -9,7 +9,7 @@
 !   Control programme for running the downscaling routine uEMEP
 !****************************************************************************
 
-    program uEMEP_v3
+    program uEMEP_v4
 
     use uEMEP_definitions
    
@@ -18,6 +18,7 @@
     integer source_index
     logical first_g_loop
     real start_time_cpu,end_time_cpu
+    logical :: have_read_emep=.false.
     !real temp_val,area_weighted_interpolation_function
     
     call CPU_TIME(start_time_cpu)
@@ -118,7 +119,14 @@
             endif
                 
             !Read EMEP data from netcdf files. Time stamps based on this
-            call uEMEP_read_EMEP
+            if (.not.have_read_emep) then
+                call uEMEP_read_EMEP
+            endif
+
+            
+            !If read EMEP only once flag is on then turn off the EMEP reading
+            !This is intended for use with multiple receptor files and requires alot of memory so is permanently turned off
+            if (read_EMEP_only_once_flag) have_read_emep=.true.
             
             !Read meteo grid from netcdf files if required
             if (use_alternative_meteorology_flag.or.use_alternative_z0_flag) then
@@ -188,6 +196,9 @@
                     !Currently only data from RIVM here
                     call uEMEP_read_agriculture_rivm_data
                 endif
+                if (calculate_deposition_flag.and.read_landuse_flag) then
+                    call uEMEP_read_landuse_rivm_data
+                endif
 
                 !Read in population data
                 if (calculate_population_exposure_flag.or.use_population_positions_for_auto_subgrid_flag.or.save_population) then
@@ -235,15 +246,27 @@
                
             !Convert proxies to emissions including time profiles
             call uEMEP_convert_proxy_to_emissions
-    
+            
+            !Places EMEP deposition velocities into the deposition_subgrid
+            if (calculate_deposition_flag) then
+                call uEMEP_set_deposition_velocities
+            endif
+
             !Set travel_time values to 0 outside of the source loop as these are aggregated over all sources
             traveltime_subgrid=0.
             !Subgrid dispersion calculation
             do source_index=1,n_source_index
-            if (calculate_source(source_index)) then
+            if (calculate_source(source_index).and..not.use_plume_dispersion_deposition_flag) then
                 call uEMEP_subgrid_dispersion(source_index)
             endif
             enddo
+            
+            do source_index=1,n_source_index
+            if (calculate_source(source_index).and.use_plume_dispersion_deposition_flag) then
+                call uEMEP_subgrid_deposition(source_index)
+            endif
+            enddo
+            
             
             !Interpolate local_subgrid if necessary
             if (interpolate_subgrids_flag) then
@@ -258,6 +281,10 @@
             !Put EMEP data into subgrids for all sources
             call uEMEP_subgrid_EMEP
         
+            if (calculate_deposition_flag) then
+                call uEMEP_subgrid_deposition_EMEP
+            endif
+
             !Interpolate EMEP to sub-grid
             do source_index=1,n_source_index
             if (calculate_source(source_index)) then
@@ -275,6 +302,11 @@
             !Combine and save sources in local and total values
             call uEMEP_combine_local_source
     
+            !Calculate the nonlocal depositions
+            if (calculate_deposition_flag) then
+                call uEMEP_calculate_deposition
+            endif
+            
             !Calculate chemistry for NO2 and O3
             call uEMEP_chemistry
 
@@ -303,7 +335,7 @@
     write(unit_logfile,*) ''
     write(unit_logfile,*) '------------------------------------------------------------------------'
     write(unit_logfile,*) 'Ending program uEMEP'
-    write(unit_logfile,'(a,i3,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
+    write(unit_logfile,'(a,i5,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
     write(unit_logfile,*) '------------------------------------------------------------------------'
     endif
     
@@ -315,8 +347,8 @@
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
     write(*,*) 'Ending program uEMEP'
-    write(*,'(a,i3,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
+    write(*,'(a,i5,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
     write(*,*) '------------------------------------------------------------------------'
 
-    end program uEMEP_v3
+    end program uEMEP_v4
 

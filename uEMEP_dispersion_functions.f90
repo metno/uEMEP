@@ -67,7 +67,7 @@
     else
         c_y_int=1./(4.*pi*sig_th*r*sig_z)*(1-order_1*pi**2*(1.+B)/(24*sig_th**2)+order_2*pi**4*((1.+B**2)/(640.*sig_th**4)))
     endif
-    
+
     gauss_plume_second_order_rotated_integral_func=c_y_int*c_z_int
     
     end function gauss_plume_second_order_rotated_integral_func
@@ -86,7 +86,7 @@
     real sig_y,sig_z,x,y,th
     real cos_val,sin_val
     real pi,sig_limit
-    parameter (pi=3.141592,sig_limit=4.)
+    parameter (pi=3.141592,sig_limit=3.)
     
     !r=sqrt((x_s-x_r)**2+(y_s-y_r)**2)
     !if (abs(u_s).lt.001) u_s=0.001
@@ -127,7 +127,7 @@
     real sig_y,sig_z,x,y,th
     real cos_val,sin_val
     real pi,sig_limit
-    parameter (pi=3.141592,sig_limit=4.)
+    parameter (pi=3.141592,sig_limit=3.)
     
     !r=sqrt((x_s-x_r)**2+(y_s-y_r)**2)
     !if (abs(u_s).lt.001) u_s=0.001
@@ -166,7 +166,7 @@
     real gauss_plume_cartesian_trajectory_func
     real sig_y,sig_z,th
     real pi,sig_limit
-    parameter (pi=3.141592,sig_limit=4.)
+    parameter (pi=3.141592,sig_limit=3.)
     
     !r=sqrt((x_s-x_r)**2+(y_s-y_r)**2)
     !if (abs(u_s).lt.001) u_s=0.001
@@ -201,7 +201,7 @@
     real gauss_plume_cartesian_trajectory_integral_func
     real sig_y,sig_z,th
     real pi,sig_limit
-    parameter (pi=3.141592,sig_limit=4.)
+    parameter (pi=3.141592,sig_limit=3.)
     
     !r=sqrt((x_s-x_r)**2+(y_s-y_r)**2)
     !if (abs(u_s).lt.001) u_s=0.001
@@ -231,14 +231,14 @@
     real, intent(in) :: x,y,z_s,z_r,sig_y,sig_z,z_pbl,FF
     real gauss_plume_cartesian_sigma_func
     real pi,sig_limit
-    parameter (pi=3.141592,sig_limit=4.)
+    parameter (pi=3.141592,sig_limit=3.)
     real z_loop(5)
     real c_z
     integer k,n_loop
     
     gauss_plume_cartesian_sigma_func=0.
     if (x.ge.0.and.abs(y).lt.sig_y*sig_limit) then
-        
+        !write(*,*) 'here'
         !If the emission height z_s is greater than the boundary layer height z_pbl then only allow reflection from the surface
         !Also if z_r+z_s<z_pbl/3 then only use surface reflections since the pbl reflection counts for so little
         !Otherwise allow reflection from surface and boundary layer
@@ -275,7 +275,7 @@
     real, intent(in) :: x,y,z_s,z_r,sig_y,sig_z,z_pbl,FF,H1,H2
     real gauss_plume_cartesian_sigma_integral_func
     real pi,sig_limit
-    parameter (pi=3.141592,sig_limit=4.)
+    parameter (pi=3.141592,sig_limit=3.)
     real z_loop(5)
     real c_z
     integer k,n_loop

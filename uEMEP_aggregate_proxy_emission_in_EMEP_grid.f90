@@ -88,8 +88,10 @@
                 EMEP_aggregated_subgid_emission(iii,jjj)=EMEP_aggregated_subgid_emission(iii,jjj)+proxy_emission_subgrid(i,j,i_source,i_pollutant)*emission_factor_conversion(compound_index,i_source,i_subsource) &
                     *1.e-12*3600.*24.*365. !Conversion from ug/sec/subgrid to ton/year 
                 if (hourly_calculations) then
-                    EMEP_aggregated_emission(iii,jjj)=EMEP_aggregated_emission(iii,jjj)+sum(var3d_nc(iii,jjj,:,emis_nc_index,i_nc_source,i_pollutant))/dim_length_nc(time_dim_nc_index) &
+                    EMEP_aggregated_emission(iii,jjj)=EMEP_aggregated_emission(iii,jjj)+sum(var3d_nc(iii,jjj,:,emis_nc_index,allsource_index,i_pollutant))/dim_length_nc(time_dim_nc_index) &
                     *(emission_subgrid_delta(y_dim_index,i_source)*emission_subgrid_delta(x_dim_index,i_source))*1.e-9*24.*365. !Conversion from mg/m2/hr to ton/year (EMEP)
+                    !NOTE: Have put in allsource_index because on this occasion there were no sectors in the EMEP file for this. Beware for later comparisons!!!
+                    !write(*,*) i_nc_source,i_pollutant,EMEP_aggregated_emission(iii,jjj),sum(var3d_nc(iii,jjj,:,emis_nc_index,i_nc_source,i_pollutant))
                 endif
                 if (annual_calculations) then
                     EMEP_aggregated_emission(iii,jjj)=EMEP_aggregated_emission(iii,jjj)+sum(var3d_nc(iii,jjj,:,emis_nc_index,i_nc_source,i_pollutant))/dim_length_nc(time_dim_nc_index) &
