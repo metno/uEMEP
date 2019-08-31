@@ -95,6 +95,8 @@
         
         hourly_calculations=read_name_logical('hourly_calculations',hourly_calculations,unit_in,unit_logfile)
         annual_calculations=read_name_logical('annual_calculations',annual_calculations,unit_in,unit_logfile)
+        start_month_in_annual_calculations=read_name_integer('start_month_in_annual_calculations',start_month_in_annual_calculations,unit_in,unit_logfile)
+        end_month_in_annual_calculations=read_name_integer('end_month_in_annual_calculations',end_month_in_annual_calculations,unit_in,unit_logfile)
         
         start_time_nc_index=read_name_integer('start_time_nc_index',start_time_nc_index,unit_in,unit_logfile)
         end_time_nc_index=read_name_integer('end_time_nc_index',end_time_nc_index,unit_in,unit_logfile)
@@ -493,6 +495,8 @@
         adjust_wetdepo_integral_to_lowest_layer_flag=read_name_logical('adjust_wetdepo_integral_to_lowest_layer_flag',adjust_wetdepo_integral_to_lowest_layer_flag,unit_in,unit_logfile)
         
         auto_adjustment_for_summertime=read_name_logical('auto_adjustment_for_summertime',auto_adjustment_for_summertime,unit_in,unit_logfile)
+        
+        use_EMEP_surface_ozone_flag=read_name_logical('use_EMEP_surface_ozone_flag',use_EMEP_surface_ozone_flag,unit_in,unit_logfile)
         
         
     close (unit_in)

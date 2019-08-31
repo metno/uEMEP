@@ -126,12 +126,14 @@
     if (.not.allocated(lon_emission_subgrid)) allocate (lon_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
     if (.not.allocated(lat_emission_subgrid)) allocate (lat_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
     if (.not.allocated(emission_time_profile_subgrid)) allocate (emission_time_profile_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop)) 
+    if (.not.allocated(emission_properties_subgrid)) allocate (emission_properties_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_emission_index,n_source_index)) 
     
     !Set the timing data. Assumes no single loops with the time based on the input date and array length defined by the length of the EMEP input data
-    format_temp='yyyymmdd'
+    format_temp='yyyymmddHH'
     call datestr_to_date(config_date_str,format_temp,a_start)
     !Assumes it starts at hour 1
-    a_start(4)=1
+    !a_start(4)=1
+    !Do not assume it starts at hour 1 any more
     a_start(5:6)=0
     a_start_emission=a_start
     
@@ -336,7 +338,8 @@
     if (save_emissions_for_EMEP(i_source).and.i_source.ne.allsource_index) then
         !Create a new file for each source
         create_file=.true.
-        temp_name=trim(pathname_emissions_for_EMEP)//'uEMEP_emission_for_EMEP_'//trim(file_tag)//'_'//trim(source_file_str(i_source))//trim(temp_compound_str)//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
+        !temp_name=trim(pathname_emissions_for_EMEP)//'uEMEP_emission_for_EMEP_'//trim(file_tag)//'_'//trim(source_file_str(i_source))//trim(temp_compound_str)//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
+        temp_name=trim(pathname_emissions_for_EMEP)//'uEMEP_emission_for_EMEP_'//trim(file_tag)//'_'//trim(source_file_str(i_source))//trim(temp_compound_str)//trim(temp_date_str)//'.nc'
         
         write(unit_logfile,'(a,a)') 'Saving netcdf file: ',trim(temp_name)
         

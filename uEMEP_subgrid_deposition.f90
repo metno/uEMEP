@@ -213,98 +213,6 @@
         !Create an integral wind speed subgrid
         call uEMEP_create_wind_field(temp_FF_integral_subgrid,angle_diff,wind_level_integral_flag,source_index,subsource_index,tt)
                
-        if (1.eq.2) then
-            
-        temp_FF_subgrid=0.
-        do j_cross=1,integral_subgrid_dim(y_dim_index)
-        do i_cross=1,integral_subgrid_dim(x_dim_index)
-            z0_temp=exp(meteo_subgrid(i_cross,j_cross,tt,logz0_subgrid_index))
-            h_temp=h_emis(source_index,subsource_index)
-            if (annual_calculations.and.wind_level_flag.eq.1) then
-                temp_FF_subgrid(i_cross,j_cross)=1./meteo_subgrid(i_cross,j_cross,tt,inv_FFgrid_subgrid_index)
-            elseif (annual_calculations.and.wind_level_flag.eq.2) then
-                temp_FF_subgrid(i_cross,j_cross)=1./meteo_subgrid(i_cross,j_cross,tt,inv_FFgrid_subgrid_index)*(1.-(log((H_meteo+z0_temp)/z0_temp)-log((h_temp+z0_temp)/z0_temp))/log((H_meteo+z0_temp)/z0_temp))
-            elseif (annual_calculations.and.wind_level_flag.eq.3) then
-                temp_FF_subgrid(i_cross,j_cross)=1./meteo_subgrid(i_cross,j_cross,tt,inv_FF10_subgrid_index)
-            elseif (annual_calculations.and.wind_level_flag.eq.4) then
-                temp_FF_subgrid(i_cross,j_cross)=1./meteo_subgrid(i_cross,j_cross,tt,inv_FF10_subgrid_index)*(1.-(log((10.+z0_temp)/z0_temp)-log((h_temp+z0_temp)/z0_temp))/log((10.+z0_temp)/z0_temp))
-            elseif (hourly_calculations.and.wind_level_flag.eq.1) then
-                temp_FF_subgrid(i_cross,j_cross)=meteo_subgrid(i_cross,j_cross,tt,FFgrid_subgrid_index)
-            elseif (hourly_calculations.and.wind_level_flag.eq.2) then
-                temp_FF_subgrid(i_cross,j_cross)=meteo_subgrid(i_cross,j_cross,tt,FFgrid_subgrid_index)*(1.-(log((H_meteo+z0_temp)/z0_temp)-log((h_temp+z0_temp)/z0_temp))/log((H_meteo+z0_temp)/z0_temp))
-            elseif (hourly_calculations.and.wind_level_flag.eq.3) then
-                temp_FF_subgrid(i_cross,j_cross)=meteo_subgrid(i_cross,j_cross,tt,FF10_subgrid_index)
-            elseif (hourly_calculations.and.wind_level_flag.eq.4) then
-                temp_FF_subgrid(i_cross,j_cross)=meteo_subgrid(i_cross,j_cross,tt,FF10_subgrid_index)*(1.-(log((10.+z0_temp)/z0_temp)-log((h_temp+z0_temp)/z0_temp))/log((10.+z0_temp)/z0_temp))
-            elseif (wind_level_flag.eq.0) then
-                temp_FF_subgrid(i_cross,j_cross)=1.
-            elseif (wind_level_flag.eq.5) then
-                !Will set based on sigma z centre of mass
-                temp_FF_subgrid(i_cross,j_cross)=1.
-            elseif (wind_level_flag.eq.6) then
-                !Will set based on sigma z centre of mass and emission height
-                temp_FF_subgrid(i_cross,j_cross)=1.
-            else
-                
-                write(unit_logfile,'(a)') 'No valid wind_level_flag selected. Stopping (uEMEP_subgrid_dispersion)'
-                stop
-            endif
-            
-            !Setting a minimum value for wind for dispersion purposes (cannot be zero)
-            temp_FF_subgrid(i_cross,j_cross)=sqrt(temp_FF_subgrid(i_cross,j_cross)*temp_FF_subgrid(i_cross,j_cross)+FF_min_dispersion*FF_min_dispersion)
-                    
-            if (temp_FF_subgrid(i_cross,j_cross).eq.0) then
-                write(unit_logfile,'(a,2i)') 'Zero wind speed at integral grid (stopping): ',i_cross,j_cross
-                stop
-            endif
-            
-
-        enddo
-        enddo
-
-        !If wind level flag is set to 5, use of initial plume centre of mass, then set wind speed for each non-zero emission grid
-        if (wind_level_flag.eq.5) then
-            temp_FF_subgrid=0.
-            do jj=1,emission_subgrid_dim(y_dim_index,source_index)
-            do ii=1,emission_subgrid_dim(x_dim_index,source_index)
-            if (sum(emission_subgrid(ii,jj,tt,source_index,:)).ne.0) then
-                                    
-                !Set the integral meteorological grid position for the emission position
-                i_cross_integral=crossreference_emission_to_integral_subgrid(ii,jj,x_dim_index,source_index)
-                j_cross_integral=crossreference_emission_to_integral_subgrid(ii,jj,y_dim_index,source_index)
-                
-                !Set the local variables
-                logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
-                FF10_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index)
-                sig_y_00_loc=emission_properties_subgrid(ii,jj,emission_sigy00_index,source_index)
-                sig_z_00_loc=emission_properties_subgrid(ii,jj,emission_sigz00_index,source_index)
-                h_emis_loc=emission_properties_subgrid(ii,jj,emission_h_index,source_index)
-                h_mix_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,hmix_subgrid_index)
-                
-                if (annual_calculations) then
-                    FF10_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
-                endif
-                
-                !Set sig_0's at the emission position
-                x_loc=0.
-                call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
-
-                !Use the initial plume centre of mass to determine wind advection height
-                call z_centremass_gauss_func(sig_z_0_loc,h_emis_loc,h_mix_loc,zc_loc)
-                call u_profile_neutral_val_func(zc_loc,FF10_loc,10.,h_mix_loc,exp(logz0_loc),FF_loc,u_star0_loc)
-                
-                !Set the minimum wind speed 
-                FF_loc=sqrt(FF_loc*FF_loc+FF_min_dispersion*FF_min_dispersion)
-
-                temp_FF_subgrid(ii,jj)=FF_loc
-                !write(*,*) FF10_loc,FF_loc,zc_loc,sig_z_0_loc                
-            
-            endif
-            enddo
-            enddo
-        endif
-        
-        endif !1eq2
         
         !Define the trajectory and its length
         !Maxium number of trajectory steps and size of steps based on the integral (meteorology) loop size
@@ -692,7 +600,7 @@
                 subgrid(i,j,tt,proxy_subgrid_index,source_index,i_pollutant)=subgrid(i,j,tt,proxy_subgrid_index,source_index,i_pollutant) &
                     +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,target_subgrid(:,:,i_pollutant) &
                     ,target_subgrid_dim(x_dim_index),target_subgrid_dim(y_dim_index),target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
-               traveltime_subgrid(i,j,tt,1,i_pollutant)=traveltime_subgrid(i,j,tt,1,i_pollutant) &
+                traveltime_subgrid(i,j,tt,1,i_pollutant)=traveltime_subgrid(i,j,tt,1,i_pollutant) &
                     +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,traveltime_target_subgrid(:,:,1,i_pollutant) &
                     ,target_subgrid_dim(x_dim_index),target_subgrid_dim(y_dim_index),target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
                 traveltime_subgrid(i,j,tt,2,i_pollutant)=traveltime_subgrid(i,j,tt,2,i_pollutant) &

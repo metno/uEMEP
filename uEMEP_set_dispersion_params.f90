@@ -21,8 +21,8 @@
     !bz(source_index,subsource_index)=0.72!From Liu 0.72
     !ay(source_index,subsource_index)=0.32
     !by(source_index,subsource_index)=0.78
-    !az(source_index,subsource_index)=0.19
-    !bz(source_index,subsource_index)=0.77
+    az(source_index,subsource_index)=0.2
+    bz(source_index,subsource_index)=0.75
 
     !Alternative to ASME
     !ay(source_index,subsource_index)=0.14

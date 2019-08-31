@@ -31,6 +31,8 @@
     emission_factor_conversion(pmex_index,traffic_index,:)=emission_factor(pmex_index,traffic_index,:)*(1.e-3)*(1.e+6)/(3600.*24.) ![veh*m/day]*(g/km/veh)*(km/m)*(ug/g)*(day/sec)=ug/sec
     
     emission_factor_conversion(nh3_index,agriculture_index,:)=emission_factor(nh3_index,agriculture_index,:)*(1.e+9)/(3600.*24.*365.)   ![kg/yr]*(ug/kg)*(yr/sec)=ug/sec
+    !Test for monthly data
+    !emission_factor_conversion(nh3_index,agriculture_index,:)=emission_factor_conversion(nh3_index,agriculture_index,:)*1.06
     
     if (read_weekly_shipping_data_flag.or.read_monthly_and_daily_shipping_data_flag) then
         !Convert from g/hour to ug/s

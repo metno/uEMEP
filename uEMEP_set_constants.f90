@@ -531,4 +531,8 @@
         write(unit_logfile,'(a,i)') 'Will not read or write any EMEP emission data'
     endif
     
+    if (use_EMEP_surface_ozone_flag) then
+        comp_name_nc(o3_nc_index)='SURF_ug_O3'        
+    endif
+    
     end subroutine uEMEP_reset_constants

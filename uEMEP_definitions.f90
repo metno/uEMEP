@@ -484,6 +484,8 @@
     
     logical :: hourly_calculations=.false.
     logical :: annual_calculations=.false.
+    integer :: start_month_in_annual_calculations=1
+    integer :: end_month_in_annual_calculations=12
     
     !Pseudo dispersion parameters
     real z_rec(n_source_index,n_possible_subsource)
@@ -795,6 +797,8 @@
 
     real depo_scale_nc(n_compound_nc_index)
     logical :: auto_adjustment_for_summertime=.true.
+    
+    logical :: use_EMEP_surface_ozone_flag=.false.
     
     end module uEMEP_definitions
     

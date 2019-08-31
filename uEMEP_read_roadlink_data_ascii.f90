@@ -379,7 +379,6 @@
     endif
     
     !Check that start time and end time are covered in the emission data before progessing further
-    !DOES NOT WORK WITH SINGLE TIME LOOP. FIX!!!
     format_temp='yyyymmddHH'
     call datestr_to_date(n_roadlink_emission_date_str,format_temp,emission_date_array)
     if (use_single_time_loop_flag) then

@@ -59,6 +59,8 @@
     !Temporary files for rotating wind field and PM
     real, allocatable :: temp_var4d_nc(:,:,:,:,:)
     
+    real, allocatable :: temp_var3d_nc(:,:,:)
+
     !Temporary PM arrays for reading in PM10
     real, allocatable :: pm_var4d_nc(:,:,:,:,:,:,:)
     real, allocatable :: pm_lc_var4d_nc(:,:,:,:,:,:,:,:,:)
@@ -112,7 +114,8 @@
         if (allocated(DMT_EMEP_grid_nc)) deallocate (DMT_EMEP_grid_nc) !Daily mean temperature
         if (allocated(species_var3d_nc)) deallocate (species_var3d_nc)
         if (allocated(depo_var3d_nc)) deallocate (depo_var3d_nc)
-       
+        if (allocated(temp_var3d_nc)) deallocate (temp_var3d_nc)
+      
     !Loop through the EMEP files containing the data
 
     n_file=2
@@ -320,6 +323,7 @@
         if (.not.allocated(comp_var4d_nc)) allocate (comp_var4d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index),n_compound_nc_index))
         if (.not.allocated(var1d_nc_dp)) allocate (var1d_nc_dp(maxval(dim_length_nc))) 
         if (.not.allocated(var2d_nc_dp)) allocate (var2d_nc_dp(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index))) !Lat and lon
+        if (.not.allocated(temp_var3d_nc)) allocate (temp_var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index))) !Lat and lon
         !if (.not.allocated(var3d_nc_dp)) allocate (var3d_nc_dp(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)))
         !allocate (var4d_nc_dp(dim_length_nc(x_index),dim_length_nc(y_index),1,dim_length_nc(time_index)))
         
@@ -541,13 +545,14 @@
 
                 if (temp_num_dims.eq.3) then
                     if (i_file.eq.1) then
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,1,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),1,temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index)/))
-                    comp_var4d_nc(:,:,1,:,i_conc)=comp_var4d_nc(:,:,1,:,i_conc)*comp_scale_nc(i_conc)
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                    comp_var4d_nc(:,:,1,:,i_conc)=temp_var3d_nc(:,:,:)*comp_scale_nc(i_conc)
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading compound file 1: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,1,:,i_conc)),maxval(comp_var4d_nc(:,:,1,:,i_conc))
+                    !write(*,*) comp_var4d_nc(:,:,1,:,i_conc)
                     elseif (i_file.eq.2) then
                     !In case the comp data is in the uEMEP file then read it here with no vertical extent
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,1,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),1,temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index)/))
-                    comp_var4d_nc(:,:,1,:,i_conc)=comp_var4d_nc(:,:,1,:,i_conc)*comp_scale_nc(i_conc)
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                    comp_var4d_nc(:,:,1,:,i_conc)=temp_var3d_nc(:,:,:)*comp_scale_nc(i_conc)
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading compound file 2: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,1,:,i_conc)),maxval(comp_var4d_nc(:,:,1,:,i_conc))
                     endif
                 endif
@@ -559,7 +564,7 @@
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,:,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     comp_var4d_nc(:,:,:,:,i_conc)=comp_var4d_nc(:,:,:,:,i_conc)*comp_scale_nc(i_conc)
                     write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading compound file 1: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,:,:,i_conc)),maxval(comp_var4d_nc(:,:,:,:,i_conc))
-                    
+                   
                     elseif (i_file.eq.2) then
                     !In case the comp data is in the uEMEP file then read it here with no vertical extent
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,1,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),1,temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index)/))
@@ -1163,6 +1168,7 @@
         if (allocated(var3d_nc_dp)) deallocate (var3d_nc_dp)
         if (allocated(var4d_nc_dp)) deallocate (var4d_nc_dp)
         if (allocated(temp_var4d_nc)) deallocate (temp_var4d_nc)
+        if (allocated(temp_var3d_nc)) deallocate (temp_var3d_nc)
         if (allocated(species_temp_var3d_nc)) deallocate (species_temp_var3d_nc)
  
     end subroutine uEMEP_read_EMEP

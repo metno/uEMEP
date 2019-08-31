@@ -131,7 +131,7 @@
     !do i=1,n_hours_in_week
     !    write(*,*) time_hour_of_week_input(i),val_hour_of_week_input(i,1:n_col-1)
     !enddo
-    
+    !stop
     !Get time information for the current calculation
     !    if (use_single_time_loop_flag) then
     !        t_profile_loop=end_time_loop_index
@@ -186,7 +186,8 @@
             endif
             !write(*,*) hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source),val_month_of_year_input(date_array(2),i_source)
             !write(*,*) emission_time_profile_subgrid(1,1,t,source_index_in(i_source),1)
-            if (source_index_in(i_source).eq.heating_index.and.use_RWC_emission_data) then
+            !Will  only do this calculation if for heat and only if meteorology exists
+            if (source_index_in(i_source).eq.heating_index.and.use_RWC_emission_data.and.allocated(meteo_var1d_nc)) then
                 do j=1,emission_subgrid_dim(y_dim_index,source_index_in(i_source))
                 do i=1,emission_subgrid_dim(x_dim_index,source_index_in(i_source))
                     if (save_emissions_for_EMEP(allsource_index)) then

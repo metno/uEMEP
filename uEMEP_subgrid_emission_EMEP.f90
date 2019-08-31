@@ -123,8 +123,11 @@
                 subgrid_count_subgrid(i,j,:)=subgrid_count_nc(ii,jj)  
                 
                 !Converts from mg/m2/hour(year) to ug/s/subgrid assuming the original EMEP emissions are in mg/m2/hour(year)
-                if (hourly_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
-                if (annual_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
+                if (hourly_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:) &
+                    *emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
+                if (annual_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:) &
+                    *emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
+                    
 
                 !write(*,*) emission_subgrid(i,j,1,i_source,subsource_index),var3d_nc(ii,jj,1,emis_nc_index,i_source)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
             enddo

@@ -75,7 +75,8 @@
     !real gauss_plume_cartesian_integral_func
     real gauss_plume_cartesian_trajectory_func
     real gauss_plume_cartesian_sigma_func
- 
+    real gauss_plume_second_order_rotated_reflected_func
+    
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Calculating dispersion of proxy (uEMEP_subgrid_dispersion)'
@@ -561,9 +562,9 @@
                                     temp_subgrid_internal=gauss_plume_cartesian_sigma_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc)
                                     
                                     !if (ii.eq.i_cross.and.jj.eq.j_cross) write(*,'(9es12.2)') x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,temp_subgrid_internal
-                                    if (tt.ge.18.and.tt.le.18.and.temp_subgrid_internal.gt.1.e-3) then
+                                    !if (tt.ge.18.and.tt.le.18.and.temp_subgrid_internal.gt.1.e-3) then
                                         !write(*,'(2i,12es12.2)') ii,jj,x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,temp_emission_subgrid(ii,jj,1),temp_subgrid_internal,sin_subgrid_loc,cos_subgrid_loc
-                                    endif
+                                    !endif
                                     
                                                                         
                                     !For diagnostics only!!
@@ -608,35 +609,69 @@
                                 endif
 
                             else
-                            
+                                                            
                                 !If not hourly concentration then use the annual dispersion function
                                 if (use_target_subgrid) then
-                                distance_subgrid=sqrt((x_emission_subgrid(ii,jj,source_index)-x_target_subgrid(i,j))*(x_emission_subgrid(ii,jj,source_index)-x_target_subgrid(i,j)) &
+                                    distance_subgrid=sqrt((x_emission_subgrid(ii,jj,source_index)-x_target_subgrid(i,j))*(x_emission_subgrid(ii,jj,source_index)-x_target_subgrid(i,j)) &
                                     +(y_emission_subgrid(ii,jj,source_index)-y_target_subgrid(i,j))*(y_emission_subgrid(ii,jj,source_index)-y_target_subgrid(i,j)))
                                 else
-                                distance_subgrid=sqrt((x_emission_subgrid(ii,jj,source_index)-x_subgrid(i,j))*(x_emission_subgrid(ii,jj,source_index)-x_subgrid(i,j)) &
+                                    distance_subgrid=sqrt((x_emission_subgrid(ii,jj,source_index)-x_subgrid(i,j))*(x_emission_subgrid(ii,jj,source_index)-x_subgrid(i,j)) &
                                     +(y_emission_subgrid(ii,jj,source_index)-y_subgrid(i,j))*(y_emission_subgrid(ii,jj,source_index)-y_subgrid(i,j)))
                                 endif
                                 
+                                !Set the simple as default
+                                call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
+
+                                !Select method for assigning sigma
+                                if (stability_scheme_flag.eq.1) then
+                                    call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
+                                endif
+                                    
+                                if (stability_scheme_flag.eq.2) then
+                                    call uEMEP_set_dispersion_sigma_PG(invL_loc,logz0_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                endif
+
                                 if (wind_level_flag.eq.5) then
                                     FF_loc=temp_FF_emission_subgrid(ii,jj)
                                 else
                                     FF_loc=temp_FF_subgrid(i_cross_integral,j_cross_integral)
                                 endif
-                           
+                                
+                                h_mix_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,hmix_subgrid_index)
+                                invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
+                                logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
+
+                                
+                                if (wind_level_flag.eq.6.and.stability_scheme_flag.ne.3) then
+                                        FF10_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
+                                        call z_centremass_gauss_func(sig_z_loc,h_emis_loc,h_mix_loc,zc_loc)
+                                        zc_loc=(h_emis_loc+zc_loc)/2.
+                                        call u_profile_neutral_val_func(zc_loc,FF10_loc,10.,h_mix_loc,exp(logz0_loc),FF_zc_loc,u_star0_loc)
+                                        FF_loc=sqrt(FF_zc_loc*FF_zc_loc+FF_min_dispersion*FF_min_dispersion)
+                                        !write(*,'(2i,7es12.2)') ii,jj,zc_loc,FF10_loc,10.,h_mix_loc,exp(logz0_loc),FF_zc_loc,u_star0_loc
+                                endif
+                                    
+                                !write(*,*) h_mix_loc,invL_loc,logz0_loc,FF_loc
+                          
+                                !write(*,'(9es12.2)') distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc
                                 !Divide by wind speed at emission position
+                                !Changed from 00 to 0 in the sigmas
                                 if (use_target_subgrid) then
                                 temp_target_subgrid(i,j,:)=temp_target_subgrid(i,j,:) &
                                     +temp_emission_subgrid(ii,jj,:) &
-                                    *gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc) &
+                                    *gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc) &
+!                                    *gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc) &
                                     /FF_loc
                                 else
                                 temp_subgrid(i,j,:)=temp_subgrid(i,j,:) &
                                     +temp_emission_subgrid(ii,jj,:) &
-                                    *gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc) &
+                                    *gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc) &
+!                                    *gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc) &
                                     /FF_loc
                                 endif
-                                
+                                !write(*,'(4i5,2es12.2,4f12.3)') i,j,ii,jj,temp_subgrid(i,j,:), &
+                                !    gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc)/FF_loc &
+                                !    ,distance_subgrid,az_loc,bz_loc,sig_z_00_loc
                             
                             endif
                         

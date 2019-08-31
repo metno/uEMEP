@@ -1,7 +1,78 @@
     
 !==========================================================================
-!   uEMEP model gauss_plume_second_order_rotated_func
+!   uEMEP model gauss_plume_second_order_rotated_reflected_func
 !   Rotationally symetric Gaussian plume function to second order
+!==========================================================================
+
+    function gauss_plume_second_order_rotated_reflected_func(r,z,ay,by,az,bz,sig_y_0,sig_z_0,z_s,z_pbl)
+
+    implicit none
+    real r,z,ay,by,az,bz,sig_y_0,sig_z_0,z_s,z_pbl
+    real gauss_plume_second_order_rotated_reflected_func
+    real sig_th,sig_z,B,c
+    real order_1,order_2
+    real z_loop(6)
+    integer n_loop,k
+    real :: correction=2.
+    real pi
+    parameter (pi=3.141592)
+    
+    !Corrected for the B**2 falut in the taylor expansion and for the fact that the integral was only half a circle. 20.08.2019
+    r=max(1.,r)
+    order_1=1.
+    order_2=1.
+    
+    sig_th=(sig_y_0+ay*(exp(by*log(r))))/r
+    sig_z=sig_z_0+az*(exp(bz*log(r)))
+    !write(*,*) sig_z,sig_th*r,sig_z_0,sig_y_0
+    B=-(sig_th**2)*(bz*(sig_z-sig_z_0)/r/sig_th+by*(r*sig_th-sig_y_0)/sig_z)
+    !write(*,*) B
+    
+        if (z_s.gt.z_pbl.or.z_s+sig_z.lt.z_pbl/3.) then
+            n_loop=2
+            z_loop(1)=z_s;z_loop(2)=-z_s
+        else
+            n_loop=5
+            z_loop(1)=z_s;z_loop(2)=-z_s;z_loop(3)=2.*z_pbl-z_s;z_loop(4)=2.*z_pbl+z_s;z_loop(5)=-2.*z_pbl+z_s
+        endif
+        
+        if (sig_z.gt.0.9*z_pbl) then
+            if (B.gt.-1.) then
+                !c=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*tanh(2/sqrt(pi)*pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B))*(exp((-(z-h)**2)/2./sig_z**2)+exp((-(z+h)**2)/2./sig_z**2))
+                c=1./(z_pbl*2.*pi*r*sqrt(1.+B))*erf(correction*pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B))
+            else
+                c=correction/(2.*sqrt(2*pi)*sig_th*r)*(1-order_1*pi**2*(1.+B)*correction**2/(24*sig_th**2)+order_2*pi**4*((1.+B)**2*correction**4/(640.*sig_th**4)))
+            endif
+        else
+            c=0.
+            do k=1,n_loop
+            if (B.gt.-1.) then
+                !c=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*tanh(2/sqrt(pi)*pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B))*(exp((-(z-h)**2)/2./sig_z**2)+exp((-(z+h)**2)/2./sig_z**2))
+                c=c+1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*erf(correction*pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B))*(exp((-(z-z_loop(k))**2)/2./sig_z**2))
+            else
+                c=c+correction/(4.*pi*sig_th*r*sig_z)*(1-order_1*pi**2*(1.+B)*correction**2/(24*sig_th**2)+order_2*pi**4*((1.+B)**2*correction**4/(640.*sig_th**4)))*(exp((-(z-z_loop(k))**2)/2./sig_z**2))
+                !Perhaps also a correction in the higher orders but must calculate that again
+            endif
+            !if (r.eq.1.) write(*,*) k,r,c,1./(4.*pi*sig_y_0*sig_z_0)
+            enddo
+        endif
+    !write(*,*) c,z_pbl
+
+        !Original
+   ! if (B.gt.-1.) then
+    !    !c=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*tanh(2/sqrt(pi)*pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B))*(exp((-(z-h)**2)/2./sig_z**2)+exp((-(z+h)**2)/2./sig_z**2))
+    !    c=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*erf(pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B))*(exp((-(z-h)**2)/2./sig_z**2)+exp((-(z+h)**2)/2./sig_z**2))
+    !else
+    !    c=1./(4.*pi*sig_th*r*sig_z)*(1-order_1*pi**2*(1.+B)/(24*sig_th**2)+order_2*pi**4*((1.+B**2)/(640.*sig_th**4)))*(exp((-(z-h)**2)/2./sig_z**2)+exp((-(z+h)**2)/2./sig_z**2))
+    !endif
+    
+    gauss_plume_second_order_rotated_reflected_func=c
+    
+    end function gauss_plume_second_order_rotated_reflected_func
+    
+!==========================================================================
+!   uEMEP model gauss_plume_second_order_rotated_func
+!   Rotationally symetric Gaussian plume function to second order with boundary layer reflection
 !==========================================================================
 
     function gauss_plume_second_order_rotated_func(r,z,ay,by,az,bz,sig_y_0,sig_z_0,h)
@@ -11,23 +82,25 @@
     real gauss_plume_second_order_rotated_func
     real sig_th,sig_z,B,c
     real order_1,order_2
+    real :: correction=2.
     real pi
     parameter (pi=3.141592)
     
+    !Corrected for the B**2 falut in the taylor expansion and for the fact that the integral was only half a circle. 20.08.2019
     r=max(0.001,r)
     order_1=1.
     order_2=1.
     
     sig_th=(sig_y_0+ay*(exp(by*log(r))))/r
     sig_z=sig_z_0+az*(exp(bz*log(r)))
-
+    !write(*,*) sig_z,sig_th*r,sig_z_0,sig_y_0
     B=-(sig_th**2)*(bz*(sig_z-sig_z_0)/r/sig_th+by*(r*sig_th-sig_y_0)/sig_z)
-
+    !write(*,*) B
     if (B.gt.-1.) then
         !c=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*tanh(2/sqrt(pi)*pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B))*(exp((-(z-h)**2)/2./sig_z**2)+exp((-(z+h)**2)/2./sig_z**2))
-        c=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*erf(pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B))*(exp((-(z-h)**2)/2./sig_z**2)+exp((-(z+h)**2)/2./sig_z**2))
+        c=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*erf(pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B)*correction)*(exp((-(z-h)**2)/2./sig_z**2)+exp((-(z+h)**2)/2./sig_z**2))
     else
-        c=1./(4.*pi*sig_th*r*sig_z)*(1-order_1*pi**2*(1.+B)/(24*sig_th**2)+order_2*pi**4*((1.+B**2)/(640.*sig_th**4)))*(exp((-(z-h)**2)/2./sig_z**2)+exp((-(z+h)**2)/2./sig_z**2))
+        c=correction/(4.*pi*sig_th*r*sig_z)*(1-order_1*pi**2*(1.+B)*correction**2/(24*sig_th**2)+order_2*pi**4*((1.+B)**2*correction**4/(640.*sig_th**4)))*(exp((-(z-h)**2)/2./sig_z**2)+exp((-(z+h)**2)/2./sig_z**2))
     endif
     
     gauss_plume_second_order_rotated_func=c
@@ -47,9 +120,12 @@
     real gauss_plume_second_order_rotated_integral_func
     real sig_th,sig_z,B,c_y_int,c_z_int
     real order_1,order_2
+    real :: correction=2.
     real pi
     parameter (pi=3.141592)
     
+    !Corrected for the B**2 falut in the taylor expansion and for the fact that the integral was only half a circle. 20.08.2019
+    !Still need to implement reflections
     r=max(0.001,r)
     order_1=1.
     order_2=1.
@@ -63,9 +139,9 @@
 
     if (B.gt.-1.) then
         !c_int=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*tanh(2/sqrt(pi)*pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B))
-        c_y_int=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*erf(pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B))
+        c_y_int=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*erf(pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B)*correction)
     else
-        c_y_int=1./(4.*pi*sig_th*r*sig_z)*(1-order_1*pi**2*(1.+B)/(24*sig_th**2)+order_2*pi**4*((1.+B**2)/(640.*sig_th**4)))
+        c_y_int=correction/(4.*pi*sig_th*r*sig_z)*(1-order_1*pi**2*(1.+B)*correction**2/(24*sig_th**2)+order_2*pi**4*((1.+B)**2*correction**4/(640.*sig_th**4)))
     endif
 
     gauss_plume_second_order_rotated_integral_func=c_y_int*c_z_int
@@ -263,7 +339,10 @@
             enddo
             gauss_plume_cartesian_sigma_func=c_z/(2.*pi*sig_y*sig_z)*exp(-0.5*(y*y)/(sig_y*sig_y))/FF
         endif
-
+        !if (x.eq.0) then
+        !    write(*,*) gauss_plume_cartesian_sigma_func*FF,1./(2.*pi*sig_y*sig_z)
+        !endif
+        
 
     endif
     
