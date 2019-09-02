@@ -29,6 +29,7 @@
     integer i_cross,j_cross
     real hdd_temp
     integer col_val,index_val
+    logical do_not_calculate_RWC_emissions
     
     !Functions
     integer day_of_week
@@ -188,6 +189,7 @@
             !write(*,*) emission_time_profile_subgrid(1,1,t,source_index_in(i_source),1)
             !Will  only do this calculation if for heat and only if meteorology exists
             !This is poorly poisitioned here because it can be called even when no meteorology is available, hence the allocation check
+            do_not_calculate_RWC_emissions=.false.
             if (source_index_in(i_source).eq.heating_index.and.use_RWC_emission_data) then
                 do j=1,emission_subgrid_dim(y_dim_index,source_index_in(i_source))
                 do i=1,emission_subgrid_dim(x_dim_index,source_index_in(i_source))
@@ -205,8 +207,9 @@
                             !Do not do this calculation until the meteo data is available
                             !write(unit_logfile,'(a)') ' No meteo data available for RWC heating emission calculations. Stopping'
                             !stop
-                            i_cross=1
-                            j_cross=1
+                            !i_cross=1
+                            !j_cross=1
+                            do_not_calculate_RWC_emissions=.true.
                         endif
                     else
                         !Use the EMEP meteorology
@@ -215,6 +218,7 @@
                         i_cross=min(max(1,i_cross),dim_length_nc(x_dim_nc_index))
                         j_cross=min(max(1,j_cross),dim_length_nc(y_dim_nc_index))
                     endif
+                    if (.not.do_not_calculate_RWC_emissions) then
                     hdd_temp=max(0.,HDD_threshold_value-max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)))
                     !write (*,*) hdd_temp,DMT_EMEP_grid_nc(i_cross,j_cross,1),max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)),HDD_threshold_value-max(DMT_min_value,DMT_EMEP_grid_nc(i_cross,j_cross,1))
                     
@@ -222,6 +226,7 @@
                     emission_time_profile_subgrid(i,j,t,source_index_in(i_source),:)=val_hour_of_week_input(hour_of_week_index,i_source)/24.*hdd_temp
                     !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source)/24.,hdd_temp,HDD_threshold_value,DMT_EMEP_grid_nc(i_cross,j_cross,1)
                     !if (i.eq.1.and.j.eq.1) write(*,*) t,hour_of_week_index,emission_time_profile_subgrid(i,j,t,source_index_in(i_source),1)
+                    endif
                 enddo
                 enddo
             endif
