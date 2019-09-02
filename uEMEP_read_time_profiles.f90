@@ -187,20 +187,29 @@
             !write(*,*) hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source),val_month_of_year_input(date_array(2),i_source)
             !write(*,*) emission_time_profile_subgrid(1,1,t,source_index_in(i_source),1)
             !Will  only do this calculation if for heat and only if meteorology exists
-            if (source_index_in(i_source).eq.heating_index.and.use_RWC_emission_data.and.allocated(meteo_var1d_nc)) then
+            !This is poorly poisitioned here because it can be called even when no meteorology is available, hence the allocation check
+            if (source_index_in(i_source).eq.heating_index.and.use_RWC_emission_data) then
                 do j=1,emission_subgrid_dim(y_dim_index,source_index_in(i_source))
                 do i=1,emission_subgrid_dim(x_dim_index,source_index_in(i_source))
                     if (save_emissions_for_EMEP(allsource_index)) then
-                        !Need to cross reference the meteo grid to the emission grid as this is not done normally
-                        !Tricky using the two different emep grids?
-                        i_cross=1+floor((x_emission_subgrid(i,j,allsource_index)-meteo_var1d_nc(1,lon_nc_index))/meteo_dgrid_nc(lon_nc_index)+0.5)
-                        j_cross=1+floor((y_emission_subgrid(i,j,allsource_index)-meteo_var1d_nc(1,lat_nc_index))/meteo_dgrid_nc(lat_nc_index)+0.5)     
-                        !Because the meteo grid can be smaller than the EMEP grid then need to limit it
-                        !write(*,'(6i12)') i,j,i_cross,j_cross,dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index)
-                        i_cross=min(max(1,i_cross),dim_length_meteo_nc(x_dim_nc_index))
-                        j_cross=min(max(1,j_cross),dim_length_meteo_nc(y_dim_nc_index))
-                        
+                        if (allocated(meteo_var1d_nc)) then
+                            !Need to cross reference the meteo grid to the emission grid as this is not done normally
+                            !Tricky using the two different emep grids?
+                            i_cross=1+floor((x_emission_subgrid(i,j,allsource_index)-meteo_var1d_nc(1,lon_nc_index))/meteo_dgrid_nc(lon_nc_index)+0.5)
+                            j_cross=1+floor((y_emission_subgrid(i,j,allsource_index)-meteo_var1d_nc(1,lat_nc_index))/meteo_dgrid_nc(lat_nc_index)+0.5)     
+                            !Because the meteo grid can be smaller than the EMEP grid then need to limit it
+                            !write(*,'(6i12)') i,j,i_cross,j_cross,dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index)
+                            i_cross=min(max(1,i_cross),dim_length_meteo_nc(x_dim_nc_index))
+                            j_cross=min(max(1,j_cross),dim_length_meteo_nc(y_dim_nc_index))
+                        else
+                            !Do not do this calculation until the meteo data is available
+                            !write(unit_logfile,'(a)') ' No meteo data available for RWC heating emission calculations. Stopping'
+                            !stop
+                            i_cross=1
+                            j_cross=1
+                        endif
                     else
+                        !Use the EMEP meteorology
                         i_cross=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,source_index_in(i_source))
                         j_cross=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index_in(i_source))
                         i_cross=min(max(1,i_cross),dim_length_nc(x_dim_nc_index))
