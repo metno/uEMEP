@@ -117,7 +117,7 @@
                     !ratio(tt,i_source,i_pollutant)=temp(tt,2)/temp(tt,1)*H_emep/h_mix_loc(tt)
                     ratio(tt,i_source,i_pollutant)=temp(tt,2)/temp(tt,1)*H_emep/h_mix_loc(tt)
  
-                    write(*,*) h_mix_loc(tt)/H_emep,temp(tt,2),temp(tt,1),ratio(tt,i_source,i_pollutant)
+                    !write(*,*) h_mix_loc(tt)/H_emep,temp(tt,2),temp(tt,1),ratio(tt,i_source,i_pollutant)
 
                     
                     if (temp(tt,1).eq.0) ratio(tt,i_source,i_pollutant)=0.
