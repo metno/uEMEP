@@ -68,6 +68,13 @@
     integer i_pollutant
     real temp_subgrid_internal_pollutant(n_pollutant_loop)
     
+    integer i_cross_deposition,j_cross_deposition
+    real temp_subgrid_rotated(n_pollutant_loop)
+    real temp_subgrid_rotated_integrated(n_pollutant_loop)
+    real precip_loc
+    real deposition_subgrid_scale
+    real plume_vertical_integral(n_integral_subgrid_index,n_pollutant_loop)
+    
     !functions
     real gauss_plume_second_order_rotated_func
     !real gauss_plume_second_order_rotated_integral_func
@@ -76,6 +83,7 @@
     real gauss_plume_cartesian_trajectory_func
     real gauss_plume_cartesian_sigma_func
     real gauss_plume_second_order_rotated_reflected_func
+    real gauss_plume_second_order_rotated_reflected_integral_func
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -197,6 +205,13 @@
         temp_subgrid=0.
         temp_FF_subgrid=0.
         !diagnostic_subgrid=0.
+        
+        
+        if (calculate_deposition_flag) then
+            subgrid(:,:,tt,drydepo_local_subgrid_index,source_index,:)=0.
+            subgrid(:,:,tt,wetdepo_local_subgrid_index,source_index,:)=0.
+        endif
+        
         
         !Set the last meteo data subgrid in the case when the internal time loop is used
         if (.not.use_single_time_loop_flag) then
@@ -619,7 +634,7 @@
                                     +(y_emission_subgrid(ii,jj,source_index)-y_subgrid(i,j))*(y_emission_subgrid(ii,jj,source_index)-y_subgrid(i,j)))
                                 endif
                                 
-                                !Set the simple as default
+                                !Set the simple as default at the emission
                                 call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
 
                                 !Select method for assigning sigma
@@ -654,25 +669,64 @@
                                 !write(*,*) h_mix_loc,invL_loc,logz0_loc,FF_loc
                           
                                 !write(*,'(9es12.2)') distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc
-                                !Divide by wind speed at emission position
+                                !Divide by wind speed at receptor position
+                                temp_subgrid_rotated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc)/FF_loc
+
                                 !Changed from 00 to 0 in the sigmas
                                 if (use_target_subgrid) then
-                                temp_target_subgrid(i,j,:)=temp_target_subgrid(i,j,:) &
-                                    +temp_emission_subgrid(ii,jj,:) &
-                                    *gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc) &
-!                                    *gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc) &
-                                    /FF_loc
+                                    temp_target_subgrid(i,j,:)=temp_target_subgrid(i,j,:) + temp_subgrid_rotated
                                 else
-                                temp_subgrid(i,j,:)=temp_subgrid(i,j,:) &
-                                    +temp_emission_subgrid(ii,jj,:) &
-                                    *gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc) &
-!                                    *gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc) &
-                                    /FF_loc
+                                    temp_subgrid(i,j,:)=temp_subgrid(i,j,:) + temp_subgrid_rotated
                                 endif
                                 !write(*,'(4i5,2es12.2,4f12.3)') i,j,ii,jj,temp_subgrid(i,j,:), &
                                 !    gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc)/FF_loc &
                                 !    ,distance_subgrid,az_loc,bz_loc,sig_z_00_loc
                             
+                                !Calculate deposition only when it is not using the alternative tarrget subgrid. Fix later to be more general
+                                if (calculate_deposition_flag.and..not.use_target_subgrid) then
+
+                                    !Only use half of the source grid for deposition and depletion
+                                    if (distance_subgrid.eq.0) then
+                                        !s/m3 *m2=s/m
+                                        deposition_subgrid_scale=0.5
+                                    else
+                                        deposition_subgrid_scale=1.0
+                                    endif
+
+                                    !Find the deposition grid index. Can be moved outside the loop
+                                    i_cross_deposition=crossreference_target_to_deposition_subgrid(i,j,x_dim_index)
+                                    j_cross_deposition=crossreference_target_to_deposition_subgrid(i,j,y_dim_index)
+
+                                    subgrid(i,j,tt,drydepo_local_subgrid_index,source_index,:)=subgrid(i,j,tt,drydepo_local_subgrid_index,source_index,:) &
+                                        + temp_subgrid_rotated*deposition_subgrid(i_cross_deposition,j_cross_deposition,tt,vd_index,:)*deposition_subgrid_scale
+                                    
+                                    !Wet deposition
+                                    precip_loc=meteo_subgrid(i_cross_target_integral,j_cross_target_integral,tt,precip_subgrid_index)
+
+                                    temp_subgrid_rotated_integrated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0.,h_mix_loc)/FF_loc*h_mix_loc
+                                    
+                                    !write(*,*) temp_emission_subgrid(ii,jj,:),gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0,H_emep)/FF_loc
+                                    
+                                    !Set the scavenging (s/m2 /m *m/s = /m2). 1e-3/3600 converts mm/hr to m/s
+                                    subgrid(i,j,tt,wetdepo_local_subgrid_index,source_index,:)=subgrid(i,j,tt,wetdepo_local_subgrid_index,source_index,:) &
+                                        + temp_subgrid_rotated_integrated*wetdepo_scavanging_rate(pollutant_loop_index(:))*(precip_loc/1000./3600.)*deposition_subgrid_scale
+                                    
+                                    !write(*,*) subgrid(i,j,tt,wetdepo_local_subgrid_index,source_index,:),temp_subgrid_rotated_integrated,wetdepo_scavanging_rate(nh3_index),precip_loc
+                                    
+                                    if (adjust_wetdepo_integral_to_lowest_layer_flag) then
+                                        plume_vertical_integral(1,:)=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0.,H_emep)/FF_loc*H_emep
+                                        plume_vertical_integral(2,:)=temp_subgrid_rotated_integrated
+                                        plume_vertical_integral(3,:)=plume_vertical_integral(1,:)/H_emep
+                                    endif
+                                    
+                                    
+                                    integral_subgrid(i_cross_target_integral,j_cross_target_integral,tt,:,source_index,:)=integral_subgrid(i_cross_target_integral,j_cross_target_integral,tt,:,source_index,:) &
+                                            +plume_vertical_integral(:,:)
+                                                
+                                    !write(*,*) integral_subgrid(i_cross_target_integral,j_cross_target_integral,tt,:,source_index,:)
+                                endif
+                                
+
                             endif
                         
                         endif
@@ -735,6 +789,10 @@
             enddo
             enddo
         endif
+
+        !Add to allsource
+        integral_subgrid(:,:,tt,:,allsource_index,:)=integral_subgrid(:,:,tt,:,allsource_index,:)+integral_subgrid(:,:,tt,:,source_index,:)
+        !write(*,*) integral_subgrid(:,:,tt,hmix_integral_subgrid_index,allsource_index,i_pollutant)
         !write(unit_logfile,'(a,3f12.3)') 'Mean, min and max grid concentration: ',sum(temp_subgrid)/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index),minval(temp_subgrid),maxval(temp_subgrid)
         do i_pollutant=1,n_pollutant_loop
             temp_sum_subgrid(i_pollutant)=0.

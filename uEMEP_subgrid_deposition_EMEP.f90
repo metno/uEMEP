@@ -81,6 +81,8 @@
         xpos_limit=dgrid_nc(lon_nc_index)/2.
         ypos_limit=dgrid_nc(lat_nc_index)/2.
 
+            ! write(*,*) integral_subgrid(:,:,1,hmix_integral_subgrid_index,allsource_index,i_pollutant)
+
         do j=1,subgrid_dim(y_dim_index)
         do i=1,subgrid_dim(x_dim_index)
 
@@ -112,7 +114,12 @@
                     temp(tt,1)=area_weighted_extended_interpolation_function(x_integral_subgrid,y_integral_subgrid,integral_subgrid(:,:,tt,hsurf_integral_subgrid_index,i_source,i_pollutant) &
                     ,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_delta(x_dim_index),x_subgrid(i,j),y_subgrid(i,j),delta_area)
                     
+                    !ratio(tt,i_source,i_pollutant)=temp(tt,2)/temp(tt,1)*H_emep/h_mix_loc(tt)
                     ratio(tt,i_source,i_pollutant)=temp(tt,2)/temp(tt,1)*H_emep/h_mix_loc(tt)
+ 
+                    write(*,*) h_mix_loc(tt)/H_emep,temp(tt,2),temp(tt,1),ratio(tt,i_source,i_pollutant)
+
+                    
                     if (temp(tt,1).eq.0) ratio(tt,i_source,i_pollutant)=0.
                     ratio(tt,i_source,i_pollutant)=max(0.,ratio(tt,i_source,i_pollutant))
                     ratio(tt,i_source,i_pollutant)=min(1.,ratio(tt,i_source,i_pollutant))
@@ -152,11 +159,17 @@
                             +var3d_nc(ii,jj,:,drydepo_nc_index,i_source,i_pollutant) &
                             *subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_subgrid_index,allsource_index,i_pollutant) &
                             *weighting_nc(ii-i_nc,jj-j_nc)
+                    !subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,allsource_index,i_pollutant)=subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,allsource_index,i_pollutant) &
+                    !        +var3d_nc(ii,jj,:,wetdepo_nc_index,i_source,i_pollutant) &
+                    !        *(1.-subgrid(i,j,:,emep_local_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_subgrid_index,i_source,i_pollutant)*ratio(:,i_source,i_pollutant)) &
+                    !        *weighting_nc(ii-i_nc,jj-j_nc)
                     subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,allsource_index,i_pollutant)=subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,allsource_index,i_pollutant) &
                             +var3d_nc(ii,jj,:,wetdepo_nc_index,i_source,i_pollutant) &
-                            *(1.-subgrid(i,j,:,emep_local_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_subgrid_index,i_source,i_pollutant)*ratio(:,i_source,i_pollutant)) &
+                            /(1.+subgrid(i,j,:,emep_local_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,i_pollutant)*ratio(:,i_source,i_pollutant)) &
                             *weighting_nc(ii-i_nc,jj-j_nc)
                 
+                    !write(*,*) ratio(:,i_source,i_pollutant),subgrid(i,j,:,emep_local_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)
+                    
                 enddo
             
             enddo

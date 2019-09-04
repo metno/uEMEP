@@ -109,7 +109,7 @@
     
     
 !==========================================================================
-!   uEMEP model gauss_plume_second_order_rotated_func
+!   uEMEP model gauss_plume_second_order_rotated_integral_func
 !   Rotationally symetric Gaussian plume function to second order vertically integrated from H1 to H2
 !==========================================================================
 
@@ -147,6 +147,63 @@
     gauss_plume_second_order_rotated_integral_func=c_y_int*c_z_int
     
     end function gauss_plume_second_order_rotated_integral_func
+
+!==========================================================================
+!   uEMEP model gauss_plume_second_order_rotated_reflected_integral_func
+!   Rotationally symetric Gaussian plume function to second order vertically integrated from H1 to H2
+!==========================================================================
+
+    function gauss_plume_second_order_rotated_reflected_integral_func(r,z,ay,by,az,bz,sig_y_0,sig_z_0,z_s,z_pbl,H1,H2)
+
+    implicit none
+    real r,z,ay,by,az,bz,sig_y_0,sig_z_0,z_s,z_pbl,H1,H2
+    real gauss_plume_second_order_rotated_reflected_integral_func
+    real sig_th,sig_z,B,c_y_int,c_z_int
+    real order_1,order_2
+    real :: correction=2.
+    integer k,n_loop
+    real z_loop(6)
+    real pi
+    parameter (pi=3.141592)
+    
+    !Corrected for the B**2 falut in the taylor expansion and for the fact that the integral was only half a circle. 20.08.2019
+    !Still need to implement reflections
+    r=max(0.001,r)
+    order_1=1.
+    order_2=1.
+    
+    sig_th=(sig_y_0+ay*(exp(by*log(r))))/r
+    sig_z=sig_z_0+az*(exp(bz*log(r)))
+  
+    B=-(sig_th**2)*(bz*(sig_z-sig_z_0)/r/sig_th+by*(r*sig_th-sig_y_0)/sig_z)
+    
+        if (z_s.gt.z_pbl.or.z_s+sig_z.lt.z_pbl/3.) then
+            n_loop=2
+            z_loop(1)=z_s;z_loop(2)=-z_s
+        else
+            n_loop=5
+            z_loop(1)=z_s;z_loop(2)=-z_s;z_loop(3)=2.*z_pbl-z_s;z_loop(4)=2.*z_pbl+z_s;z_loop(5)=-2.*z_pbl+z_s
+        endif
+
+        if (sig_z.gt.0.9*z_pbl) then
+            c_z_int=1./z_pbl
+        else
+            c_z_int=0.
+            do k=1,n_loop
+                c_z_int=c_z_int+sqrt(pi/2.)*sig_z*(erf((H2-z_loop(k))/sqrt(2.)/sig_z)-erf((H1-z_loop(k))/sqrt(2.)/sig_z))/(H2-H1)
+            enddo
+        endif       
+
+        if (B.gt.-1.) then
+            c_y_int=1./(2.*pi*sqrt(2.*pi)*r*sig_z*sqrt(1.+B))*erf(pi/(2.*sqrt(2.))/sig_th*sqrt(1.+B)*correction)
+        else
+            c_y_int=correction/(4.*pi*sig_th*r*sig_z)*(1-order_1*pi**2*(1.+B)*correction**2/(24*sig_th**2)+order_2*pi**4*((1.+B)**2*correction**4/(640.*sig_th**4)))
+        endif
+        !write(*,*) c_y_int,c_z_int
+
+        gauss_plume_second_order_rotated_reflected_integral_func=c_y_int*c_z_int
+    
+    end function gauss_plume_second_order_rotated_reflected_integral_func
 
 !==========================================================================
 !   uEMEP model gauss_plume_cartesian_func

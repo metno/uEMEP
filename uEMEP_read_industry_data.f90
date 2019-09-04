@@ -212,7 +212,7 @@
                     emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)=emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)+industry_height(industry_number)*industry_emission(industry_number,nox_index)
                     count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
                     count=count+1
-                    write(*,'(a,3i,f)') 'Industry height nox: ',industry_number,i_industry_index,j_industry_index,industry_height(industry_number)
+                    !write(*,'(a,3i,f12.2)') 'Industry height nox: ',industry_number,i_industry_index,j_industry_index,industry_height(industry_number)
                 endif
                 if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index.and.industry_emission(industry_number,pm10_index).gt.0) then
                     proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
@@ -220,7 +220,7 @@
                     emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)=emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)+industry_height(industry_number)*industry_emission(industry_number,pm10_index)
                     count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
                     count=count+1
-                    write(*,'(a,3i,f)') 'Industry height pm10: ',industry_number,i_industry_index,j_industry_index,industry_height(industry_number)
+                    !write(*,'(a,3i,f12.2)') 'Industry height pm10: ',industry_number,i_industry_index,j_industry_index,industry_height(industry_number)
                endif
                 if (pollutant_loop_index(i_pollutant).eq.pm25_nc_index.and.industry_emission(industry_number,pm25_index).gt.0) then
                     proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant)=proxy_emission_subgrid(i_industry_index,j_industry_index,source_index,i_pollutant) &
@@ -228,7 +228,7 @@
                     emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)=emission_height_subgrid(i_industry_index,j_industry_index,i_pollutant)+industry_height(industry_number)*industry_emission(industry_number,pm25_index)
                     count_subgrid(i_industry_index,j_industry_index,i_pollutant)=count_subgrid(i_industry_index,j_industry_index,i_pollutant)+1
                     count=count+1
-                    write(*,'(a,3i,f)') 'Industry height pm25: ',industry_number,i_industry_index,j_industry_index,industry_height(industry_number)
+                    !write(*,'(a,3i,f12.2)') 'Industry height pm25: ',industry_number,i_industry_index,j_industry_index,industry_height(industry_number)
                 endif
                 
             enddo                

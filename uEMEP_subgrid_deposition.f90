@@ -476,6 +476,7 @@
                     subgrid_internal=gauss_plume_cartesian_sigma_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc)
                     !write(*,'(9es12.2)') x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,subgrid_internal
                     
+                    !Only use half of the source grid for deposition and depletion
                     if (k.gt.1) then
                         !s/m3 *m2=s/m
                         subgrid_internal_integral=(subgrid_internal)*target_subgrid_delta(x_dim_index)*target_subgrid_delta(y_dim_index)
