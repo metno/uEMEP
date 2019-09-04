@@ -21,6 +21,7 @@
     real delta_area(2)
     real temp(subgrid_dim(t_dim_index),2)
     integer tt
+    real ratio_interp(subgrid_dim(t_dim_index),2)
     
     integer i_depo,i_loop
     
@@ -120,7 +121,9 @@
                     !write(*,*) h_mix_loc(tt)/H_emep,temp(tt,2),temp(tt,1),ratio(tt,i_source,i_pollutant)
 
                     
+                    !Division by 0 traps
                     if (temp(tt,1).eq.0) ratio(tt,i_source,i_pollutant)=0.
+                    if (h_mix_loc(tt).eq.0) ratio(tt,i_source,i_pollutant)=0.
                     ratio(tt,i_source,i_pollutant)=max(0.,ratio(tt,i_source,i_pollutant))
                     ratio(tt,i_source,i_pollutant)=min(1.,ratio(tt,i_source,i_pollutant))
                     !write(*,'(2i,3es12.2)') i,j,temp(tt,1),temp(tt,2),ratio(tt,i_source,i_pollutant)
@@ -155,17 +158,29 @@
                 i_source=allsource_index
                 do i_pollutant=1,n_emep_pollutant_loop
 
+                    !Division by 0 traps
+                    ratio_interp(:,1)=subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_subgrid_index,allsource_index,i_pollutant)
+                    where (ratio_interp(:,1).gt.1.) ratio_interp(:,1)=1.
+                    where (ratio_interp(:,1).lt.0.) ratio_interp(:,1)=0.
+                    where (subgrid(i,j,:,emep_subgrid_index,allsource_index,i_pollutant).eq.0.) ratio_interp(:,1)=0.
+
+                    ratio_interp(:,2)=subgrid(i,j,:,emep_local_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,i_pollutant)*ratio(:,i_source,i_pollutant)
+                    !where (ratio_interp(:,2).gt.1.) ratio_interp(:,2)=1.
+                    where (ratio_interp(:,2).lt.0.) ratio_interp(:,2)=0.
+                    where (subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,i_pollutant).eq.0.) ratio_interp(:,2)=0.
+
                     subgrid(i,j,:,drydepo_nonlocal_subgrid_index,allsource_index,i_pollutant)=subgrid(i,j,:,drydepo_nonlocal_subgrid_index,allsource_index,i_pollutant) &
                             +var3d_nc(ii,jj,:,drydepo_nc_index,i_source,i_pollutant) &
-                            *subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_subgrid_index,allsource_index,i_pollutant) &
+                            *ratio_interp(:,1) &
                             *weighting_nc(ii-i_nc,jj-j_nc)
+                    
                     !subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,allsource_index,i_pollutant)=subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,allsource_index,i_pollutant) &
                     !        +var3d_nc(ii,jj,:,wetdepo_nc_index,i_source,i_pollutant) &
                     !        *(1.-subgrid(i,j,:,emep_local_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_subgrid_index,i_source,i_pollutant)*ratio(:,i_source,i_pollutant)) &
                     !        *weighting_nc(ii-i_nc,jj-j_nc)
                     subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,allsource_index,i_pollutant)=subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,allsource_index,i_pollutant) &
                             +var3d_nc(ii,jj,:,wetdepo_nc_index,i_source,i_pollutant) &
-                            /(1.+subgrid(i,j,:,emep_local_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,i_pollutant)*ratio(:,i_source,i_pollutant)) &
+                            /(1.+ratio_interp(:,2)) &
                             *weighting_nc(ii-i_nc,jj-j_nc)
                 
                     !write(*,*) ratio(:,i_source,i_pollutant),subgrid(i,j,:,emep_local_subgrid_index,allsource_index,i_pollutant)/subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)

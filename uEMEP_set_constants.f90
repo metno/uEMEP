@@ -28,6 +28,7 @@
         var_name_nc(conc_nc_index,no2_nc_index,allsource_nc_index)='no2'
         var_name_nc(conc_nc_index,nox_nc_index,allsource_nc_index)='nox'
         var_name_nc(conc_nc_index,nh3_nc_index,allsource_nc_index)='nh3'
+        var_name_nc(conc_nc_index,nh4_nc_index,allsource_nc_index)='nh4'
         var_name_nc(conc_nc_index,pm25_nc_index,allsource_nc_index)='pm25'
         var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)='pm10'
         var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)='pmco'
@@ -157,6 +158,8 @@
         comp_name_nc(no2_nc_index)='D3_ug_NO2'
         comp_name_nc(nox_nc_index)='D3_ugN_NOX'
         comp_name_nc(nh3_nc_index)='D3_ug_NH3'
+        !comp_name_nc(nh3_nc_index)='nh3'
+        comp_name_nc(nh4_nc_index)='D3_ug_NH4_F'
         !comp_name_nc(pm25_nc_index)='pm25'
         !comp_name_nc(pmco_nc_index)='D3_ug_PMCO'
         comp_name_nc(pm10_nc_index)='D3_ug_PM10'
@@ -367,6 +370,7 @@
     emission_factor(pmex_index,traffic_index,:)=0.01 !(g/km/veh)
 
     emission_factor(nh3_index,agriculture_index,:)=1. !Agriculture data is in emissions [kg/yr]
+    emission_factor(nh4_index,agriculture_index,:)=1. !Agriculture data is in emissions [kg/yr]
 
     ratio_truck_car_emission(nox_index)=12.5 !4.86/.318 !From excel sheet for NOx. 12.5 matches the values used in NORTRIP
     ratio_truck_car_emission(no2_index)=12.5 !4.86/.318 !Should perhaps be different but 
@@ -478,20 +482,31 @@
             pollutant_loop_back_index(pm25_nc_index)=1
             pollutant_loop_back_index(pm10_nc_index)=2
             pollutant_loop_back_index(pmex_nc_index)=3
+        elseif (pollutant_index.eq.nh3_nc_index) then
+            n_emep_pollutant_loop=1
+            n_pollutant_loop=1
+            pollutant_loop_index(1)=nh3_nc_index
+            pollutant_loop_index(2)=nh4_nc_index
+            pollutant_loop_back_index(nh3_nc_index)=1
+            pollutant_loop_back_index(nh4_nc_index)=2
         else
             n_emep_pollutant_loop=1
             n_pollutant_loop=1
             pollutant_loop_index(1)=pollutant_index
             pollutant_loop_back_index(pollutant_index)=1
         endif
-        !Set indexing for additional compounds. Only used when reading in EMEP data
         
+        !Set indexing for additional compounds. Only used when reading in EMEP data
         do p_loop=1,n_pollutant_loop
         if (pollutant_loop_index(p_loop).eq.nox_nc_index) then
             n_pollutant_compound_loop(p_loop)=3
             pollutant_compound_loop_index(p_loop,1)=nox_nc_index
             pollutant_compound_loop_index(p_loop,2)=no2_nc_index
             pollutant_compound_loop_index(p_loop,3)=o3_nc_index
+        elseif (pollutant_loop_index(p_loop).eq.nh3_nc_index) then
+            n_pollutant_compound_loop(p_loop)=2
+            pollutant_compound_loop_index(p_loop,1)=nh3_nc_index
+            pollutant_compound_loop_index(p_loop,2)=nh4_nc_index
         else
             n_pollutant_compound_loop(p_loop)=1
             pollutant_compound_loop_index(p_loop,1)=pollutant_loop_index(p_loop)
