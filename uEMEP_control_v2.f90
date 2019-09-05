@@ -16,7 +16,6 @@
     implicit none
     
     integer source_index
-    logical first_g_loop
     real start_time_cpu,end_time_cpu
     logical :: have_read_emep=.false.
     !real temp_val,area_weighted_interpolation_function

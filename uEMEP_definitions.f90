@@ -810,6 +810,11 @@
     
     logical :: use_EMEP_surface_ozone_flag=.false.
     
+    logical :: save_compounds_as_ascii=.false.
+    
+    logical :: first_g_loop=.true.
+
+    
     end module uEMEP_definitions
     
     

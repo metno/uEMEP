@@ -17,6 +17,7 @@
     real, allocatable :: exhaust_subgrid(:,:,:)
     real, allocatable :: aqi_subgrid(:,:,:,:)
     integer, allocatable :: aqi_responsible_pollutant_index(:,:,:)
+    real, allocatable :: temp_subgrid_ascii(:,:)
     
     integer ii,jj,tt
     
@@ -32,6 +33,7 @@
     integer n_save_aqi_pollutant_index
     real temp_sum_comp
     integer count
+    character(256) filename_ascii
     
     !Functions
     real DIRECTION
@@ -47,6 +49,7 @@
     if (.not.allocated(exhaust_subgrid)) allocate(exhaust_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
     if (.not.allocated(aqi_subgrid).and.save_aqi) allocate(aqi_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
     if (.not.allocated(aqi_responsible_pollutant_index).and.save_aqi) allocate(aqi_responsible_pollutant_index(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
+    if (.not.allocated(temp_subgrid_ascii).and.save_compounds_as_ascii) allocate(temp_subgrid_ascii(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
     
     !Save subgrid calculations
     valid_min=0.   
@@ -98,7 +101,7 @@
     temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'.nc'
     temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'.nc'
     endif
-   
+       
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Saving netcdf data (uEMEP_save_netcdf_control)'
@@ -126,6 +129,41 @@
         write(unit_logfile,*) 'Saving as mean data'
     endif
     
+    !Save the final result of the subgrid calculation in ascii format
+    !This should only be used for annual mean calculations since it cannot have a time dimmension
+    !Intended for FAIRMODE output
+    !Makes a new file for each compound and averages over time, if there is a time dimension
+    if (save_compounds_as_ascii) then
+    variable_type='float'
+    unit_str="ug/m3"
+    do i_pollutant=1,n_pollutant_loop
+        if (pollutant_loop_index(i_pollutant).ne.pmex_index &
+            .and.pollutant_loop_index(i_pollutant).ne.pm25_sand_index.and.pollutant_loop_index(i_pollutant).ne.pm10_sand_index &
+            .and.pollutant_loop_index(i_pollutant).ne.pm25_salt_index.and.pollutant_loop_index(i_pollutant).ne.pm10_salt_index) then
+            do i_loop=1,n_pollutant_compound_loop(i_pollutant)
+            
+            i_comp=pollutant_compound_loop_index(i_pollutant,i_loop)
+            !write(*,*) i_comp
+        
+            var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))
+            
+            title_str=trim(var_name_temp)//'_'//trim(file_tag)//trim(temp_date_str)
+            write(unit_logfile,'(a)')'Writing ascii data to: '//trim(title_str)
+        
+            filename_ascii=trim(pathname_output_grid)//trim(title_str)//'.asc'
+        
+            temp_subgrid_ascii(:,:)=sum(comp_subgrid(:,:,:,i_comp),3)/subgrid_dim(t_dim_index)
+        
+
+            write(unit_logfile,'(a,f12.2)')'Writing ascii array variable: '//trim(var_name_temp),sum(comp_subgrid(:,:,:,i_comp))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+
+            call write_esri_ascii_file(unit_logfile,filename_ascii,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_delta(x_dim_index),temp_subgrid_ascii,x_subgrid,y_subgrid)
+            
+            enddo
+        endif
+    enddo
+    endif
+
     !Save the final result of the subgrid calculation
     if (save_compounds) then
     variable_type='float'
@@ -147,7 +185,7 @@
             create_file=.false.
         endif
 
-        if (i_pollutant.eq.1.and.i_loop.eq.1.and.t_loop.eq.start_time_loop_index.and.g_loop.eq.start_grid_loop_index.and.save_netcdf_receptor_flag) then
+        if (i_pollutant.eq.1.and.i_loop.eq.1.and.t_loop.eq.start_time_loop_index.and.first_g_loop.and.save_netcdf_receptor_flag) then
             create_file_rec=.true.
             title_str_rec='uEMEP_receptor_'//trim(file_tag)//temp_date_str
             if (receptor_available) write(unit_logfile,'(a)')'Writing to: '//trim(temp_name_rec)
@@ -194,6 +232,8 @@
     
     create_file=.false.
     create_file_rec=.false.
+    
+    
     
     !Save the different local source contributions, not the total though
     if (save_source_contributions) then

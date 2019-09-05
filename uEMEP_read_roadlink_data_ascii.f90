@@ -332,6 +332,9 @@
     integer n_roadlink_emission_selected
     character(256) format_temp
     
+    double precision emission_date_number_start,emission_date_number
+    double precision date_to_number
+    
     write(unit_logfile,'(A)') ''
 	write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Reading road link emission data (uEMEP_read_roadlink_emission_data)'
@@ -378,35 +381,50 @@
         stop
     endif
     
-    !Check that start time and end time are covered in the emission data before progessing further
+    !Check that start time and end time are covered in the emission data before progressing further
     format_temp='yyyymmddHH'
     call datestr_to_date(n_roadlink_emission_date_str,format_temp,emission_date_array)
     if (use_single_time_loop_flag) then
-        !Does not check for t_match but assumes it is 1
         time_index_temp=end_time_loop_index
-        t_match_index=1
     else
         time_index_temp=subgrid_dim(t_dim_index)
+    endif
+    
         t_match_index=0
         !write(*,*) shape(val_dim_nc)
-        do t=1,time_index_temp
-            call number_to_date(val_dim_nc(t,time_dim_nc_index),date_array_temp,ref_year_EMEP)
+        !do t=1,time_index_temp
+        !    call number_to_date(val_dim_nc(t,time_dim_nc_index),date_array_temp,ref_year_EMEP)
+        !    if (date_array_temp(1).eq.emission_date_array(1).and.date_array_temp(2).eq.emission_date_array(2).and. &
+        !        date_array_temp(3).eq.emission_date_array(3).and.date_array_temp(4).eq.emission_date_array(4)) then
+        !        t_match_index=t
+        !    endif
+        !    write(*,'(4i)') date_array_temp(1:4)
+        !enddo
+        emission_date_number_start=date_to_number(emission_date_array,ref_year_EMEP)
+        call number_to_date(val_dim_nc(1,time_dim_nc_index),date_array_temp,ref_year_EMEP)
+        do t=1,n_roadlink_emission_time
+            emission_date_number=emission_date_number_start+(t-1)/24.
+            call number_to_date(emission_date_number,emission_date_array,ref_year_EMEP)
             if (date_array_temp(1).eq.emission_date_array(1).and.date_array_temp(2).eq.emission_date_array(2).and. &
                 date_array_temp(3).eq.emission_date_array(3).and.date_array_temp(4).eq.emission_date_array(4)) then
                 t_match_index=t
             endif
+            !write(*,'(4i)') emission_date_array(1:4)
         enddo
         if (t_match_index.eq.0) then
             write(unit_logfile,'(A,6i6)') 'ERROR: No starting date found in road emission data: ',emission_date_array
             stop
         else
             write(unit_logfile,'(A,6i6)') ' Road link emission starting date found. Index: ',t_match_index
+            write(unit_logfile,'(A,6i6)') ' Road link emission starting date found. Index: ',t_match_index
         endif
         if (n_roadlink_emission_time-t_match_index+1.lt.time_index_temp) then
             write(unit_logfile,'(A,2i6)') 'ERROR: Not enough time data in road link emission files: ',n_roadlink_emission_time-t_match_index+1,time_index_temp
             stop
+        else
+            write(unit_logfile,'(A,6i6)') ' Road link emission ending date found. Index: ',t_match_index+time_index_temp-1
         endif 
-    endif
+    !endif
     
     !Allocate the arrays after reading in the number of roads
     n_roadlink_emission_selected=n_roadlink_emission
