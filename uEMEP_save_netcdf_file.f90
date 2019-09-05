@@ -59,8 +59,14 @@
     !Save the data
     i_file=subgrid_total_file_index(allsource_index)
     !temp_name=trim(pathname_grid(i_file))//trim(filename_grid(i_file))//'_'//trim(file_tag)//'.nc'
-    if (len(config_date_str).gt.0) then
-        temp_date_str='_'//trim(config_date_str)
+    !if (len(config_date_str).gt.0) then
+    !    temp_date_str='_'//trim(config_date_str)
+    !else
+    !    temp_date_str=''
+    !endif
+    
+    if (len(filename_date_output_grid).gt.0) then
+        temp_date_str='_'//filename_date_output_grid
     else
         temp_date_str=''
     endif
@@ -80,13 +86,19 @@
     !Do not write anything about the compounds
     temp_compound_str=''
     
-    temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
-    temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
+    !temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
+    !temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
+    !if (save_netcdf_average_flag) then
+    !temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
+    !temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
+    !endif
+    temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//trim(temp_date_str)//'.nc'
+    temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//trim(temp_date_str)//'.nc'
     if (save_netcdf_average_flag) then
-    temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
-    temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'_'//trim(forecast_hour_str)//'.nc'
+    temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'.nc'
+    temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'.nc'
     endif
-    
+   
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Saving netcdf data (uEMEP_save_netcdf_control)'
@@ -686,7 +698,7 @@
         unit_str="ug/m3"
         temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_pollutant)
         if (save_netcdf_file_flag) then
-            write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid(:,:,:))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                 ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -704,6 +716,46 @@
         endif
         enddo
         enddo
+    endif
+
+    !Only save sea salt in this way when emep species are not saved in the general way
+    if (save_seasalt.and..not.save_emep_species) then
+        variable_type='float'
+        i_pollutant=sp_seasalt_index
+        do i_loop=1,n_pmxx_sp_index
+        if (i_loop.eq.pm25_sp_index.or.i_loop.eq.pm10_sp_index) then            
+
+            if (save_netcdf_fraction_as_contribution_flag) then
+                variable_type='float'
+                var_name_temp=trim(species_name_nc(i_loop,i_pollutant))//'_nonlocal_contribution'
+                unit_str="ug/m3"
+                temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_pollutant)
+            else
+                variable_type='byte'
+                var_name_temp=trim(species_name_nc(i_loop,i_pollutant))//'_nonlocal_fraction'
+                unit_str="%"
+                temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_pollutant)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+            endif
+
+            if (save_netcdf_file_flag) then
+            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid(:,:,:))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+                call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                    ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                    ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+            endif
+            if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid(:,:,:))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+                call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                    ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                    ,unit_str,title_str_rec,create_file_rec,valid_min &
+                    ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                    ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                    ,z_rec(allsource_index,1) &
+                    ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)
+            endif
+        endif
+        enddo
+        
     endif
 
     !Save the original EMEP compounds

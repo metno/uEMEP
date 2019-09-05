@@ -264,6 +264,7 @@
         
         !Read output grid path for all data
         pathname_output_grid=read_name_char('pathname_output_grid',pathname_output_grid,unit_in,unit_logfile)
+        filename_date_output_grid=read_name_char('filename_date_output_grid',filename_date_output_grid,unit_in,unit_logfile)
         
         !Read in file names. Only 2 choices for most file types
         pathname_rl(1)=read_name_char('pathname_rl(1)',pathname_rl(1),unit_in,unit_logfile)
@@ -465,7 +466,7 @@
         save_aqi=read_name_logical('save_aqi',save_aqi,unit_in,unit_logfile)
         save_emep_species=read_name_logical('save_emep_species',save_emep_species,unit_in,unit_logfile)
         save_deposition=read_name_logical('save_deposition',save_deposition,unit_in,unit_logfile)
-        
+        save_seasalt=read_name_logical('save_seasalt',save_seasalt,unit_in,unit_logfile)
  
         lowest_stable_L=read_name_real('lowest_stable_L',lowest_stable_L,unit_in,unit_logfile)
         lowest_unstable_L=read_name_real('lowest_unstable_L',lowest_unstable_L,unit_in,unit_logfile)
@@ -528,6 +529,7 @@
         filename_EMEP(3)=replace_string_char(config_date_str,replacement_date_str,filename_EMEP(3))
         filename_EMEP(4)=replace_string_char(config_date_str,replacement_date_str,filename_EMEP(4))
         pathname_output_grid=replace_string_char(config_date_str,replacement_date_str,pathname_output_grid)
+        filename_date_output_grid=replace_string_char(config_date_str,replacement_date_str,filename_date_output_grid)
         !NORTRIP file and path name
         pathname_rl(2)=replace_string_char(config_date_str,replacement_date_str,pathname_rl(2))
         filename_rl(2)=replace_string_char(config_date_str,replacement_date_str,filename_rl(2))
@@ -541,6 +543,7 @@
         filename_EMEP(3)=replace_string_char(forecast_hour_str,replacement_hour_str,filename_EMEP(3))
         filename_EMEP(4)=replace_string_char(forecast_hour_str,replacement_hour_str,filename_EMEP(4))
         pathname_output_grid=replace_string_char(forecast_hour_str,replacement_hour_str,pathname_output_grid)
+        filename_date_output_grid=replace_string_char(forecast_hour_str,replacement_hour_str,filename_date_output_grid)
         !NORTRIP file and path name
         pathname_rl(2)=replace_string_char(forecast_hour_str,replacement_hour_str,pathname_rl(2))
         filename_rl(2)=replace_string_char(forecast_hour_str,replacement_hour_str,filename_rl(2))
@@ -554,6 +557,7 @@
 
     do i=1,3
         call date_to_datestr_bracket(a,pathname_output_grid,pathname_output_grid)
+        call date_to_datestr_bracket(a,filename_date_output_grid,filename_date_output_grid)
         call date_to_datestr_bracket(a,pathname_EMEP(1),pathname_EMEP(1))
         call date_to_datestr_bracket(a,pathname_EMEP(2),pathname_EMEP(2))
         call date_to_datestr_bracket(a,pathname_EMEP(3),pathname_EMEP(3))
@@ -582,6 +586,7 @@
 
     do i=1,3
         call date_to_datestr_squarebracket(a,pathname_output_grid,pathname_output_grid)
+        call date_to_datestr_squarebracket(a,filename_date_output_grid,filename_date_output_grid)
         call date_to_datestr_squarebracket(a,pathname_EMEP(1),pathname_EMEP(1))
         call date_to_datestr_squarebracket(a,pathname_EMEP(2),pathname_EMEP(2))
         call date_to_datestr_squarebracket(a,pathname_EMEP(3),pathname_EMEP(3))
@@ -600,6 +605,7 @@
         filename_EMEP(3)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_EMEP(3))
         filename_EMEP(4)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_EMEP(4))
         pathname_output_grid=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,pathname_output_grid)
+        filename_date_output_grid=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_date_output_grid)
         !NORTRIP file and path name
         pathname_rl(2)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,pathname_rl(2))
         filename_rl(2)=replace_string_char(yesterday_date_str,replacement_yesterday_date_str,filename_rl(2))

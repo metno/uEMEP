@@ -426,6 +426,11 @@
                     endif
                                     
                     if (stability_scheme_flag.eq.2) then
+                        call uEMEP_set_dispersion_params_PG(invL_loc,source_index,subsource_index)
+                        ay_loc=ay(source_index,subsource_index)
+                        by_loc=by(source_index,subsource_index)
+                        az_loc=az(source_index,subsource_index)
+                        bz_loc=bz(source_index,subsource_index)
                         call uEMEP_set_dispersion_sigma_PG(invL_loc,logz0_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                     endif
                                     

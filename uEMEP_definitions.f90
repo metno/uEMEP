@@ -290,6 +290,7 @@
     character(256) pathname_grid(n_filenames_grid)
     character(256) pathfilename_grid(n_filenames_grid)  !Combined path and filename
     character(256) pathname_output_grid
+    character(256) :: filename_date_output_grid=''
     
     logical :: save_intermediate_files=.false.
     
@@ -708,6 +709,7 @@
     logical :: save_aqi=.true.
     logical :: save_emep_species=.false.
     logical :: save_deposition=.false.
+    logical :: save_seasalt=.false.
 
     !Region ID file names
     character(256) pathfilename_region_id,pathname_region_id,filename_region_id

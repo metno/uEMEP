@@ -181,6 +181,9 @@
     bz=0.711 !For z0=0.3, corresponding to the same as K_z for wind height at average of emission source of 1 m and zc
     az=0.21
     bz=0.79 !For z0=0.3, corresponding to the same as K_z for wind height at emission source of 1 m
+    !Consistant with uEMEP_set_dispersion_params_PG needs to be fixed. Just one call to the parameters, one calle to the sigma calculation
+    az=0.2
+    bz=0.75
 
 
     min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
