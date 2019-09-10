@@ -78,7 +78,7 @@
     subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)=0
     comp_EMEP_subgrid(:,:,:,:)=0
     orig_EMEP_subgrid(:,:,:,:)=0
-    if (save_emep_species) species_EMEP_subgrid(:,:,:,:,:)=0
+    if (save_emep_species.or.save_seasalt) species_EMEP_subgrid(:,:,:,:,:)=0
     
     !Set value used later
     EMEP_grid_interpolation_size_sqr=EMEP_grid_interpolation_size*EMEP_grid_interpolation_size
@@ -139,7 +139,7 @@
             enddo
             enddo
 
-            if (save_emep_species) then
+            if (save_emep_species.or.save_seasalt) then
             do i_pollutant=1,n_sp_index
             do i_loop=1,n_pmxx_sp_index
                 species_EMEP_subgrid(i,j,:,i_loop,i_pollutant)=species_var3d_nc(ii,jj,:,i_loop,i_pollutant)
@@ -256,7 +256,7 @@
                         
                     enddo
 
-                    if (save_emep_species) then
+                    if (save_emep_species.or.save_seasalt) then
                     do i_pollutant=1,n_sp_index
                     do i_loop=1,n_pmxx_sp_index
                         species_EMEP_subgrid(i,j,tt,i_loop,i_pollutant)=species_EMEP_subgrid(i,j,tt,i_loop,i_pollutant) &

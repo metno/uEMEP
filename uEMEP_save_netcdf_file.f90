@@ -728,7 +728,7 @@
     enddo
     endif
     
-    if (save_emep_species) then
+    if (save_emep_species.and..not.save_seasalt) then
         variable_type='float'
         do i_pollutant=1,n_sp_index-1
         do i_loop=1,n_pmxx_sp_index

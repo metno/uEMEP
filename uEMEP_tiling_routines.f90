@@ -60,8 +60,9 @@
     integer reduce_grid_class
     real aggregation_tile_scale(10)
     integer n_aggregated_tiles
-    parameter (n_aggregated_tiles=4) !40to5km
+    !parameter (n_aggregated_tiles=4) !40to5km
     !parameter (n_aggregated_tiles=5) !160to10km
+    parameter (n_aggregated_tiles=1) !make_100km_files
     
     real aggregated_tile_subgrid_delta(n_dim_index,n_aggregated_tiles)
     real aggregated_tile_subgrid_min(n_dim_index,n_aggregated_tiles)
@@ -76,6 +77,7 @@
     integer count_class(n_aggregated_tiles,10)
     logical OK
     integer max_counter,zero_counter
+    logical :: make_100km_files=.true.
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -100,6 +102,13 @@
     tile_subgrid_max(x_dim_index)=1110000.+40000.
     tile_subgrid_max(y_dim_index)=7950000.+40000.
 
+    if (make_100km_files) then
+    tile_subgrid_min(x_dim_index)=-70000.-30000
+    tile_subgrid_max(x_dim_index)=1110000.+150000.
+    tile_subgrid_min(y_dim_index)=6440000.-40000
+    tile_subgrid_max(y_dim_index)=7950000.+50000.
+    endif
+    
     !40to5km tile class
     population_tile_scale=0.5 !For 5 km, to give 200 people /km^2
 	tile_subgrid_delta(x_dim_index)=5000.
@@ -108,7 +117,11 @@
     population_tile_scale=1.
 	tile_subgrid_delta(x_dim_index)=10000.
 	tile_subgrid_delta(y_dim_index)=10000.
-
+    if (make_100km_files) then
+	tile_subgrid_delta(x_dim_index)=100000.
+	tile_subgrid_delta(y_dim_index)=100000.
+    endif
+    
     limit_val_tile_population=limit_val_tile_population*population_tile_scale
     
     !Set all tile subgrids relative to the target subgrid
@@ -134,6 +147,8 @@
         aggregation_tile_scale(1)=4.
         aggregation_tile_scale(2)=2.
         aggregation_tile_scale(3)=1.
+    elseif (n_aggregated_tiles.eq.1) then
+        aggregation_tile_scale(1)=1.
     endif
     
     do k=1,n_aggregated_tiles
@@ -374,10 +389,17 @@
             elseif (tile_subgrid(i_tile,j_tile,tile_population_index).gt.limit_val_tile_population(5)) then
                     tile_class_subgrid(i_tile,j_tile)=4 !Population > 100000
             endif
-            !if (tile_class_subgrid(i_tile,j_tile).eq.2) tile_class_subgrid(i_tile,j_tile)=3
+            if (make_100km_files) then
+                if (tile_municipality_subgrid(i_tile,j_tile).gt.0) then
+                tile_class_subgrid(i_tile,j_tile)=1
+                endif
+            endif
+            
             num_tile_classes(tile_class_subgrid(i_tile,j_tile))=num_tile_classes(tile_class_subgrid(i_tile,j_tile))+1
             
         endif
+        
+
     enddo
     enddo
    
@@ -400,7 +422,11 @@
     resolution_tile_classes(3)=125.
     resolution_tile_classes(4)=50.
     resolution_tile_classes(5)=25.
-   
+
+    if (make_100km_files) then
+        resolution_tile_classes(1)=100.
+    endif
+    
     !Preallocate the smallest aggregated tiles with the calculated tile value
     aggregated_tile_class_subgrid=0
     aggregated_tile_class_subgrid(:,:,n_aggregated_tiles)=tile_class_subgrid

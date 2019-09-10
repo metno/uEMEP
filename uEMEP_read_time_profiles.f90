@@ -124,7 +124,7 @@
     close(unit_in,status='keep')
     !close(unit_in)
     
-    !Normalise the data to be used with average emmissions
+    !Normalise the data to be used with average emmissions to give an hourly average value and a monthly average value
     do i_source=1,n_col-1
     val_hour_of_week_input(:,i_source)=val_hour_of_week_input(:,i_source)/sum(val_hour_of_week_input(:,i_source))*n_hours_in_week
     val_month_of_year_input(:,i_source)=val_month_of_year_input(:,i_source)/sum(val_month_of_year_input(:,i_source))*n_months_in_year

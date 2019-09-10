@@ -629,7 +629,11 @@
                                 endif
 
                             else
-                                                            
+
+                                sig_y_00_loc=emission_properties_subgrid(ii,jj,emission_sigy00_index,source_index)
+                                sig_z_00_loc=emission_properties_subgrid(ii,jj,emission_sigz00_index,source_index)
+                                h_emis_loc=emission_properties_subgrid(ii,jj,emission_h_index,source_index)
+
                                 !If not hourly concentration then use the annual dispersion function
                                 if (use_target_subgrid) then
                                     distance_subgrid=sqrt((x_emission_subgrid(ii,jj,source_index)-x_target_subgrid(i,j))*(x_emission_subgrid(ii,jj,source_index)-x_target_subgrid(i,j)) &

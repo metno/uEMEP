@@ -334,7 +334,7 @@
         endif
         endif
 
-        if (save_emep_species) then
+        if (save_emep_species.or.save_seasalt) then
         if (.not.allocated(species_var3d_nc)) then
             allocate (species_var3d_nc(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index),n_pmxx_sp_index,n_sp_index))
             species_var3d_nc=0
@@ -606,7 +606,7 @@
         endif
         
         !Loop through the species
-        if (save_emep_species.and.i_file.eq.1) then
+        if ((save_emep_species.or.save_seasalt).and.i_file.eq.1) then
             write(unit_logfile,'(A)') ' Reading species data from EMEP: '
 
             do i_sp=1,n_sp_index
@@ -749,7 +749,7 @@
                endif
   
                if (i_sp.eq.sp_seasalt_index) then
-                    !Read dust
+                    !Read seasalt
                     do pmxx_sp_index=1,n_pmxx_sp_index
                     if (pmxx_sp_index.eq.pm25_sp_index.or.pmco_sp_index.eq.pmxx_sp_index) then
                     var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_seasalt_in_index)

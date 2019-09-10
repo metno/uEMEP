@@ -134,6 +134,11 @@
         enddo        
         endif
     
+        !For annual calculations use the provided emissions in g/year without any HDD
+        if (annual_calculations) then
+            RWC_grid_HDD=1.    
+        endif
+        
         if (count.ne.n_RWC_grids) then
             write(unit_logfile,'(A,2i)') 'ERROR: Total number of RWC grids in file is not the same as given. Stopping: ',n_RWC_grids,count
             stop

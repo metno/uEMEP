@@ -42,6 +42,12 @@
     if (use_RWC_emission_data) then
         !Convert from g/h/subgrid to ug/s/subgrid 
         emission_factor_conversion(:,heating_index,:)=1.e6/3600.
+        if (annual_calculations) then
+            !Convert from g/yr/subgrid to ug/s/subgrid. Temporal profile will be set to 1.
+            !Should also be in shipping. No because the original data is read in as g/hr
+            emission_factor_conversion(:,heating_index,:)=1.e6/3600./24./365.
+        endif
+        
     endif
     
     !Converts tonne per year to ug/s/subgrid

@@ -290,7 +290,7 @@
     character(256) pathname_grid(n_filenames_grid)
     character(256) pathfilename_grid(n_filenames_grid)  !Combined path and filename
     character(256) pathname_output_grid
-    character(256) :: filename_date_output_grid=''
+    character(256) :: filename_date_output_grid='<replace_date_str>_<replace_hour>'
     
     logical :: save_intermediate_files=.false.
     

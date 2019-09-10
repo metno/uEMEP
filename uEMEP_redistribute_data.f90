@@ -264,7 +264,7 @@
      enddo
 
      !Replace the species PPM with the actual species PPM used in the local fraction and then replace this with the nonlocal part.
-     if (save_emep_species) then
+     if (save_emep_species.or.save_seasalt) then
          !Replace the primary species value with the one used in the calculations for consistency
          write(unit_logfile,'(A)') 'ppm read from surf and read emep. Difference should just be surface grid'
          write(unit_logfile,'(A,2f12.2)') 'PPM25 (tot_sp,comp)',sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &

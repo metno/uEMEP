@@ -204,7 +204,7 @@
     !After populating the grid with emission data (kg/yr) then fill all the other untouched grids with EMEP emission data (mg/m^2/yr) or (mg/m^2/hr).
     !Doesn't work. Would need to have a Nederlands mask instead of checking if emissions have been written or not.
     !!Do not use!!
-    if (1.eq.2) then
+    if (1.eq.1) then
         
     if (.not.save_emissions_for_EMEP(agriculture_index)) then
     
@@ -227,6 +227,7 @@
     enddo
     enddo
     
+    !Note, in current reading we have average emissions from EMEP not total
     do j=1,emission_subgrid_dim(y_dim_index,source_index)
     do i=1,emission_subgrid_dim(x_dim_index,source_index)
         !write(*,*) i,j,agriculture_emission_data_available(i,j)
@@ -238,13 +239,14 @@
             iii=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,source_index)
             jjj=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,source_index)
             if (agriculture_emission_emep_subgrid_count(iii,jjj).ne.0) then
-                !Convert mg/m2 to kg/emission subgrid
+                !Convert mg/m2/hr to kg/emission subgrid. Need to put in time here for the hourly runs. Need to fix
                 proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_index))=var3d_nc(iii,jjj,1,emis_nc_index,agriculture_nc_index,pollutant_loop_back_index(nh3_nc_index))/1.0e6 &
-                    *emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index)
-                !If hourly data then convert to annual emissions
-                if (hourly_calculations) proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_index)) &
-                    =proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_index))*24.*365.
-                write(*,*) i,j,proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_index))
+                    *emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index)*24.*365.
+                !If hourly data then convert to mean hour emission emissions
+                !if (hourly_calculations) proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_index)) &
+                !    =proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_index))/24./365.
+                !write(*,*) i,j,iii,jjj
+                !write(*,*) pollutant_loop_back_index(nh3_nc_index),proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_index)),var3d_nc(iii,jjj,1,emis_nc_index,agriculture_nc_index,pollutant_loop_back_index(nh3_nc_index))
             endif
         endif
     !write(*,*) agriculture_emission_emep_subgrid_count(iii,jjj)
