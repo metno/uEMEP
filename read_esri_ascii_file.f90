@@ -140,7 +140,7 @@
         write(unit_in,*)'xllcorner',xllcorner
         write(unit_in,*)'yllcorner',yllcorner
         write(unit_in,*)'cellsize',cellsize_sub
-        write(unit_in,*)'NODATA_val',NODATA_value
+        write(unit_in,*)'NODATA_value',NODATA_value
         !write(unit_logfile,'(2a10,4a12)')'ncols','nrows','xllcorner','yllcorner','cellsize','NODATA_val'
         !write(unit_logfile,'(2i10,4f12.1)')ncols_sub,nrows_sub,xllcorner,yllcorner,cellsize_sub,NODATA_value  
     

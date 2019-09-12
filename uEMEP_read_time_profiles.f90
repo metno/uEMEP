@@ -183,7 +183,7 @@
             else
                 !Set the time profile
                 emission_time_profile_subgrid(:,:,t,source_index_in(i_source),:)=val_hour_of_week_input(hour_of_week_index,i_source)*val_month_of_year_input(date_array(2),i_source)
-            
+                !if (source_index_in(i_source).eq.industry_index) write(*,*) 'TIME PROFILE: ',val_hour_of_week_input(hour_of_week_index,i_source),val_month_of_year_input(date_array(2),i_source)
             endif
             !write(*,*) hour_of_week_index,val_hour_of_week_input(hour_of_week_index,i_source),val_month_of_year_input(date_array(2),i_source)
             !write(*,*) emission_time_profile_subgrid(1,1,t,source_index_in(i_source),1)
