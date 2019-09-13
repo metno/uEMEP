@@ -309,6 +309,14 @@
         temp_date_str=''
     endif
     
+    !Do not use the actual emission start date for the file name but use the format specified by filename_date_output_grid
+    if (len(filename_date_output_grid).gt.0) then
+        temp_date_str='_'//trim(filename_date_output_grid)
+    else
+        temp_date_str=''
+    endif
+   
+   
     !Do not write 'all' in file name if all compounds are selected
     if (pollutant_index.eq.all_nc_index) then
         temp_compound_str=''
@@ -330,7 +338,6 @@
         stop
     endif
 
-    
    !Save the emissions interpolated to the target grid
     variable_type='float'
     unit_str="mg/m2"
