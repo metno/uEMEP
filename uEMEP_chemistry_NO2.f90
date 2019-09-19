@@ -607,8 +607,11 @@
     real, intent(out) :: nox_out,no2_out,o3_out
     
     !From Norwegian obs fit
-    real :: a_rom=21
-    real :: b_rom=27
+    !real :: a_rom=20
+    !real :: b_rom=30
+    !From model fit
+    real :: a_rom=30
+    real :: b_rom=35
     real :: c_rom=0.23
     real ox_init,no2_init
    
@@ -620,57 +623,7 @@
     ox_init=no2_init*47./46.+o3_bg*47./48.
     o3_out=ox_init*48./47.-no2_out*48./46.
     
+    !o3_out=o3_bg.+no2_bg*48./46.-no2_out*48./46.
+
     end subroutine uEMEP_Romberg_NO2
     
-    subroutine uEMEP_nox_emission_temperature
-    !Routine for doing the chemistry calculations in uEMEP
-    
-    use uEMEP_definitions
-
-    implicit none
-    
-    integer t_start,t_end
-    integer i,j,t
-    integer i_integral,j_integral
-    real :: ref_temperature1=-10.
-    real :: ref_temperature2=10.
-    real :: ref_scaling1=3.
-    real :: ref_scaling2=1.
-    real :: emission_scaling
-    real :: temperature
-    
-    write(unit_logfile,'(A)') ''
-    write(unit_logfile,'(A)') '================================================================'
-	write(unit_logfile,'(A)') 'Using temperature dependency of NOx traffic emissions (uEMEP_nox_emission_temperature)'
-	write(unit_logfile,'(A)') '================================================================'
-
-    t_start=1
-    t_end=subgrid_dim(t_dim_index)
-    ref_temperature1=traffic_nox_emission_temperature_ref_temperature(1)
-    ref_temperature2=traffic_nox_emission_temperature_ref_temperature(2)
-    ref_scaling1=traffic_nox_emission_temperature_ref_scaling(1)
-    ref_scaling2=traffic_nox_emission_temperature_ref_scaling(2)
-
-    do t=t_start,t_end
-    do j=1,subgrid_dim(y_dim_index)
-    do i=1,subgrid_dim(x_dim_index)
-    if (use_subgrid(i,j,traffic_index)) then
-        
-        i_integral=crossreference_target_to_integral_subgrid(i,j,x_dim_index)
-        j_integral=crossreference_target_to_integral_subgrid(i,j,y_dim_index)
-   
-        temperature=meteo_subgrid(i_integral,j_integral,t,t2m_subgrid_index)-273.14
-        
-        emission_scaling=ref_scaling1+(ref_scaling2-ref_scaling1)*(temperature-ref_temperature1)/(ref_temperature2-ref_temperature1)
-        
-        emission_scaling=max(min(emission_scaling,ref_scaling1),ref_scaling2)
-        
-        subgrid(i,j,t,local_subgrid_index,traffic_index,pollutant_loop_back_index(nox_nc_index))=emission_scaling*subgrid(i,j,t,local_subgrid_index,traffic_index,pollutant_loop_back_index(nox_nc_index))
-        
-        !write(*,'(3i,2f12.2)') i,j,t,temperature,emission_scaling
-    endif
-    enddo
-    enddo
-    enddo
-    
-    end subroutine uEMEP_nox_emission_temperature

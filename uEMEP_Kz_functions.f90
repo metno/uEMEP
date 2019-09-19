@@ -122,13 +122,13 @@
     
     !Calculate sigma_y at the maximum K, around the average of the emission height and 0.25 of the boundary layer height
     !THis is new 27.10.2018 and not tested. It will reduce sig_y which is OK
-    h_y=(h_mix_loc*0.25+z_emis_loc)/2.
-    call Kz_func(h_mix_loc,L,u_star0,h_y,K_min,K_y)
-    sig_y=sig_y00+min_xy*sigy_0_subgid_width_scale+sqrt(2.*K_y*l_t*f_t)
+    !h_y=(h_mix_loc*0.25+z_emis_loc)/2.
+    !call Kz_func(h_mix_loc,L,u_star0,h_y,K_min,K_y)
+    !sig_y=sig_y00+min_xy*sigy_0_subgid_width_scale+sqrt(2.*K_y*l_t*f_t)
     
     !Should change this to what is documented, i.e. 2*sig_z. Need to test
     !Also sigy_0_subgid_width_scale should perhaps be 0.5, not 0.25. Also need to test
-    !sig_y=sig_y00+min_xy*sigy_0_subgid_width_scale+(sig_z-sigz00)*2.0
+    sig_y=sig_y00+min_xy*sigy_0_subgid_width_scale+(sig_z-sig_z00)*2.0
     
     end subroutine uEMEP_set_dispersion_sigma_Kz
     

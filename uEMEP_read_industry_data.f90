@@ -246,7 +246,7 @@
         do i_pollutant=1,n_pollutant_loop
         if (proxy_emission_subgrid(i,j,source_index,i_pollutant).gt.0) then
             emission_height_subgrid(i,j,i_pollutant)=emission_height_subgrid(i,j,i_pollutant)/proxy_emission_subgrid(i,j,source_index,i_pollutant)
-            write(unit_logfile,'(2a,2i6,f12.2)') 'Emission height: ',trim(pollutant_file_str(pollutant_loop_index(i_pollutant))),i,j,emission_height_subgrid(i,j,i_pollutant)
+            !write(unit_logfile,'(2a,2i6,f12.2)') 'Emission height: ',trim(pollutant_file_str(pollutant_loop_index(i_pollutant))),i,j,emission_height_subgrid(i,j,i_pollutant)
             !Take the average of the pollutants
             emission_properties_subgrid(i,j,emission_h_index,source_index)=emission_properties_subgrid(i,j,emission_h_index,source_index)+emission_height_subgrid(i,j,i_pollutant)
             pollutant_count=pollutant_count+1
@@ -254,7 +254,7 @@
         enddo
         if (pollutant_count.gt.0) then
             emission_properties_subgrid(i,j,emission_h_index,source_index)=emission_properties_subgrid(i,j,emission_h_index,source_index)/pollutant_count
-            write(unit_logfile,'(2a,2i6,f12.2)') 'Final emission height: ',trim('mean'),i,j,emission_properties_subgrid(i,j,emission_h_index,source_index)
+            !write(unit_logfile,'(2a,2i6,f12.2)') 'Final emission height: ',trim('mean'),i,j,emission_properties_subgrid(i,j,emission_h_index,source_index)
         endif
         !Set the industry emission heights to that given in the config file if it is > 0
         if (h_emis(industry_index,1).ge.0) then

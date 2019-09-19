@@ -204,6 +204,7 @@
             call uEMEP_convert_proxy_to_emissions         
         endif
         if (i_source.eq.traffic_index) then
+            g_loop=1
             !Read inthe road data
             call uEMEP_read_roadlink_data_ascii
             if (use_NORTRIP_emission_data) then
@@ -216,6 +217,18 @@
             !call uEMEP_read_time_profiles
             !call uEMEP_set_emission_factors
             !call uEMEP_convert_proxy_to_emissions
+            
+            !Adjust traffic emissions of NOx based on temperature
+            if (use_traffic_nox_emission_temperature_dependency) then
+                use_alternative_meteorology_flag=.true.
+                !Set the maximum dimension to that which is necessary. Minimum is not changed as it is selected in uEMEP_save_emission_netcdf
+                end_time_meteo_nc_index=start_time_meteo_nc_index+(save_emissions_end_index-1)
+                call uEMEP_read_meteo_nc
+                !call uEMEP_subgrid_meteo_EMEP
+                !call uEMEP_crossreference_grids
+                
+                call uEMEP_nox_emission_temperature
+            endif
             
         endif
         if (i_source.eq.heating_index) then

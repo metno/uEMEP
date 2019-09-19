@@ -246,7 +246,12 @@
             !Convert proxies to emissions including time profiles
             call uEMEP_convert_proxy_to_emissions
             
-            !Places EMEP deposition velocities into the deposition_subgrid
+            !Adjust traffic emissions of NOx based on temperature
+            if (use_traffic_nox_emission_temperature_dependency) then
+                call uEMEP_nox_emission_temperature
+            endif
+        
+           !Places EMEP deposition velocities into the deposition_subgrid
             if (calculate_deposition_flag) then
                 call uEMEP_set_deposition_velocities
             endif
@@ -294,10 +299,6 @@
             endif
             enddo
 
-            if (use_traffic_nox_emission_temperature_dependency) then
-                call uEMEP_nox_emission_temperature
-            endif
-        
             !Combine and save sources in local and total values
             call uEMEP_combine_local_source
     

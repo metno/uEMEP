@@ -530,6 +530,17 @@
                                         call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
                                     endif
                                     
+                                !In the annual case then make the wind level to be at emission height for emissions greater than 10 m, if meteoflag 1 or 3 is called                                
+                                h_temp=h_emis_loc
+                                if (wind_level_flag.eq.2.or.(h_temp.gt.H_meteo.and.wind_level_flag.eq.1)) then
+                                    FFgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index)
+                                    call u_profile_neutral_val_func(h_temp,FFgrid_loc,H_meteo,h_mix_loc,exp(logz0_loc),FF_loc,u_star0_loc)
+                                endif
+                                if (wind_level_flag.eq.4.or.(h_temp.gt.10.and.wind_level_flag.eq.3)) then
+                                    FF10_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index)
+                                    call u_profile_neutral_val_func(h_temp,FF10_loc,10.,h_mix_loc,exp(logz0_loc),FF_loc,u_star0_loc)
+                                endif
+                                
                                     if (stability_scheme_flag.eq.2) then
                                         call uEMEP_set_dispersion_params_PG(invL_loc,source_index,subsource_index)
                                         ay_loc=ay(source_index,subsource_index)
@@ -590,6 +601,8 @@
                                     !if (tt.ge.18.and.tt.le.18.and.temp_subgrid_internal.gt.1.e-3) then
                                         !write(*,'(2i,12es12.2)') ii,jj,x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,temp_emission_subgrid(ii,jj,1),temp_subgrid_internal,sin_subgrid_loc,cos_subgrid_loc
                                     !endif
+                
+            !if (source_index.eq.traffic_index.and.x_loc.eq.0) write(*,'(16es12.2)') sigy_0_subgid_width_scale,x_loc,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,sig_y_0_loc,sig_z_0_loc,sig_y_loc,sig_z_loc,h_emis_loc,FF_loc,meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index)
                                     
                                                                         
                                     !For diagnostics only!!
@@ -639,6 +652,8 @@
                                 sig_z_00_loc=emission_properties_subgrid(ii,jj,emission_sigz00_index,source_index)
                                 h_emis_loc=emission_properties_subgrid(ii,jj,emission_h_index,source_index)
                                 
+                                !write(*,*) ii,jj,sig_y_00_loc,sig_z_00_loc
+                                
                                 !If not hourly concentration then use the annual dispersion function
                                 if (use_target_subgrid) then
                                     distance_subgrid=sqrt((x_emission_subgrid(ii,jj,source_index)-x_target_subgrid(i,j))*(x_emission_subgrid(ii,jj,source_index)-x_target_subgrid(i,j)) &
@@ -648,7 +663,7 @@
                                     +(y_emission_subgrid(ii,jj,source_index)-y_subgrid(i,j))*(y_emission_subgrid(ii,jj,source_index)-y_subgrid(i,j)))
                                 endif
                                 
-                                !Set the simple as default at the emission
+                                !Set the simple as default at the receptor grid
                                 x_loc=distance_subgrid
                                 call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
 
@@ -672,18 +687,22 @@
                                 
                                 h_temp=h_emis_loc
             
-                                if (wind_level_flag.eq.5) then
+                                if (wind_level_flag.eq.5.or.wind_level_flag.eq.6) then
                                     FF_loc=temp_FF_emission_subgrid(ii,jj)
                                 else
                                     FF_loc=temp_FF_subgrid(i_cross_integral,j_cross_integral)
                                 endif
 
                                 !In the annual case then make the wind level to be at emission height for emissions greater than 10 m, if meteoflag 1 or 3 is called                                
-                                if (wind_level_flag.eq.2.or.(h_temp.gt.10.and.wind_level_flag.eq.1)) then
-                                    FF_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FFgrid_subgrid_index)*(1.-(log((H_meteo+z0_temp)/z0_temp)-log((h_temp+z0_temp)/z0_temp))/log((H_meteo+z0_temp)/z0_temp))
+                                if (wind_level_flag.eq.2.or.(h_temp.gt.H_meteo.and.wind_level_flag.eq.1)) then
+                                    !FF_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FFgrid_subgrid_index)*(1.-(log((H_meteo+z0_temp)/z0_temp)-log((h_temp+z0_temp)/z0_temp))/log((H_meteo+z0_temp)/z0_temp))
+                                    FFgrid_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FFgrid_subgrid_index)
+                                    call u_profile_neutral_val_func(h_temp,FFgrid_loc,H_meteo,h_mix_loc,exp(logz0_loc),FF_loc,u_star0_loc)
                                 endif
                                 if (wind_level_flag.eq.4.or.(h_temp.gt.10.and.wind_level_flag.eq.3)) then
-                                    FF_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)*(1.-(log((10.+z0_temp)/z0_temp)-log((h_temp+z0_temp)/z0_temp))/log((10.+z0_temp)/z0_temp))
+                                    !FF_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)*(1.-(log((10.+z0_temp)/z0_temp)-log((h_temp+z0_temp)/z0_temp))/log((10.+z0_temp)/z0_temp))
+                                    FF10_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
+                                    call u_profile_neutral_val_func(h_temp,FF10_loc,10.,h_mix_loc,exp(logz0_loc),FF_loc,u_star0_loc)
                                 endif
                                 
                                 !if (source_index.eq.industry_index) write(*,'(5es12.2)') meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FFgrid_subgrid_index),H_meteo,z0_temp,h_temp,FF_loc
@@ -706,7 +725,7 @@
                                 !write(*,*) h_mix_loc,invL_loc,logz0_loc,FF_loc
                           
                                 !if (source_index.eq.industry_index) write(*,'(6ES12.2)') sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc
-                                !if (source_index.eq.shipping_index) write(*,'(14es12.2)') sigy_0_subgid_width_scale,distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,FF_loc,1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
+                                !if (source_index.eq.traffic_index.and.distance_subgrid.eq.0) write(*,'(16es12.2)') sigy_0_subgid_width_scale,distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,sig_y_0_loc,sig_z_0_loc,sig_y_loc,sig_z_loc,h_emis_loc,FF_loc,1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
                                 !Divide by wind speed at receptor position
                                 temp_subgrid_rotated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc)/FF_loc
 

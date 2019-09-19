@@ -197,8 +197,8 @@
                         if (allocated(meteo_var1d_nc)) then
                             !Need to cross reference the meteo grid to the emission grid as this is not done normally
                             !Tricky using the two different emep grids?
-                            i_cross=1+floor((x_emission_subgrid(i,j,allsource_index)-meteo_var1d_nc(1,lon_nc_index))/meteo_dgrid_nc(lon_nc_index)+0.5)
-                            j_cross=1+floor((y_emission_subgrid(i,j,allsource_index)-meteo_var1d_nc(1,lat_nc_index))/meteo_dgrid_nc(lat_nc_index)+0.5)     
+                            i_cross=1+floor((x_emission_subgrid(i,j,source_index_in(i_source))-meteo_var1d_nc(1,lon_nc_index))/meteo_dgrid_nc(lon_nc_index)+0.5)
+                            j_cross=1+floor((y_emission_subgrid(i,j,source_index_in(i_source))-meteo_var1d_nc(1,lat_nc_index))/meteo_dgrid_nc(lat_nc_index)+0.5)     
                             !Because the meteo grid can be smaller than the EMEP grid then need to limit it
                             !write(*,'(6i12)') i,j,i_cross,j_cross,dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index)
                             i_cross=min(max(1,i_cross),dim_length_meteo_nc(x_dim_nc_index))

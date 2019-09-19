@@ -188,7 +188,9 @@
 
     min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
     !Set sig_y_0 to be half of the average x,y grid size
-    sig_y_0=sig_y_00+min_xy*sigy_0_subgid_width_scale
+    !Add this here ay*exp(by*log(min_xy)) to be the same as sig_z and the same as the  Kz calculation
+    !Does not mean it is correct, just closer to the Kz which is perhaps not so correct
+    sig_y_0=sig_y_00+min_xy*sigy_0_subgid_width_scale+ay*exp(by*log(min_xy))
     !Set sig_z_0 to be the size of the plume after travelling half of the grid size
     sig_z_0=sig_z_00+az*exp(bz*log(min_xy))
 
@@ -249,7 +251,9 @@
     bz=bz_pg(i_bot)*(1.-weight)+bz_pg(i_top)*weight
     
     !Set sig_y_0 to be half of the average x,y grid size
-    sig_y_0=sig_y_00+min_xy*sigy_0_subgid_width_scale
+    !Add this here ay*exp(by*log(min_xy)) to be the same as sig_z and the same as the  Kz calculation
+    !Does not mean it is correct, just closer to the Kz which is perhaps not so correct
+    sig_y_0=sig_y_00+min_xy*sigy_0_subgid_width_scale+ay*exp(by*log(min_xy))
     !Set sig_z_0 to be the size of the plume after travelling half of the grid size
     sig_z_0=sig_z_00+az*exp(bz*log(min_xy))
 
