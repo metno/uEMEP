@@ -35,6 +35,8 @@
     integer count
     character(256) filename_ascii
     
+    integer i_sp,ii_sp
+    
     !Functions
     real DIRECTION
     
@@ -730,51 +732,70 @@
     
     if (save_emep_species) then
         variable_type='float'
-        do i_pollutant=1,n_sp_index-1
-        do i_loop=1,n_pmxx_sp_index
-        if (i_loop.eq.pm25_sp_index.or.i_loop.eq.pm10_sp_index) then            
+        do i_sp=1,n_species_loop_index 
+            ii_sp=species_loop_index(i_sp)
+            if (i_sp.ne.sp_pm_index) then
+                !Do not include the total
+                do i_loop=1,n_pmxx_sp_index
+                    if (i_loop.eq.pm25_sp_index.or.i_loop.eq.pm10_sp_index) then            
 
-        var_name_temp=trim(species_name_nc(i_loop,i_pollutant))//'_contribution_to_EMEP_nonlocal'
-        unit_str="ug/m3"
-        temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_pollutant)
-        if (save_netcdf_file_flag) then
-            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid(:,:,:))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
-            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
-        endif
-        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-            write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid(:,:,:))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
-            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                ,unit_str,title_str_rec,create_file_rec,valid_min &
-                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
-                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
-                ,z_rec(allsource_index,1) &
-                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
-        endif
-        endif
-        enddo
+                if (i_loop.eq.pm25_sp_index) i_pollutant=pollutant_loop_back_index(pm25_index)
+                if (i_loop.eq.pm10_sp_index) i_pollutant=pollutant_loop_back_index(pm10_index)
+                
+                if (save_netcdf_fraction_as_contribution_flag) then
+                    variable_type='float'
+                    var_name_temp=trim(species_name_nc(i_loop,ii_sp))//'_nonlocal_contribution'
+                    unit_str="ug/m3"
+                    temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_sp)
+                else
+                    variable_type='byte'
+                    var_name_temp=trim(species_name_nc(i_loop,i_sp))//'_nonlocal_fraction'
+                    unit_str="%"
+                    temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_sp)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+                endif
+
+                    if (save_netcdf_file_flag) then
+                        write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid(:,:,:))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+                        call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                            ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+                    endif
+                    if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                        write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid(:,:,:))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+                        call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                            ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                            ,unit_str,title_str_rec,create_file_rec,valid_min &
+                            ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                            ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                            ,z_rec(allsource_index,1) &
+                            ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+                    endif
+                    endif
+                enddo
+            endif
         enddo
     endif
 
     !Only save sea salt in this way when emep species are not saved in the general way
     if (save_seasalt.and..not.save_emep_species) then
         variable_type='float'
-        i_pollutant=sp_seasalt_index
+        i_sp=n_species_loop_index
+        ii_sp=species_loop_index(i_sp)
         do i_loop=1,n_pmxx_sp_index
         if (i_loop.eq.pm25_sp_index.or.i_loop.eq.pm10_sp_index) then            
 
+            if (i_loop.eq.pm25_sp_index) i_pollutant=pollutant_loop_back_index(pm25_index)
+            if (i_loop.eq.pm10_sp_index) i_pollutant=pollutant_loop_back_index(pm10_index)
             if (save_netcdf_fraction_as_contribution_flag) then
                 variable_type='float'
-                var_name_temp=trim(species_name_nc(i_loop,i_pollutant))//'_nonlocal_contribution'
+                var_name_temp=trim(species_name_nc(i_loop,ii_sp))//'_nonlocal_contribution'
                 unit_str="ug/m3"
-                temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_pollutant)
+                temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_sp)
             else
                 variable_type='byte'
-                var_name_temp=trim(species_name_nc(i_loop,i_pollutant))//'_nonlocal_fraction'
+                var_name_temp=trim(species_name_nc(i_loop,i_sp))//'_nonlocal_fraction'
                 unit_str="%"
-                temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_pollutant)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+                temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_sp)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
             endif
 
             if (save_netcdf_file_flag) then

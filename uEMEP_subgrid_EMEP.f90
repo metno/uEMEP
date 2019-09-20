@@ -65,6 +65,7 @@
     integer :: tt_dim=1
    
     integer i_pollutant,i_loop
+    integer i_sp,ii_sp
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -140,9 +141,10 @@
             enddo
 
             if (save_emep_species.or.save_seasalt) then
-            do i_pollutant=1,n_sp_index
+            do i_sp=1,n_species_loop_index
+            ii_sp=species_loop_index(i_sp)
             do i_loop=1,n_pmxx_sp_index
-                species_EMEP_subgrid(i,j,:,i_loop,i_pollutant)=species_var3d_nc(ii,jj,:,i_loop,i_pollutant)
+                species_EMEP_subgrid(i,j,:,i_loop,i_sp)=species_var3d_nc(ii,jj,:,i_loop,i_sp)
             enddo
             enddo
             endif
@@ -257,10 +259,11 @@
                     enddo
 
                     if (save_emep_species.or.save_seasalt) then
-                    do i_pollutant=1,n_sp_index
+                    do i_sp=1,n_species_loop_index
+                    ii_sp=species_loop_index(i_sp)
                     do i_loop=1,n_pmxx_sp_index
-                        species_EMEP_subgrid(i,j,tt,i_loop,i_pollutant)=species_EMEP_subgrid(i,j,tt,i_loop,i_pollutant) &
-                            +species_var3d_nc(ii_nc,jj_nc,tt,i_loop,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,allsource_index)
+                        species_EMEP_subgrid(i,j,tt,i_loop,i_sp)=species_EMEP_subgrid(i,j,tt,i_loop,i_sp) &
+                            +species_var3d_nc(ii_nc,jj_nc,tt,i_loop,i_sp)*weighting_nc(ii_w,jj_w,tt_dim,allsource_index)
                     enddo
                     enddo
                     endif

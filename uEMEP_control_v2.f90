@@ -9,7 +9,7 @@
 !   Control programme for running the downscaling routine uEMEP
 !****************************************************************************
 
-    program uEMEP_v4
+    program uEMEP_v5
 
     use uEMEP_definitions
    
@@ -24,7 +24,7 @@
     
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
-    write(*,*) 'Starting program uEMEP_v4.1'
+    write(*,*) 'Starting program uEMEP_v5.1'
     write(*,*) '------------------------------------------------------------------------'
     
     !Read the command line, assigning the configuration file names and the substitution date_str
@@ -42,6 +42,9 @@
     !Set the pollutant and compound loop definitions
     call uEMEP_set_pollutant_loop
     
+    !Set the EMEP species definitions if they are to be read
+    call uEMEP_set_species_loop
+
     !Set the names of files to be written to when saving intermediate files
     call uEMEP_set_filenames
     
@@ -350,5 +353,5 @@
     write(*,'(a,i5,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
     write(*,*) '------------------------------------------------------------------------'
 
-    end program uEMEP_v4
+    end program uEMEP_v5
 

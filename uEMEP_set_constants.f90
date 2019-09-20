@@ -520,6 +520,35 @@
         
     end subroutine uEMEP_set_pollutant_loop
 
+    subroutine uEMEP_set_species_loop
+    
+    use uEMEP_definitions
+    
+    implicit none
+    
+    integer s_loop
+    
+        !Set the pollutant index loops after reading in pollutant_index
+        !Remove the sand and salt PM2.5, not necessary. Fixed ratio if needed n_pollutant_loop=6
+        if (save_emep_species) then
+            n_species_loop_index=n_sp_index
+            do s_loop=1,n_species_loop_index
+                species_loop_index(s_loop)=s_loop
+            enddo
+        elseif (save_seasalt) then
+            n_species_loop_index=1
+            species_loop_index(1)=sp_seasalt_index
+        else
+            !No species will be read or chosen. Set to 0 to make sure it fails if they are
+            n_species_loop_index=1
+            species_loop_index(1)=0
+        endif
+                
+        write(unit_logfile,'(a,i)') 'Number of species=',n_species_loop_index
+        
+    end subroutine uEMEP_set_species_loop
+
+
     subroutine uEMEP_reset_constants
     !Reset some constants based on the configuration file input
     use uEMEP_definitions

@@ -745,9 +745,11 @@
     integer sp_soa_in_index,sp_sia_in_index,sp_dust_in_index,sp_seasalt_in_index,sp_ffire_in_index,sp_ppm_in_index,sp_water_in_index,sp_pm_in_index
     parameter (sp_soa_in_index=18,sp_sia_in_index=19,sp_dust_in_index=20,sp_seasalt_in_index=21,sp_ffire_in_index=22,sp_ppm_in_index=23,sp_water_in_index=24,sp_pm_in_index=25,n_sp_all_index=25)
     
-    real, allocatable :: species_var3d_nc(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_sp_index)
-    real, allocatable :: species_EMEP_subgrid(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_sp_index)
-
+    real, allocatable :: species_var3d_nc(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_species_loop_index)
+    real, allocatable :: species_EMEP_subgrid(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_species_loop_index)
+    integer :: species_loop_index(n_sp_index)
+    integer n_species_loop_index !Variable length of species list, set in uEMEP_set_species_loop
+    
     character(256) species_name_nc(n_pmxx_sp_index,n_sp_all_index)
     
     !Deposition and land use
