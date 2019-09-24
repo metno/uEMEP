@@ -501,6 +501,7 @@
 
         save_compounds_as_ascii=read_name_logical('save_compounds_as_ascii',save_compounds_as_ascii,unit_in,unit_logfile)
 
+        use_GNFR_emissions_from_EMEP_flag=read_name_logical('use_GNFR_emissions_from_EMEP_flag',use_GNFR_emissions_from_EMEP_flag,unit_in,unit_logfile)
         
         
     close (unit_in)

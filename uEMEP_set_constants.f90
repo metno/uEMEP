@@ -581,4 +581,56 @@
         comp_name_nc(o3_nc_index)='SURF_ug_O3'        
     endif
     
+    if (use_GNFR_emissions_from_EMEP_flag) then
+        
+        !Local fractions
+        var_name_nc(frac_nc_index,nox_nc_index,traffic_nc_index)='nox_sec06_local_fraction'
+        var_name_nc(frac_nc_index,pmco_nc_index,traffic_nc_index)='pmco_sec06_local_fraction'
+        var_name_nc(frac_nc_index,pm25_nc_index,traffic_nc_index)='pm25_sec06_local_fraction'
+ 
+        var_name_nc(frac_nc_index,nox_nc_index,shipping_nc_index)='nox_sec07_local_fraction'
+        var_name_nc(frac_nc_index,pm25_nc_index,shipping_nc_index)='pm25_sec07_local_fraction'
+        var_name_nc(frac_nc_index,pmco_nc_index,shipping_nc_index)='pmco_sec07_local_fraction'
+
+        !var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)='nh3_sec11_local_fraction'
+        !var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)='nh3_sec12_local_fraction'
+        !Read as total for the time being as these have become two sectors now
+        var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)='nh3_local_fraction'
+
+        var_name_nc(frac_nc_index,nox_nc_index,heating_nc_index)='nox_sec03_local_fraction'
+        var_name_nc(frac_nc_index,pm25_nc_index,heating_nc_index)='pm25_sec03_local_fraction'
+        var_name_nc(frac_nc_index,pmco_nc_index,heating_nc_index)='pmco_sec03_local_fraction'
+
+        var_name_nc(frac_nc_index,nox_nc_index,industry_nc_index)='nox_sec04_local_fraction'
+        var_name_nc(frac_nc_index,pm25_nc_index,industry_nc_index)='pm25_sec04_local_fraction'
+        var_name_nc(frac_nc_index,pmco_nc_index,industry_nc_index)='pmco_sec04_local_fraction'
+
+        !Total emissions remain the same
+        var_name_nc(emis_nc_index,nh3_nc_index,allsource_nc_index)='Emis_mgm2_nh3'
+        var_name_nc(emis_nc_index,nox_nc_index,allsource_nc_index)='Emis_mgm2_nox'
+        var_name_nc(emis_nc_index,pmco_nc_index,allsource_nc_index)='Emis_mgm2_pmco'
+        var_name_nc(emis_nc_index,pm25_nc_index,allsource_nc_index)='Emis_mgm2_pm25'
+        
+        !Sector emissions read as total
+        var_name_nc(emis_nc_index,nh3_nc_index,agriculture_nc_index)='Emis_mgm2_nh3'
+
+        var_name_nc(emis_nc_index,nox_nc_index,traffic_nc_index)='Emis_mgm2_sec6nox'
+        var_name_nc(emis_nc_index,pm25_nc_index,traffic_nc_index)='Emis_mgm2_sec6pm25'
+        var_name_nc(emis_nc_index,pmco_nc_index,traffic_nc_index)='Emis_mgm2_sec6pmco'
+
+        var_name_nc(emis_nc_index,nox_nc_index,shipping_nc_index)='Emis_mgm2_sec7nox'
+        var_name_nc(emis_nc_index,pm25_nc_index,shipping_nc_index)='Emis_mgm2_sec7pm25'
+        var_name_nc(emis_nc_index,pmco_nc_index,shipping_nc_index)='Emis_mgm2_sec7pmco'
+        
+        var_name_nc(emis_nc_index,nox_nc_index,heating_nc_index)='Emis_mgm2_sec3nox'
+        var_name_nc(emis_nc_index,pm25_nc_index,heating_nc_index)='Emis_mgm2_sec3pm25'
+        var_name_nc(emis_nc_index,pmco_nc_index,heating_nc_index)='Emis_mgm2_sec3pmco'
+              
+        var_name_nc(emis_nc_index,nox_nc_index,industry_nc_index)='Emis_mgm2_sec4nox'
+        var_name_nc(emis_nc_index,pm25_nc_index,industry_nc_index)='Emis_mgm2_sec4pm25'
+        var_name_nc(emis_nc_index,pmco_nc_index,industry_nc_index)='Emis_mgm2_sec4pmco'
+        
+        
+    endif
+    
     end subroutine uEMEP_reset_constants

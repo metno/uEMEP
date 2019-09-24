@@ -816,6 +816,7 @@
     
     logical :: first_g_loop=.true.
 
+    logical :: use_GNFR_emissions_from_EMEP_flag=.false.
     
     end module uEMEP_definitions
     
