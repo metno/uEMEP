@@ -543,6 +543,13 @@
     do i_source=1,n_source_index
         if (calculate_source(i_source)) then
     
+            !Do not save emissions if the source is not traffic and the pollutant is road sand and salt or exhaust as these do not exist
+            if (i_source.ne.traffic_index.and.(pollutant_loop_index(i_pollutant).eq.pm25_sand_index.or.pollutant_loop_index(i_pollutant).eq.pm10_sand_index &
+                .or.pollutant_loop_index(i_pollutant).eq.pm25_salt_index.or.pollutant_loop_index(i_pollutant).eq.pm10_salt_index &
+                .or.pollutant_loop_index(i_pollutant).eq.pmex_index)) then
+                !Do nothing because these pollutants only exist for traffic
+            else
+                
                 i_file=emission_file_index(i_source)
                 var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
                 
@@ -579,7 +586,9 @@
                         ,z_rec(allsource_index,1) &
                         ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
                 endif
-    
+            
+            endif
+            
         endif
     enddo
     enddo
