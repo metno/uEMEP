@@ -802,7 +802,7 @@
                 temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_sp)
             else
                 variable_type='byte'
-                var_name_temp=trim(species_name_nc(i_loop,i_sp))//'_nonlocal_fraction'
+                var_name_temp=trim(species_name_nc(i_loop,ii_sp))//'_nonlocal_fraction'
                 unit_str="%"
                 temp_subgrid=species_EMEP_subgrid(:,:,:,i_loop,i_sp)/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
             endif
