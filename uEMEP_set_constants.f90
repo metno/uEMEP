@@ -554,6 +554,10 @@
     use uEMEP_definitions
     implicit none
     
+    integer index_start
+    character(256) prefix_str,postfix_str
+    integer i_pollutant
+    
      if (index(alternative_meteorology_type,'nortrip').gt.0) then
         var_name_meteo_nc(lon_nc_index)='lon'
         var_name_meteo_nc(lat_nc_index)='lat'
@@ -632,5 +636,39 @@
         
         
     endif
+    
+    if (use_emission_naming_template_flag) then
+        !Set the prefix and postfix part of the emission name string based on the template
+        !Assumes compound is added at the end
+        index_start=INDEX(emission_naming_template_str,'<n>')
+        if (index_start.eq.0) then
+            prefix_str=''
+        else
+            prefix_str=emission_naming_template_str(1:index_start-1)
+        endif
+        if (index_start+3.gt.len_trim(emission_naming_template_str)) then
+            postfix_str=''
+        else
+            postfix_str=emission_naming_template_str(index_start+3:)
+        endif
+        
+        write(unit_logfile,'(a)') 'Using emission name template'
+        do i_pollutant=1,n_emep_pollutant_loop
+            var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
+            var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),agriculture_nc_index)=trim(prefix_str)//'10'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
+            var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),traffic_nc_index)=trim(prefix_str)//'7'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
+            var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),shipping_nc_index)=trim(prefix_str)//'8'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
+            var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),heating_nc_index)=trim(prefix_str)//'2'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
+            var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),industry_nc_index)=trim(prefix_str)//'4'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
+            write(unit_logfile,'(5a)') trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index)) &
+                                    ,trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),agriculture_nc_index)) &
+                                    ,trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),traffic_nc_index)) &
+                                    ,trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),shipping_nc_index)) &
+                                    ,trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),heating_nc_index)) &
+                                    ,trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),industry_nc_index))
+        enddo
+        
+    endif
+    
     
     end subroutine uEMEP_reset_constants

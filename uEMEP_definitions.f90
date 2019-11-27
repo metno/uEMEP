@@ -818,6 +818,9 @@
 
     logical :: use_GNFR_emissions_from_EMEP_flag=.false.
     
+    logical :: use_emission_naming_template_flag=.false.
+    character(256) :: emission_naming_template_str='Sec<n>_Emis_mgm2_'
+    
     end module uEMEP_definitions
     
     

@@ -503,6 +503,9 @@
 
         use_GNFR_emissions_from_EMEP_flag=read_name_logical('use_GNFR_emissions_from_EMEP_flag',use_GNFR_emissions_from_EMEP_flag,unit_in,unit_logfile)
         
+        use_emission_naming_template_flag=read_name_logical('use_emission_naming_template_flag',use_emission_naming_template_flag,unit_in,unit_logfile)
+        emission_naming_template_str=read_name_char('emission_naming_template_str',emission_naming_template_str,unit_in,unit_logfile)
+        
         
     close (unit_in)
     
