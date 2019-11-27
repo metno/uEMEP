@@ -496,6 +496,8 @@
             n_pollutant_loop=1
             pollutant_loop_index(1)=pollutant_index
             pollutant_loop_back_index(pollutant_index)=1
+            write(*,*) pollutant_loop_index(1),pollutant_index
+            stop
         endif
         
         !Set indexing for additional compounds. Only used when reading in EMEP data
