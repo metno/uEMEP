@@ -651,16 +651,17 @@
         else
             postfix_str=emission_naming_template_str(index_start+3:)
         endif
-        
-        write(unit_logfile,'(a)') 'Using emission name template'
+        write(*,*) index_start,index_start+3,len_trim(emission_naming_template_str)
         do i_pollutant=1,n_emep_pollutant_loop
+            write(unit_logfile,'(a)') 'Using emission name template for: '//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
+            write(*,*) i_pollutant,pollutant_loop_index(i_pollutant)
             var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
             var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),agriculture_nc_index)=trim(prefix_str)//'10'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
             var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),traffic_nc_index)=trim(prefix_str)//'7'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
             var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),shipping_nc_index)=trim(prefix_str)//'8'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
             var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),heating_nc_index)=trim(prefix_str)//'2'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
             var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),industry_nc_index)=trim(prefix_str)//'4'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
-            write(unit_logfile,'(5a)') trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index)) &
+            write(unit_logfile,'(6a24)') trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index)) &
                                     ,trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),agriculture_nc_index)) &
                                     ,trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),traffic_nc_index)) &
                                     ,trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),shipping_nc_index)) &
