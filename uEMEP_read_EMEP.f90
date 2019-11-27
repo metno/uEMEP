@@ -1112,6 +1112,9 @@
         endif
         
         where (var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index).lt.hmix_min) var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=hmix_min
+
+        !Limit Jd as well in case there is something wrong
+        where (var4d_nc(:,:,:,:,J_nc_index,:,:).lt.0) var4d_nc(:,:,:,:,J_nc_index,:,:)=0.
         
         if (FF_scale.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Rescaling wind fields everywhere with factor: ',FF_scale
