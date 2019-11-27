@@ -258,9 +258,13 @@
     sig_z_0=sig_z_00+az*exp(bz*log(min_xy))
 
     !Set sig_y and sig_z = sig_0 + a*x^b +x*delata_wind
+    if (x.le.0) then
+    sig_y=sig_y_0
+    sig_z=sig_z_0
+    else
     sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta_wind)
     sig_z=sig_z_0+az*exp(bz*log(x))
-
+    endif
     !write(*,'(i,6f)') i,weight,sig_y,sig_z,az,bz,x
     
     end subroutine uEMEP_set_dispersion_sigma_PG
