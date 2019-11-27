@@ -820,6 +820,7 @@
     
     logical :: use_emission_naming_template_flag=.false.
     character(256) :: emission_naming_template_str='Sec<n>_Emis_mgm2_'
+    logical :: read_OSM_roadlink_data_flag=.false.
     
     end module uEMEP_definitions
     

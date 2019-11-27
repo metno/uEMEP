@@ -149,11 +149,15 @@
         read(unit_in,*) 
         read(unit_in,*) 
     else
+        if (read_OSM_roadlink_data_flag) then
         !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
-        !read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+        read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+        temp_category=0;temp_length=0;temp_structure_type=0;temp_region_id=0;temp_surface_id=0;temp_tunnel_length=0;temp_route_id=0
+        else
         !ID ADT HDV ROAD_ACTIVITY_TYPE SPEED ROAD_WIDTH N_LANES N_SUBNODES ROAD_CATEGORY ROAD_LENGTH ROAD_STRUCTURE_TYPE REGION_ID ROAD_SURFACE_ID TUNNEL_LENGTH ROUTE_ID
         read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes &
             ,temp_category,temp_length,temp_structure_type,temp_region_id,temp_surface_id,temp_tunnel_length,temp_route_id
+        endif
         !write(*,*) i,temp_id,temp_adt,n_subnodes
         read(unit_in,*) sub_nodes_x(1:n_subnodes)
         read(unit_in,*) sub_nodes_y(1:n_subnodes)
