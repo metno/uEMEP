@@ -476,6 +476,7 @@
 
         !Input variable names. Only some selected few
         var_name_nc(hmix_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(hmix_nc_index)',var_name_nc(hmix_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(FF10_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(FF10_nc_index)',var_name_nc(FF10_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
 
         save_netcdf_average_flag=read_name_logical('save_netcdf_average_flag',save_netcdf_average_flag,unit_in,unit_logfile)
         
@@ -508,6 +509,9 @@
         emission_naming_template_str=read_name_char('emission_naming_template_str',emission_naming_template_str,unit_in,unit_logfile)
         
         read_OSM_roadlink_data_flag=read_name_logical('read_OSM_roadlink_data_flag',read_OSM_roadlink_data_flag,unit_in,unit_logfile)
+        
+        EMEP_surface_level_nc=read_name_integer('EMEP_surface_level_nc',EMEP_surface_level_nc,unit_in,unit_logfile)
+        EMEP_surface_level_nc_2=read_name_integer('EMEP_surface_level_nc_2',EMEP_surface_level_nc_2,unit_in,unit_logfile)
         
         
     close (unit_in)

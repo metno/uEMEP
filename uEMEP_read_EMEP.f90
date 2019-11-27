@@ -94,8 +94,8 @@
     endif
 
     !Presettng the surface level to 1. Valid when there is no inverting of layers
-    surface_level_nc=1
-    surface_level_nc_2=1
+    surface_level_nc=EMEP_surface_level_nc
+    surface_level_nc_2=EMEP_surface_level_nc_2
     write(unit_logfile,'(A,I)') ' Surface level base set to: ',surface_level_nc
     write(unit_logfile,'(A,I)') ' Surface level local_contribution set to: ',surface_level_nc_2
 

@@ -822,7 +822,10 @@
     logical :: use_emission_naming_template_flag=.false.
     character(256) :: emission_naming_template_str='Sec<n>_Emis_mgm2_'
     logical :: read_OSM_roadlink_data_flag=.false.
-    
+
+    integer :: EMEP_surface_level_nc=1
+    integer :: EMEP_surface_level_nc_2=1
+
     end module uEMEP_definitions
     
     

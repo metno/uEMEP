@@ -222,6 +222,10 @@
     if (.not.allocated(species_EMEP_subgrid).and.(save_emep_species.or.save_seasalt)) then
         allocate (species_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_pmxx_sp_index,n_species_loop_index))
     endif
+    comp_EMEP_subgrid=0.
+    comp_subgrid=0.
+    orig_EMEP_subgrid=0.
+    species_EMEP_subgrid=0.
     
     do j=1,subgrid_dim(y_dim_index)
     do i=1,subgrid_dim(x_dim_index)                   
@@ -338,6 +342,9 @@
     if (.not.allocated(yproj_emission_subgrid)) allocate (yproj_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
     if (.not.allocated(emission_properties_subgrid)) allocate (emission_properties_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_emission_index,n_source_index)) 
     emission_time_profile_subgrid=1.
+    proxy_emission_subgrid=0.
+    emission_subgrid=0.
+    emission_properties_subgrid=0.
     
     !Define emission grids
     do i_source=1,n_source_index
