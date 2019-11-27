@@ -673,5 +673,18 @@
         
     endif
     
+    if (use_EMEP_surface_compounds_flag) then
+        comp_name_nc(o3_nc_index)='SURF_ug_O3'
+        comp_name_nc(no2_nc_index)='SURF_ug_NO2'
+        comp_name_nc(nox_nc_index)='SURF_ugN_NOX'
+        comp_name_nc(nh3_nc_index)='SURF_ug_NH3'
+        !comp_name_nc(nh3_nc_index)='nh3'
+        comp_name_nc(nh4_nc_index)='SURF_ug_NH4_F'
+        !comp_name_nc(pm25_nc_index)='pm25'
+        !comp_name_nc(pmco_nc_index)='SURF_ug_PMCO'
+        comp_name_nc(pm10_nc_index)='SURF_ug_PM10'
+        comp_name_nc(pm25_nc_index)='SURF_ug_PMFINE'
+    endif
+    
     
     end subroutine uEMEP_reset_constants

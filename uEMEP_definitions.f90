@@ -811,6 +811,7 @@
     logical :: auto_adjustment_for_summertime=.true.
     
     logical :: use_EMEP_surface_ozone_flag=.false.
+    logical :: use_EMEP_surface_compounds_flag=.false.
     
     logical :: save_compounds_as_ascii=.false.
     

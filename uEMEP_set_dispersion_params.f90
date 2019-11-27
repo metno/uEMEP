@@ -258,12 +258,13 @@
     sig_z_0=sig_z_00+az*exp(bz*log(min_xy))
 
     !Set sig_y and sig_z = sig_0 + a*x^b +x*delata_wind
+    !Changed this because of error when x=0, check the other similar routines
     if (x.le.0) then
-    sig_y=sig_y_0
-    sig_z=sig_z_0
+        sig_y=sig_y_0
+        sig_z=sig_z_0
     else
-    sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta_wind)
-    sig_z=sig_z_0+az*exp(bz*log(x))
+        sig_y=sig_y_0+ay*exp(by*log(x))+x*abs(delta_wind)
+        sig_z=sig_z_0+az*exp(bz*log(x))
     endif
     !write(*,'(i,6f)') i,weight,sig_y,sig_z,az,bz,x
     
