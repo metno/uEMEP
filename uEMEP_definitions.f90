@@ -123,11 +123,11 @@
     integer pollutant_loop_back_index(n_pollutant_nc_index)
     
     !Set pollutant compound loop 
-    integer n_pollutant_compound_loop(n_pollutant_nc_index)
-    integer pollutant_compound_loop_index(n_pollutant_nc_index,n_compound_nc_index)
+    integer :: n_pollutant_compound_loop(n_pollutant_nc_index)=0
+    integer :: pollutant_compound_loop_index(n_pollutant_nc_index,n_compound_nc_index)=0
     !Set the pollutant reference index for meteo data. All meteo data read from EMEP uses this index
     integer :: meteo_p_loop_index=1
-    character(256) pollutant_file_str(n_pollutant_nc_index)
+    character(256) :: pollutant_file_str(n_pollutant_nc_index)=''
 
     character(256) var_name_nc(num_var_nc,n_pollutant_nc_index,n_source_nc_index)
     character(256) dim_name_nc(num_dims_nc)
