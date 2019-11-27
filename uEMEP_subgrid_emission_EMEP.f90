@@ -71,11 +71,11 @@
         if (calculate_source(i_source)) then
             do i_pollutant=1,n_pollutant_loop
                 write(*,*) trim(source_file_str(i_source))
-                write(*,*) trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))
+                write(*,*) trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index)) !trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))
                 write(*,*) sum(emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),:,i_source,i_pollutant))
                 write(*,*) (t_end-t_start+1)
                 
-            write(unit_logfile,'(A,A,A,A,ES10.2)') 'Emission source ',trim(source_file_str(i_source))//' ',trim(pollutant_file_str(pollutant_loop_index(i_pollutant))),': Total hourly average emissions before use of EMEP (ug/s)=', &
+            write(unit_logfile,'(A,A,A,A,ES10.2)') 'Emission source ',trim(source_file_str(i_source))//' ',trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index)),': Total hourly average emissions before use of EMEP (ug/s)=', &
                 sum(emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),:,i_source,i_pollutant))/(t_end-t_start+1)
             enddo
         endif
