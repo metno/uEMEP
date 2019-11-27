@@ -36,11 +36,11 @@
     !Read the configuration files. Hard coded to be up to 5 files. Log file opened in this routine
     call uEMEP_read_config
     
-    !Reset any constants needed based on the configuration input
-    call uEMEP_reset_constants
-    
     !Set the pollutant and compound loop definitions
     call uEMEP_set_pollutant_loop
+    
+    !Reset any constants needed based on the configuration input
+    call uEMEP_reset_constants
     
     !Set the EMEP species definitions if they are to be read
     call uEMEP_set_species_loop

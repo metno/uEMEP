@@ -520,7 +520,7 @@
         if (trim(var_name_nc(conc_nc_index,i,allsource_nc_index)).eq.trim(input_comp_name)) then
             compound_index=i
             pollutant_index=i
-            write(*,*) 'Pollutant: ',trim(input_comp_name),i
+            !write(*,*) 'Pollutant: ',trim(input_comp_name),i
         endif
     enddo
    

@@ -496,8 +496,8 @@
             n_pollutant_loop=1
             pollutant_loop_index(1)=pollutant_index
             pollutant_loop_back_index(pollutant_index)=1
-            write(*,*) pollutant_loop_index(1),pollutant_index
-            stop
+            !write(*,*) pollutant_loop_index(1),pollutant_index
+            
         endif
         
         !Set indexing for additional compounds. Only used when reading in EMEP data
@@ -653,10 +653,10 @@
         else
             postfix_str=emission_naming_template_str(index_start+3:)
         endif
-        write(*,*) index_start,index_start+3,len_trim(emission_naming_template_str)
+        !write(*,*) index_start,index_start+3,len_trim(emission_naming_template_str)
         do i_pollutant=1,n_emep_pollutant_loop
             write(unit_logfile,'(a)') 'Using emission name template for: '//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
-            write(*,*) i_pollutant,pollutant_loop_index(i_pollutant)
+            !write(*,*) i_pollutant,pollutant_loop_index(i_pollutant)
             var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
             var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),agriculture_nc_index)=trim(prefix_str)//'10'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
             var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),traffic_nc_index)=trim(prefix_str)//'7'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
