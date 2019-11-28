@@ -1280,10 +1280,11 @@
                                     endif
                                     
                                     !Calculate the dispersion
-                                    integral_subgrid(i,j,tt,hsurf_integral_subgrid_index,source_index,:)=integral_subgrid(i,j,tt,hsurf_integral_subgrid_index,source_index,:) &
+                                    integral_subgrid(i,j,tt,hsurf_average_subgrid_index,source_index,:)=integral_subgrid(i,j,tt,hsurf_average_subgrid_index,source_index,:) &
                                         + gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,H_emep) &
                                         * emission_subgrid(ii,jj,tt,source_index,:)
-                                                                        
+                                         
+                                    !write(*,*) i,j,integral_subgrid(i,j,tt,hsurf_average_subgrid_index,source_index,1)
                                 endif
                                 
                             else
@@ -1298,7 +1299,7 @@
                                     FF_loc=temp_FF_subgrid(i_cross_integral,j_cross_integral)
                                 endif
 
-                                integral_subgrid(i,j,tt,hsurf_integral_subgrid_index,source_index,:)=integral_subgrid(i,j,hsurf_integral_subgrid_index,tt,source_index,:) &
+                                integral_subgrid(i,j,tt,hsurf_average_subgrid_index,source_index,:)=integral_subgrid(i,j,hsurf_average_subgrid_index,tt,source_index,:) &
                                     +emission_subgrid(ii,jj,tt,source_index,:) &
                                     *gauss_plume_second_order_rotated_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,0.,H_emep) &
                                     /FF_loc

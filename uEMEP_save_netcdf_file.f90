@@ -307,7 +307,7 @@
                 if (pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index) then
                     exhaust_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,pollutant_loop_back_index(pmex_index))
                 else
-                    exhaust_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)            
+                    exhaust_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)
                 endif
             
                 if (save_netcdf_fraction_as_contribution_flag) then
@@ -320,7 +320,7 @@
                 where (subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant).eq.0) temp_subgrid=0
               
                 if (save_netcdf_file_flag) then
-                    write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                    write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                     call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                         ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -342,7 +342,7 @@
             !Special case for salt and sand
             if (pollutant_loop_index(i_pollutant).eq.pm25_sand_index.or.pollutant_loop_index(i_pollutant).eq.pm10_sand_index &
             .or.pollutant_loop_index(i_pollutant).eq.pm25_salt_index.or.pollutant_loop_index(i_pollutant).eq.pm10_salt_index) then
-                !Save the total nonlocal part from EMEP
+                !Save the nonexhaust sand and salt
                 if (i_source.eq.traffic_index) then
                
                     i_file=subgrid_local_file_index(i_source)
@@ -360,7 +360,7 @@
                     where (subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant).eq.0) temp_subgrid=0
 
                     if (save_netcdf_file_flag) then
-                        write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                    write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                         call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                             ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                             ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -454,7 +454,7 @@
             
             
             if (save_netcdf_file_flag) then
-                write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                    write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                 call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                     ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                     ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -513,7 +513,7 @@
             endif
             
             if (save_netcdf_file_flag) then
-                write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                 call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                     ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                     ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -620,7 +620,7 @@
                 
                 unit_str='inhabitants/grid'
                 if (save_netcdf_file_flag) then
-                    write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                    write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                     call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                         ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
@@ -717,15 +717,16 @@
         
         i_file=emep_subgrid_file_index(allsource_index)
         var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_interpolated'//'_'//trim(filename_grid(i_file))
+        temp_subgrid=comp_EMEP_subgrid(:,:,:,i_comp)
         unit_str="ug/m3"
        if (save_netcdf_file_flag) then
-            write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+            write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,comp_EMEP_subgrid(:,:,:,i_comp),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                 ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
         endif
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-                write(unit_logfile,'(a,f12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(comp_EMEP_subgrid(:,:,:,i_comp))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+            write(unit_logfile,'(a,f12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(comp_EMEP_subgrid(:,:,:,i_comp))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,comp_EMEP_subgrid(:,:,:,i_comp),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                 ,unit_str,title_str_rec,create_file_rec,valid_min &

@@ -69,11 +69,11 @@
     integer target_subgrid_dim_min(2),target_subgrid_dim_max(2)
    
     integer i_loop_deposition
-    real plume_vertical_integral(3)
-    real plume_vertical_integral_pollutant(3)
+    real plume_vertical_integral(n_integral_subgrid_index)
+    real plume_vertical_integral_pollutant(n_integral_subgrid_index)
     real, allocatable :: target_vertical_integral_subgrid(:,:,:)
     integer i_integral
-        
+
     integer count
     !Functions
     !integer rargsort(n_plume_subgrid_max)
@@ -118,7 +118,7 @@
     if (.not.allocated(y_target_subgrid)) allocate (y_target_subgrid(target_subgrid_dim(x_dim_index),target_subgrid_dim(y_dim_index))) 
     if (.not.allocated(traveltime_target_subgrid)) allocate (traveltime_target_subgrid(target_subgrid_dim(x_dim_index),target_subgrid_dim(y_dim_index),2,n_pollutant_loop)) 
 
-    if (adjust_wetdepo_integral_to_lowest_layer_flag) then
+    if (adjust_wetdepo_integral_to_lowest_layer_flag.or.local_subgrid_method_flag.eq.1) then
         if (allocated(target_vertical_integral_subgrid)) deallocate (target_vertical_integral_subgrid)
         if (.not.allocated(target_vertical_integral_subgrid)) allocate (target_vertical_integral_subgrid(target_subgrid_dim(x_dim_index),target_subgrid_dim(y_dim_index),3)) 
     endif
@@ -491,8 +491,8 @@
                     
                     !Calculate the vertically integrated mass of the plume (s/m2) up to the lowest level and up to the mixing height
                     if (adjust_wetdepo_integral_to_lowest_layer_flag.and.calculate_deposition_flag) then
-                        plume_vertical_integral(1)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,H_emep)*H_emep
-                        plume_vertical_integral(2)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,h_mix_loc)*h_mix_loc
+                        plume_vertical_integral(hsurf_integral_subgrid_index)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,H_emep)*H_emep
+                        plume_vertical_integral(hmix_integral_subgrid_index)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,h_mix_loc)*h_mix_loc
                         !write(*,*) h_mix_loc,x_loc,sig_z_loc,vertical_integral_internal/(sig_z_loc*sqrt(2.*3.14159)/(2.*3.14159*sig_y_loc*sig_z_loc)*exp(-0.5*(y_loc*y_loc)/(sig_y_loc*sig_y_loc))/FF_loc*plume_source(i_pollutant) )
                         !write(*,*) plume_vertical_integral(1)/plume_vertical_integral(2),H_emep/h_mix_loc,H_emep/h_mix_loc/(plume_vertical_integral(1)/plume_vertical_integral(2))
                         !Calculate the average concentration in the lowest layer
@@ -504,7 +504,7 @@
 
                     endif
                     if (local_subgrid_method_flag.eq.1) then
-                        plume_vertical_integral(3)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_integral_loc,0.,H_emep)
+                        plume_vertical_integral(hsurf_average_subgrid_index)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_integral_loc,0.,H_emep)
                     endif 
 
 
@@ -549,8 +549,9 @@
                                 target_subgrid(i,j,i_pollutant)=target_subgrid(i,j,i_pollutant)+subgrid_internal_pollutant(i_pollutant)
                     
                             enddo
+                            
                             else
-                                    
+                            !No deposition        
                             do i_pollutant=1,n_pollutant_loop
 
                                 !Multiply by the emissions to get the concentration prior to depletion (ug/m3)
@@ -559,7 +560,10 @@
                                 !Add to the target concentration subgrid position
                                 target_subgrid(i,j,i_pollutant)=target_subgrid(i,j,i_pollutant)+subgrid_internal_pollutant(i_pollutant)
                     
+                                !Make integrated concentration values
+                                plume_vertical_integral_pollutant(:)=plume_vertical_integral(:)*plume_source(i_pollutant)
                             enddo
+                            
                             endif
                             
                             !Determine the distance for the travel time calculation

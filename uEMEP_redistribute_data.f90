@@ -111,6 +111,7 @@
 
                         !do i_pollutant=1,n_pollutant_loop
                             sum_integral(:)=sum_integral(:)+integral_subgrid(ii,jj,tt,hsurf_average_subgrid_index,source_index,:)
+                            !write(*,*) ii,jj,integral_subgrid(ii,jj,tt,hsurf_average_subgrid_index,source_index,1)
                         !enddo
                         
                         integral_counter=integral_counter+1
@@ -126,7 +127,7 @@
                 else
                     subgrid(i,j,tt,scaling_factor_subgrid_index,source_index,i_pollutant)=0.
                 endif
-                !write(*,*) subgrid(i,j,source_index,scaling_factor_subgrid_index),subgrid(i,j,source_index,proxy_subgrid_index)
+                !write(*,*) i_pollutant,subgrid(i,j,tt,proxy_subgrid_index,source_index,i_pollutant),sum_integral(i_pollutant)
                 if (isnan(subgrid(i,j,tt,scaling_factor_subgrid_index,source_index,i_pollutant))) write(*,*) i,j,sum_integral(i_pollutant),integral_counter
                 if (isnan(subgrid(i,j,tt,emep_local_subgrid_index,source_index,i_pollutant))) write(*,*) 'L',i,j,sum_integral(i_pollutant),integral_counter
             enddo
@@ -140,8 +141,8 @@
     enddo
 
     do i_pollutant=1,n_pollutant_loop
-    write(unit_logfile,'(A,f12.4)') 'Max scaling factor for pollutant  =',maxval(subgrid(:,:,:,scaling_factor_subgrid_index,source_index,i_pollutant))
-    write(unit_logfile,'(A,f12.4)') 'Mean scaling factor for pollutant =',sum(subgrid(:,:,:,scaling_factor_subgrid_index,source_index,i_pollutant)) &
+    write(unit_logfile,'(i,A,f12.4)') i_pollutant,' Max scaling factor for pollutant  =',maxval(subgrid(:,:,:,scaling_factor_subgrid_index,source_index,i_pollutant))
+    write(unit_logfile,'(i,A,f12.4)') i_pollutant,' Mean scaling factor for pollutant =',sum(subgrid(:,:,:,scaling_factor_subgrid_index,source_index,i_pollutant)) &
         /subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
     enddo
     

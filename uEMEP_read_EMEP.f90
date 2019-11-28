@@ -956,7 +956,15 @@
         !
     endif
     
-       
+    !EMEP emissions for traffic do not differentiate between exhaust and nonexhaust
+    !Place the read PM2.5 emissions also into the exhaust emissions. If PM10 is higher then these are then the non-exhaust emissions
+    !This only needs to be done when the EMEP emissions are used and distributed using a proxy but we do it in general anyway
+    !if (local_subgrid_method_flag.eq.3) then
+        write(unit_logfile,'(A,2es12.2)') ' 1 Filling the EMEP exhaust emissions with PM25 emissions ',sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
+        var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))=var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index))      
+        write(unit_logfile,'(A,2es12.2)') ' 2 Filling the EMEP exhaust emissions with PM25 emissions ',sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
+    !endif
+    
     !Transfer all source values to all the sources for use in source looping later
     do i_source=1,n_source_nc_index
         !if (calculate_source(i_source).and.i_source.ne.allsource_nc_index) then
@@ -1062,7 +1070,6 @@
 
         where (var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index).lt.ustar_min) var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)=ustar_min
 
-
         !Test for 0 wind speed components
         do j=1,dim_length_nc(y_dim_nc_index)
         do i=1,dim_length_nc(x_dim_nc_index)
@@ -1112,7 +1119,6 @@
         enddo
         enddo
             
-
         !If no logz0 available. Set to log(0.1)
         !For urban areas a value of 0.3 is used
         where (var3d_nc(:,:,:,logz0_nc_index,:,meteo_p_loop_index).eq.0.0) var3d_nc(:,:,:,logz0_nc_index,:,meteo_p_loop_index)=log(0.3)
@@ -1211,6 +1217,7 @@
         if (allocated(temp_var3d_nc)) deallocate (temp_var3d_nc)
         if (allocated(species_temp_var3d_nc)) deallocate (species_temp_var3d_nc)
  
+
     end subroutine uEMEP_read_EMEP
     
     

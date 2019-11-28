@@ -113,7 +113,6 @@
     integer i_integral,j_integral
     logical exit_traj
     
-
     k=1
     !Set the initial trajectory position to the emission source
     x_traj(k)=x_emis
