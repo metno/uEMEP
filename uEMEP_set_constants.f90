@@ -576,13 +576,6 @@
         var_name_meteo_nc(precip_nc_index)='precipitation_amount'      
     endif
     
-    !Reset emission names so they will not be read if they are not used
-    if (make_EMEP_grid_emission_data(allsource_index).or.local_subgrid_method_flag.ne.2.or.save_emissions_for_EMEP(allsource_index).or.save_emissions) then
-    else
-        var_name_nc(emis_nc_index,:,:)=''        
-        write(unit_logfile,'(a,i)') 'Will not read or write any EMEP emission data'
-    endif
-    
     if (use_EMEP_surface_ozone_flag) then
         comp_name_nc(o3_nc_index)='SURF_ug_O3'        
     endif
@@ -704,6 +697,13 @@
         !comp_name_nc(pmco_nc_index)='SURF_ug_PMCO'
         comp_name_nc(pm10_nc_index)='SURF_ug_PM10'
         comp_name_nc(pm25_nc_index)='SURF_ug_PMFINE'
+    endif
+    
+    !Reset emission names so they will not be read if they are not used
+    if (make_EMEP_grid_emission_data(allsource_index).or.local_subgrid_method_flag.ne.2.or.save_emissions_for_EMEP(allsource_index).or.save_emissions) then
+    else
+        var_name_nc(emis_nc_index,:,:)=''        
+        write(unit_logfile,'(a,i)') 'Will not read or write any EMEP emission data'
     endif
     
     
