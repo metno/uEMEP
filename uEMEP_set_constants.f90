@@ -37,6 +37,7 @@
         var_name_nc(conc_nc_index,all_sand_nc_index,allsource_nc_index)='all_sand'
         var_name_nc(conc_nc_index,all_sand_salt_nc_index,allsource_nc_index)='all_sand_salt'
         var_name_nc(conc_nc_index,all_salt_nc_index,allsource_nc_index)='all_salt'
+        var_name_nc(conc_nc_index,all_totals_nc_index,allsource_nc_index)='all_totals'
        
         var_name_nc(conc_nc_index,pm25_sand_nc_index,allsource_nc_index)='pm25_sand'
         var_name_nc(conc_nc_index,pm10_sand_nc_index,allsource_nc_index)='pm10_sand'
@@ -475,6 +476,15 @@
             pollutant_loop_back_index(pm25_nc_index)=2
             pollutant_loop_back_index(pm10_nc_index)=3
             pollutant_loop_back_index(pmex_nc_index)=4
+        elseif (pollutant_index.eq.all_totals_nc_index) then
+            n_emep_pollutant_loop=3
+            n_pollutant_loop=3
+            pollutant_loop_index(1)=nox_nc_index
+            pollutant_loop_index(2)=pm25_nc_index
+            pollutant_loop_index(3)=pm10_nc_index
+            pollutant_loop_back_index(nox_nc_index)=1
+            pollutant_loop_back_index(pm25_nc_index)=2
+            pollutant_loop_back_index(pm10_nc_index)=3
         elseif (pollutant_index.eq.pm_nc_index) then
             n_emep_pollutant_loop=2
             n_pollutant_loop=3

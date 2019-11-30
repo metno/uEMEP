@@ -482,6 +482,7 @@
                         write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var3d_nc(:,:,:,i,i_source,2)),maxval(pm_var3d_nc(:,:,:,i,i_source,2))
                         write(unit_logfile,'(2A,f16.4,3i)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var3d_nc(:,:,:,i,i_source,2))/(size(pm_var3d_nc,1)*size(pm_var3d_nc,2)*size(pm_var3d_nc,4)),size(pm_var3d_nc,1),size(pm_var3d_nc,2),size(pm_var3d_nc,4)
                         var3d_nc(:,:,:,i,i_source,p_loop_index)=pm_var3d_nc(:,:,:,i,i_source,1)+pm_var3d_nc(:,:,:,i,i_source,2)
+                        write(unit_logfile,'(2A,f16.4,3i)') ' Average of: ',trim(var_name_nc(i,pm10_nc_index,i_source)),sum(var3d_nc(:,:,:,i,i_source,p_loop_index))/(size(var3d_nc,1)*size(var3d_nc,2)*size(var3d_nc,4)),size(var3d_nc,1),size(var3d_nc,2),size(var3d_nc,4)
                 elseif (temp_num_dims.eq.3.and.i_file.eq.1) then
                     !write(*,'(6i)') dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, var3d_nc(:,:,:,i,i_source,p_loop_index),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
@@ -503,6 +504,7 @@
                         write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,2)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,2))
                         write(unit_logfile,'(2A,f16.4,3i)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var4d_nc(:,:,1,:,i,i_source,2))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4)),size(pm_var4d_nc,1),size(pm_var4d_nc,2),size(pm_var4d_nc,4)
                         var4d_nc(:,:,:,:,i,i_source,p_loop_index)=pm_var4d_nc(:,:,:,:,i,i_source,1)+pm_var4d_nc(:,:,:,:,i,i_source,2)
+                        write(unit_logfile,'(2A,f16.4,3i)') ' Average of: ',trim(var_name_nc(i,pm10_nc_index,i_source)),sum(var4d_nc(:,:,:,:,i,i_source,p_loop_index))/(size(var4d_nc,1)*size(var4d_nc,2)*size(var4d_nc,4)),size(var4d_nc,1),size(var4d_nc,2),size(var4d_nc,4)
                     else
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,p_loop_index),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
@@ -960,9 +962,13 @@
     !Place the read PM2.5 emissions also into the exhaust emissions. If PM10 is higher then these are then the non-exhaust emissions
     !This only needs to be done when the EMEP emissions are used and distributed using a proxy but we do it in general anyway
     !if (local_subgrid_method_flag.eq.3) then
-        write(unit_logfile,'(A,2es12.2)') ' 1 Filling the EMEP exhaust emissions with PM25 emissions ',sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
-        var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))=var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index))      
-        write(unit_logfile,'(A,2es12.2)') ' 2 Filling the EMEP exhaust emissions with PM25 emissions ',sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
+        !write(unit_logfile,'(A,2es12.2)') ' In: Filling the EMEP exhaust emissions with PM25 emissions ',sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
+        !var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))=var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index))      
+        !write(unit_logfile,'(A,2es12.2)') ' Out: Filling the EMEP exhaust emissions with PM25 emissions ',sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
+        !var3d_nc(:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))=var3d_nc(:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index))      
+        !var4d_nc(:,:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))=var4d_nc(:,:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index))      
+        !write(unit_logfile,'(A,2es12.2)') ' 3D Filling the EMEP exhaust concentrations with PM25 emissions ',sum(var3d_nc(:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var3d_nc(:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
+        !write(unit_logfile,'(A,2es12.2)') ' 4D Filling the EMEP exhaust emissions with PM25 emissions ',sum(var4d_nc(:,:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var4d_nc(:,:,:,:,,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
     !endif
     
     !Transfer all source values to all the sources for use in source looping later
@@ -1030,6 +1036,7 @@
                 !write(*,*) sum(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)), &
                 !    sum(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,shipping_index,1)),sum(pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,shipping_index,1)), &
                 !    sum(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,shipping_index,2)),sum(pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,shipping_index,2))
+
             else
             !lc_var4d_nc(i,j,:,:,:,:,lc_local_nc_index,:)=var4d_nc(:,:,:,:,conc_nc_index,:)*lc_var4d_nc(i,j,:,:,:,:,lc_frac_nc_index,:)
             lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=var3d_nc(:,:,:,conc_nc_index,:,p_loop)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop)
@@ -1042,6 +1049,14 @@
         enddo
         enddo
         
+        do i_source=1,n_source_index
+            if (calculate_source(i_source)) then
+                p_loop=pollutant_loop_back_index(pm10_nc_index)
+                write(unit_logfile,'(2A,f16.4)') ' Average local fraction of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)), &
+                sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,i_source,p_loop)/(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,1)+pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,2)))/(size(var3d_nc,1)*size(var3d_nc,2)*size(var3d_nc,4))
+            endif
+        enddo
+            
         if (allocated(pm_lc_var4d_nc)) deallocate(pm_lc_var4d_nc)
         if (allocated(pm_var4d_nc)) deallocate(pm_var4d_nc)
         if (allocated(pm_var3d_nc)) deallocate(pm_var3d_nc)

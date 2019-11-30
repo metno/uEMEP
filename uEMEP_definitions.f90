@@ -101,8 +101,8 @@
     integer n_compound_nc_index
     parameter (n_compound_nc_index=13)
     !These are only used in names
-    integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index
-    parameter (pmco_nc_index=14,all_nc_index=15,pm_nc_index=16,all_sand_nc_index=17,all_salt_nc_index=18,all_sand_salt_nc_index=19)
+    integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index,all_totals_nc_index
+    parameter (pmco_nc_index=14,all_nc_index=15,pm_nc_index=16,all_sand_nc_index=17,all_salt_nc_index=18,all_sand_salt_nc_index=19,all_totals_nc_index=20)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
     integer allsource_nc_index,traffic_nc_index,shipping_nc_index,heating_nc_index,agriculture_nc_index,industry_nc_index
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
@@ -116,7 +116,7 @@
     !Loop for all pollutants to be calculated
     integer pollutant_index
     integer n_pollutant_nc_index
-    parameter (n_pollutant_nc_index=19) !Includes the addition naming indexes index
+    parameter (n_pollutant_nc_index=20) !Includes the addition naming indexes index
     integer :: n_pollutant_loop = 1
     integer :: n_emep_pollutant_loop = 1
     integer pollutant_loop_index(n_pollutant_nc_index)

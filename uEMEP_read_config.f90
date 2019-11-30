@@ -527,10 +527,10 @@
         if (trim(var_name_nc(conc_nc_index,i,allsource_nc_index)).eq.trim(input_comp_name)) then
             compound_index=i
             pollutant_index=i
-            !write(*,*) 'Pollutant: ',trim(input_comp_name),i
+            write(unit_logfile,*) 'Selected pollutant: ',trim(input_comp_name),i
         endif
     enddo
-   
+ 
 
     !Replace some of the strings with the date_str. Do this twice in case there are two occurences of it in a string
     do i=1,2
