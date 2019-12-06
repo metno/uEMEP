@@ -645,6 +645,7 @@
     if (use_emission_naming_template_flag) then
         !Set the prefix and postfix part of the emission name string based on the template
         !Assumes compound is added at the end
+       
         index_start=INDEX(emission_naming_template_str,'<n>')
         if (index_start.eq.0) then
             prefix_str=''
@@ -658,8 +659,9 @@
         endif
         !write(*,*) index_start,index_start+3,len_trim(emission_naming_template_str)
         if (use_GNFR_emissions_from_EMEP_flag) then
-            do i=1,n_pollutant_nc_index
-                write(unit_logfile,'(a)') 'Using emission name template for: '//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+            write(unit_logfile,'(a)') 'Using emission name template for GNFR sectors: '//trim(emission_naming_template_str)
+           do i=1,n_pollutant_nc_index
+                !write(unit_logfile,'(a)') 'Using emission name template for: '//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 !write(*,*) i_pollutant,i
                 var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 var_name_nc(emis_nc_index,i,agriculture_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index)) !GNFR is 11 and 12 so currently using total
@@ -667,18 +669,19 @@
                 var_name_nc(emis_nc_index,i,shipping_nc_index)=trim(prefix_str)//'7'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 var_name_nc(emis_nc_index,i,heating_nc_index)=trim(prefix_str)//'3'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 var_name_nc(emis_nc_index,i,industry_nc_index)=trim(prefix_str)//'4'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                write(unit_logfile,'(6a32)') trim(var_name_nc(emis_nc_index,i,allsource_nc_index)) &
-                                        ,trim(var_name_nc(emis_nc_index,i,agriculture_nc_index)) &
-                                        ,trim(var_name_nc(emis_nc_index,i,traffic_nc_index)) &
-                                        ,trim(var_name_nc(emis_nc_index,i,shipping_nc_index)) &
-                                        ,trim(var_name_nc(emis_nc_index,i,heating_nc_index)) &
-                                        ,trim(var_name_nc(emis_nc_index,i,industry_nc_index))
+                !write(unit_logfile,'(6a32)') trim(var_name_nc(emis_nc_index,i,allsource_nc_index)) &
+                !                        ,trim(var_name_nc(emis_nc_index,i,agriculture_nc_index)) &
+                !                        ,trim(var_name_nc(emis_nc_index,i,traffic_nc_index)) &
+                !                        ,trim(var_name_nc(emis_nc_index,i,shipping_nc_index)) &
+                !                        ,trim(var_name_nc(emis_nc_index,i,heating_nc_index)) &
+                !                        ,trim(var_name_nc(emis_nc_index,i,industry_nc_index))
             enddo
         
         else
+            write(unit_logfile,'(a)') 'Using emission name template for SNAP sectors: '//trim(emission_naming_template_str)
             
             do i=1,n_pollutant_nc_index
-                write(unit_logfile,'(a)') 'Using emission name template for: '//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                !write(unit_logfile,'(a)') 'Using emission name template for: '//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 !write(*,*) i_pollutant,i
                 var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 var_name_nc(emis_nc_index,i,agriculture_nc_index)=trim(prefix_str)//'10'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
@@ -686,17 +689,20 @@
                 var_name_nc(emis_nc_index,i,shipping_nc_index)=trim(prefix_str)//'8'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 var_name_nc(emis_nc_index,i,heating_nc_index)=trim(prefix_str)//'2'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 var_name_nc(emis_nc_index,i,industry_nc_index)=trim(prefix_str)//'4'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                write(unit_logfile,'(6a32)') trim(var_name_nc(emis_nc_index,i,allsource_nc_index)) &
-                                        ,trim(var_name_nc(emis_nc_index,i,agriculture_nc_index)) &
-                                        ,trim(var_name_nc(emis_nc_index,i,traffic_nc_index)) &
-                                        ,trim(var_name_nc(emis_nc_index,i,shipping_nc_index)) &
-                                        ,trim(var_name_nc(emis_nc_index,i,heating_nc_index)) &
-                                        ,trim(var_name_nc(emis_nc_index,i,industry_nc_index))
+                !write(unit_logfile,'(6a32)') trim(var_name_nc(emis_nc_index,i,allsource_nc_index)) &
+                !                        ,trim(var_name_nc(emis_nc_index,i,agriculture_nc_index)) &
+                !                        ,trim(var_name_nc(emis_nc_index,i,traffic_nc_index)) &
+                !                        ,trim(var_name_nc(emis_nc_index,i,shipping_nc_index)) &
+                !                        ,trim(var_name_nc(emis_nc_index,i,heating_nc_index)) &
+                !                        ,trim(var_name_nc(emis_nc_index,i,industry_nc_index))
             enddo
         endif
+        
+
     endif
     
     if (use_EMEP_surface_compounds_flag) then
+        write(unit_logfile,'(a)') 'Using EMEP surface compounds instead of gridded'
         comp_name_nc(o3_nc_index)='SURF_ug_O3'
         comp_name_nc(no2_nc_index)='SURF_ug_NO2'
         comp_name_nc(nox_nc_index)='SURF_ugN_NOX'

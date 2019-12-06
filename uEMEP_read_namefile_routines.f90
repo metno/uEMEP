@@ -291,6 +291,6 @@
         endif
     
     
-20  enddo    
+20    enddo    
     
 30    end function read_name_logical

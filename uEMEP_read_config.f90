@@ -76,7 +76,7 @@
                 open(unit_logfile,file=trim(pathfilename_log_file),access='sequential',form='formatted',status='unknown')
                 if (unit_logfile.ne.0) then 
                 write(unit_logfile,*) '------------------------------------------------------------------------'
-                write(unit_logfile,*) 'Starting programm uEMEP_v2.1'
+                write(unit_logfile,*) 'Starting programm uEMEP_v2.5'
                 write(unit_logfile,*) '------------------------------------------------------------------------'
                 endif
             else
@@ -512,6 +512,10 @@
         
         EMEP_surface_level_nc=read_name_integer('EMEP_surface_level_nc',EMEP_surface_level_nc,unit_in,unit_logfile)
         EMEP_surface_level_nc_2=read_name_integer('EMEP_surface_level_nc_2',EMEP_surface_level_nc_2,unit_in,unit_logfile)
+        
+        limit_industry_delta=read_name_real('limit_industry_delta',limit_industry_delta,unit_in,unit_logfile)
+        limit_shipping_delta=read_name_real('limit_shipping_delta',limit_shipping_delta,unit_in,unit_logfile)
+        limit_heating_delta=read_name_real('limit_heating_delta',limit_heating_delta,unit_in,unit_logfile)
         
         
     close (unit_in)

@@ -259,7 +259,7 @@
 
                     !write(*,*) x_ssb,y_ssb,emission_subgrid_delta(x_dim_index,source_index),i_ssb_index,j_ssb_index
 
-                    !Reduce the number of dwellings when they are in a multiple dwelling by factor of 3. i.e. the proxy is reduced in blocks with the assumption that only 1 in 3 use their wood heater
+                    !Reduce the number of dwellings when they are in a multiple dwelling by factor of 5. i.e. the proxy is reduced in blocks with the assumption that only 1 in 5 use their wood heater
                     heating_proxy=dwe_todw
                     heating_proxy=max(0.,dwe_todw-dwe_mult)+dwe_mult/5.
                     proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,:)=proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,:)+heating_proxy

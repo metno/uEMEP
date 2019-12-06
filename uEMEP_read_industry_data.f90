@@ -267,7 +267,7 @@
     do i_pollutant=1,n_pollutant_loop   
     write(unit_logfile,'(A,es12.3)') 'Total emission '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//' = ',sum(proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,source_index),1:emission_subgrid_dim(y_dim_index,source_index),source_index,i_pollutant))
     enddo    
-    write(unit_logfile,'(A,f)') 'Average industry emission height for all industries = ',sum(industry_height(1:n_industries))/n_industries
+    write(unit_logfile,'(A,f12.2)') 'Average industry emission height for all industries = ',sum(industry_height(1:n_industries))/n_industries
     
     close(unit_in)
     
