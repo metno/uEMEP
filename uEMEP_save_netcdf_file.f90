@@ -310,7 +310,7 @@
             !Special case for exhaust as this must be given as a fraction for both PM2.5 and PM10.
             !if ((pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index).and.i_source.eq.traffic_index) then
             !Write all exhaust pollutants except the pmex
-            if (i_source.eq.traffic_index.and..not.pollutant_index.eq.all_totals_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_index) then
+            if (i_source.eq.traffic_index.and.(.not.pollutant_index.eq.all_totals_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_index)) then
             
                 !If PM then exhaust output is exhaust
                 if (pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index) then
