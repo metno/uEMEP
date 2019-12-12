@@ -611,7 +611,7 @@
                 i_file=population_file_index(population_index)
                 var_name_temp=trim(filename_grid(i_file))
                 
-                !Calculate the emissions in the target grid
+                !Calculate the population in the target grid
                 temp_subgrid=0.
                 do j=1,subgrid_dim(y_dim_index)
                 do i=1,subgrid_dim(x_dim_index)

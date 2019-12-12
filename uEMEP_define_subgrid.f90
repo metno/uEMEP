@@ -399,7 +399,8 @@
     if (.not.allocated(lat_population_subgrid)) allocate (lat_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
     if (.not.allocated(xproj_population_subgrid)) allocate (xproj_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
     if (.not.allocated(yproj_population_subgrid)) allocate (yproj_population_subgrid(population_subgrid_dim(x_dim_index),population_subgrid_dim(y_dim_index)))
-
+    population_subgrid=0
+    
     do j=1,population_subgrid_dim(y_dim_index)
     do i=1,population_subgrid_dim(x_dim_index)                 
 
@@ -453,7 +454,9 @@
     if (.not.allocated(lat_deposition_subgrid)) allocate (lat_deposition_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index)))
     if (.not.allocated(xproj_deposition_subgrid)) allocate (xproj_deposition_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index)))
     if (.not.allocated(yproj_deposition_subgrid)) allocate (yproj_deposition_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index)))
-
+    orig_EMEP_deposition_subgrid=0
+    deposition_subgrid=0
+    
     do j=1,deposition_subgrid_dim(y_dim_index)
     do i=1,deposition_subgrid_dim(x_dim_index)                 
 
@@ -495,6 +498,7 @@
     if (.not.allocated(lat_landuse_subgrid)) allocate (lat_landuse_subgrid(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index)))
     if (.not.allocated(xproj_landuse_subgrid)) allocate (xproj_landuse_subgrid(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index)))
     if (.not.allocated(yproj_landuse_subgrid)) allocate (yproj_landuse_subgrid(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index)))
+    landuse_subgrid=0
     
     do j=1,landuse_subgrid_dim(y_dim_index)
     do i=1,landuse_subgrid_dim(x_dim_index)                 
