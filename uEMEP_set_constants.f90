@@ -22,6 +22,14 @@
     dim_name_nc(ydist_dim_nc_index)='y_dist'
 
 
+    !Sectors. Default are SNAP sectors
+    uEMEP_to_EMEP_sector=0
+    uEMEP_to_EMEP_sector(traffic_index)=7
+    uEMEP_to_EMEP_sector(shipping_index)=8
+    uEMEP_to_EMEP_sector(agriculture_index)=10
+    uEMEP_to_EMEP_sector(heating_index)=2
+    uEMEP_to_EMEP_sector(industry_index)=4
+    
         !Concentrations
         var_name_nc=''
         var_name_nc(conc_nc_index,o3_nc_index,allsource_nc_index)='o3'
@@ -610,9 +618,9 @@
         var_name_nc(frac_nc_index,pm25_nc_index,heating_nc_index)='pm25_sec03_local_fraction'
         var_name_nc(frac_nc_index,pmco_nc_index,heating_nc_index)='pmco_sec03_local_fraction'
 
-        var_name_nc(frac_nc_index,nox_nc_index,industry_nc_index)='nox_sec04_local_fraction'
-        var_name_nc(frac_nc_index,pm25_nc_index,industry_nc_index)='pm25_sec04_local_fraction'
-        var_name_nc(frac_nc_index,pmco_nc_index,industry_nc_index)='pmco_sec04_local_fraction'
+        var_name_nc(frac_nc_index,nox_nc_index,industry_nc_index)='nox_sec02_local_fraction'
+        var_name_nc(frac_nc_index,pm25_nc_index,industry_nc_index)='pm25_sec02_local_fraction'
+        var_name_nc(frac_nc_index,pmco_nc_index,industry_nc_index)='pmco_sec02_local_fraction'
 
         !Total emissions remain the same
         var_name_nc(emis_nc_index,nh3_nc_index,allsource_nc_index)='Emis_mgm2_nh3'
@@ -635,9 +643,9 @@
         var_name_nc(emis_nc_index,pm25_nc_index,heating_nc_index)='Emis_mgm2_sec3pm25'
         var_name_nc(emis_nc_index,pmco_nc_index,heating_nc_index)='Emis_mgm2_sec3pmco'
               
-        var_name_nc(emis_nc_index,nox_nc_index,industry_nc_index)='Emis_mgm2_sec4nox'
-        var_name_nc(emis_nc_index,pm25_nc_index,industry_nc_index)='Emis_mgm2_sec4pm25'
-        var_name_nc(emis_nc_index,pmco_nc_index,industry_nc_index)='Emis_mgm2_sec4pmco'
+        var_name_nc(emis_nc_index,nox_nc_index,industry_nc_index)='Emis_mgm2_sec2nox'
+        var_name_nc(emis_nc_index,pm25_nc_index,industry_nc_index)='Emis_mgm2_sec2pm25'
+        var_name_nc(emis_nc_index,pmco_nc_index,industry_nc_index)='Emis_mgm2_sec2pmco'
         
         
     endif
@@ -668,7 +676,7 @@
                 var_name_nc(emis_nc_index,i,traffic_nc_index)=trim(prefix_str)//'6'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 var_name_nc(emis_nc_index,i,shipping_nc_index)=trim(prefix_str)//'7'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 var_name_nc(emis_nc_index,i,heating_nc_index)=trim(prefix_str)//'3'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                var_name_nc(emis_nc_index,i,industry_nc_index)=trim(prefix_str)//'4'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                var_name_nc(emis_nc_index,i,industry_nc_index)=trim(prefix_str)//'2'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 !write(unit_logfile,'(6a32)') trim(var_name_nc(emis_nc_index,i,allsource_nc_index)) &
                 !                        ,trim(var_name_nc(emis_nc_index,i,agriculture_nc_index)) &
                 !                        ,trim(var_name_nc(emis_nc_index,i,traffic_nc_index)) &

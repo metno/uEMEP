@@ -89,7 +89,7 @@
     elseif (.not.use_region_select_and_mask_flag) then
         pathfilename_population(SSB_file_index)=trim(pathname_population(SSB_file_index))//trim(filename_population(SSB_file_index))
         
-        !Test existence of the heating filename. If does not exist then use default
+        !Test existence of the heating filename. If does not exist then stop
         inquire(file=trim(pathfilename_population(SSB_file_index)),exist=exists)
         if (.not.exists) then
             write(unit_logfile,'(A,A)') ' ERROR: SSB file does not exist: ', trim(pathfilename_population(SSB_file_index))

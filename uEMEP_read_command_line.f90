@@ -10,7 +10,7 @@
     integer i_config
     
     !Assign the configuration file name and substitution date_str from the command line
-    !Can have up to 5 config files, limitted by the array definition
+    !Can have up to 10 config files, limitted by the array definition
     !Last command line string is always the date string
     !
     name_config_file=''
@@ -18,8 +18,8 @@
     
     n_commandline_inputs = command_argument_count ()
     
-    if (n_commandline_inputs.gt.6) then
-        write(*,*) 'ERROR: Too many command line inputs. Maximum is 5 configuration files plus one date_str. Stopping uEMEP '
+    if (n_commandline_inputs.gt.n_max_config_files+1) then
+        write(*,'(a,i2,a)') 'ERROR: Too many command line inputs. Maximum is ',n_max_config_files,' configuration files plus one date_str. Stopping uEMEP '
         stop
     endif
         

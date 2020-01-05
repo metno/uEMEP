@@ -999,7 +999,7 @@
         enddo
         
         !Use average lowest level grid thickness
-        H_emep_temp=sum(var4d_nc(:,:,surface_level_nc_2,:,ZTOP_nc_index,allsource_index,meteo_p_loop_index))/dim_length_nc(x_dim_nc_index)/dim_length_nc(y_dim_nc_index)/dim_length_nc(time_dim_nc_index)
+        H_emep_temp=sum(var4d_nc(:,:,surface_level_nc,:,ZTOP_nc_index,allsource_index,meteo_p_loop_index))/dim_length_nc(x_dim_nc_index)/dim_length_nc(y_dim_nc_index)/dim_length_nc(time_dim_nc_index)
         if (H_emep_temp.ne.0) then
             H_emep=H_emep_temp
             write(unit_logfile,'(A,f8.2)')' Using model depth info. Setting lowest level depth = ',H_emep
@@ -1010,7 +1010,7 @@
         H_meteo=H_emep/2.
         write(unit_logfile,'(A,f8.2)')' Setting lowest meteo grid height = ',H_meteo
         
-        !var3d_nc(:,:,:,conc_nc_index,:,:)=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,:)
+        !var3d_nc(:,:,:,conc_nc_index,:,:)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,:,:)
         
         !For nh3 only use the comp value not the value in the local fraction file
         !NOTE: TEMPORARY

@@ -79,7 +79,16 @@
     integer max_counter,zero_counter
     logical :: make_100km_files=.true.
 
-    write(unit_logfile,'(A)') ''
+    integer n_search
+    parameter (n_search=5)
+    character(16) search_str(n_search)
+    real search_delta(n_search)
+    integer temp_search
+    
+    data search_str /'1000m','500m','250m','100m','50m'/
+    data search_delta /1000.,500.,250.,100.,50./
+
+   write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Calculating tile distribution and resolution (uEMEP_set_tile_grids)'
 	write(unit_logfile,'(A)') '================================================================'
@@ -181,11 +190,31 @@
     tile_class_subgrid=0
     
     !Read in SSB file containing gridded municipality ids
-    ssb_dx=1000.
-    ssb_dy=1000.
+    !ssb_dx=1000.
+    !ssb_dy=1000.
     f_easting=2.e6
+    
+    !Search file name to define the grid size
+        ssb_dx=0.
+        ssb_dy=0.
+        do k=1,n_search
+            temp_search=index(filename_population(municipality_index),trim(adjustl(search_str(k))))
+            if (temp_search.ne.0) then
+                ssb_dx=search_delta(k)
+                ssb_dy=search_delta(k)
+                write(unit_logfile,'(i,A)') temp_search,' Reading municipality masking data with resolution '//trim(adjustl(search_str(k)))
+            endif
+        enddo
+    
+        if (ssb_dx.eq.0) then
+            write(unit_logfile,'(A)') 'Cannot find a valid SSB grid size. Stopping. '//trim(filename_population(municipality_index))
+            stop
+        else
+            write(unit_logfile,'(A,2f12.2)') 'Setting municipality SSB grid size (x,y) = ',ssb_dx,ssb_dy    
+        endif
+
     pathfilename_population(municipality_index)=trim(pathname_population(municipality_index))//trim(filename_population(municipality_index))
-    !Test existence of the heating filename. If does not exist then use default
+    !Test existence of the filename. If does not exist then use default
     inquire(file=trim(pathfilename_population(municipality_index)),exist=exists)
     if (.not.exists) then
         write(unit_logfile,'(A,A)') ' ERROR: SSB file with municipality IDs does not exist: ', trim(pathfilename_population(municipality_index))
@@ -747,6 +776,14 @@
     logical OK
     integer max_counter,zero_counter
 
+    integer n_search
+    parameter (n_search=5)
+    character(16) search_str(n_search)
+    real search_delta(n_search)
+    integer temp_search
+    
+    data search_str /'1000m','500m','250m','100m','50m'/
+    data search_delta /1000.,500.,250.,100.,50./
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -837,9 +874,29 @@
     tile_class_subgrid=0
     
     !Read in SSB file containing gridded municipality ids
-    ssb_dx=1000.
-    ssb_dy=1000.
+    !ssb_dx=1000.
+    !ssb_dy=1000.
     f_easting=2.e6
+
+    !Search file name to define the grid size
+        ssb_dx=0.
+        ssb_dy=0.
+        do k=1,n_search
+            temp_search=index(filename_population(municipality_index),trim(adjustl(search_str(k))))
+            if (temp_search.ne.0) then
+                ssb_dx=search_delta(k)
+                ssb_dy=search_delta(k)
+                write(unit_logfile,'(i,A)') temp_search,' Reading municipality masking data with resolution '//trim(adjustl(search_str(k)))
+            endif
+        enddo
+    
+        if (ssb_dx.eq.0) then
+            write(unit_logfile,'(A)') 'Cannot find a valid SSB grid size. Stopping. '//trim(filename_population(municipality_index))
+            stop
+        else
+            write(unit_logfile,'(A,2f12.2)') 'Setting municipality SSB grid size (x,y) = ',ssb_dx,ssb_dy    
+        endif
+    
     pathfilename_population(municipality_index)=trim(pathname_population(municipality_index))//trim(filename_population(municipality_index))
     !Test existence of the heating filename. If does not exist then use default
     inquire(file=trim(pathfilename_population(municipality_index)),exist=exists)

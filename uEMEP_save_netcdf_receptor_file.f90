@@ -180,8 +180,8 @@
         call check(  nf90_put_att(ncid, station_name_varid, "cf_role", "timeseries_id" ) )
 
         !Specify other dimension attributes
-        !call check(  nf90_put_att(ncid, y_varid, "standard_name", "projection_y_axis") )
-        !call check(  nf90_put_att(ncid, x_varid, "standard_name", "projection_x_axis") )
+        !call check(  nf90_put_att(ncid, y_varid, "standard_name", "projection_y_coordinate") )
+        !call check(  nf90_put_att(ncid, x_varid, "standard_name", "projection_x_coordinate") )
         !call check(  nf90_put_att(ncid, y_varid, "axis", "Y") )
         !call check(  nf90_put_att(ncid, x_varid, "axis", "X") )
   

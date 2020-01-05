@@ -10,7 +10,9 @@
     character(1) :: slash='\'
 
     !Configuration file name entered in command line
-    character(256) :: name_config_file(5)=''
+    integer n_max_config_files
+    parameter(n_max_config_files=10)
+    character(256) :: name_config_file(n_max_config_files)=''
     character(256) :: filename_log_file='uEMEP_log.txt'
     character(256) :: pathname_log_file=''
     character(256) :: config_date_str=''
@@ -291,9 +293,7 @@
     character(256) pathfilename_grid(n_filenames_grid)  !Combined path and filename
     character(256) pathname_output_grid
     character(256) :: filename_date_output_grid='<replace_date>_<replace_hour>'
-    
-    logical :: save_intermediate_files=.false.
-    
+        
     !integer traffic_param_index,shipping_param_index,heating_param_index,agriculture_param_index
     !parameter (traffic_param_index=1,shipping_param_index=2,heating_param_index=3,agriculture_param_index=4)
     !integer num_param_index
@@ -331,7 +331,7 @@
     integer n_compound_index
     parameter (n_compound_index=13)
     
-    !Declare source indexes (type_source)
+    !Declare source indexes (type_source) must be the same as source_nc_index
     integer allsource_index,traffic_index,shipping_index,heating_index,agriculture_index,industry_index
     parameter (allsource_index=1,traffic_index=2,shipping_index=3,heating_index=4,agriculture_index=5,industry_index=6)
     integer n_source_index
@@ -801,9 +801,9 @@
     logical :: use_plume_dispersion_deposition_flag=.false.
 
     !Definition of the landuse file to be read.
-    character(256) filename_landuse
-    character(256) pathname_landuse
-    character(256) pathfilename_landuse  !Combined path and filename
+    character(256) :: filename_landuse=''
+    character(256) :: pathname_landuse=''
+    character(256) :: pathfilename_landuse=''  !Combined path and filename
 
     character(256) deposition_name_nc(n_landuse_index,n_compound_nc_index)
 
@@ -825,6 +825,9 @@
 
     integer :: EMEP_surface_level_nc=1
     integer :: EMEP_surface_level_nc_2=1
+    
+    !Define the source sector match between uEMEP and EMEP
+    integer :: uEMEP_to_EMEP_sector(n_source_index)
 
     end module uEMEP_definitions
     

@@ -54,6 +54,7 @@
     integer source_index,subsource_index
     real invL
     integer class_index
+    real min_xy
     
     real ay_pg(6),by_pg(6),az_pg(6),bz_pg(6)
     real L_class(5),invL_class(5)
@@ -97,9 +98,13 @@
     !by(source_index,subsource_index)=0.764
     !az(source_index,subsource_index)=0.114
     !bz(source_index,subsource_index)=0.727
+    
+    !Changed this to use the min_xy value as in all other routines using sigy_0_subgid_width_scale (13.12.2019)
+    !Not important because this is set properly in uEMEP_set_dispersion_sigma_PG which is called afterwards
+    min_xy=(emission_subgrid_delta(x_dim_index,source_index)+emission_subgrid_delta(y_dim_index,source_index))/4.
 
-
-    sig_y_0(source_index,subsource_index)=sig_y_00(source_index,subsource_index)+sqrt(emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index))/4.*sigy_0_subgid_width_scale
+    !sig_y_0(source_index,subsource_index)=sig_y_00(source_index,subsource_index)+sqrt(emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index))/4.*sigy_0_subgid_width_scale
+    sig_y_0(source_index,subsource_index)=sig_y_00(source_index,subsource_index)+min_xy*sigy_0_subgid_width_scale
     sig_z_0(source_index,subsource_index)=sig_z_00(source_index,subsource_index)+az(source_index,subsource_index)*exp(bz(source_index,subsource_index)*log(sig_y_0(source_index,subsource_index)))
     
     

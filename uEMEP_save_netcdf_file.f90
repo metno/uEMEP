@@ -1813,8 +1813,8 @@
         call check(  nf90_put_att(ncid, time_varid, "units", trim(unit_dim_nc(time_dim_nc_index))) )
 
         !Specify other dimension attributes
-        call check(  nf90_put_att(ncid, y_varid, "standard_name", "projection_y_axis") )
-        call check(  nf90_put_att(ncid, x_varid, "standard_name", "projection_x_axis") )
+        call check(  nf90_put_att(ncid, y_varid, "standard_name", "projection_y_coordinate") )
+        call check(  nf90_put_att(ncid, x_varid, "standard_name", "projection_x_coordinate") )
         call check(  nf90_put_att(ncid, y_varid, "axis", "Y") )
         call check(  nf90_put_att(ncid, x_varid, "axis", "X") )
   

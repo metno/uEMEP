@@ -95,8 +95,9 @@
         
         hourly_calculations=read_name_logical('hourly_calculations',hourly_calculations,unit_in,unit_logfile)
         annual_calculations=read_name_logical('annual_calculations',annual_calculations,unit_in,unit_logfile)
-        start_month_in_annual_calculations=read_name_integer('start_month_in_annual_calculations',start_month_in_annual_calculations,unit_in,unit_logfile)
-        end_month_in_annual_calculations=read_name_integer('end_month_in_annual_calculations',end_month_in_annual_calculations,unit_in,unit_logfile)
+        !Not implemented 
+        !start_month_in_annual_calculations=read_name_integer('start_month_in_annual_calculations',start_month_in_annual_calculations,unit_in,unit_logfile)
+        !end_month_in_annual_calculations=read_name_integer('end_month_in_annual_calculations',end_month_in_annual_calculations,unit_in,unit_logfile)
         
         start_time_nc_index=read_name_integer('start_time_nc_index',start_time_nc_index,unit_in,unit_logfile)
         end_time_nc_index=read_name_integer('end_time_nc_index',end_time_nc_index,unit_in,unit_logfile)
@@ -105,7 +106,6 @@
 
         use_single_time_loop_flag=read_name_logical('use_single_time_loop_flag',use_single_time_loop_flag,unit_in,unit_logfile)
         reduce_EMEP_region_flag=read_name_logical('reduce_EMEP_region_flag',reduce_EMEP_region_flag,unit_in,unit_logfile)
-        save_intermediate_files=read_name_logical('save_intermediate_files',save_intermediate_files,unit_in,unit_logfile)
         use_multiple_receptor_grids_flag=read_name_logical('use_multiple_receptor_grids_flag',use_multiple_receptor_grids_flag,unit_in,unit_logfile)
         use_receptor_region=read_name_integer('use_receptor_region',use_receptor_region,unit_in,unit_logfile)
         reduce_roadlink_region_flag=read_name_logical('reduce_roadlink_region_flag',reduce_roadlink_region_flag,unit_in,unit_logfile)
@@ -121,8 +121,7 @@
         !    if (calculate_source(i_source)) calculate_source(allsource_index)=.true.
         !enddo
 
-        !For aggregating proxy emission data to EMEP grids
-        !make_EMEP_grid_emission_data(:)=read_name_logical('make_EMEP_grid_emission_data(:)',make_EMEP_grid_emission_data(allsource_index),unit_in,unit_logfile)
+        !For aggregating proxy emission data to EMEP grids in ascii test routines that no longer exist. Default is false
         make_EMEP_grid_emission_data(traffic_index)=read_name_logical('make_EMEP_grid_emission_data(traffic_index)',make_EMEP_grid_emission_data(traffic_index),unit_in,unit_logfile)
         make_EMEP_grid_emission_data(shipping_index)=read_name_logical('make_EMEP_grid_emission_data(shipping_index)',make_EMEP_grid_emission_data(shipping_index),unit_in,unit_logfile)
         make_EMEP_grid_emission_data(heating_index)=read_name_logical('make_EMEP_grid_emission_data(heating_index)',make_EMEP_grid_emission_data(heating_index),unit_in,unit_logfile)
@@ -132,7 +131,7 @@
             if (make_EMEP_grid_emission_data(i_source)) make_EMEP_grid_emission_data(allsource_index)=.true.
         enddo
         
-        !replace_EMEP_local_with_subgrid_local(:)=read_name_logical('replace_EMEP_local_with_subgrid_local',replace_EMEP_local_with_subgrid_local(allsource_index),unit_in,unit_logfile)
+        !For scaling EMEP concentrations with EMEP/local emission ratio. for testing purposes only. Default is false
         replace_EMEP_local_with_subgrid_local(traffic_index)=read_name_logical('replace_EMEP_local_with_subgrid_local(traffic_index)',replace_EMEP_local_with_subgrid_local(traffic_index),unit_in,unit_logfile)
         replace_EMEP_local_with_subgrid_local(shipping_index)=read_name_logical('replace_EMEP_local_with_subgrid_local(shipping_index)',replace_EMEP_local_with_subgrid_local(shipping_index),unit_in,unit_logfile)
         replace_EMEP_local_with_subgrid_local(heating_index)=read_name_logical('replace_EMEP_local_with_subgrid_local(heating_index)',replace_EMEP_local_with_subgrid_local(heating_index),unit_in,unit_logfile)
@@ -161,7 +160,6 @@
         wind_level_integral_flag=read_name_integer('wind_level_integral_flag',wind_level_flag,unit_in,unit_logfile) !Default is wind_level_flag
         no2_chemistry_scheme_flag=read_name_integer('no2_chemistry_scheme_flag',no2_chemistry_scheme_flag,unit_in,unit_logfile)
         
-        !use_emission_positions_for_auto_subgrid_flag(:)=read_name_logical('use_emission_positions_for_auto_subgrid_flag',use_emission_positions_for_auto_subgrid_flag(allsource_index),unit_in,unit_logfile)
         use_emission_positions_for_auto_subgrid_flag(traffic_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(traffic_index)',use_emission_positions_for_auto_subgrid_flag(traffic_index),unit_in,unit_logfile)
         use_emission_positions_for_auto_subgrid_flag(shipping_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(shipping_index)',use_emission_positions_for_auto_subgrid_flag(shipping_index),unit_in,unit_logfile)
         use_emission_positions_for_auto_subgrid_flag(heating_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(heating_index)',use_emission_positions_for_auto_subgrid_flag(heating_index),unit_in,unit_logfile)
@@ -219,8 +217,7 @@
         landuse_subgrid_delta(x_dim_index)=read_name_real('landuse_subgrid_delta(x_dim_index)',landuse_subgrid_delta(x_dim_index),unit_in,unit_logfile)
         landuse_subgrid_delta(y_dim_index)=read_name_real('landuse_subgrid_delta(y_dim_index)',landuse_subgrid_delta(y_dim_index),unit_in,unit_logfile)
 
-        !Specifies the number of subsources for each source. Usually not used as default is 1
-        !n_subsource(:)=read_name_integer('n_subsource(:)',n_subsource(allsource_index),unit_in,unit_logfile)
+        !Specifies the number of subsources for each source. Not used as default is 1
         n_subsource(traffic_index)=read_name_integer('n_subsource(traffic_index)',n_subsource(traffic_index),unit_in,unit_logfile)
         n_subsource(shipping_index)=read_name_integer('n_subsource(shipping_index)',n_subsource(shipping_index),unit_in,unit_logfile)
         n_subsource(heating_index)=read_name_integer('n_subsource(heating_index)',n_subsource(heating_index),unit_in,unit_logfile)
@@ -336,7 +333,7 @@
         use_meandering_in_dispersion=read_name_logical('use_meandering_in_dispersion',use_meandering_in_dispersion,unit_in,unit_logfile)
         
         use_traffic_for_sigma0_flag=read_name_logical('use_traffic_for_sigma0_flag',use_traffic_for_sigma0_flag,unit_in,unit_logfile)
-!        use_traffic_for_minFF_flag=read_name_logical('use_traffic_for_minFF_flag',use_traffic_for_minFF_flag,unit_in,unit_logfile)
+        !use_traffic_for_minFF_flag=read_name_logical('use_traffic_for_minFF_flag',use_traffic_for_minFF_flag,unit_in,unit_logfile)
 
         use_alternative_meteorology_flag=read_name_logical('use_alternative_meteorology_flag',use_alternative_meteorology_flag,unit_in,unit_logfile)
         ustar_min=read_name_real('ustar_min',ustar_min,unit_in,unit_logfile)
@@ -346,7 +343,7 @@
         alternative_meteorology_type=read_name_char('alternative_meteorology_type',alternative_meteorology_type,unit_in,unit_logfile)
        
         
-        !Read emission factors
+        !Read emission factors for traffic
         emission_factor(nox_index,traffic_index,:)=read_name_real('emission_factor(nox_index,traffic_index,:)',emission_factor(nox_index,traffic_index,1),unit_in,unit_logfile)
         emission_factor(nox_index,traffic_index,1)=read_name_real('emission_factor(nox_index,traffic_index,1)',emission_factor(nox_index,traffic_index,1),unit_in,unit_logfile)
         emission_factor(nox_index,traffic_index,2)=read_name_real('emission_factor(nox_index,traffic_index,2)',emission_factor(nox_index,traffic_index,2),unit_in,unit_logfile)
@@ -474,10 +471,22 @@
         tunnel_sig_z_00=read_name_real('tunnel_sig_z_00',tunnel_sig_z_00,unit_in,unit_logfile)
         bridge_h_emis=read_name_real('bridge_h_emis',bridge_h_emis,unit_in,unit_logfile)
 
-        !Input variable names. Only some selected few
+        !Input variable names for meteo data read from EMEP
         var_name_nc(hmix_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(hmix_nc_index)',var_name_nc(hmix_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
         var_name_nc(FF10_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(FF10_nc_index)',var_name_nc(FF10_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
-
+        var_name_nc(ugrid_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(ugrid_nc_index)',var_name_nc(ugrid_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(vgrid_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(vgrid_nc_index)',var_name_nc(vgrid_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(FFgrid_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(FFgrid_nc_index)',var_name_nc(FFgrid_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(inv_FFgrid_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(inv_FFgrid_nc_index)',var_name_nc(inv_FFgrid_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(inv_FF10_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(inv_FF10_nc_index)',var_name_nc(inv_FF10_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(kz_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(kz_nc_index)',var_name_nc(kz_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(ustar_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(ustar_nc_index)',var_name_nc(ustar_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(logz0_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(logz0_nc_index)',var_name_nc(logz0_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(invL_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(invL_nc_index)',var_name_nc(invL_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(ZTOP_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(ZTOP_nc_index)',var_name_nc(ZTOP_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(t2m_nc_index)',var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(precip_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(precip_nc_index)',var_name_nc(precip_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)    
+        
         save_netcdf_average_flag=read_name_logical('save_netcdf_average_flag',save_netcdf_average_flag,unit_in,unit_logfile)
         
         use_traffic_nox_emission_temperature_dependency=read_name_logical('use_traffic_nox_emission_temperature_dependency',use_traffic_nox_emission_temperature_dependency,unit_in,unit_logfile)
