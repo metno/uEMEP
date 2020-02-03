@@ -827,7 +827,9 @@
     integer :: EMEP_surface_level_nc_2=1
     
     !Define the source sector match between uEMEP and EMEP
+    logical :: use_user_specified_sectors_flag=.false.
     integer :: uEMEP_to_EMEP_sector(n_source_index)
+    integer :: uEMEP_to_EMEP_replace_sector(n_source_index)
 
     end module uEMEP_definitions
     

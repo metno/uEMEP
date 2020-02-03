@@ -22,13 +22,15 @@
     dim_name_nc(ydist_dim_nc_index)='y_dist'
 
 
-    !Sectors. Default are SNAP sectors
+    !Sectors. Default are SNAP sectors before reading config files
     uEMEP_to_EMEP_sector=0
     uEMEP_to_EMEP_sector(traffic_index)=7
     uEMEP_to_EMEP_sector(shipping_index)=8
     uEMEP_to_EMEP_sector(agriculture_index)=10
     uEMEP_to_EMEP_sector(heating_index)=2
     uEMEP_to_EMEP_sector(industry_index)=4
+    !Set replace value to -1 as flag
+    uEMEP_to_EMEP_replace_sector=-1
     
         !Concentrations
         var_name_nc=''
@@ -124,8 +126,8 @@
         var_name_meteo_nc=''
         !Depends which file you read unfortunately. My files lat, MEPS latitude WHY?
         !Put these in the config file
-        var_name_meteo_nc(lon_nc_index)='lon'
-        var_name_meteo_nc(lat_nc_index)='lat'
+        !var_name_meteo_nc(lon_nc_index)='lon'
+        !var_name_meteo_nc(lat_nc_index)='lat'
         var_name_meteo_nc(lon_nc_index)='longitude'
         var_name_meteo_nc(lat_nc_index)='latitude'
         var_name_meteo_nc(ugrid_nc_index)='u_wind' !!Doesn't exist but name is used
@@ -577,6 +579,8 @@
     integer index_start
     character(256) prefix_str,postfix_str
     integer i
+    character(8) sector_str_lf,sector_str_emis
+    integer sector_index
     
      if (index(alternative_meteorology_type,'nortrip').gt.0) then
         var_name_meteo_nc(lon_nc_index)='lon'
@@ -598,13 +602,25 @@
         comp_name_nc(o3_nc_index)='SURF_ug_O3'        
     endif
     
+
+    !Set the emission sector index to be read to standard GNFR.
+    !Not actually used now but could be used in the loop below
+    if (use_GNFR_emissions_from_EMEP_flag) then
+        uEMEP_to_EMEP_sector(traffic_index)=6
+        uEMEP_to_EMEP_sector(shipping_index)=7
+        uEMEP_to_EMEP_sector(agriculture_index)=0
+        uEMEP_to_EMEP_sector(heating_index)=3
+        uEMEP_to_EMEP_sector(industry_index)=2
+    endif  
+
+    !These are for the previous EMEP version before 4.3.3
     if (use_GNFR_emissions_from_EMEP_flag) then
         
-        !Local fractions
+        !Local fractions        
         var_name_nc(frac_nc_index,nox_nc_index,traffic_nc_index)='nox_sec06_local_fraction'
         var_name_nc(frac_nc_index,pmco_nc_index,traffic_nc_index)='pmco_sec06_local_fraction'
         var_name_nc(frac_nc_index,pm25_nc_index,traffic_nc_index)='pm25_sec06_local_fraction'
- 
+
         var_name_nc(frac_nc_index,nox_nc_index,shipping_nc_index)='nox_sec07_local_fraction'
         var_name_nc(frac_nc_index,pm25_nc_index,shipping_nc_index)='pm25_sec07_local_fraction'
         var_name_nc(frac_nc_index,pmco_nc_index,shipping_nc_index)='pmco_sec07_local_fraction'
@@ -646,8 +662,7 @@
         var_name_nc(emis_nc_index,nox_nc_index,industry_nc_index)='Emis_mgm2_sec2nox'
         var_name_nc(emis_nc_index,pm25_nc_index,industry_nc_index)='Emis_mgm2_sec2pm25'
         var_name_nc(emis_nc_index,pmco_nc_index,industry_nc_index)='Emis_mgm2_sec2pmco'
-        
-        
+                
     endif
     
     if (use_emission_naming_template_flag) then
@@ -667,7 +682,7 @@
         endif
         !write(*,*) index_start,index_start+3,len_trim(emission_naming_template_str)
         if (use_GNFR_emissions_from_EMEP_flag) then
-            write(unit_logfile,'(a)') 'Using emission name template for GNFR sectors: '//trim(emission_naming_template_str)
+        write(unit_logfile,'(a)') 'Using emission name template for GNFR sectors: '//trim(emission_naming_template_str)
            do i=1,n_pollutant_nc_index
                 !write(unit_logfile,'(a)') 'Using emission name template for: '//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 !write(*,*) i_pollutant,i
@@ -708,7 +723,44 @@
         
 
     endif
-    
+ 
+    if (use_user_specified_sectors_flag) then
+        
+            write(unit_logfile,'(a)') 'Replacing sector index in EMEP (sector,pollutant,lf_name,emis_name)'
+        
+            do sector_index=0,n_source_nc_index
+                if (calculate_source(sector_index).and.uEMEP_to_EMEP_replace_sector(sector_index).ge.0) then
+                    !sector_index=traffic_nc_index
+                    write(sector_str_lf,'(i0.2)') uEMEP_to_EMEP_replace_sector(sector_index)
+                    write(sector_str_emis,'(i0.1)') uEMEP_to_EMEP_replace_sector(sector_index)
+                    if (uEMEP_to_EMEP_replace_sector(sector_index).ne.0) then
+                        sector_str_lf='_sec'//trim(sector_str_lf)
+                        sector_str_emis=trim(sector_str_emis)
+                    else
+                        sector_str_lf=''
+                        sector_str_emis=''
+                    endif
+                    do i=1,n_pollutant_nc_index
+                        var_name_nc(frac_nc_index,i,sector_index)=trim(var_name_nc(conc_nc_index,i,allsource_nc_index))//trim(sector_str_lf)//'_local_fraction'
+                        !var_name_nc(frac_nc_index,pmco_nc_index,sector_index)='pmco'//trim(sector_str)//'_local_fraction'
+                        !var_name_nc(frac_nc_index,pm25_nc_index,sector_index)='pm25'//trim(sector_str)//'_local_fraction'
+
+                        if (use_emission_naming_template_flag) then
+                            var_name_nc(emis_nc_index,i,sector_index)=trim(prefix_str)//trim(sector_str_emis)//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                        else
+                            var_name_nc(emis_nc_index,i,sector_index)='Emis_mgm2_sec'//trim(sector_str_emis)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))      
+                        endif
+
+                        write(unit_logfile,'(2i8,a6,i2,a4,i2,a3,2a48)') sector_index,i,' from ',uEMEP_to_EMEP_sector(sector_index),' to ',uEMEP_to_EMEP_replace_sector(sector_index),' : ',trim(var_name_nc(frac_nc_index,i,sector_index)),trim(var_name_nc(emis_nc_index,i,sector_index))
+                        
+                    enddo
+                    
+                endif
+            enddo
+    endif
+        !stop
+        !write(unit_tile,'(a,i0.5)') 'tile_tag= '//trim(save_tile_tag)//'_',count
+
     if (use_EMEP_surface_compounds_flag) then
         write(unit_logfile,'(a)') 'Using EMEP surface compounds instead of gridded'
         comp_name_nc(o3_nc_index)='SURF_ug_O3'

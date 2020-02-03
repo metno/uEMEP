@@ -526,6 +526,14 @@
         limit_shipping_delta=read_name_real('limit_shipping_delta',limit_shipping_delta,unit_in,unit_logfile)
         limit_heating_delta=read_name_real('limit_heating_delta',limit_heating_delta,unit_in,unit_logfile)
         
+        use_user_specified_sectors_flag=read_name_logical('use_user_specified_sectors_flag',use_user_specified_sectors_flag,unit_in,unit_logfile)        
+        if (use_user_specified_sectors_flag) then
+            uEMEP_to_EMEP_replace_sector(traffic_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(traffic_index)',uEMEP_to_EMEP_replace_sector(traffic_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(shipping_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(shipping_index)',uEMEP_to_EMEP_replace_sector(shipping_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(agriculture_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(agriculture_index)',uEMEP_to_EMEP_replace_sector(agriculture_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(heating_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(heating_index)',uEMEP_to_EMEP_replace_sector(heating_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(industry_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(industry_index)',uEMEP_to_EMEP_replace_sector(industry_index),unit_in,unit_logfile)
+        endif
         
     close (unit_in)
     
