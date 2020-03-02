@@ -830,6 +830,9 @@
     logical :: use_user_specified_sectors_flag=.false.
     integer :: uEMEP_to_EMEP_sector(n_source_index)
     integer :: uEMEP_to_EMEP_replace_sector(n_source_index)
+    
+    !Define the aggregation period for EMEP emissions when these are to be used in calculations. Annual is 365*24=8760 or 8784 for leap years
+    real :: EMEP_emission_aggregation_period=1.
 
     end module uEMEP_definitions
     

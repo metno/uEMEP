@@ -535,6 +535,9 @@
             uEMEP_to_EMEP_replace_sector(industry_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(industry_index)',uEMEP_to_EMEP_replace_sector(industry_index),unit_in,unit_logfile)
         endif
         
+        EMEP_emission_aggregation_period=read_name_real('EMEP_emission_aggregation_period',EMEP_emission_aggregation_period,unit_in,unit_logfile)
+       
+        
     close (unit_in)
     
     !Call some error traps

@@ -37,10 +37,14 @@
     real sum_temp(n_pollutant_loop)
     real xpos_subgrid,ypos_subgrid
     real xpos_subgrid2,ypos_subgrid2
- 
+    real EMEP_emission_scaling
     integer i_pollutant
     
     !functions
+    
+    !Set the scaling factor for EMEP emissions depending on whether they are total emissions or average emissions
+    !EMEP_emission_aggregation_period=365.*24.   !For aggregation over a year 
+    !EMEP_emission_aggregation_period=1.         !For hourly average        
     
     if (local_subgrid_method_flag.ne.3.and.local_subgrid_method_flag.ne.4) return
     
@@ -131,7 +135,7 @@
                 if (hourly_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:) &
                     *emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
                 if (annual_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:) &
-                    *emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
+                    *emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600./EMEP_emission_aggregation_period
                     
 
                 !write(*,*) emission_subgrid(i,j,1,i_source,subsource_index),var3d_nc(ii,jj,1,emis_nc_index,i_source)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
@@ -301,7 +305,7 @@
                                 
                 !Converts from mg/subgrid to ug/s/subgrid assuming the original EMEP emissions are in mg/m2/hour
                 if (hourly_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
-                if (annual_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
+                if (annual_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600./EMEP_emission_aggregation_period
 
             endif !If valid emission point
                 
@@ -484,7 +488,7 @@
                 
             !Converts from mg/subgrid to ug/s/subgrid assuming the original EMEP emissions are in mg/m2/hour
             if (hourly_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
-            if (annual_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./365./24./3600.
+            if (annual_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:)*emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600./EMEP_emission_aggregation_period
 
             endif !If valid emission subgrid
                 
