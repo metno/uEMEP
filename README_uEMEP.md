@@ -31,6 +31,6 @@ uEMEP uses the time stamps provided by EMEP to specify the calculation times.
 uEMEP requires EMEP output files, one of which contains the local fraction data, for implementation.
 
 ## Example files and configuration
-A zip file 'uEMEP_GMD_submission.zip' containing the data and configuration files for first implementing uEMEP.
+A zip file 'uEMEP_demo_startup_files.zip' containing the data and configuration files for first implementing uEMEP.
 
 
