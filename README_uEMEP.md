@@ -28,9 +28,9 @@ The date string, required, ‘yyyymmddHH’ refers to the date string of the EME
 
 uEMEP uses the time stamps provided by EMEP to specify the calculation times.
 
-uEMEP requires an EMEP output file for implementation.
+uEMEP requires EMEP output files, one of which contains the local fraction data, for implementation.
 
 ## Example files and configuration
-A zip file 'uEMEP_example_configuration.zip' containing the default and 2 example configuration files is provided.
+A zip file 'uEMEP_GMD_submission.zip' containing the data and configuration files for first implementing uEMEP.
 
 
