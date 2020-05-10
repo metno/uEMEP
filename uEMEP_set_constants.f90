@@ -164,6 +164,14 @@
         !var_name_meteo_nc(snow_nc_index)='snowfall_amount_acc'
         !var_name_meteo_nc(pressure_nc_index)='surface_air_pressure'
         
+        !dim_name_population_nc(x_dim_nc_index)='x'
+        !dim_name_population_nc(y_dim_nc_index)='y'
+        dim_name_population_nc(x_dim_nc_index)='lon'
+        dim_name_population_nc(y_dim_nc_index)='lat'
+        !var_name_population_nc(lon_nc_index)='lon'
+        !var_name_population_nc(lat_nc_index)='lat'
+        var_name_population_nc(population_nc_index)='Band1'
+
        
         !Additional compounds for chemistry and totals
         comp_name_nc=''
@@ -413,6 +421,27 @@
     traffic_nox_emission_temperature_ref_scaling(1)=3.
     traffic_nox_emission_temperature_ref_scaling(2)=1.
     
+    !EMEP projection default (LCC)
+    EMEP_projection_type=LCC_projection_index
+    EMEP_projection_attributes(1) = 63.0 !Standard parallel 1
+    EMEP_projection_attributes(2) = 63.0 !Standard parallel 2
+    EMEP_projection_attributes(3) = 15.0 !lon0
+    EMEP_projection_attributes(4) = 63.0 !lat0
+    EMEP_projection_attributes(5) = 6370000.0 !earth_radius
+
+    !uEMEP projection default (UTM)
+    projection_type=UTM_projection_index
+    projection_attributes(1) = utm_zone
+    projection_attributes(2) = utm_lon0
+
+    !uEMEP projection alternative (LAEA) for European modelling. Can copy to config file if it is to be used
+    !projection_type=LAEA_projection_index
+    !projection_attributes(1) = 10.  !lon0
+    !projection_attributes(2) = 52.  !lat0
+    !projection_attributes(3) = 4321000.  !false_easting
+    !projection_attributes(4) = 3210000.  !false_northing
+    !projection_attributes(5) = 6370000.0  !earth_radius
+
 
     end subroutine uEMEP_set_constants
     
@@ -780,6 +809,12 @@
     else
         var_name_nc(emis_nc_index,:,:)=''        
         write(unit_logfile,'(a,i)') 'Will not read or write any EMEP emission data'
+    endif
+    
+    !If utm zones set the projection parameters to these values
+    if (projection_type.eq.utm_projection_index) then    
+        projection_attributes(1)=utm_zone
+        projection_attributes(2)=utm_lon0
     endif
     
     

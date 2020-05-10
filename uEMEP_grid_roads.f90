@@ -121,10 +121,11 @@
         x_line_in=inputdata_rl(ro,x1_rl_index:x2_rl_index)
         y_line_in=inputdata_rl(ro,y1_rl_index:y2_rl_index)
         
-        !Convert to EMEP coordinates from UTM to lambert or latlon. Not certain if the fraction is correctly calculated in lat lon coordinates but otherwise very complicated
+        !Convert to EMEP coordinates from specified projection type to lambertCC or latlon. Not certain if the fraction is correctly calculated in lat lon coordinates but otherwise very complicated
         if (save_emissions_for_EMEP(traffic_index)) then
             do i=1,2
-                call UTM2LL(utm_zone,y_line_in(i),x_line_in(i),lat_line_in(i),lon_line_in(i))
+                call PROJ2LL(x_line_in(i),y_line_in(i),lon_line_in(i),lat_line_in(i),projection_attributes,projection_type)
+                !call UTM2LL(utm_zone,y_line_in(i),x_line_in(i),lat_line_in(i),lon_line_in(i))
                 if (projection_type.eq.LL_projection_index) then
                     x_line_in(i)=lon_line_in(i)
                     y_line_in(i)=lat_line_in(i)        
@@ -199,7 +200,7 @@
                                 if (.not.use_tunnel_emissions_flag.and.inputdata_rl(ro,tunnel_length_rl_index).gt.0) then
                                     tunnel_ratio=0
                                 endif
-                                !Converts from g/km/hr to ug/sec
+                                !Converts from g/km/hr (NORTRIP) to ug/sec (uEMEP)
                                 emission_subgrid(i,j,t,source_index,i_pollutant)=emission_subgrid(i,j,t,source_index,i_pollutant)+ &
                                     +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*inputdata_rl_emissions(major_ro,ttt,i_roadlink_emission_compound(i_pollutant)) &
                                     *1.e6/1.e3/3600.*tunnel_ratio

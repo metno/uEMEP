@@ -182,6 +182,9 @@
                     where (total_proxy_emission_subgrid(:,:,i_source,:).eq.0.) emission_subgrid(:,:,t,i_source,:)=0.
                 enddo
                 
+                !Fix round off negatives
+                where (emission_subgrid(:,:,:,i_source,:).lt.0) emission_subgrid(:,:,:,i_source,:)=0.
+                
             !write(*,*) sum(emission_subgrid(:,:,:,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(emission_subgrid(:,:,:,traffic_index,pollutant_loop_back_index(pm25_nc_index)))
             !write(*,*) sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var3d_nc(:,:,:,emis_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index)))
             !write(*,*) pmex_index,pmex_nc_index

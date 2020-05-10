@@ -84,12 +84,15 @@
 
         x_landuse_subgrid(i,j)=landuse_subgrid_min(x_dim_index)+landuse_subgrid_delta(x_dim_index)*(i-0.5)
         y_landuse_subgrid(i,j)=landuse_subgrid_min(y_dim_index)+landuse_subgrid_delta(y_dim_index)*(j-0.5)
+        
         !Set the lat-lon coordinates of the landuse
-        if (projection_type.eq.RDM_projection_index) then
-            call RDM2LL(y_landuse_subgrid(i,j),x_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),lon_landuse_subgrid(i,j))
-        elseif (projection_type.eq.UTM_projection_index) then
-            call UTM2LL(utm_zone,y_landuse_subgrid(i,j),x_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),lon_landuse_subgrid(i,j))
-        endif
+        call PROJ2LL(x_landuse_subgrid(i,j),y_landuse_subgrid(i,j),lon_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),projection_attributes,projection_type)
+        !if (projection_type.eq.RDM_projection_index) then
+        !    call RDM2LL(y_landuse_subgrid(i,j),x_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),lon_landuse_subgrid(i,j))
+        !elseif (projection_type.eq.UTM_projection_index) then
+        !    call UTM2LL(utm_zone,y_landuse_subgrid(i,j),x_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),lon_landuse_subgrid(i,j))
+        !endif
+        
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_landuse_subgrid(i,j),yproj_landuse_subgrid(i,j),lon_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),EMEP_projection_attributes)

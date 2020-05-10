@@ -139,6 +139,11 @@
     character(256) input_comp_name
     real comp_scale_nc(n_compound_nc_index)
     
+    integer num_var_population_nc,num_dims_population_nc,population_nc_index
+    !parameter (num_var_population_nc=3,num_dims_population_nc=2,population_nc_index=3) !population_nc_index=3 assumes lat and lon are 1 and 2
+    parameter (num_var_population_nc=1,num_dims_population_nc=2,population_nc_index=1) !population_nc_index=1 assumes population files in lat and lon
+    character(256) var_name_population_nc(num_var_population_nc)
+    character(256) dim_name_population_nc(num_dims_population_nc)
 
 
     !dimension netcdf fields
@@ -198,6 +203,12 @@
     character(256) filename_rl(2)
     character(256) pathname_rl(2)
     character(256) pathfilename_rl(2)
+    !Filenames for multiple road link (mrl) files
+    integer :: num_multiple_roadlink_files=0
+    character(256) filename_mrl(50)
+    character(256) pathname_mrl(50)
+    character(256) pathfilename_mrl(50)
+
     character(256) file_tag
 
     !Declare ais shiping data arrays
@@ -370,6 +381,7 @@
     integer subgrid_loop_index(2)               !Number of target subgrids to loop through, limitted by the size of the EMEP grid
     integer integral_subgrid_loop_index(2)      !Number of integral subgrids to loop through, limitted by the size of the EMEP grid
     integer emission_subgrid_loop_index(2,n_source_index)      !Number of emission subgrids to loop through, limitted by the size of the EMEP grid
+    integer init_emission_subgrid_loop_index(2,n_source_index)      !Number of emission subgrids to loop through, limitted by the size of the EMEP grid
     logical, allocatable :: use_subgrid(:,:,:)    !Specifies if calculations are to be made at a particular set of target subgrids or not
     integer, allocatable :: use_subgrid_val(:,:,:) !Same as use_subgrid but given a value to indicate if it is in the buffer zone of a region ore not
     integer, allocatable :: use_subgrid_interpolation_index(:,:,:) !Assigns the resolution level for auto gridding to the target grid
@@ -393,6 +405,8 @@
     integer emission_subgrid_dim(n_dim_index,n_source_index)
     integer emission_max_subgrid_dim(n_dim_index)
     real emission_subgrid_delta(2,n_source_index),emission_subgrid_min(2,n_source_index),emission_subgrid_max(2,n_source_index)  !Only x and y
+    integer init_emission_subgrid_dim(n_dim_index,n_source_index)
+    real init_emission_subgrid_delta(2,n_source_index),init_emission_subgrid_min(2,n_source_index),init_emission_subgrid_max(2,n_source_index)  !Only x and y
     !emission_subgrid (i,j,t,n_source,n_subsource)
     real, allocatable :: emission_subgrid(:,:,:,:,:)
     real, allocatable :: proxy_emission_subgrid(:,:,:,:) !No time dependence
@@ -411,6 +425,8 @@
     real    buffer_size(2)
     integer emission_buffer_index(2,n_source_index)
     real    emission_buffer_size(2,n_source_index)
+    integer init_emission_buffer_index(2,n_source_index)
+    real    init_emission_buffer_size(2,n_source_index)
     integer integral_buffer_index(2)
     real    integral_buffer_size(2)
 
@@ -519,12 +535,13 @@
     !integer num_NN_nc
     !parameter (num_NN_nc=9)                  ! number of readable near neighbours
 
-    integer UTM_projection_index,RDM_projection_index,LCC_projection_index,LL_projection_index
-    parameter (UTM_projection_index=1,RDM_projection_index=2,LCC_projection_index=3,LL_projection_index=4)
+    integer UTM_projection_index,RDM_projection_index,LCC_projection_index,LL_projection_index,LAEA_projection_index
+    parameter (UTM_projection_index=1,RDM_projection_index=2,LCC_projection_index=3,LL_projection_index=4,LAEA_projection_index=5)
     integer :: projection_type=UTM_projection_index
-    integer :: EMEP_projection_type=LL_projection_index
+    integer :: EMEP_projection_type=LCC_projection_index
     double precision :: EMEP_projection_attributes(10)
     double precision :: projection_attributes(10)
+    double precision :: population_nc_projection_attributes(10)
     integer :: meteo_nc_projection_type=LCC_projection_index
     double precision :: meteo_nc_projection_attributes(10)
     logical :: use_alternative_LCC_projection_flag=.false.
@@ -580,7 +597,7 @@
 
     
     integer n_receptor,n_receptor_in,n_receptor_max,n_valid_receptor,n_valid_receptor_in
-    parameter (n_receptor_max=1000)
+    parameter (n_receptor_max=10000)
     real lon_receptor(n_receptor_max),lat_receptor(n_receptor_max),x_receptor(n_receptor_max),y_receptor(n_receptor_max),height_receptor(n_receptor_max)
     real lon_receptor_in(n_receptor_max),lat_receptor_in(n_receptor_max),x_receptor_in(n_receptor_max),y_receptor_in(n_receptor_max),height_receptor_in(n_receptor_max)
     integer i_receptor_subgrid(n_receptor_max),j_receptor_subgrid(n_receptor_max)
@@ -822,6 +839,7 @@
     logical :: use_emission_naming_template_flag=.false.
     character(256) :: emission_naming_template_str='Sec<n>_Emis_mgm2_'
     logical :: read_OSM_roadlink_data_flag=.false.
+    logical :: no_header_roadlink_data_flag=.false.
 
     integer :: EMEP_surface_level_nc=1
     integer :: EMEP_surface_level_nc_2=1
@@ -834,6 +852,22 @@
     !Define the aggregation period for EMEP emissions when these are to be used in calculations. Annual is 365*24=8760 or 8784 for leap years
     real :: EMEP_emission_aggregation_period=1.
 
+    logical :: read_population_from_netcdf_flag=.false.
+    
+    logical :: auto_select_OSM_country_flag=.false.
+    character(256) :: pathfilename_boundingbox=''
+    character(256) :: pathname_boundingbox=''
+    character(256) :: filename_boundingbox=''
+    character(256) :: select_country_by_name=''
+
+	logical :: select_latlon_centre_domain_position_flag=.false.
+	real :: select_lat_centre_position=60.
+	real :: select_lon_centre_position=11.
+	real :: select_domain_width_EW_km=20.
+	real :: select_domain_height_NS_km=20.
+    
+    real :: osm_adt_power_scale=1.
+    
     end module uEMEP_definitions
     
     

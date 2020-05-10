@@ -647,7 +647,7 @@
                                 endif
 
                             else
-
+                                !Annual calculations
                                 sig_y_00_loc=emission_properties_subgrid(ii,jj,emission_sigy00_index,source_index)
                                 sig_z_00_loc=emission_properties_subgrid(ii,jj,emission_sigz00_index,source_index)
                                 h_emis_loc=emission_properties_subgrid(ii,jj,emission_h_index,source_index)

@@ -30,12 +30,8 @@
     !Or just defne them here without reading
 
     if (trim(save_emissions_for_EMEP_projection).eq.'lambert') then
-        projection_type=LCC_projection_index
+        EMEP_projection_type=LCC_projection_index
         !grid_mapping_name = "lambert_conformal_conic";
-        EMEP_projection_attributes(1:2) = 63.0
-        EMEP_projection_attributes(3) = 15.0
-        EMEP_projection_attributes(4) = 63.0
-        EMEP_projection_attributes(5) = 6370000.0
         !float i(i=531);
         !standard_name = "projection_x_coordinate";
         !long_name = "x-coordinate in Cartesian system";
@@ -66,8 +62,8 @@
         endif
     
     elseif (trim(save_emissions_for_EMEP_projection).eq.'latlon') then
-        projection_type=LL_projection_index
-        write(unit_logfile,'(A,i)') 'Projection of emission grid set to '//trim(save_emissions_for_EMEP_projection),projection_type
+        EMEP_projection_type=LL_projection_index
+        write(unit_logfile,'(A,i)') 'Projection of emission grid set to '//trim(save_emissions_for_EMEP_projection),EMEP_projection_type
         if (trim(save_emissions_for_EMEP_region).eq.'NL') then
             emission_subgrid_min(x_dim_index,:)=3.0 
             emission_subgrid_delta(x_dim_index,:)=0.25
@@ -476,9 +472,7 @@
         endif
         
         !Define the dimensions
-        !write(*,*) 'here1',nt
         call check(  nf90_def_dim(ncid,"time",NF90_UNLIMITED, time_dimid) )
-        !write(*,*) 'herea'
         !if (trim(save_emissions_for_EMEP_projection).eq.'lambert') then
         call check(  nf90_def_dim(ncid, "y", ny, y_dimid) )
         call check(  nf90_def_dim(ncid, "x", nx, x_dimid) )
@@ -487,7 +481,6 @@
         !call check(  nf90_def_dim(ncid, "lon", nx, x_dimid) )
         !endif
         
-        !write(*,*) 'here2'
         !Define the dimension variables
         call check(  nf90_def_var(ncid, "time", NF90_DOUBLE, time_dimid, time_varid) )
         !call check(  nf90_def_var(ncid, "time", NF90_INT, time_dimid, time_varid) )
@@ -499,7 +492,6 @@
         !call check(  nf90_def_var(ncid, "lon", NF90_REAL, x_dimid, x_varid) )
         !endif
         
-        !write(*,*) 'here3'
         !Define the values
         dimids3 = (/ x_dimid, y_dimid, time_dimid /)
         dimids2 = (/ x_dimid, y_dimid /)
@@ -508,8 +500,6 @@
         call check(  nf90_def_var(ncid, "lon", NF90_REAL, dimids2, lon_varid) )
         !endif
     
-
-        !write(*,*) 'here4'
         !Specify the units
         call check(  nf90_put_att(ncid, lat_varid, "units", "degrees_north") )
         call check(  nf90_put_att(ncid, lon_varid, "units", "degrees_east") )
@@ -522,7 +512,6 @@
         endif
         call check(  nf90_put_att(ncid, time_varid, "units", trim(unit_dim_nc(time_dim_nc_index))) )
 
-        !write(*,*) 'here5'
         !Specify other dimension attributes
         !if (trim(save_emissions_for_EMEP_projection).eq.'lambert') then
         call check(  nf90_put_att(ncid, y_varid, "standard_name", "projection_y_coordinate") )

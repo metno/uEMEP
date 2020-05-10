@@ -212,17 +212,23 @@
             !Determine the LL cordinates of the target grid
             !if (EMEP_projection_type.eq.LCC_projection_index) then
                 !Retrieve the four corners of the target grid in lat and lon
-            if (projection_type.eq.RDM_projection_index) then
-                call RDM2LL(init_subgrid_min(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(1),temp_lon(1))
-                call RDM2LL(init_subgrid_max(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(2),temp_lon(2))
-                call RDM2LL(init_subgrid_max(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(3),temp_lon(3))
-                call RDM2LL(init_subgrid_min(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(4),temp_lon(4))
-            elseif (projection_type.eq.UTM_projection_index) then
-                call UTM2LL(utm_zone,init_subgrid_min(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(1),temp_lon(1))
-                call UTM2LL(utm_zone,init_subgrid_max(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(2),temp_lon(2))
-                call UTM2LL(utm_zone,init_subgrid_max(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(3),temp_lon(3))
-                call UTM2LL(utm_zone,init_subgrid_min(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(4),temp_lon(4))
-            endif   
+            call PROJ2LL(init_subgrid_min(x_dim_index),init_subgrid_min(y_dim_index),temp_lon(1),temp_lat(1),projection_attributes,projection_type)
+            call PROJ2LL(init_subgrid_max(x_dim_index),init_subgrid_max(y_dim_index),temp_lon(2),temp_lat(2),projection_attributes,projection_type)
+            call PROJ2LL(init_subgrid_min(x_dim_index),init_subgrid_max(y_dim_index),temp_lon(3),temp_lat(3),projection_attributes,projection_type)
+            call PROJ2LL(init_subgrid_max(x_dim_index),init_subgrid_min(y_dim_index),temp_lon(4),temp_lat(4),projection_attributes,projection_type)
+            
+            
+            !if (projection_type.eq.RDM_projection_index) then
+            !    call RDM2LL(init_subgrid_min(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(1),temp_lon(1))
+            !    call RDM2LL(init_subgrid_max(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(2),temp_lon(2))
+            !    call RDM2LL(init_subgrid_max(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(3),temp_lon(3))
+            !    call RDM2LL(init_subgrid_min(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(4),temp_lon(4))
+            !elseif (projection_type.eq.UTM_projection_index) then
+            !    call UTM2LL(utm_zone,init_subgrid_min(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(1),temp_lon(1))
+            !    call UTM2LL(utm_zone,init_subgrid_max(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(2),temp_lon(2))
+            !    call UTM2LL(utm_zone,init_subgrid_max(y_dim_index),init_subgrid_min(x_dim_index),temp_lat(3),temp_lon(3))
+            !    call UTM2LL(utm_zone,init_subgrid_min(y_dim_index),init_subgrid_max(x_dim_index),temp_lat(4),temp_lon(4))
+            !endif   
                 
                 !This did not work because it was almost all of the grid and because the min and max lat lon did not cover all stations
                 !if (read_EMEP_only_once_flag.and.use_multiple_receptor_grids_flag) then

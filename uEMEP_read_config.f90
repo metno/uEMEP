@@ -9,6 +9,7 @@
     real read_name_real
     logical read_name_logical
     integer read_name_integer
+    double precision read_name_double
     character(256) read_name_char,pathfilename_log_file
     integer exists
     integer a(6)
@@ -139,10 +140,30 @@
         replace_EMEP_local_with_subgrid_local(industry_index)=read_name_logical('replace_EMEP_local_with_subgrid_local(industry_index)',replace_EMEP_local_with_subgrid_local(industry_index),unit_in,unit_logfile)
 
         projection_type=read_name_integer('projection_type',projection_type,unit_in,unit_logfile)
+        EMEP_projection_type=read_name_integer('EMEP_projection_type',EMEP_projection_type,unit_in,unit_logfile)
         utm_zone=read_name_integer('utm_zone',utm_zone,unit_in,unit_logfile)
         !Present UTM central lon position if not overridden by input
         utm_lon0=abs(utm_zone)*6-180-3
         utm_lon0=read_name_real('utm_lon0',utm_lon0,unit_in,unit_logfile)
+
+        !Read the projection attributes for uEMEP if they are available
+        projection_attributes(1)=read_name_double('projection_attributes(1)',projection_attributes(1),unit_in,unit_logfile)
+        projection_attributes(2)=read_name_double('projection_attributes(2)',projection_attributes(2),unit_in,unit_logfile)
+        projection_attributes(3)=read_name_double('projection_attributes(3)',projection_attributes(3),unit_in,unit_logfile)
+        projection_attributes(4)=read_name_double('projection_attributes(4)',projection_attributes(4),unit_in,unit_logfile)
+        projection_attributes(5)=read_name_double('projection_attributes(5)',projection_attributes(5),unit_in,unit_logfile)
+        projection_attributes(6)=read_name_double('projection_attributes(6)',projection_attributes(6),unit_in,unit_logfile)
+        projection_attributes(7)=read_name_double('projection_attributes(7)',projection_attributes(7),unit_in,unit_logfile)
+        
+        !Read the projection attributes for EMEP if they are available
+        !THese will be reset if EMEP data is read in
+        EMEP_projection_attributes(1)=read_name_double('EMEP_projection_attributes(1)',EMEP_projection_attributes(1),unit_in,unit_logfile)
+        EMEP_projection_attributes(2)=read_name_double('EMEP_projection_attributes(2)',EMEP_projection_attributes(2),unit_in,unit_logfile)
+        EMEP_projection_attributes(3)=read_name_double('EMEP_projection_attributes(3)',EMEP_projection_attributes(3),unit_in,unit_logfile)
+        EMEP_projection_attributes(4)=read_name_double('EMEP_projection_attributes(4)',EMEP_projection_attributes(4),unit_in,unit_logfile)
+        EMEP_projection_attributes(5)=read_name_double('EMEP_projection_attributes(5)',EMEP_projection_attributes(5),unit_in,unit_logfile)
+        EMEP_projection_attributes(6)=read_name_double('EMEP_projection_attributes(6)',EMEP_projection_attributes(6),unit_in,unit_logfile)
+        EMEP_projection_attributes(7)=read_name_double('EMEP_projection_attributes(7)',EMEP_projection_attributes(7),unit_in,unit_logfile)
 
         EMEP_grid_interpolation_flag=read_name_integer('EMEP_grid_interpolation_flag',EMEP_grid_interpolation_flag,unit_in,unit_logfile)
         EMEP_meteo_grid_interpolation_flag=read_name_integer('EMEP_meteo_grid_interpolation_flag',EMEP_meteo_grid_interpolation_flag,unit_in,unit_logfile)
@@ -268,6 +289,28 @@
         pathname_rl(2)=read_name_char('pathname_rl(2)',pathname_rl(2),unit_in,unit_logfile)
         filename_rl(1)=read_name_char('filename_rl(1)',filename_rl(1),unit_in,unit_logfile)
         filename_rl(2)=read_name_char('filename_rl(2)',filename_rl(2),unit_in,unit_logfile)
+
+        pathname_mrl(1)=read_name_char('pathname_mrl(1)',pathname_mrl(1),unit_in,unit_logfile)
+        pathname_mrl(2)=read_name_char('pathname_mrl(2)',pathname_mrl(2),unit_in,unit_logfile)
+        pathname_mrl(3)=read_name_char('pathname_mrl(3)',pathname_mrl(3),unit_in,unit_logfile)
+        pathname_mrl(4)=read_name_char('pathname_mrl(4)',pathname_mrl(4),unit_in,unit_logfile)
+        pathname_mrl(5)=read_name_char('pathname_mrl(5)',pathname_mrl(5),unit_in,unit_logfile)
+        pathname_mrl(6)=read_name_char('pathname_mrl(6)',pathname_mrl(6),unit_in,unit_logfile)
+        pathname_mrl(7)=read_name_char('pathname_mrl(7)',pathname_mrl(7),unit_in,unit_logfile)
+        pathname_mrl(8)=read_name_char('pathname_mrl(8)',pathname_mrl(8),unit_in,unit_logfile)
+        pathname_mrl(9)=read_name_char('pathname_mrl(9)',pathname_mrl(9),unit_in,unit_logfile)
+        pathname_mrl(10)=read_name_char('pathname_mrl(10)',pathname_mrl(10),unit_in,unit_logfile)
+        filename_mrl(1)=read_name_char('filename_mrl(1)',filename_mrl(1),unit_in,unit_logfile)
+        filename_mrl(2)=read_name_char('filename_mrl(2)',filename_mrl(2),unit_in,unit_logfile)
+        filename_mrl(3)=read_name_char('filename_mrl(3)',filename_mrl(3),unit_in,unit_logfile)
+        filename_mrl(4)=read_name_char('filename_mrl(4)',filename_mrl(4),unit_in,unit_logfile)
+        filename_mrl(5)=read_name_char('filename_mrl(5)',filename_mrl(5),unit_in,unit_logfile)
+        filename_mrl(6)=read_name_char('filename_mrl(6)',filename_mrl(6),unit_in,unit_logfile)
+        filename_mrl(7)=read_name_char('filename_mrl(7)',filename_mrl(7),unit_in,unit_logfile)
+        filename_mrl(8)=read_name_char('filename_mrl(8)',filename_mrl(8),unit_in,unit_logfile)
+        filename_mrl(9)=read_name_char('filename_mrl(9)',filename_mrl(9),unit_in,unit_logfile)
+        filename_mrl(10)=read_name_char('filename_mrl(10)',filename_mrl(10),unit_in,unit_logfile)
+        num_multiple_roadlink_files=read_name_integer('num_multiple_roadlink_files',num_multiple_roadlink_files,unit_in,unit_logfile)
 
         pathname_EMEP(1)=read_name_char('pathname_EMEP(1)',pathname_EMEP(1),unit_in,unit_logfile)
         pathname_EMEP(2)=read_name_char('pathname_EMEP(2)',pathname_EMEP(2),unit_in,unit_logfile)
@@ -518,6 +561,7 @@
         emission_naming_template_str=read_name_char('emission_naming_template_str',emission_naming_template_str,unit_in,unit_logfile)
         
         read_OSM_roadlink_data_flag=read_name_logical('read_OSM_roadlink_data_flag',read_OSM_roadlink_data_flag,unit_in,unit_logfile)
+        no_header_roadlink_data_flag=read_name_logical('no_header_roadlink_data_flag',no_header_roadlink_data_flag,unit_in,unit_logfile)
         
         EMEP_surface_level_nc=read_name_integer('EMEP_surface_level_nc',EMEP_surface_level_nc,unit_in,unit_logfile)
         EMEP_surface_level_nc_2=read_name_integer('EMEP_surface_level_nc_2',EMEP_surface_level_nc_2,unit_in,unit_logfile)
@@ -525,6 +569,7 @@
         limit_industry_delta=read_name_real('limit_industry_delta',limit_industry_delta,unit_in,unit_logfile)
         limit_shipping_delta=read_name_real('limit_shipping_delta',limit_shipping_delta,unit_in,unit_logfile)
         limit_heating_delta=read_name_real('limit_heating_delta',limit_heating_delta,unit_in,unit_logfile)
+        limit_population_delta=read_name_real('limit_population_delta',limit_population_delta,unit_in,unit_logfile)
         
         use_user_specified_sectors_flag=read_name_logical('use_user_specified_sectors_flag',use_user_specified_sectors_flag,unit_in,unit_logfile)        
         if (use_user_specified_sectors_flag) then
@@ -536,7 +581,20 @@
         endif
         
         EMEP_emission_aggregation_period=read_name_real('EMEP_emission_aggregation_period',EMEP_emission_aggregation_period,unit_in,unit_logfile)
+        read_population_from_netcdf_flag=read_name_logical('read_population_from_netcdf_flag',read_population_from_netcdf_flag,unit_in,unit_logfile)
+        
+        auto_select_OSM_country_flag=read_name_logical('auto_select_OSM_country_flag',auto_select_OSM_country_flag,unit_in,unit_logfile)
+        pathname_boundingbox=read_name_char('pathname_boundingbox',pathname_boundingbox,unit_in,unit_logfile)
+        filename_boundingbox=read_name_char('filename_boundingbox',filename_boundingbox,unit_in,unit_logfile)
+        select_country_by_name=read_name_char('select_country_by_name',select_country_by_name,unit_in,unit_logfile)
+        
+        select_latlon_centre_domain_position_flag=read_name_logical('select_latlon_centre_domain_position_flag',select_latlon_centre_domain_position_flag,unit_in,unit_logfile)
+        select_lat_centre_position=read_name_real('select_lat_centre_position',select_lat_centre_position,unit_in,unit_logfile)
+        select_lon_centre_position=read_name_real('select_lon_centre_position',select_lon_centre_position,unit_in,unit_logfile)
+        select_domain_width_EW_km=read_name_real('select_domain_width_EW_km',select_domain_width_EW_km,unit_in,unit_logfile)
+        select_domain_height_NS_km=read_name_real('select_domain_height_NS_km',select_domain_height_NS_km,unit_in,unit_logfile)
        
+        osm_adt_power_scale=read_name_real('osm_adt_power_scale',osm_adt_power_scale,unit_in,unit_logfile)
         
     close (unit_in)
     

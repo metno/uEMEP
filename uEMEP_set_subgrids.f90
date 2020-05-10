@@ -9,6 +9,7 @@
     integer i 
     real dim_check(2)
     
+    
     !In the case of interpolation and auto subgridding we need to extend the domain by dx and dy to get the different grids to fit
     !Assume the maximum is 1 km
     if (use_emission_positions_for_auto_subgrid_flag(allsource_index)) then
@@ -142,3 +143,44 @@
     endif
     
     end subroutine uEMEP_set_subgrids
+    
+    
+    subroutine uEMEP_set_subgrid_select_latlon_centre
+    !If specified using select_latlon_centre_domain_position_flag then this routines specifies
+    !the grid according to the lat lon position and the width and height
+    !This is intended to make life easier for users and to implement uEMEP in a more global context
+    
+    use uEMEP_definitions
+
+    implicit none
+    
+    real x_out,y_out
+    
+    !Find centre position in specified coordinates
+    if  (projection_type.eq.UTM_projection_index) then
+        call LL2UTM(1,utm_zone,select_lat_centre_position,select_lon_centre_position,y_out,x_out)
+    elseif (projection_type.eq.LAEA_projection_index) then
+        call LL2LAEA(x_out,y_out,select_lon_centre_position,select_lat_centre_position,projection_attributes)
+    endif
+
+    !Snap to nearest 1 km
+    x_out=floor(x_out/1000.+0.5)*1000
+    y_out=floor(y_out/1000.+0.5)*1000
+            
+    !Set max and min values
+    subgrid_min(x_dim_index)=x_out-select_domain_width_EW_km*1000./2.
+    subgrid_min(y_dim_index)=y_out-select_domain_height_NS_km*1000./2.
+    subgrid_max(x_dim_index)=x_out+select_domain_width_EW_km*1000./2.
+    subgrid_max(y_dim_index)=y_out+select_domain_height_NS_km*1000./2.
+            
+    write(unit_logfile,'(A,2f12.1)') 'Setting domain centre (lon,lat) to: ',select_lon_centre_position,select_lat_centre_position 
+    write(unit_logfile,'(A,2f12.1)') 'Setting min domain (x,y) to: ',subgrid_min(1:2) 
+    write(unit_logfile,'(A,2f12.1)') 'Setting max domain (x,y) to: ',subgrid_max(1:2) 
+
+    !Reset the initial subgrid as well, needed for EMEP and receptor selection
+    init_subgrid_min(x_dim_index)=subgrid_min(x_dim_index)
+    init_subgrid_min(y_dim_index)=subgrid_min(y_dim_index)
+    init_subgrid_max(x_dim_index)=subgrid_max(x_dim_index)
+    init_subgrid_max(y_dim_index)=subgrid_max(y_dim_index)
+    
+    end subroutine uEMEP_set_subgrid_select_latlon_centre

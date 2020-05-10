@@ -71,6 +71,77 @@
     
 30  end function read_name_real
 
+    function read_name_double(name_str,default_val,unit_in,unit_out)
+    
+    use uEMEP_definitions
+
+    implicit none   
+    
+    integer i,j,k
+    double precision read_name_double
+    double precision default_val
+    character(*) name_str
+    integer index_val
+    integer unit_in,unit_out
+    character(256) temp_str,temp_str1,temp_str2
+    
+    
+    read_name_double=default_val
+    
+    rewind(unit_in)
+    
+    do while (.not.eof(unit_in))
+    
+        read(unit_in,'(A)',ERR=30) temp_str
+        
+        !Remove tabs
+        index_val=0
+        do i=1,len(temp_str)
+            if (ichar(temp_str(i:i)).ne.9) then
+                index_val=index_val+1
+                temp_str1(index_val:index_val)=temp_str(i:i)
+            endif
+        enddo
+        
+        temp_str=ADJUSTL(temp_str1)
+        temp_str1=''
+        
+        !If not a comment
+        if (trim(temp_str(1:1)).ne.'!') then
+            
+            !write(*,*) trim(temp_str)
+            
+            !Find the position of the equals sign if there is one
+            index_val=index(temp_str,'=',back=.false.)
+    
+            if (index_val.gt.1) then
+            
+                !Create the string before the equals sign
+                temp_str1=trim(temp_str(1:index_val-1))
+                
+                !Check to see if it is a matching string
+                !write(*,*) trim(temp_str1),' ',trim(name_str)
+                if (trim(temp_str1).eq.trim(name_str)) then
+
+                    !Create the string after the equals sign
+                    temp_str2=temp_str(index_val+1:)
+                    temp_str2=adjustl(temp_str2)
+                    
+                    if (len(trim(temp_str2)).ge.1) then
+                        read(temp_str2,*,ERR=20) read_name_double
+                        write(unit_out,'(A,es12.4)') 'Setting: '//trim(name_str)//' = ',read_name_double
+                    endif
+                
+                endif
+    
+            endif
+        endif
+    
+    
+20  enddo
+    
+30  end function read_name_double
+
     
     
     function read_name_integer(name_str,default_val,unit_in,unit_out)

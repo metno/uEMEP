@@ -185,14 +185,18 @@
     do industry_number=1,n_industries
         
     !Convert lat lon to utm coords
-    call LL2UTM(1,utm_zone,industry_lb_pos(industry_number,2),industry_lb_pos(industry_number,1),y_industry,x_industry)
+    if  (projection_type.eq.UTM_projection_index) then
+        call LL2UTM(1,utm_zone,industry_lb_pos(industry_number,2),industry_lb_pos(industry_number,1),y_industry,x_industry)
+    elseif (projection_type.eq.LAEA_projection_index) then
+        call LL2LAEA(x_industry,y_industry,industry_lb_pos(industry_number,1),industry_lb_pos(industry_number,2),projection_attributes)
+    endif
     
     !Special case when saving emissions, convert to either latlon or lambert
     if (save_emissions_for_EMEP(industry_index)) then
-        if (projection_type.eq.LL_projection_index) then
+        if (EMEP_projection_type.eq.LL_projection_index) then
             x_industry=industry_lb_pos(industry_number,1)
             y_industry=industry_lb_pos(industry_number,2)        
-        elseif (projection_type.eq.LCC_projection_index) then
+        elseif (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(x_industry,y_industry,industry_lb_pos(industry_number,1),industry_lb_pos(industry_number,2),EMEP_projection_attributes)
         endif
     endif

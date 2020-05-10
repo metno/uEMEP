@@ -1,6 +1,5 @@
 !uEMEP_define_subgrid.f90
-
-    subroutine uEMEP_define_subgrid
+    subroutine uEMEP_define_subgrid_extent
     
     use uEMEP_definitions
     
@@ -15,7 +14,7 @@
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
-	write(unit_logfile,'(A)') 'Define subgrids and buffer zones (uEMEP_define_subgrid)'
+	write(unit_logfile,'(A)') 'Define subgrid extent and buffer zones (uEMEP_define_subgrid_extent)'
 	write(unit_logfile,'(A)') '================================================================'
 
     
@@ -29,6 +28,7 @@
     
     !Set the time index to be the same as the EMEP time dimensions
     emission_subgrid_dim(t_dim_index,:)=subgrid_dim(t_dim_index)
+    init_emission_subgrid_dim(t_dim_index,:)=subgrid_dim(t_dim_index)
     integral_subgrid_dim(t_dim_index)=subgrid_dim(t_dim_index)
     
     write(unit_logfile,'(A,I5)')'Number of external time steps:',end_time_loop_index-start_time_loop_index+1
@@ -39,6 +39,7 @@
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
     write(unit_logfile,'(A,A,2I5)')'Number of emission grids: ',trim(source_file_str(i_source)),emission_subgrid_dim(1:2,i_source)        
+    write(unit_logfile,'(A,A,2I5)')'Number of initial emission grids: ',trim(source_file_str(i_source)),init_emission_subgrid_dim(1:2,i_source)        
     endif
     enddo
 
@@ -49,16 +50,20 @@
     !Define the centre of the subgrid
     !ii=int(subgrid_dim(x_dim_index)/2)
     !jj=int(subgrid_dim(y_dim_index)/2)
-    if (projection_type.eq.RDM_projection_index) then
-        call RDM2LL((subgrid_min(y_dim_index)+subgrid_max(y_dim_index))/2.,(subgrid_min(x_dim_index)+subgrid_max(x_dim_index))/2.,lat_temp,lon_temp)
-    elseif (projection_type.eq.UTM_projection_index) then
-        call UTM2LL(utm_zone,(subgrid_min(y_dim_index)+subgrid_max(y_dim_index))/2.,(subgrid_min(x_dim_index)+subgrid_max(x_dim_index))/2.,lat_temp,lon_temp)
-    endif   
+    
+    call PROJ2LL((subgrid_min(x_dim_index)+subgrid_max(x_dim_index))/2.,(subgrid_min(y_dim_index)+subgrid_max(y_dim_index))/2.,lon_temp,lat_temp,projection_attributes,projection_type)
+    
+    !if (projection_type.eq.RDM_projection_index) then
+    !    call RDM2LL((subgrid_min(y_dim_index)+subgrid_max(y_dim_index))/2.,(subgrid_min(x_dim_index)+subgrid_max(x_dim_index))/2.,lat_temp,lon_temp)
+    !elseif (projection_type.eq.UTM_projection_index) then
+    !    call UTM2LL(utm_zone,(subgrid_min(y_dim_index)+subgrid_max(y_dim_index))/2.,(subgrid_min(x_dim_index)+subgrid_max(x_dim_index))/2.,lat_temp,lon_temp)
+    !endif   
 
     if (EMEP_projection_type.eq.LL_projection_index) then
         dx_temp=111000.*dgrid_nc(lon_nc_index)*cos(lat_temp*pi/180.)
         dy_temp=111000.*dgrid_nc(lat_nc_index)
     else
+        !Assumed LCC
         dx_temp=dgrid_nc(lon_nc_index)
         dy_temp=dgrid_nc(lat_nc_index)
     endif
@@ -74,6 +79,13 @@
     if (calculate_source(i_source)) then
         emission_subgrid_loop_index(x_dim_index,i_source)=floor(dx_temp/emission_subgrid_delta(x_dim_index,i_source)*loop_index_scale)
         emission_subgrid_loop_index(y_dim_index,i_source)=floor(dy_temp/emission_subgrid_delta(y_dim_index,i_source)*loop_index_scale)
+    endif
+    enddo
+
+    do i_source=1,n_source_index
+    if (calculate_source(i_source)) then
+        init_emission_subgrid_loop_index(x_dim_index,i_source)=floor(dx_temp/init_emission_subgrid_delta(x_dim_index,i_source)*loop_index_scale)
+        init_emission_subgrid_loop_index(y_dim_index,i_source)=floor(dy_temp/init_emission_subgrid_delta(y_dim_index,i_source)*loop_index_scale)
     endif
     enddo
 
@@ -106,6 +118,13 @@
         endif
         enddo
 
+        do i_source=1,n_source_index
+        if (calculate_source(i_source)) then
+            init_emission_buffer_index(x_dim_index,i_source)=floor(dx_temp/init_emission_subgrid_delta(x_dim_index,i_source)*(buffer_index_scale+0.5))
+            init_emission_buffer_index(y_dim_index,i_source)=floor(dy_temp/init_emission_subgrid_delta(y_dim_index,i_source)*(buffer_index_scale+0.5))       
+        endif
+        enddo
+
         if (calculate_deposition_flag) then
         deposition_buffer_index(x_dim_index)=floor(dx_temp/deposition_subgrid_delta(x_dim_index)*buffer_index_scale)
         deposition_buffer_index(y_dim_index)=floor(dy_temp/deposition_subgrid_delta(y_dim_index)*buffer_index_scale)
@@ -117,12 +136,14 @@
     else
         buffer_index=0
         emission_buffer_index=0
+        init_emission_buffer_index=0
         integral_buffer_index=0
         deposition_buffer_index=0
         landuse_buffer_index=0
     endif
     buffer_size=buffer_index*subgrid_delta
     emission_buffer_size=emission_buffer_index*emission_subgrid_delta
+    init_emission_buffer_size=emission_buffer_index*init_emission_subgrid_delta
     integral_buffer_size=integral_buffer_index*integral_subgrid_delta
     if (calculate_deposition_flag) then
         deposition_buffer_size=deposition_buffer_index*deposition_subgrid_delta
@@ -141,6 +162,14 @@
     !emission_max_subgrid_dim(1:2)=emission_max_subgrid_dim(1:2)+buffer_index(1:2)*2
     emission_max_subgrid_dim(1:2)=maxval(emission_subgrid_dim(1:2,:),2)
     
+    do i_source=1,n_source_index
+    if (calculate_source(i_source)) then
+        init_emission_subgrid_dim(1:2,i_source)=init_emission_subgrid_dim(1:2,i_source)+init_emission_buffer_index(1:2,i_source)*2
+        init_emission_subgrid_min(1:2,i_source)=init_emission_subgrid_min(1:2,i_source)-init_emission_buffer_size(1:2,i_source)
+        init_emission_subgrid_max(1:2,i_source)=init_emission_subgrid_max(1:2,i_source)+init_emission_buffer_size(1:2,i_source)
+    endif
+    enddo
+
     integral_subgrid_dim(1:2)=integral_subgrid_dim(1:2)+integral_buffer_index(1:2)*2
     integral_subgrid_min(1:2)=integral_subgrid_min(1:2)-integral_buffer_size(1:2)
     integral_subgrid_max(1:2)=integral_subgrid_max(1:2)+integral_buffer_size(1:2)
@@ -169,6 +198,7 @@
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
     write(unit_logfile,'(A,A,2I5)')'Size of emission grid buffer zone: ',trim(source_file_str(i_source)),emission_buffer_index(1:2,i_source)        
+    write(unit_logfile,'(A,A,2I5)')'Size of initial emission grid buffer zone: ',trim(source_file_str(i_source)),emission_buffer_index(1:2,i_source)        
     endif
     enddo
 
@@ -186,7 +216,34 @@
     write(unit_logfile,'(A,A,2f12.1)')'Max of emission grids:   ',trim(source_file_str(i_source)),emission_subgrid_max(1:2,i_source)     
     write(unit_logfile,'(A,A,2f12.1)')'Delta of emission grids: ',trim(source_file_str(i_source)),emission_subgrid_delta(1:2,i_source)     
     endif
+    if (calculate_source(i_source)) then
+    write(unit_logfile,'(A,A,2I5)')   'Number of initial emission grids:',trim(source_file_str(i_source)),init_emission_subgrid_dim(1:2,i_source)        
+    write(unit_logfile,'(A,A,2f12.1)')'Min of initial emission grids:   ',trim(source_file_str(i_source)),init_emission_subgrid_min(1:2,i_source)     
+    write(unit_logfile,'(A,A,2f12.1)')'Max of initial emission grids:   ',trim(source_file_str(i_source)),init_emission_subgrid_max(1:2,i_source)     
+    write(unit_logfile,'(A,A,2f12.1)')'Delta of initial emission grids: ',trim(source_file_str(i_source)),init_emission_subgrid_delta(1:2,i_source)     
+    endif
     enddo
+
+    end subroutine uEMEP_define_subgrid_extent
+ 
+    subroutine uEMEP_define_subgrid
+    
+    use uEMEP_definitions
+    
+    implicit none
+    
+    integer i,j
+    integer i_source
+    !integer ii,jj
+    real dx_temp,dy_temp
+    real lon_temp,lat_temp
+    integer :: subsource_index=1
+
+    write(unit_logfile,'(A)') ''
+    write(unit_logfile,'(A)') '================================================================'
+	write(unit_logfile,'(A)') 'Define subgrid arrays (uEMEP_define_subgrid)'
+	write(unit_logfile,'(A)') '================================================================'
+
 
     !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
     if (allocated(subgrid)) deallocate (subgrid)
@@ -239,11 +296,15 @@
     do i=1,subgrid_dim(x_dim_index)                   
         x_subgrid(i,j)=subgrid_min(x_dim_index)+subgrid_delta(x_dim_index)*(i-0.5)
         y_subgrid(i,j)=subgrid_min(y_dim_index)+subgrid_delta(y_dim_index)*(j-0.5)
-        if (projection_type.eq.RDM_projection_index) then
-            call RDM2LL(y_subgrid(i,j),x_subgrid(i,j),lat_subgrid(i,j),lon_subgrid(i,j))
-        elseif (projection_type.eq.UTM_projection_index) then
-            call UTM2LL(utm_zone,y_subgrid(i,j),x_subgrid(i,j),lat_subgrid(i,j),lon_subgrid(i,j))
-        endif   
+        
+        call PROJ2LL(x_subgrid(i,j),y_subgrid(i,j),lon_subgrid(i,j),lat_subgrid(i,j),projection_attributes,projection_type)
+
+        !if (projection_type.eq.RDM_projection_index) then
+        !    call RDM2LL(y_subgrid(i,j),x_subgrid(i,j),lat_subgrid(i,j),lon_subgrid(i,j))
+        !elseif (projection_type.eq.UTM_projection_index) then
+        !    call UTM2LL(utm_zone,y_subgrid(i,j),x_subgrid(i,j),lat_subgrid(i,j),lon_subgrid(i,j))
+        !endif
+        
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_subgrid(i,j),yproj_subgrid(i,j),lon_subgrid(i,j),lat_subgrid(i,j),EMEP_projection_attributes)
@@ -283,11 +344,14 @@
     do i=1,integral_subgrid_dim(x_dim_index)                 
         x_integral_subgrid(i,j)=integral_subgrid_min(x_dim_index)+integral_subgrid_delta(x_dim_index)*(i-0.5)
         y_integral_subgrid(i,j)=integral_subgrid_min(y_dim_index)+integral_subgrid_delta(y_dim_index)*(j-0.5)
-        if (projection_type.eq.RDM_projection_index) then
-            call RDM2LL(y_integral_subgrid(i,j),x_integral_subgrid(i,j),lat_integral_subgrid(i,j),lon_integral_subgrid(i,j))
-        elseif (projection_type.eq.UTM_projection_index) then
-            call UTM2LL(utm_zone,y_integral_subgrid(i,j),x_integral_subgrid(i,j),lat_integral_subgrid(i,j),lon_integral_subgrid(i,j))
-        endif   
+
+        call PROJ2LL(x_integral_subgrid(i,j),y_integral_subgrid(i,j),lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),projection_attributes,projection_type)
+        !if (projection_type.eq.RDM_projection_index) then
+        !    call RDM2LL(y_integral_subgrid(i,j),x_integral_subgrid(i,j),lat_integral_subgrid(i,j),lon_integral_subgrid(i,j))
+        !elseif (projection_type.eq.UTM_projection_index) then
+        !    call UTM2LL(utm_zone,y_integral_subgrid(i,j),x_integral_subgrid(i,j),lat_integral_subgrid(i,j),lon_integral_subgrid(i,j))
+        !endif 
+        
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_integral_subgrid(i,j),yproj_integral_subgrid(i,j),lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),EMEP_projection_attributes)
@@ -362,13 +426,16 @@
         
         x_emission_subgrid(i,j,i_source)=emission_subgrid_min(x_dim_index,i_source)+emission_subgrid_delta(x_dim_index,i_source)*(i-0.5)
         y_emission_subgrid(i,j,i_source)=emission_subgrid_min(y_dim_index,i_source)+emission_subgrid_delta(y_dim_index,i_source)*(j-0.5)
-        if (projection_type.eq.UTM_projection_index) then
-            call UTM2LL(utm_zone,y_emission_subgrid(i,j,i_source),x_emission_subgrid(i,j,i_source), &
-            lat_emission_subgrid(i,j,i_source),lon_emission_subgrid(i,j,i_source))
-        elseif (projection_type.eq.RDM_projection_index) then
-            call RDM2LL(y_emission_subgrid(i,j,i_source),x_emission_subgrid(i,j,i_source), &
-            lat_emission_subgrid(i,j,i_source),lon_emission_subgrid(i,j,i_source))
-        endif
+
+        call PROJ2LL(x_emission_subgrid(i,j,i_source),y_emission_subgrid(i,j,i_source),lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),projection_attributes,projection_type)
+        !if (projection_type.eq.UTM_projection_index) then
+        !    call UTM2LL(utm_zone,y_emission_subgrid(i,j,i_source),x_emission_subgrid(i,j,i_source), &
+        !    lat_emission_subgrid(i,j,i_source),lon_emission_subgrid(i,j,i_source))
+        !elseif (projection_type.eq.RDM_projection_index) then
+        !    call RDM2LL(y_emission_subgrid(i,j,i_source),x_emission_subgrid(i,j,i_source), &
+        !    lat_emission_subgrid(i,j,i_source),lon_emission_subgrid(i,j,i_source))
+        !endif
+        
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_emission_subgrid(i,j,i_source),yproj_emission_subgrid(i,j,i_source),lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),EMEP_projection_attributes)
@@ -407,11 +474,14 @@
         x_population_subgrid(i,j)=population_subgrid_min(x_dim_index)+population_subgrid_delta(x_dim_index)*(i-0.5)
         y_population_subgrid(i,j)=population_subgrid_min(y_dim_index)+population_subgrid_delta(y_dim_index)*(j-0.5)
         !Set the lat-lon coordinates of the population
-        if (projection_type.eq.RDM_projection_index) then
-            call RDM2LL(y_population_subgrid(i,j),x_population_subgrid(i,j),lat_population_subgrid(i,j),lon_population_subgrid(i,j))
-        elseif (projection_type.eq.UTM_projection_index) then
-            call UTM2LL(utm_zone,y_population_subgrid(i,j),x_population_subgrid(i,j),lat_population_subgrid(i,j),lon_population_subgrid(i,j))
-        endif
+        
+        call PROJ2LL(x_population_subgrid(i,j),y_population_subgrid(i,j),lon_population_subgrid(i,j),lat_population_subgrid(i,j),projection_attributes,projection_type)
+        !if (projection_type.eq.RDM_projection_index) then
+        !    call RDM2LL(y_population_subgrid(i,j),x_population_subgrid(i,j),lat_population_subgrid(i,j),lon_population_subgrid(i,j))
+        !elseif (projection_type.eq.UTM_projection_index) then
+        !    call UTM2LL(utm_zone,y_population_subgrid(i,j),x_population_subgrid(i,j),lat_population_subgrid(i,j),lon_population_subgrid(i,j))
+        !endif
+        
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_population_subgrid(i,j),yproj_population_subgrid(i,j),lon_population_subgrid(i,j),lat_population_subgrid(i,j),EMEP_projection_attributes)
@@ -463,11 +533,14 @@
         x_deposition_subgrid(i,j)=deposition_subgrid_min(x_dim_index)+deposition_subgrid_delta(x_dim_index)*(i-0.5)
         y_deposition_subgrid(i,j)=deposition_subgrid_min(y_dim_index)+deposition_subgrid_delta(y_dim_index)*(j-0.5)
         !Set the lat-lon coordinates of the deposition
-        if (projection_type.eq.RDM_projection_index) then
-            call RDM2LL(y_deposition_subgrid(i,j),x_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),lon_deposition_subgrid(i,j))
-        elseif (projection_type.eq.UTM_projection_index) then
-            call UTM2LL(utm_zone,y_deposition_subgrid(i,j),x_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),lon_deposition_subgrid(i,j))
-        endif
+
+        call PROJ2LL(x_deposition_subgrid(i,j),y_deposition_subgrid(i,j),lon_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),projection_attributes,projection_type)
+        !if (projection_type.eq.RDM_projection_index) then
+        !    call RDM2LL(y_deposition_subgrid(i,j),x_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),lon_deposition_subgrid(i,j))
+        !elseif (projection_type.eq.UTM_projection_index) then
+        !    call UTM2LL(utm_zone,y_deposition_subgrid(i,j),x_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),lon_deposition_subgrid(i,j))
+        !endif
+        
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_deposition_subgrid(i,j),yproj_deposition_subgrid(i,j),lon_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),EMEP_projection_attributes)
@@ -506,11 +579,14 @@
         x_landuse_subgrid(i,j)=landuse_subgrid_min(x_dim_index)+landuse_subgrid_delta(x_dim_index)*(i-0.5)
         y_landuse_subgrid(i,j)=landuse_subgrid_min(y_dim_index)+landuse_subgrid_delta(y_dim_index)*(j-0.5)
         !Set the lat-lon coordinates of the landuse
-        if (projection_type.eq.RDM_projection_index) then
-            call RDM2LL(y_landuse_subgrid(i,j),x_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),lon_landuse_subgrid(i,j))
-        elseif (projection_type.eq.UTM_projection_index) then
-            call UTM2LL(utm_zone,y_landuse_subgrid(i,j),x_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),lon_landuse_subgrid(i,j))
-        endif
+
+        call PROJ2LL(x_landuse_subgrid(i,j),y_landuse_subgrid(i,j),lon_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),projection_attributes,projection_type)
+        !if (projection_type.eq.RDM_projection_index) then
+        !    call RDM2LL(y_landuse_subgrid(i,j),x_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),lon_landuse_subgrid(i,j))
+        !elseif (projection_type.eq.UTM_projection_index) then
+        !    call UTM2LL(utm_zone,y_landuse_subgrid(i,j),x_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),lon_landuse_subgrid(i,j))
+        !endif
+
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_landuse_subgrid(i,j),yproj_landuse_subgrid(i,j),lon_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),EMEP_projection_attributes)

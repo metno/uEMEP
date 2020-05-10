@@ -9,7 +9,7 @@
 !   Control programme for running the downscaling routine uEMEP
 !****************************************************************************
 
-    program uEMEP_v5
+    program uEMEP_v6
 
     use uEMEP_definitions
    
@@ -36,6 +36,16 @@
     !Read the configuration files. Hard coded to be up to 5 files. Log file opened in this routine
     call uEMEP_read_config
     
+    !If selected then specify subgrid using the lat and lon coordinates
+    if (select_latlon_centre_domain_position_flag) then
+        call uEMEP_set_subgrid_select_latlon_centre
+    endif
+        
+    !Autoselect files and countries if required. Place here because it changes config data
+    if (auto_select_OSM_country_flag.or.trim(select_country_by_name).ne.'') then
+        call read_country_bounding_box_data
+    endif
+    
     !Set the pollutant and compound loop definitions
     call uEMEP_set_pollutant_loop
     
@@ -56,6 +66,15 @@
         call uEMEP_calculate_emissions_for_EMEP
     endif
     
+    !We set up an initial emission grid parameter set that can be used to first select the outest region
+    !This has been done to enable reading of multiple road link files but only keeping those in the initial defined area
+    call uEMEP_set_subgrids
+    !call uEMEP_define_subgrid_extent
+    init_emission_subgrid_min=emission_subgrid_min
+    init_emission_subgrid_max=emission_subgrid_max
+    init_emission_subgrid_dim=emission_subgrid_dim
+    init_emission_subgrid_delta=emission_subgrid_delta
+
     !Set the grid loop (g_loop) extent based on use_multiple_receptor_grids_flag or not
     if (use_multiple_receptor_grids_flag) then
         start_grid_loop_index=1
@@ -63,7 +82,7 @@
         n_receptor=1
         n_valid_receptor=1
         valid_receptor_index(1)=1
-        reduce_roadlink_region_flag=.false. !Multiple receptor flags reads in all road links and allocates to the different receptor grids. Only reads once
+        !reduce_roadlink_region_flag=.false. !Multiple receptor flags reads in all road links and allocates to the different receptor grids. Only reads once
     else
         start_grid_loop_index=1
         end_grid_loop_index=1
@@ -94,7 +113,7 @@
         
         !Set the grid definitions according to the receptor/observation positions
         call uEMEP_set_loop_receptor_grid
-    
+        
         !Create the subgrid
         call uEMEP_set_subgrids
         
@@ -139,6 +158,7 @@
             if (t_loop.eq.start_time_loop_index) then
         
                 !Define subgrid positions and buffer zones. Must be done after reading EMEP data as is based on EMEP grid sizes
+                call uEMEP_define_subgrid_extent
                 call uEMEP_define_subgrid
         
                 !Define and allocate cross reference subgrids used to transfer data between different subgrids
@@ -188,7 +208,12 @@
                     else
                         !Read and subgrid SSB dwelling data
                         SSB_data_type=dwelling_index
-                        call uEMEP_read_SSB_data
+                        if (read_population_from_netcdf_flag) then
+                            !call uEMEP_read_netcdf_population
+                            call uEMEP_read_netcdf_population_latlon
+                        else
+                            call uEMEP_read_SSB_data
+                        endif
                     endif
                     
                 endif
@@ -206,7 +231,12 @@
                 if (calculate_population_exposure_flag.or.use_population_positions_for_auto_subgrid_flag.or.save_population) then
                     !Read and subgrid SSB population data
                     SSB_data_type=population_data_type
-                    call uEMEP_read_SSB_data
+                    if (read_population_from_netcdf_flag) then
+                        !call uEMEP_read_netcdf_population
+                        call uEMEP_read_netcdf_population_latlon
+                    else
+                        call uEMEP_read_SSB_data
+                    endif
                 endif
 
                 !Autogrid setting for selecting which subgrids to calculate
@@ -353,5 +383,5 @@
     write(*,'(a,i5,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
     write(*,*) '------------------------------------------------------------------------'
 
-    end program uEMEP_v5
+    end program uEMEP_v6
 

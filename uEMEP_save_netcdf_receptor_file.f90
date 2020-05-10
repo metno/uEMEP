@@ -36,7 +36,8 @@
     character(256) name_rec_in(nr)
     character(256) temp_char
     integer n_char
-    parameter (n_char=7)
+    !parameter (n_char=7)
+    parameter (n_char=64)
     character(1) name_rec(n_char,nr)
     integer n_time_total
     real val_rec(nr,nt_in)

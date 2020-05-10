@@ -614,7 +614,7 @@
     real :: b_rom=35
     real :: c_rom=0.23
     real ox_init,no2_init
-   
+    !Gral values 30 35 0.18    !Bächlin and Bösinger (2008) 29 35 0.217
     nox_out=nox_bg+nox_loc
     no2_out=a_rom*nox_out/(nox_out+b_rom)+nox_out*c_rom
     no2_init=no2_bg+f_no2_loc*nox_loc

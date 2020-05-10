@@ -23,28 +23,64 @@
     real diagnostic_val(10)
     integer temp_category,temp_structure_type,temp_region_id,temp_surface_id,temp_route_id
     real temp_length,temp_tunnel_length
+    logical :: road_data_in_latlon=.false. 
+    real temp_real
     
     real, allocatable :: inputdata_rl_temp(:,:)
     integer, allocatable :: inputdata_int_rl_temp(:,:)
+    real, allocatable :: inputdata_rl_multi(:,:)
+    integer, allocatable :: inputdata_int_rl_multi(:,:)
+    real, allocatable :: inputdata_rl_multi_new(:,:)
+    integer, allocatable :: inputdata_int_rl_multi_new(:,:)
+    integer n_multi_roadlinks_new,n_multi_roadlinks
+    integer m
+    integer n_road_link_file_loop
+
     
     write(unit_logfile,'(A)') ''
 	write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Reading road link data ascii (uEMEP_read_roadlink_data_ascii)'
 	write(unit_logfile,'(A)') '================================================================'
     
+    
     min_adt=10.
     min_link_size=1.
-
+    
+    if (num_multiple_roadlink_files.eq.0) then
+        n_road_link_file_loop=1
+    else
+        n_road_link_file_loop=num_multiple_roadlink_files
+    endif
+    
+    !Start the file loop here
+    !---------------------------
+    n_multi_roadlinks_new=0
+    n_multi_roadlinks=0
+    
+    do m=1,n_road_link_file_loop
+    
+    if (num_multiple_roadlink_files.gt.0) then
+        !pathname_rl(1)=pathname_mrl(m)
+        filename_rl(1)=filename_mrl(m)
+        write(*,*) m,n_road_link_file_loop,trim(filename_rl(1))
+    endif
+    
     pathfilename_rl(1)=trim(pathname_rl(1))//trim(filename_rl(1))
     !write(*,*) pathname_rl(2),filename_rl(2),pathfilename_rl(2)
     
-    !Test existence of the road link filename (2). If does not exist then use default
+    !Test existence of the road link filename (2). If does not exist then stop
     inquire(file=trim(pathfilename_rl(1)),exist=exists)
     if (.not.exists) then
         write(unit_logfile,'(A,A)') ' ERROR: Road link file ascii does not exist: ', trim(pathfilename_rl(1))
         stop
     endif
 
+    !Check filename for the string 'latlon' that specifies if the data is in lat lon coordinates
+    if (index(filename_rl(1),'latlon').gt.0) then
+        road_data_in_latlon=.true. 
+        write(unit_logfile,'(A,A)') ' Reading road data positions as lat lon: ', trim(pathfilename_rl(1))
+    endif
+    
    !Open the file for reading to test the available links in the region
     if (reduce_roadlink_region_flag) then
         unit_in=20
@@ -53,17 +89,64 @@
     
         rewind(unit_in)
         call NXTDAT(unit_in,nxtdat_flag)
+        
         !read the header to find out how many links there are
         !read(unit_in,'(a)',ERR=20) temp_str
-        read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
-        write(unit_logfile,'(a,i)') ' Number of major road links= ', n_roadlinks_major
-        write(unit_logfile,'(a,i)') ' Number of sub road links= ', n_roadlinks
-             
+        if (no_header_roadlink_data_flag) then
+            write(unit_logfile,'(a)') ' Reading road link file(ascii) without header: '//trim(pathfilename_rl(1))
+            i=0
+            do while(.not.eof(unit_in))
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_real,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_x(1) !Read x nodes
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_y(1) !Read y nodes
+                if (temp_real.gt.0.and..not.eof(unit_in)) then
+                    i=i+1
+                    n_roadlinks=n_roadlinks+n_subnodes-1
+                endif
+                if (int(temp_real).ne.temp_real) then
+                    write(unit_logfile,'(a,i,f)') ' Problem with record at point with ID: ',i,temp_real
+                    stop
+                endif
+                
+            enddo
+            n_roadlinks_major=i
+            !n_roadlinks=0
+            rewind(unit_in)
+            call NXTDAT(unit_in,nxtdat_flag)
+        else
+            read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
+        endif
+        
+        if (n_roadlinks.eq.0) then
+            write(unit_logfile,'(a)') ' Reading road link file(ascii) with header but without subnode counts: '//trim(pathfilename_rl(1))
+            rewind(unit_in)
+            call NXTDAT(unit_in,nxtdat_flag)
+            read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
+            i=0
+            do while(.not.eof(unit_in))
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_x(1) !Read x nodes
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_y(1) !Read y nodes
+                !write(*,*) temp_id
+                if (temp_id.gt.0.and..not.eof(unit_in)) then
+                i=i+1
+                n_roadlinks=n_roadlinks+n_subnodes-1
+                endif
+            enddo
+            n_roadlinks_major=i
+            rewind(unit_in)
+            call NXTDAT(unit_in,nxtdat_flag)
+        endif
+
+        write(unit_logfile,'(a,i)') ' Number of major road links in header = ', n_roadlinks_major
+        write(unit_logfile,'(a,i)') ' Number of sub road links in header= ', n_roadlinks
+            
+        
         !Allocate the arrays after reading in the number of roads
         !allocate (inputdata_rl_temp(n_roadlinks,num_var_rl))
         !allocate (inputdata_int_rl_temp(n_roadlinks,num_int_rl))
+        !if (allocated(valid_link_flag)) deallocate (valid_link_flag)
         allocate (valid_link_flag(n_roadlinks_major))
-    
         valid_link_flag=.false.
    
         !Initialise
@@ -73,22 +156,53 @@
         counter_major=0
         counter_sub=0
         !Read the data to find roads in the tile
-        x_grid_min=emission_subgrid_min(x_dim_index,traffic_index)
-        x_grid_max=emission_subgrid_min(x_dim_index,traffic_index)+(emission_subgrid_dim(x_dim_index,traffic_index)+1)*emission_subgrid_delta(x_dim_index,traffic_index)
-        y_grid_min=emission_subgrid_min(y_dim_index,traffic_index)
-        y_grid_max=emission_subgrid_min(y_dim_index,traffic_index)+(emission_subgrid_dim(y_dim_index,traffic_index)+1)*emission_subgrid_delta(y_dim_index,traffic_index)
+        !x_grid_min=emission_subgrid_min(x_dim_index,traffic_index)
+        !x_grid_max=emission_subgrid_min(x_dim_index,traffic_index)+(emission_subgrid_dim(x_dim_index,traffic_index)+1)*emission_subgrid_delta(x_dim_index,traffic_index)
+        !y_grid_min=emission_subgrid_min(y_dim_index,traffic_index)
+        !y_grid_max=emission_subgrid_min(y_dim_index,traffic_index)+(emission_subgrid_dim(y_dim_index,traffic_index)+1)*emission_subgrid_delta(y_dim_index,traffic_index)
+    
+        x_grid_min=init_emission_subgrid_min(x_dim_index,traffic_index)
+        x_grid_max=init_emission_subgrid_min(x_dim_index,traffic_index)+(init_emission_subgrid_dim(x_dim_index,traffic_index)+1)*init_emission_subgrid_delta(x_dim_index,traffic_index)
+        y_grid_min=init_emission_subgrid_min(y_dim_index,traffic_index)
+        y_grid_max=init_emission_subgrid_min(y_dim_index,traffic_index)+(init_emission_subgrid_dim(y_dim_index,traffic_index)+1)*init_emission_subgrid_delta(y_dim_index,traffic_index)
+
+        !Under the special case where multiple roads are read from different countries then us the intital grid to determine which to keep
+        !This is not implemented yet but needs to select the region when reading multiple files
+        !if 
+        !init_subgrid_min(x_dim_index)=subgrid_min(x_dim_index)
+        !init_subgrid_min(y_dim_index)=subgrid_min(y_dim_index)
+        !init_subgrid_max(x_dim_index)=subgrid_max(x_dim_index)
+        !init_subgrid_max(y_dim_index)=subgrid_max(y_dim_index)
+        !endif
     
         do i=1,n_roadlinks_major
             !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
             read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
             !read(unit_in,*,ERR=20) !temp_id
             !write(*,*) temp_id,temp_adt,n_subnodes
-            read(unit_in,*) sub_nodes_x(1)
-            read(unit_in,*) sub_nodes_y(1)
     
+            if (road_data_in_latlon) then
+                !Order is reversed in these files
+                read(unit_in,*) sub_nodes_y(1)
+                read(unit_in,*) sub_nodes_x(1)
+        
+                if  (projection_type.eq.UTM_projection_index) then
+                    !write(*,*) i,sub_nodes_x(1),sub_nodes_y(1)
+                    call LL2UTM(1,utm_zone,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1))
+                    !write(*,*) i,sub_nodes_x(1),sub_nodes_y(1)
+                elseif (projection_type.eq.LCC_projection_index) then
+                elseif (projection_type.eq.LAEA_projection_index) then
+                    call LL2LAEA(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),projection_attributes)
+                endif
+        
+            else
+                read(unit_in,*) sub_nodes_x(1)
+                read(unit_in,*) sub_nodes_y(1)            
+            endif
             !Convert to EMEP coordinates from UTM to lambert. No choices here
             if (save_emissions_for_EMEP(traffic_index)) then
-                call UTM2LL(utm_zone,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_lat(1),sub_nodes_lon(1))
+                call PROJ2LL(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1),projection_attributes,projection_type)
+                !call UTM2LL(utm_zone,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_lat(1),sub_nodes_lon(1))
                 call lb2lambert2_uEMEP(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1),EMEP_projection_attributes)
                 !write(*,*) sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1)
             endif
@@ -102,10 +216,11 @@
                 counter_sub=counter_sub+n_subnodes-1
                 valid_link_flag(i)=.true.
             endif
-            
+                
         enddo
         close(unit_in,status='keep')
-           
+                   
+        
         write(unit_logfile,'(a,i,i)') ' Number of major and sub road links within the region = ', counter_major,counter_sub
     endif
 
@@ -116,12 +231,53 @@
     
     rewind(unit_in)
     call NXTDAT(unit_in,nxtdat_flag)
+    
     !read the header to find out how many links there are
     !read(unit_in,'(a)',ERR=20) temp_str
-    read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
-    write(unit_logfile,'(a,i)') ' Number of major road links= ', n_roadlinks_major
-    write(unit_logfile,'(a,i)') ' Number of sub road links= ', n_roadlinks
-             
+
+        if (no_header_roadlink_data_flag) then
+            write(unit_logfile,'(a)') ' Reading road link file(ascii) without header: '//trim(pathfilename_rl(1))
+            i=0
+            do while(.not.eof(unit_in))
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_x(1) !Read x nodes
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_y(1) !Read y nodes
+                if (temp_id.gt.0.and..not.eof(unit_in)) then
+                i=i+1
+                endif
+            enddo
+            n_roadlinks_major=i
+            n_roadlinks=n_roadlinks+n_subnodes-1
+            rewind(unit_in)
+            call NXTDAT(unit_in,nxtdat_flag)
+        else
+            read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
+        endif
+        
+        if (n_roadlinks.eq.0.and..not.reduce_roadlink_region_flag) then
+            write(unit_logfile,'(a)') ' Reading road link file(ascii) with header but without subnode counts: '//trim(pathfilename_rl(1))
+            rewind(unit_in)
+            call NXTDAT(unit_in,nxtdat_flag)
+            read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
+            i=0
+            do while(.not.eof(unit_in))
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_x(1) !Read x nodes
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_y(1) !Read y nodes
+                !write(*,*) temp_id
+                if (temp_id.gt.0.and..not.eof(unit_in)) then
+                i=i+1
+                n_roadlinks=n_roadlinks+n_subnodes-1
+               endif
+            enddo
+            n_roadlinks_major=i
+            rewind(unit_in)
+            call NXTDAT(unit_in,nxtdat_flag)
+        endif
+
+        write(unit_logfile,'(a,i)') ' Number of major road links= ', n_roadlinks_major
+        write(unit_logfile,'(a,i)') ' Number of sub road links= ', n_roadlinks
+            
     !Allocate the arrays after reading in the number of roads
     if (reduce_roadlink_region_flag) then
         n_roadlinks=counter_sub
@@ -131,6 +287,7 @@
         allocate (valid_link_flag(n_roadlinks_major))
         valid_link_flag=.true.
     endif
+    
     allocate (inputdata_rl_temp(n_roadlinks,num_var_rl))
     allocate (inputdata_int_rl_temp(n_roadlinks,num_int_rl))
     
@@ -144,23 +301,23 @@
     !Read the data
     do i=1,n_roadlinks_major
     if (.not.valid_link_flag(i)) then
-        read(unit_in,*,ERR=20) 
+        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) 
         !write(*,*) temp_id,temp_adt,n_subnodes
-        read(unit_in,*) 
-        read(unit_in,*) 
+        if (.not.eof(unit_in)) read(unit_in,*) 
+        if (.not.eof(unit_in)) read(unit_in,*) 
     else
         if (read_OSM_roadlink_data_flag) then
-        !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
-        read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
-        temp_category=0;temp_length=0;temp_structure_type=0;temp_region_id=0;temp_surface_id=0;temp_tunnel_length=0;temp_route_id=0
+            !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
+            if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+            temp_category=0;temp_length=0;temp_structure_type=0;temp_region_id=0;temp_surface_id=0;temp_tunnel_length=0;temp_route_id=0
         else
-        !ID ADT HDV ROAD_ACTIVITY_TYPE SPEED ROAD_WIDTH N_LANES N_SUBNODES ROAD_CATEGORY ROAD_LENGTH ROAD_STRUCTURE_TYPE REGION_ID ROAD_SURFACE_ID TUNNEL_LENGTH ROUTE_ID
-        read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes &
+            !ID ADT HDV ROAD_ACTIVITY_TYPE SPEED ROAD_WIDTH N_LANES N_SUBNODES ROAD_CATEGORY ROAD_LENGTH ROAD_STRUCTURE_TYPE REGION_ID ROAD_SURFACE_ID TUNNEL_LENGTH ROUTE_ID
+            if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes &
             ,temp_category,temp_length,temp_structure_type,temp_region_id,temp_surface_id,temp_tunnel_length,temp_route_id
         endif
         !write(*,*) i,temp_id,temp_adt,n_subnodes
-        read(unit_in,*) sub_nodes_x(1:n_subnodes)
-        read(unit_in,*) sub_nodes_y(1:n_subnodes)
+        if (.not.eof(unit_in)) read(unit_in,*) sub_nodes_x(1:n_subnodes)
+        if (.not.eof(unit_in)) read(unit_in,*) sub_nodes_y(1:n_subnodes)
         !write(*,*) sub_nodes_x(1:n_subnodes),sub_nodes_y(1:n_subnodes)
         !put in the road link data
         
@@ -184,14 +341,14 @@
             counter=counter+1          
             inputdata_int_rl_temp(counter,major_index_rl_index)=counter_major
             inputdata_int_rl_temp(counter,id_rl_index)=temp_id
-            inputdata_rl_temp(counter,adt_rl_index)=temp_adt
+            inputdata_rl_temp(counter,adt_rl_index)=temp_adt**osm_adt_power_scale
             inputdata_rl_temp(counter,hdv_rl_index)=temp_hdv
             inputdata_int_rl_temp(counter,roadtype_rl_index)=temp_road_type
             inputdata_rl_temp(counter,speed_rl_index)=temp_speed
             inputdata_rl_temp(counter,width_rl_index)=temp_width
+            inputdata_int_rl_temp(counter,nlanes_rl_index)=temp_nlanes
             inputdata_rl_temp(counter,x1_rl_index)=sub_nodes_x(j)
             inputdata_rl_temp(counter,x2_rl_index)=sub_nodes_x(j+loop_step)
-            inputdata_int_rl_temp(counter,nlanes_rl_index)=temp_nlanes
             inputdata_rl_temp(counter,y1_rl_index)=sub_nodes_y(j)
             inputdata_rl_temp(counter,y2_rl_index)=sub_nodes_y(j+loop_step)
             !write(*,*) inputdata_int_rl(counter,id_rl_index),inputdata_rl(counter,x1_rl_index),inputdata_rl(counter,y2_rl_index)
@@ -213,8 +370,85 @@
     inputdata_rl=inputdata_rl_temp(1:n_roadlinks,:)
     inputdata_int_rl=inputdata_int_rl_temp(1:n_roadlinks,:)
     
-    deallocate (inputdata_rl_temp)
-    deallocate (inputdata_int_rl_temp)
+    if (road_data_in_latlon) then
+        !Order is reversed in these files so they are reversed in the projection calls as well
+        
+        do i=1,n_roadlinks
+            if  (projection_type.eq.UTM_projection_index) then
+                call LL2UTM(1,utm_zone,inputdata_rl_temp(i,x1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index))
+                call LL2UTM(1,utm_zone,inputdata_rl_temp(i,x2_rl_index),inputdata_rl_temp(i,y2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index))
+            elseif (projection_type.eq.LCC_projection_index) then
+            elseif (projection_type.eq.LAEA_projection_index) then
+                call LL2LAEA(inputdata_rl(i,x1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl_temp(i,x1_rl_index),projection_attributes)
+                call LL2LAEA(inputdata_rl(i,x2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl_temp(i,y2_rl_index),inputdata_rl_temp(i,x2_rl_index),projection_attributes)
+            endif
+        enddo
+        
+    endif
+
+    if (num_multiple_roadlink_files.gt.0) then
+        
+        n_multi_roadlinks_new=n_multi_roadlinks+n_roadlinks
+    
+        !Allocate the new multi array with all roads so far
+        allocate (inputdata_rl_multi_new(n_multi_roadlinks_new,num_var_rl))
+        allocate (inputdata_int_rl_multi_new(n_multi_roadlinks_new,num_int_rl))
+
+        !Place the current multi roads in the new multiroads
+        inputdata_rl_multi_new(1:n_multi_roadlinks,:)=inputdata_rl_multi(1:n_multi_roadlinks,:)
+        inputdata_int_rl_multi_new(1:n_multi_roadlinks,:)=inputdata_int_rl_multi(1:n_roadlinks,:)
+        
+        !Place the last read road links in the new multiroads
+        inputdata_rl_multi_new(n_multi_roadlinks+1:n_multi_roadlinks_new,:)=inputdata_rl(1:n_roadlinks,:)
+        inputdata_int_rl_multi_new(n_multi_roadlinks+1:n_multi_roadlinks_new,:)=inputdata_int_rl(1:n_roadlinks,:)
+
+        !Deallocate the old multi road arrays
+        if (allocated(inputdata_rl_multi)) deallocate(inputdata_rl_multi)
+        if (allocated(inputdata_int_rl_multi)) deallocate(inputdata_int_rl_multi)
+
+        !Deallocate the other arrays as well
+        if (allocated(inputdata_rl)) deallocate(inputdata_rl)
+        if (allocated(inputdata_int_rl)) deallocate(inputdata_int_rl)
+        if (allocated(inputdata_rl_temp)) deallocate (inputdata_rl_temp)
+        if (allocated(inputdata_int_rl_temp)) deallocate (inputdata_int_rl_temp)
+        
+        n_multi_roadlinks=n_multi_roadlinks_new
+        
+        !Allocate the multi road array
+        allocate (inputdata_rl_multi(n_multi_roadlinks,num_var_rl))
+        allocate (inputdata_int_rl_multi(n_multi_roadlinks,num_int_rl))
+   
+        !Put the new data in the old one
+        inputdata_rl_multi=inputdata_rl_multi_new
+        inputdata_int_rl_multi=inputdata_int_rl_multi_new
+
+        !Deallocate the new multi road arrays
+        if (allocated(inputdata_rl_multi_new)) deallocate(inputdata_rl_multi_new)
+        if (allocated(inputdata_int_rl_multi_new)) deallocate(inputdata_int_rl_multi_new)
+
+        if (allocated(valid_link_flag)) deallocate (valid_link_flag)
+
+        write(unit_logfile,'(a,i)') ' Number of accumulated multi-road links used = ', n_multi_roadlinks_new
+
+    endif
+    
+    !End the multiloop here
+    enddo
+    
+    if (num_multiple_roadlink_files.gt.0) then
+        allocate (inputdata_rl(n_multi_roadlinks,num_var_rl))
+        allocate (inputdata_int_rl(n_multi_roadlinks,num_int_rl))
+        inputdata_rl=inputdata_rl_multi
+        inputdata_int_rl=inputdata_int_rl_multi
+        if (allocated(inputdata_rl_multi)) deallocate(inputdata_rl_multi)
+        if (allocated(inputdata_int_rl_multi)) deallocate(inputdata_int_rl_multi)
+        n_roadlinks=n_multi_roadlinks_new
+    endif
+    
+    
+
+    if (allocated(inputdata_rl_temp)) deallocate (inputdata_rl_temp)
+    if (allocated(inputdata_int_rl_temp)) deallocate (inputdata_int_rl_temp)
     
     !No speed in the files currently. Set all to 50 km/hr. Temporary
     !inputdata_rl(:,speed_rl_index)=50.
@@ -238,9 +472,12 @@
     !Calculate road orientation and check for range overflows for length as well
     !inputdata_rl(angle_rl_index,:)=180./3.14159*acos((inputdata_rl(y2_rl_index,:)-inputdata_rl(y1_rl_index,:))/inputdata_rl(length_rl_index,:))
     do i=1,n_roadlinks
-        call UTM2LL(utm_zone,inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index),inputdata_rl(i,lat1_rl_index),inputdata_rl(i,lon1_rl_index))
-        call UTM2LL(utm_zone,inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index),inputdata_rl(i,lat2_rl_index),inputdata_rl(i,lon2_rl_index))
-        call UTM2LL(utm_zone,inputdata_rl(i,y0_rl_index),inputdata_rl(i,x0_rl_index),inputdata_rl(i,lat0_rl_index),inputdata_rl(i,lon0_rl_index))
+        call PROJ2LL(inputdata_rl(i,x1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl(i,lon1_rl_index),inputdata_rl(i,lat1_rl_index),projection_attributes,projection_type)
+        call PROJ2LL(inputdata_rl(i,x2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl(i,lon2_rl_index),inputdata_rl(i,lat2_rl_index),projection_attributes,projection_type)
+        call PROJ2LL(inputdata_rl(i,x0_rl_index),inputdata_rl(i,y0_rl_index),inputdata_rl(i,lon0_rl_index),inputdata_rl(i,lat0_rl_index),projection_attributes,projection_type)
+        !call UTM2LL(utm_zone,inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index),inputdata_rl(i,lat1_rl_index),inputdata_rl(i,lon1_rl_index))
+        !call UTM2LL(utm_zone,inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index),inputdata_rl(i,lat2_rl_index),inputdata_rl(i,lon2_rl_index))
+        !call UTM2LL(utm_zone,inputdata_rl(i,y0_rl_index),inputdata_rl(i,x0_rl_index),inputdata_rl(i,lat0_rl_index),inputdata_rl(i,lon0_rl_index))
     enddo
         
     !Check lengths
@@ -577,3 +814,171 @@
     write(unit_logfile,'(A,i)') 'Number of road links changed = ',count
 
     end subroutine uEMEP_change_road_data
+
+    subroutine read_country_bounding_box_data
+    !This routine reads in a file that provides information on the country bounding box
+    !as well as reference to the filename used in the OSM files
+    !Is also useful for other purposes but used here only for OSM file names
+    
+    use uEMEP_definitions
+    
+    implicit none
+
+    integer exists
+    integer i
+    character(256) CNTR_ID
+    character(256) OSM_country,Long_name
+    real min_lat,min_lon,max_lat,max_lon,min_y_3035,min_x_3035,max_y_3035,max_x_3035
+    real lon_grid_min,lat_grid_min,lon_grid_max,lat_grid_max
+    real lon_new_min,lat_new_min,lon_new_max,lat_new_max
+    integer unit_in
+    character(256) temp_str
+    integer count
+    logical found_country
+    real x_out(4),y_out(4)
+    
+
+    !Will fail at lon=-180
+    
+    !Read in replacement file
+    pathfilename_boundingbox=trim(pathname_boundingbox)//trim(filename_boundingbox)
+    
+    !Test existence of the road link filename (2). If does not exist then use default
+    inquire(file=trim(pathfilename_boundingbox),exist=exists)
+    if (.not.exists) then
+        write(unit_logfile,'(A,A)') ' ERROR: Bounding box file does not exist: ', trim(filename_boundingbox)
+        stop
+    endif
+    
+    if (trim(select_country_by_name).ne.'') then
+        
+    !Open the file for reading
+    unit_in=20
+    open(unit_in,file=pathfilename_boundingbox,access='sequential',status='old',readonly)  
+    write(unit_logfile,'(a)') ' Opening Bounding box file  '//trim(filename_boundingbox)
+    rewind(unit_in)
+   
+    !Skip over the header
+    !Index	CNTR_ID	OSM_country	min_lat	min_lon	max_lat	max_lon	min_y_3035	min_x_3035	max_y_3035	max_x_3035		Long_name
+    read(unit_in,*) temp_str
+
+    !Read coordinates
+    found_country=.false.
+    do while (.not.eof(unit_in))
+        read(unit_in,*) i,CNTR_ID,OSM_country,min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,Long_name
+        !write(*,*) i,trim(CNTR_ID),trim(OSM_country),min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,trim(Long_name)
+        
+        if (index(trim(select_country_by_name),trim(CNTR_ID)).gt.0) then
+            
+            !Set the min and max lat and lon values for the current grid
+            if  (projection_type.eq.UTM_projection_index) then
+                call LL2UTM(1,utm_zone,min_lat,min_lon,y_out(1),x_out(1))
+                call LL2UTM(1,utm_zone,max_lat,max_lon,y_out(2),x_out(2))
+                call LL2UTM(1,utm_zone,max_lat,min_lon,y_out(3),x_out(3))
+                call LL2UTM(1,utm_zone,min_lat,max_lon,y_out(4),x_out(4))
+            elseif (projection_type.eq.LAEA_projection_index) then
+                call LL2LAEA(x_out(1),y_out(1),min_lon,min_lat,projection_attributes)
+                call LL2LAEA(x_out(2),y_out(2),max_lon,max_lat,projection_attributes)
+                call LL2LAEA(x_out(3),y_out(3),min_lon,max_lat,projection_attributes)
+                call LL2LAEA(x_out(4),y_out(4),max_lon,min_lat,projection_attributes)
+            endif
+            
+            subgrid_min(x_dim_index)=minval(x_out)
+            subgrid_max(x_dim_index)=maxval(x_out)
+            subgrid_min(y_dim_index)=minval(y_out)
+            subgrid_max(y_dim_index)=maxval(y_out)
+            
+            !Snap to nearest 10 km
+            subgrid_min(x_dim_index)=floor(subgrid_min(x_dim_index)/10000.)*10000
+            subgrid_min(y_dim_index)=floor(subgrid_min(y_dim_index)/10000.)*10000
+            subgrid_max(x_dim_index)=ceiling(subgrid_max(x_dim_index)/10000.)*10000
+            subgrid_max(y_dim_index)=ceiling(subgrid_max(y_dim_index)/10000.)*10000
+            
+            write(unit_logfile,'(i,a)') i,' Setting grid for ID: '//trim(CNTR_ID)//'   OSM name: '//trim(OSM_country)//'   Name: '//trim(Long_name)
+            write(unit_logfile,'(a,f12.1)') 'subgrid_min(x_dim_index)=',subgrid_min(x_dim_index)
+            write(unit_logfile,'(a,f12.1)') 'subgrid_min(y_dim_index)=',subgrid_min(y_dim_index)
+            write(unit_logfile,'(a,f12.1)') 'subgrid_max(x_dim_index)=',subgrid_max(x_dim_index)
+            write(unit_logfile,'(a,f12.1)') 'subgrid_max(y_dim_index)=',subgrid_max(y_dim_index)
+            found_country=.true.
+        endif
+    
+        !Reset the initial subgrid as well, needed for EMEP and receptor selection
+        init_subgrid_min(x_dim_index)=subgrid_min(x_dim_index)
+        init_subgrid_min(y_dim_index)=subgrid_min(y_dim_index)
+        init_subgrid_max(x_dim_index)=subgrid_max(x_dim_index)
+        init_subgrid_max(y_dim_index)=subgrid_max(y_dim_index)
+
+    enddo
+    
+10  close(unit_in)  
+      
+    if (.not.found_country) then
+            write(unit_logfile,'(a)') ' No country with this ID found: '//trim(select_country_by_name)
+    endif
+
+    endif
+    
+    !Open the file for reading
+    
+    if (auto_select_OSM_country_flag) then
+
+    !Set the min and max lat and lon values for the current grid
+    call PROJ2LL(subgrid_min(x_dim_index),subgrid_min(y_dim_index),lon_grid_min,lat_grid_min,projection_attributes,projection_type)
+    call PROJ2LL(subgrid_max(x_dim_index),subgrid_max(y_dim_index),lon_grid_max,lat_grid_max,projection_attributes,projection_type)
+
+    unit_in=20
+    open(unit_in,file=pathfilename_boundingbox,access='sequential',status='old',readonly)  
+    write(unit_logfile,'(a)') ' Opening Bounding box file  '//trim(filename_boundingbox)
+    rewind(unit_in)
+   
+    !Skip over the header
+    !Index	CNTR_ID	OSM_country	min_lat	min_lon	max_lat	max_lon	min_y_3035	min_x_3035	max_y_3035	max_x_3035		Long_name
+    read(unit_in,*) temp_str
+
+    !Read coordinates
+    count=0
+    filename_mrl=''
+    do while (.not.eof(unit_in))
+        read(unit_in,*) i,CNTR_ID,OSM_country,min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,Long_name
+        !write(*,*) i,trim(CNTR_ID),trim(OSM_country),min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,trim(Long_name)
+        
+        !test the bounding box in lat lon coordinates
+        lon_new_min=max(min_lon,lon_grid_min)
+        lat_new_min=max(min_lat,lat_grid_min)
+        lon_new_max=min(max_lon,lon_grid_max)
+        lat_new_max=min(max_lat,lat_grid_max)
+        
+        if (lon_new_min.gt.lon_new_max.or.lat_new_min.gt.lat_new_max) then
+            !No intersection so do nothing
+        elseif (index('none',trim(OSM_country)).le.0) then
+            !update and attribute the filename
+            count=count+1
+            if (count.gt.50) then
+                write(unit_logfile,'(a)') ' Max files are 50. Stopping  '
+                stop
+            endif
+                     
+            filename_mrl(count)='Road_data_OSM_'//trim(OSM_country)//'_latlon.txt'
+            write(unit_logfile,'(2i,a)') count,i, ' Including OSM file:  '//trim(filename_mrl(count))
+        endif
+        
+    enddo
+    
+    if (count.eq.0) then
+        write(unit_logfile,'(a)') ' No countries overlap this area. Stopping'
+        stop
+    else
+        write(unit_logfile,'(a,i)') ' Specifying this many OSM road link files to be read',count        
+        num_multiple_roadlink_files=count
+    endif
+    
+
+20  close(unit_in)  
+        
+
+    endif
+    
+    !stop
+    
+
+    end subroutine read_country_bounding_box_data

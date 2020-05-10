@@ -256,11 +256,13 @@
     do i=1,tile_subgrid_dim(x_dim_index)                 
         x_tile_subgrid(i,j)=tile_subgrid_min(x_dim_index)+tile_subgrid_delta(x_dim_index)*(i-0.5) !New definition
         y_tile_subgrid(i,j)=tile_subgrid_min(y_dim_index)+tile_subgrid_delta(y_dim_index)*(j-0.5) !New definition
-        if (projection_type.eq.RDM_projection_index) then
-            call RDM2LL(y_tile_subgrid(i,j),x_tile_subgrid(i,j),lat_tile_subgrid(i,j),lon_tile_subgrid(i,j))
-        elseif (projection_type.eq.UTM_projection_index) then
-            call UTM2LL(utm_zone,y_tile_subgrid(i,j),x_tile_subgrid(i,j),lat_tile_subgrid(i,j),lon_tile_subgrid(i,j))
-        endif   
+        
+        call PROJ2LL(x_tile_subgrid(i,j),y_tile_subgrid(i,j),lon_tile_subgrid(i,j),lat_tile_subgrid(i,j),projection_attributes,projection_type)
+        !if (projection_type.eq.RDM_projection_index) then
+        !    call RDM2LL(y_tile_subgrid(i,j),x_tile_subgrid(i,j),lat_tile_subgrid(i,j),lon_tile_subgrid(i,j))
+        !elseif (projection_type.eq.UTM_projection_index) then
+        !    call UTM2LL(utm_zone,y_tile_subgrid(i,j),x_tile_subgrid(i,j),lat_tile_subgrid(i,j),lon_tile_subgrid(i,j))
+        !endif   
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         !if (EMEP_projection_type.eq.LCC_projection_index) then
         !    call lb2lambert2_uEMEP(xproj_tile_subgrid(i,j),yproj_tile_subgrid(i,j),lon_tile_subgrid(i,j),lat_tile_subgrid(i,j),EMEP_projection_attributes)
@@ -966,11 +968,13 @@
     do i=1,tile_subgrid_dim(x_dim_index)                 
         x_tile_subgrid(i,j)=tile_subgrid_min(x_dim_index)+tile_subgrid_delta(x_dim_index)*(i-0.5) !New definition
         y_tile_subgrid(i,j)=tile_subgrid_min(y_dim_index)+tile_subgrid_delta(y_dim_index)*(j-0.5) !New definition
-        if (projection_type.eq.RDM_projection_index) then
-            call RDM2LL(y_tile_subgrid(i,j),x_tile_subgrid(i,j),lat_tile_subgrid(i,j),lon_tile_subgrid(i,j))
-        elseif (projection_type.eq.UTM_projection_index) then
-            call UTM2LL(utm_zone,y_tile_subgrid(i,j),x_tile_subgrid(i,j),lat_tile_subgrid(i,j),lon_tile_subgrid(i,j))
-        endif   
+
+        call PROJ2LL(x_tile_subgrid(i,j),y_tile_subgrid(i,j),lon_tile_subgrid(i,j),lat_tile_subgrid(i,j),projection_attributes,projection_type)
+        !if (projection_type.eq.RDM_projection_index) then
+        !    call RDM2LL(y_tile_subgrid(i,j),x_tile_subgrid(i,j),lat_tile_subgrid(i,j),lon_tile_subgrid(i,j))
+        !elseif (projection_type.eq.UTM_projection_index) then
+        !    call UTM2LL(utm_zone,y_tile_subgrid(i,j),x_tile_subgrid(i,j),lat_tile_subgrid(i,j),lon_tile_subgrid(i,j))
+        !endif   
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         !if (EMEP_projection_type.eq.LCC_projection_index) then
         !    call lb2lambert2_uEMEP(xproj_tile_subgrid(i,j),yproj_tile_subgrid(i,j),lon_tile_subgrid(i,j),lat_tile_subgrid(i,j),EMEP_projection_attributes)

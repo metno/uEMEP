@@ -93,11 +93,12 @@
  
         !Special case when saving emissions, convert to either latlon or lambert
         if (save_emissions_for_EMEP(shipping_index)) then
-            call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
-            if (projection_type.eq.LL_projection_index) then
+            call PROJ2LL(x_ship,y_ship,lon_ship,lat_ship,projection_attributes,projection_type)
+            !call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
+            if (EMEP_projection_type.eq.LL_projection_index) then
                 x_ship=lon_ship
                 y_ship=lat_ship       
-            elseif (projection_type.eq.LCC_projection_index) then
+            elseif (EMEP_projection_type.eq.LCC_projection_index) then
                 call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
             endif
         endif
@@ -230,7 +231,8 @@
  
         !Special case when saving emissions, convert to either latlon or lambert
         if (save_emissions_for_EMEP(shipping_index)) then
-            call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
+            call PROJ2LL(x_ship,y_ship,lon_ship,lat_ship,projection_attributes,projection_type)
+            !call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
             if (projection_type.eq.LL_projection_index) then
                 x_ship=lon_ship
                 y_ship=lat_ship       
@@ -307,7 +309,8 @@
         !write(*,'(i,2f16.1,24f8.2)') i,x_ship,y_ship,(daily_cycle(t),t=1,24)
         !Convert to EMEP coordinates if it is to be saved. emission grids are already in the EMEP coordinate system
         if (save_emissions_for_EMEP(shipping_index)) then
-            call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
+            call PROJ2LL(x_ship,y_ship,lon_ship,lat_ship,projection_attributes,projection_type)
+            !call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
             call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
         endif
 
@@ -347,7 +350,7 @@
 
     
     subroutine uEMEP_read_shipping_asi_data
- 
+    !Reads in the original ais raw data
     use uEMEP_definitions
     
     implicit none
@@ -447,13 +450,24 @@
         if  (totalnoxemission.gt.0.or.totalparticulatematteremission.gt.0) then
             
         !Convert to EMEP coordinates if it is to be saved. emission grids are already in the EMEP coordinate system
+        !This will not work for lat lon as it is now written but will never be called either
         if (save_emissions_for_EMEP(shipping_index)) then
-            call lb2lambert2_uEMEP(x_ship,y_ship,ddlongitude,ddlatitude,EMEP_projection_attributes)
+            if (EMEP_projection_type.eq.LCC_projection_index) then
+                call lb2lambert2_uEMEP(x_ship,y_ship,ddlongitude,ddlatitude,EMEP_projection_attributes)
+            !elseif (EMEP_projection_type.eq.LL_projection_index) then
+                !lon_ship=ddlongitude
+                !lat_ship=ddlatitude
+            endif           
         else
             !Convert lat lon to utm coords
-            call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
-        endif        
-        !Find the grid index it belongs to
+            if (projection_type.eq.UTM_projection_index) then
+                call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
+            elseif (projection_type.eq.LAEA_projection_index) then
+                call LL2LAEA(x_ship,y_ship,ddlongitude,ddlatitude,projection_attributes)
+            endif
+       endif        
+
+    !Find the grid index it belongs to
         i_ship_index=1+floor((x_ship-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
         j_ship_index=1+floor((y_ship-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
         !(x_subgrid(i,j)-subgrid_min(1))/+subgrid_delta(1)+1=i
@@ -675,9 +689,14 @@
         if (totalnoxemission.gt.0.or.totalparticulatematteremission.gt.0) then
             
             !Convert lat lon to utm coords
-            call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
+            if (projection_type.eq.UTM_projection_index) then
+                call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
+            elseif (projection_type.eq.LAEA_projection_index) then
+                call LL2LAEA(x_ship,y_ship,ddlongitude,ddlatitude,projection_attributes)
+            endif
         
             !Find the grid index it belongs to. This assumes a minimum UTM grid at 0 so the index can be negative
+            !Not certain if this 0.5 is correct
             i_ship_index=floor((x_ship-0)/ship_delta+0.5)
             j_ship_index=floor((y_ship-0)/ship_delta+0.5)
         
@@ -706,6 +725,7 @@
         
             ship_value(i_count,ship_x_dim_index)=(ship_index(i_count,ship_i_dim_index)+.5)*ship_delta
             ship_value(i_count,ship_y_dim_index)=(ship_index(i_count,ship_j_dim_index)+.5)*ship_delta
+            call PROJ2LL(ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_lon_dim_index),ship_value(i_count,ship_lat_dim_index),projection_attributes,projection_type)
             call UTM2LL(utm_zone,ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index))
            
         !if (mod(count,10000).eq.0) write(*,'(2i,2f,2e)') count,ship_index_count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission  
@@ -751,11 +771,11 @@
 
 
     !Calculate the x,y, lat,lon of the centre of the valid grids
-    do i_count=1,ship_index_count
+    !do i_count=1,ship_index_count
         !ship_value(i_count,ship_x_dim_index)=(ship_index(i_count,ship_i_dim_index)+.5)*ship_delta
         !ship_value(i_count,ship_y_dim_index)=(ship_index(i_count,ship_j_dim_index)+.5)*ship_delta
         !call UTM2LL(utm_zone,ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index))
-    enddo
+    !enddo
     
     !Save the data in the same format as previously provided
     pathfilename_ship(1)=trim(pathname_ship(1))//'Aggregated_'//trim(filename_ship(1))

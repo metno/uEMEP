@@ -208,13 +208,13 @@
         x_ssb=ssb_id/10000000-f_easting+ssb_dx/2.
         y_ssb=mod(ssb_id,10000000)+ssb_dy/2.
         
-        !Convert to EMEP coordinates
+        !Convert to EMEP coordinates. SSB data always in UTM coordinates
         if (save_emissions_for_EMEP(heating_index)) then
             call UTM2LL(utm_zone,y_ssb,x_ssb,lat_ssb,lon_ssb)
-            if (projection_type.eq.LL_projection_index) then
+            if (EMEP_projection_type.eq.LL_projection_index) then
                 x_ssb=lon_ssb
                 y_ssb=lat_ssb
-            elseif (projection_type.eq.LCC_projection_index) then
+            elseif (EMEP_projection_type.eq.LCC_projection_index) then
                 call lb2lambert2_uEMEP(x_ssb,y_ssb,lon_ssb,lat_ssb,EMEP_projection_attributes)
             endif
         endif
