@@ -322,9 +322,11 @@
         !put in the road link data
         
         !Test size of major link. If less than min_link_size then treat it as a single link from the start sub_node to the end sub_node
+        
         size_major(1)=maxval(sub_nodes_x(1:n_subnodes))-minval(sub_nodes_x(1:n_subnodes))
         size_major(2)=maxval(sub_nodes_y(1:n_subnodes))-minval(sub_nodes_y(1:n_subnodes))
         size_major(3)=sqrt(size_major(1)**2+size_major(2)**2)
+
         if (size_major(3).gt.min_link_size) then
             n_loop=n_subnodes-1
             loop_step=1
@@ -332,6 +334,11 @@
             n_loop=1
             loop_step=n_subnodes-1
             !write(*,*) size_major(3)
+        endif
+        !Do not do this with latlon input data as it does not work
+        if (road_data_in_latlon) then
+            n_loop=n_subnodes-1
+            loop_step=1
         endif
         
         counter_major=counter_major+1
@@ -923,12 +930,22 @@
     if (auto_select_OSM_country_flag) then
 
     !Set the min and max lat and lon values for the current grid
+        
     call PROJ2LL(subgrid_min(x_dim_index),subgrid_min(y_dim_index),lon_grid_min,lat_grid_min,projection_attributes,projection_type)
     call PROJ2LL(subgrid_max(x_dim_index),subgrid_max(y_dim_index),lon_grid_max,lat_grid_max,projection_attributes,projection_type)
+    
+    !Test
+    !lon_grid_max=5.;lat_grid_max=50.
+    !call LL2LAEA(subgrid_max(x_dim_index),subgrid_max(y_dim_index),lon_grid_max,lat_grid_max,projection_attributes,projection_type)
+    !call LAEA2LL(subgrid_max(x_dim_index),subgrid_max(y_dim_index),lon_grid_max,lat_grid_max,projection_attributes,projection_type)
+    
+    write(unit_logfile,'(a)') ' Opening Bounding box file  '//trim(filename_boundingbox)
+    write(unit_logfile,'(a,2f12.6)') ' Lon (min,max)  ',lon_grid_min,lon_grid_max
+    write(unit_logfile,'(a,2f12.6)') ' Lat (min,max)  ',lat_grid_min,lat_grid_max
 
+    
     unit_in=20
     open(unit_in,file=pathfilename_boundingbox,access='sequential',status='old',readonly)  
-    write(unit_logfile,'(a)') ' Opening Bounding box file  '//trim(filename_boundingbox)
     rewind(unit_in)
    
     !Skip over the header

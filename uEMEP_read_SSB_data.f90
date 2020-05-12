@@ -476,7 +476,7 @@
                 elseif (projection_type.eq.LAEA_projection_index) then
 
                     call LL2LAEA(x_pop,y_pop,population_nc_dp(i,j,lon_nc_index),population_nc_dp(i,j,lat_nc_index),projection_attributes)
-                    call LAEA2LL(x_pop,y_pop,x_ssb,y_ssb,projection_attributes)
+                    !call LAEA2LL(x_pop,y_pop,x_ssb,y_ssb,projection_attributes)
                     !write(*,*) population_nc_dp(i,j,lon_nc_index)-x_ssb,population_nc_dp(i,j,lat_nc_index)-y_ssb
 
                 else

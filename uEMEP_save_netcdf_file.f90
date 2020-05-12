@@ -1787,6 +1787,7 @@
         call check(  nf90_put_att(ncid, proj_varid, "false_northing", 0. ) )
         call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", utm_lon0 ) )
         endif
+        
         if (projection_type.eq.RDM_projection_index) then
             !Not properly assigned, same as UTM
         call check(  nf90_def_var(ncid, "projection_RDM", NF90_int, proj_varid) )
@@ -1800,12 +1801,14 @@
         call check(  nf90_put_att(ncid, proj_varid, "false_northing", 0. ) )
         call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", utm_lon0 ) )
         endif
+        
         if (projection_type.eq.LAEA_projection_index) then
         call check(  nf90_def_var(ncid, "projection_ETRS89_LAEA", NF90_int, proj_varid) )
-        call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", 6378137.0 ) )
-        call check(  nf90_put_att(ncid, proj_varid, "inverse_flattening", 298.257222101 ) )
+        !call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", 6378137.0 ) )
+        !call check(  nf90_put_att(ncid, proj_varid, "inverse_flattening", 298.257222101 ) )
         
         !https://github.com/mdsumner/rasterwise/blob/master/README.md
+        !EPSG:3035
         !int ETRS89-LAEA ;
         !    ETRS89-LAEA:missing_value = -1. ;
         !   ETRS89-LAEA:grid_mapping_name = "lambert_azimuthal_equal_area" ;
@@ -1815,12 +1818,23 @@
         !   ETRS89-LAEA:false_northing = 3210000. ;
         !   ETRS89-LAEA:inverse_flattening = 298.257222101 ;
         !   ETRS89-LAEA:semi_major_axis = 6378137. ;
+        
+        !call check(  nf90_put_att(ncid, proj_varid, "grid_mapping_name", "lambert_azimuthal_equal_area" ) )
+        !call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", 6378137.0 ) )
+        !call check(  nf90_put_att(ncid, proj_varid, "inverse_flattening", 298.257222101 ) )
+        !call check(  nf90_put_att(ncid, proj_varid, "scale_factor_at_central_meridian", 0.9996 ) )
+        !call check(  nf90_put_att(ncid, proj_varid, "latitude_of_projection_origin",  52. ) )
+        !call check(  nf90_put_att(ncid, proj_varid, "false_easting", 4321000. ) )
+        !call check(  nf90_put_att(ncid, proj_varid, "false_northing", 3210000. ) )
+        !call check(  nf90_put_att(ncid, proj_varid, "longitude_of_projection_origin", 10.) )
+
         call check(  nf90_put_att(ncid, proj_varid, "grid_mapping_name", "lambert_azimuthal_equal_area" ) )
-        call check(  nf90_put_att(ncid, proj_varid, "scale_factor_at_central_meridian", 0.9996 ) )
-        call check(  nf90_put_att(ncid, proj_varid, "latitude_of_projection_origin",  52. ) )
-        call check(  nf90_put_att(ncid, proj_varid, "false_easting", 4321000. ) )
-        call check(  nf90_put_att(ncid, proj_varid, "false_northing", 3210000. ) )
-        call check(  nf90_put_att(ncid, proj_varid, "longitude_of_projection_origin", 10.) )
+        call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", projection_attributes(5) ) )
+        call check(  nf90_put_att(ncid, proj_varid, "inverse_flattening", projection_attributes(6) ) )
+        call check(  nf90_put_att(ncid, proj_varid, "latitude_of_projection_origin",  projection_attributes(2) ) )
+        call check(  nf90_put_att(ncid, proj_varid, "false_easting", projection_attributes(3) ) )
+        call check(  nf90_put_att(ncid, proj_varid, "false_northing", projection_attributes(4) ) )
+        call check(  nf90_put_att(ncid, proj_varid, "longitude_of_projection_origin", projection_attributes(1)) )
         endif
        
         !Define the dimensions

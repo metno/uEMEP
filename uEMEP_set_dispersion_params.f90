@@ -81,6 +81,7 @@
         class_index=6
     else
         class_index=0
+        write(*,*) 'No stability class found. Stopping',invL
         write(*,*) 'No stability class found. Stopping',1./invL
         stop
     endif

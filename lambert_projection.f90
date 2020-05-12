@@ -195,7 +195,7 @@ end subroutine testlambert
     
     end subroutine lb2lambert2_uEMEP
     
-    subroutine LL2LAEA(x,y,lon_in,lat_in,projection_attributes)
+    subroutine LL2LAEA_spherical(x,y,lon_in,lat_in,projection_attributes)
     !https://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html
     
     implicit none
@@ -236,9 +236,9 @@ end subroutine testlambert
     x=false_easting+r*k_lambert*cos(lat)*sin(lon-lon0)
     y=false_northing+r*k_lambert*(cos(lat0)*sin(lat)-sin(lat0)*cos(lat)*cos(lon-lon0))
     
-    end subroutine LL2LAEA
+    end subroutine LL2LAEA_spherical
 
-    subroutine LAEA2LL(x,y,lon,lat,projection_attributes)
+    subroutine LAEA2LL_spherical(x,y,lon,lat,projection_attributes)
     !https://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html
      
     implicit none
@@ -279,8 +279,135 @@ end subroutine testlambert
     lat=lat*rad2deg
     lon=lon*rad2deg
     
-    end subroutine LAEA2LL
+    end subroutine LAEA2LL_spherical
     
+    subroutine LL2LAEA(x,y,lon_in,lat_in,projection_attributes)
+    !www.epsg.org
+    
+    implicit none
+    double precision, intent(in) :: projection_attributes(10)
+    real, intent(in) ::lon_in,lat_in
+    real, intent(out)::x,y
+    real ::r
+    real ::PI
+    real :: semi_major_axis
+    real deg2rad,rad2deg
+    real lat0,lat0_in,lon0,lon0_in
+    real false_easting,false_northing
+    real lon,lat
+    real inv_f,f,a,e,q_p,q_0,q,beta,beta_0,R_q,D,B
+    
+    !grid_mapping_name = lambert_azimuthal_equal_area
+    !Map parameters:
+    !longitude_of_projection_origin
+    !latitude_of_projection_origin
+    !false_easting - This parameter is optional (default is 0)
+    !false_northing - This parameter is optional (default is 0)lat_stand1_lambert=projection_attributes(1)
+    lon0_in=projection_attributes(1)
+    lat0_in=projection_attributes(2)
+    false_easting=projection_attributes(3)
+    false_northing=projection_attributes(4) 
+    semi_major_axis = projection_attributes(5)
+    inv_f=projection_attributes(6) !flattening
+    
+    PI=3.14159265358979323
+    deg2rad=PI/180.
+    rad2deg=180./PI
+    a=semi_major_axis
+    f=1./inv_f
+    e=sqrt(2.*f-f*f)
+    
+    lat0=lat0_in*deg2rad
+    lon0=lon0_in*deg2rad
+    lon=lon_in*deg2rad
+    lat=lat_in*deg2rad
+    
+    q_p=(1.-e*e)*(1./(1.-e*e)-1./(2.*e)*log((1.-e)/(1.+e)))
+    q_0=(1.-e*e)*(sin(lat0)/(1.-e*e*sin(lat0)**2)-1./(2.*e)*log((1.-e*sin(lat0))/(1.+e*sin(lat0))))
+    q=  (1.-e*e)*(sin(lat )/(1.-e*e*sin(lat )**2)-1./(2.*e)*log((1.-e*sin(lat ))/(1.+e*sin(lat ))))
+    beta_0=asin(q_0/q_p)
+    beta=asin(q/q_p)
+    R_q=a*sqrt(q_p/2.)
+    D=a*(cos(lat0)/sqrt(1.-e*e*sin(lat0)**2)/(R_q*cos(beta_0)))
+    B=R_q*sqrt(2./(1.+sin(beta_0)*sin(beta)+cos(beta_0)*cos(beta)*cos(lon-lon0)))
+    x=false_easting+B*D*cos(beta)*sin(lon-lon0)
+    y=false_northing+B/D*(cos(beta_0)*sin(beta)-sin(beta_0)*cos(beta)*cos(lon-lon0))
+        
+    !write(*,*) 'LL2LAEA'
+    !write(*,*) x,y
+    !write(*,*) q_p,q_0,q,R_q
+    !write(*,*) beta_0,beta,D,B
+
+    end subroutine LL2LAEA
+
+    subroutine LAEA2LL(x,y,lon,lat,projection_attributes)
+    !www.epsg.org
+     
+    implicit none
+    double precision, intent(in) :: projection_attributes(10)
+    real, intent(out) :: lon,lat
+    real, intent(in)::x,y
+    real :: rho
+    real :: PI
+    real :: semi_major_axis
+    real deg2rad,rad2deg
+    real lat0,lat0_in,lon0,lon0_in
+    real false_easting,false_northing
+    real inv_f,f,a,e,q_p,q_0,q,beta,beta_0,R_q,D,B
+    real C,beta_d
+    
+    !grid_mapping_name = lambert_azimuthal_equal_area
+    !Map parameters:
+    !longitude_of_projection_origin
+    !latitude_of_projection_origin
+    !false_easting - This parameter is optional (default is 0)
+    !false_northing - This parameter is optional (default is 0)lat_stand1_lambert=projection_attributes(1)
+    lon0_in=projection_attributes(1)
+    lat0_in=projection_attributes(2)
+    false_easting=projection_attributes(3)
+    false_northing=projection_attributes(4) 
+    semi_major_axis = projection_attributes(5)
+    inv_f=projection_attributes(6) !flattening
+    
+    PI=3.14159265358979323
+    deg2rad=PI/180.
+    rad2deg=180./PI
+    a=semi_major_axis
+    f=1./inv_f
+    e=sqrt(2.*f-f*f)
+    
+    lat0=lat0_in*deg2rad
+    lon0=lon0_in*deg2rad
+    
+    q_p=(1.-e*e)*(1./(1.-e*e)-1./(2.*e)*log((1.-e)/(1.+e)))
+    q_0=(1.-e*e)*(sin(lat0)/(1.-e*e*sin(lat0)**2)-1./(2.*e)*log((1.-e*sin(lat0))/(1.+e*sin(lat0))))
+    !q=(1.-e*e)*(sin(lat)/(1.-e*e*sin(lat)**2)-1./(2.*e)*log((1.-e*sin(lat))/(1.+e*sin(lat))))
+    beta_0=asin(q_0/q_p)
+    !beta=asin(q/q_p)
+    R_q=a*sqrt(q_p/2.)
+    D=a*(cos(lat0)/sqrt(1.-e*e*sin(lat0)**2)/(R_q*cos(beta_0)))
+    !B=R_q*sqrt(2./(1.+sin(beta_0)*sin(beta)+cos(beta_0)*cos(beta)*cos(lon-lon0)))
+    rho=sqrt((x-false_easting)*(x-false_easting)/D/D+D*D*(y-false_northing)*(y-false_northing))
+    C=2.*asin(rho/2./R_q)
+    beta_d=asin(cos(C)*sin(beta_0)+D*(y-false_northing)*sin(C)*cos(beta_0)/rho)
+    
+    lon=lon0+atan2((x-false_easting)*sin(C) &
+        ,(D*rho*cos(beta_0)*cos(C)-D*D*(y-false_northing)*sin(beta_0)*sin(C)))
+    lat=beta_d+e**2*(1./3.+31./180.*e**2+517./5040.*e**4)*sin(2.*beta_d) &
+        +e**4*(23./360.+251./3780.*e**2)*sin(4.*beta_d)+(761./45360.*e**6)*sin(6.*beta_d)
+    
+    !write(*,*) 'LAEA2LL'
+    !write(*,*) x,y
+    !write(*,*) lat,lon
+    lat=lat*rad2deg
+    lon=lon*rad2deg
+    !write(*,*) lat,lon
+    !write(*,*) q_p,q_0,q,R_q
+    !write(*,*) beta_0,beta,D,B
+    !write(*,*) rho,C,beta_d
+    
+    end subroutine LAEA2LL
+
     !Routine for calling the various possible projections for the uEMEP sub-grid to lat lon
     subroutine PROJ2LL(x_in,y_in,lon_out,lat_out,projection_attributes_in,projection_type_in)
 

@@ -31,15 +31,15 @@
     init_emission_subgrid_dim(t_dim_index,:)=subgrid_dim(t_dim_index)
     integral_subgrid_dim(t_dim_index)=subgrid_dim(t_dim_index)
     
-    write(unit_logfile,'(A,I5)')'Number of external time steps:',end_time_loop_index-start_time_loop_index+1
-    write(unit_logfile,'(A,I5)')'Number of internal time steps:',subgrid_dim(t_dim_index)
-    write(unit_logfile,'(A,2I5)')'Number of target grids:',subgrid_dim(1:2)
-    write(unit_logfile,'(A,2I5)')'Number of integral grids:',integral_subgrid_dim(1:2)
-    write(unit_logfile,'(A,2I5)')'Max number of emission grids:',emission_max_subgrid_dim(1:2)
+    write(unit_logfile,'(A,I6)')'Number of external time steps:',end_time_loop_index-start_time_loop_index+1
+    write(unit_logfile,'(A,I6)')'Number of internal time steps:',subgrid_dim(t_dim_index)
+    write(unit_logfile,'(A,2I6)')'Number of target grids:',subgrid_dim(1:2)
+    write(unit_logfile,'(A,2I6)')'Number of integral grids:',integral_subgrid_dim(1:2)
+    write(unit_logfile,'(A,2I6)')'Max number of emission grids:',emission_max_subgrid_dim(1:2)
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
-    write(unit_logfile,'(A,A,2I5)')'Number of emission grids: ',trim(source_file_str(i_source)),emission_subgrid_dim(1:2,i_source)        
-    write(unit_logfile,'(A,A,2I5)')'Number of initial emission grids: ',trim(source_file_str(i_source)),init_emission_subgrid_dim(1:2,i_source)        
+    write(unit_logfile,'(A,A,2I6)')'Number of emission grids: ',trim(source_file_str(i_source)),emission_subgrid_dim(1:2,i_source)        
+    write(unit_logfile,'(A,A,2I8)')'Number of initial emission grids: ',trim(source_file_str(i_source)),init_emission_subgrid_dim(1:2,i_source)        
     endif
     enddo
 
@@ -202,22 +202,22 @@
     endif
     enddo
 
-    write(unit_logfile,'(A,2I5)')'Number of target grids:',subgrid_dim(1:2)
-    write(unit_logfile,'(A,2I5)')'Number of integral grids:',integral_subgrid_dim(1:2)
-    write(unit_logfile,'(A,2I5)')'Number of integral grids:',integral_subgrid_dim(1:2)
+    write(unit_logfile,'(A,2I6)')'Number of target grids:',subgrid_dim(1:2)
+    write(unit_logfile,'(A,2I6)')'Number of integral grids:',integral_subgrid_dim(1:2)
+    write(unit_logfile,'(A,2I6)')'Number of integral grids:',integral_subgrid_dim(1:2)
     if (calculate_deposition_flag) then
-    write(unit_logfile,'(A,2I5)')'Number of deposition grids:',deposition_subgrid_dim(1:2)
+    write(unit_logfile,'(A,2I6)')'Number of deposition grids:',deposition_subgrid_dim(1:2)
     endif
-    write(unit_logfile,'(A,2I5)')'Max number of emission grids:',emission_max_subgrid_dim(1:2)
+    write(unit_logfile,'(A,2I6)')'Max number of emission grids:',emission_max_subgrid_dim(1:2)
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
-    write(unit_logfile,'(A,A,2I5)')   'Number of emission grids:',trim(source_file_str(i_source)),emission_subgrid_dim(1:2,i_source)        
+    write(unit_logfile,'(A,A,2I6)')   'Number of emission grids:',trim(source_file_str(i_source)),emission_subgrid_dim(1:2,i_source)        
     write(unit_logfile,'(A,A,2f12.1)')'Min of emission grids:   ',trim(source_file_str(i_source)),emission_subgrid_min(1:2,i_source)     
     write(unit_logfile,'(A,A,2f12.1)')'Max of emission grids:   ',trim(source_file_str(i_source)),emission_subgrid_max(1:2,i_source)     
     write(unit_logfile,'(A,A,2f12.1)')'Delta of emission grids: ',trim(source_file_str(i_source)),emission_subgrid_delta(1:2,i_source)     
     endif
     if (calculate_source(i_source)) then
-    write(unit_logfile,'(A,A,2I5)')   'Number of initial emission grids:',trim(source_file_str(i_source)),init_emission_subgrid_dim(1:2,i_source)        
+    write(unit_logfile,'(A,A,2I8)')   'Number of initial emission grids:',trim(source_file_str(i_source)),init_emission_subgrid_dim(1:2,i_source)        
     write(unit_logfile,'(A,A,2f12.1)')'Min of initial emission grids:   ',trim(source_file_str(i_source)),init_emission_subgrid_min(1:2,i_source)     
     write(unit_logfile,'(A,A,2f12.1)')'Max of initial emission grids:   ',trim(source_file_str(i_source)),init_emission_subgrid_max(1:2,i_source)     
     write(unit_logfile,'(A,A,2f12.1)')'Delta of initial emission grids: ',trim(source_file_str(i_source)),init_emission_subgrid_delta(1:2,i_source)     

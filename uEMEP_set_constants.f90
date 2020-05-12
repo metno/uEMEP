@@ -428,6 +428,7 @@
     EMEP_projection_attributes(3) = 15.0 !lon0
     EMEP_projection_attributes(4) = 63.0 !lat0
     EMEP_projection_attributes(5) = 6370000.0 !earth_radius
+    EMEP_projection_attributes(6) = 1.e12 !flattening spherical earth
 
     !uEMEP projection default (UTM)
     projection_type=UTM_projection_index
