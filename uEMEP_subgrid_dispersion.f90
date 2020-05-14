@@ -683,7 +683,11 @@
                                     !call uEMEP_set_dispersion_sigma_PG(invL_loc,logz0_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                 endif
 
-                                z0_temp=exp(meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index))
+                                !z0_temp=exp(meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index))
+                                h_mix_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,hmix_subgrid_index)
+                                invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
+                                logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
+                                
                                 
                                 h_temp=h_emis_loc
             
@@ -706,10 +710,6 @@
                                 endif
                                 
                                 !if (source_index.eq.industry_index) write(*,'(5es12.2)') meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FFgrid_subgrid_index),H_meteo,z0_temp,h_temp,FF_loc
-                                
-                                h_mix_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,hmix_subgrid_index)
-                                invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
-                                logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
                                 
  
                                 

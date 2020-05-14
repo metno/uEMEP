@@ -3,6 +3,8 @@
 !
 !   Bruce rolstad Denby (brucerd@met.no)
 !   MET Norway
+!****************************************************************************
+! Reminder note for compilation on Intel
 ! To add this library to your linker input in the IDE, open the context menu for the project node, choose Properties, then in the Project Properties dialog box, choose Linker
 ! , and edit the Linker Input to add legacy_stdio_definitions.lib to the semi-colon-separated list
 ! Tools/options/intel compilers and tools/visual fortran/compilers and add bin, include and lib, e.g. C:\Program Files (x86)\netcdf 4.3.3.1\bin;
@@ -24,7 +26,7 @@
     
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
-    write(*,*) 'Starting program uEMEP_v5.1'
+    write(*,*) 'Starting program uEMEP_v6.0'
     write(*,*) '------------------------------------------------------------------------'
     
     !Read the command line, assigning the configuration file names and the substitution date_str
@@ -66,10 +68,9 @@
         call uEMEP_calculate_emissions_for_EMEP
     endif
     
-    !We set up an initial emission grid parameter set that can be used to first select the outest region
-    !This has been done to enable reading of multiple road link files but only keeping those in the initial defined area
+    !We set up an initial emission grid parameter set that can be used to first select the outester region
+    !This has been done to enable reading of multiple road link files but only keeping those in the initial defined emission area
     call uEMEP_set_subgrids
-    !call uEMEP_define_subgrid_extent
     init_emission_subgrid_min=emission_subgrid_min
     init_emission_subgrid_max=emission_subgrid_max
     init_emission_subgrid_dim=emission_subgrid_dim
