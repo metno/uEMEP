@@ -75,6 +75,16 @@
     real deposition_subgrid_scale
     real plume_vertical_integral(n_integral_subgrid_index,n_pollutant_loop)
     
+    !Fitting Kz calculation
+    real x_loc_fit(2)
+    real sig_z_loc_fit(2)
+    real sig_y_loc_fit(2)
+    real FF_zc_loc_fit(2) !Not used
+    real az_loc_fit,bz_loc_fit
+    real ay_loc_fit,by_loc_fit
+    real sig_z_0_loc_fit,sig_y_0_loc_fit
+    integer f_loop
+    
     !functions
     real gauss_plume_second_order_rotated_func
     !real gauss_plume_second_order_rotated_integral_func
@@ -84,6 +94,8 @@
     real gauss_plume_cartesian_sigma_func
     real gauss_plume_second_order_rotated_reflected_func
     real gauss_plume_second_order_rotated_reflected_integral_func
+    
+    
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -515,7 +527,7 @@
                                     invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
                                     FFgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index)
                                     logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
-                                    u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),0.001)
+                                    u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),ustar_min)
                                     FF10_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index)
                                     sig_y_00_loc=emission_properties_subgrid(ii,jj,emission_sigy00_index,source_index)
                                     sig_z_00_loc=emission_properties_subgrid(ii,jj,emission_sigz00_index,source_index)
@@ -651,6 +663,11 @@
                                 sig_y_00_loc=emission_properties_subgrid(ii,jj,emission_sigy00_index,source_index)
                                 sig_z_00_loc=emission_properties_subgrid(ii,jj,emission_sigz00_index,source_index)
                                 h_emis_loc=emission_properties_subgrid(ii,jj,emission_h_index,source_index)
+                                h_mix_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,hmix_subgrid_index)
+                                invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
+                                logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
+                                u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),ustar_min)
+                                FF10_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index)
                                 
                                 !write(*,*) ii,jj,sig_y_00_loc,sig_z_00_loc
                                 
@@ -683,10 +700,43 @@
                                     !call uEMEP_set_dispersion_sigma_PG(invL_loc,logz0_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                 endif
 
-                                !z0_temp=exp(meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index))
-                                h_mix_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,hmix_subgrid_index)
-                                invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
-                                logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
+                                    if (stability_scheme_flag.eq.3) then
+                                        !Fit the Kz curve at 100 and 2000 m to get an estimate of sigma that can be used in the calculations
+                                        !Set sig z,y 00 and sig z,y 0 to 0 for the fitting
+                                        x_loc_fit(1)=100.
+                                        x_loc_fit(2)=2000.
+                                        do f_loop=1,2
+                                        !Set initial values for sigma. Initial sig_y is set here as well but is overridden by Kz dispersion
+                                        call uEMEP_set_dispersion_sigma_simple(0.,0.,0.,emission_subgrid_delta(:,source_index)*0.,angle_diff(i_cross_integral,j_cross_integral)*0.,x_loc_fit(f_loop),sig_z_loc_fit(f_loop),sig_y_loc_fit(f_loop),sig_z_0_loc_fit,sig_y_0_loc_fit)
+                                        call uEMEP_set_dispersion_sigma_Kz(x_loc_fit(f_loop),0.,0.,0.,sig_z_loc_fit(f_loop),h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index)*0.,u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z_loc_fit(f_loop),sig_y_loc_fit(f_loop),FF_zc_loc_fit(f_loop))
+                                        enddo
+                                        
+                                        !Fit
+                                        bz_loc_fit=(log(sig_z_loc_fit(2))-log(sig_z_loc_fit(1)))/(log(x_loc_fit(2))-log(x_loc_fit(1)))
+                                        az_loc_fit=exp(log(sig_z_loc_fit(1))-bz_loc_fit*log(x_loc_fit(1)))
+                                        by_loc_fit=(log(sig_y_loc_fit(2))-log(sig_y_loc_fit(1)))/(log(x_loc_fit(2))-log(x_loc_fit(1)))
+                                        ay_loc_fit=exp(log(sig_y_loc_fit(1))-by_loc_fit*log(x_loc_fit(1)))
+
+                                        ay_loc=ay_loc_fit
+                                        by_loc=by_loc_fit
+                                        az_loc=az_loc_fit
+                                        bz_loc=bz_loc_fit
+                                        
+                                        !write(*,'(a,4f12.3)') 'Z:',az_loc,bz_loc,sig_z_loc_fit(1),sig_z_loc_fit(2)
+                                        !write(*,'(a,4f12.3)') 'Y:',ay_loc,by_loc,sig_y_loc_fit(1),sig_y_loc_fit(2)
+                                        
+                                        !Having made the fit need also to calculate sig_z,y if wind flag 6 is used
+                                        if (wind_level_flag.eq.6) then
+                                            call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
+                                            call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z_loc,sig_y_loc,FF_zc_loc)
+                                        
+                                            !Use the average of the emision height and zc to determine wind speed. Is set to true if wind_level_flag=6
+                                            !FF_loc=FF_zc_loc
+                                            !Set the minimum wind speed 
+                                            FF_loc=sqrt(FF_zc_loc*FF_zc_loc+FF_min_dispersion*FF_min_dispersion)
+                                        endif
+
+                                    endif
                                 
                                 
                                 h_temp=h_emis_loc
@@ -712,8 +762,17 @@
                                 !if (source_index.eq.industry_index) write(*,'(5es12.2)') meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FFgrid_subgrid_index),H_meteo,z0_temp,h_temp,FF_loc
                                 
  
+                                !write(*,*) h_mix_loc,invL_loc,logz0_loc,FF_loc
+                          
+                                !if (source_index.eq.industry_index) write(*,'(6ES12.2)') sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc
+                                !if (source_index.eq.traffic_index.and.distance_subgrid.eq.0) write(*,'(16es12.2)') sigy_0_subgid_width_scale,distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,sig_y_0_loc,sig_z_0_loc,sig_y_loc,sig_z_loc,h_emis_loc,FF_loc,1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
+                                !Divide by wind speed at receptor position
+                                temp_subgrid_rotated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc)
                                 
-                                if (wind_level_flag.eq.6.and.stability_scheme_flag.ne.3) then
+                                !If wind level flag is 6 in annual means then the average height is not calculated because a fit is used so valid for all stability types now
+                                !Needs to be calculated after sig_z_loc is calculated
+                                if (wind_level_flag.eq.6) then
+                                !if (wind_level_flag.eq.6.and.stability_scheme_flag.ne.3) then
                                         FF10_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
                                         call z_centremass_gauss_func(sig_z_loc,h_emis_loc,h_mix_loc,zc_loc)
                                         zc_loc=(h_emis_loc+zc_loc)/2.
@@ -722,12 +781,10 @@
                                         !write(*,'(2i,7es12.2)') ii,jj,zc_loc,FF10_loc,10.,h_mix_loc,exp(logz0_loc),FF_zc_loc,u_star0_loc
                                 endif
                                     
-                                !write(*,*) h_mix_loc,invL_loc,logz0_loc,FF_loc
-                          
-                                !if (source_index.eq.industry_index) write(*,'(6ES12.2)') sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc
-                                !if (source_index.eq.traffic_index.and.distance_subgrid.eq.0) write(*,'(16es12.2)') sigy_0_subgid_width_scale,distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,sig_y_0_loc,sig_z_0_loc,sig_y_loc,sig_z_loc,h_emis_loc,FF_loc,1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
-                                !Divide by wind speed at receptor position
-                                temp_subgrid_rotated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc)/FF_loc
+                                !write(*,'(11f12.3)') distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,FF_loc
+
+                                !Add the wind to the calculation
+                                temp_subgrid_rotated=temp_subgrid_rotated/FF_loc
 
                                 !Changed from 00 to 0 in the sigmas
                                 if (use_target_subgrid) then
@@ -1227,7 +1284,7 @@
                                     invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
                                     FFgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index)
                                     logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
-                                    u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),0.001)
+                                    u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),ustar_min)
                                     FF10_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index)
                                     sig_y_00_loc=emission_properties_subgrid(ii,jj,emission_sigy00_index,source_index)
                                     sig_z_00_loc=emission_properties_subgrid(ii,jj,emission_sigz00_index,source_index)

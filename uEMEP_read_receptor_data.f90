@@ -56,7 +56,7 @@
     !read the header to find out how many links there are
     read(unit_in,'(a)',ERR=20) temp_str
     k=0
-    do while(.not.eof(unit_in))
+    do while(.not.eof(unit_in).and.k.lt.n_receptor_max)
         k=k+1
         read(unit_in,*,ERR=20) name_receptor(k,1),lon_receptor(k),lat_receptor(k),height_receptor(k)!,name_receptor(k,2)
         !write(*,*) trim(name_receptor(k,1)),lon_receptor(k),lat_receptor(k),trim(name_receptor(k,2))
@@ -65,7 +65,7 @@
 20  close(unit_in)
     
     n_receptor=k
-    write(unit_logfile,'(a,i)') ' Number of receptor points = ', n_receptor
+    write(unit_logfile,'(a,2i)') ' Number of receptor points and max allowable = ', n_receptor,n_receptor_max
     
     !Convert to x,y positions
     do k=1,n_receptor

@@ -597,7 +597,7 @@
 
     
     integer n_receptor,n_receptor_in,n_receptor_max,n_valid_receptor,n_valid_receptor_in
-    parameter (n_receptor_max=10000)
+    parameter (n_receptor_max=20000)
     real lon_receptor(n_receptor_max),lat_receptor(n_receptor_max),x_receptor(n_receptor_max),y_receptor(n_receptor_max),height_receptor(n_receptor_max)
     real lon_receptor_in(n_receptor_max),lat_receptor_in(n_receptor_max),x_receptor_in(n_receptor_max),y_receptor_in(n_receptor_max),height_receptor_in(n_receptor_max)
     integer i_receptor_subgrid(n_receptor_max),j_receptor_subgrid(n_receptor_max)

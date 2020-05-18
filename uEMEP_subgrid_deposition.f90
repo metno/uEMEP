@@ -302,7 +302,7 @@
                 invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
                 FFgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index)
                 logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
-                u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),0.001)
+                u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),ustar_min)
                 FF10_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index)
                 sig_y_00_loc=emission_properties_subgrid(ii,jj,emission_sigy00_index,source_index)
                 sig_z_00_loc=emission_properties_subgrid(ii,jj,emission_sigz00_index,source_index)
