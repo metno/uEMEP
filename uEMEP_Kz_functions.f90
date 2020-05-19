@@ -36,6 +36,8 @@
     !L=lowest_stable_L
     !if (abs(invL).gt.1./L) L=1./invL
     L=1./invL
+    !Why does it not explode? when invL=0?
+    if (invL.eq.0) L=1.e6
     
     z0=exp(logz0)
     min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
@@ -71,6 +73,7 @@
     !f_t=1.+tau/l_t*(exp(-l_t/tau)-1.)
         !if (x.lt.200) then
         !write(*,'(a,i,5f)') 'S: ',j,tau,l_t,f_t,u_zc,sig_z
+        !write(*,'(a,5f)') 'S: ',tau,u_star0,z_tau_max,z_emis_loc,z_tau_min
         !endif
         
     !All functions commented out 4 secs
@@ -157,8 +160,8 @@
     K_z=K_min
 
     if (L.ge.0) then
-        K_z=0.39*u_star0*z*exp(-0.5*(z/0.21/z_pbl)*(z/0.21/z_pbl))  !As in EMEP
-        K_z=0.39*u_star0*z*exp(-0.5*(z/0.32/z_pbl)*(z/0.32/z_pbl)) !Adjusted to match under neutral conditions
+        !K_z=0.39*u_star0*z*exp(-0.5*(z/0.21/z_pbl)*(z/0.21/z_pbl))  !As in EMEP
+        !K_z=0.39*u_star0*z*exp(-0.5*(z/0.32/z_pbl)*(z/0.32/z_pbl)) !Adjusted to match under neutral conditions
         K_z=0.39*u_star0*z/phih*exp(-0.5*(z/0.32/z_pbl)*(z/0.32/z_pbl)) !Adjusted but with stability added
     else
         call phih_func(h_s,L,phih_hs,phih_i_hs)
