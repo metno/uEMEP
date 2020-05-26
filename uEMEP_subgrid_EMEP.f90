@@ -108,12 +108,16 @@
             jj=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
          
             !Nearest neighbour interpolate the EMEP compounds to subgrid
+            if (ii.ge.1.and.ii.le.dim_length_nc(x_dim_nc_index).and.jj.ge.1.and.jj.le.dim_length_nc(y_dim_nc_index)) then
+            
             do i_pollutant=1,n_emep_pollutant_loop
             do i_loop=1,n_pollutant_compound_loop(i_pollutant)
                 !write(*,*) trim(pollutant_file_str(pollutant_compound_loop_index(i_pollutant,i_loop)))
                 orig_EMEP_subgrid(i,j,:,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_var3d_nc(ii,jj,:,pollutant_compound_loop_index(i_pollutant,i_loop))
             enddo
             enddo
+            
+            endif
             
         enddo
         enddo
@@ -130,6 +134,8 @@
             ii=crossreference_target_to_emep_subgrid(i,j,x_dim_index)
             jj=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
         
+            if (ii.ge.1.and.ii.le.dim_length_nc(x_dim_nc_index).and.jj.ge.1.and.jj.le.dim_length_nc(y_dim_nc_index)) then
+            
             subgrid(i,j,:,emep_subgrid_index,:,:)=var3d_nc(ii,jj,:,conc_nc_index,:,:)
             subgrid(i,j,:,emep_local_subgrid_index,:,:)=var3d_nc(ii,jj,:,local_nc_index,:,:)
                     
@@ -147,6 +153,8 @@
                 species_EMEP_subgrid(i,j,:,i_loop,i_sp)=species_var3d_nc(ii,jj,:,i_loop,i_sp)
             enddo
             enddo
+            endif
+            
             endif
 
         endif
@@ -226,6 +234,9 @@
                 ii_w=ii+ii_w0
                 jj_w=jj+jj_w0
                 
+                !Put in a limit
+                if (ii_nc.ge.1.and.ii_nc.le.dim_length_nc(x_dim_nc_index).and.jj_nc.ge.1.and.jj_nc.le.dim_length_nc(y_dim_nc_index)) then
+
                 !Set the edges to an EMEP grid surounding the EMEP grid being assessed
                 xpos_min=max(xpos_area_min,var1d_nc(ii_nc,lon_nc_index)-dgrid_nc(lon_nc_index)/2.)
                 xpos_max=min(xpos_area_max,var1d_nc(ii_nc,lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
@@ -268,6 +279,7 @@
                     enddo
                     endif
 
+                endif
             enddo
             enddo
             
@@ -282,6 +294,9 @@
                 ii_w=ii+ii_w0
                 jj_w=jj+jj_w0
 
+                !Put in a limit
+                if (ii_nc.ge.1.and.ii_nc.le.dim_length_nc(x_dim_nc_index).and.jj_nc.ge.1.and.jj_nc.le.dim_length_nc(y_dim_nc_index)) then
+
                 if (jj.ne.0.or.ii.ne.0) then
                     
                     !First weight is emission, the second is area
@@ -290,6 +305,8 @@
                         -lc_var3d_nc(ii_w0,jj_w0,ii_nc,jj_nc,tt,lc_local_nc_index,:,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,:)*weighting_nc(ii_w0,jj_w0,tt_dim,:) &
                         -lc_var3d_nc(ii_w,jj_w,i_nc,j_nc,tt,lc_local_nc_index,:,i_pollutant)*weighting_nc(ii_w0,jj_w0,tt_dim,:)*weighting_nc(ii_w,jj_w,tt_dim,:)
                     enddo                 
+                endif
+                
                 endif
                 
             enddo

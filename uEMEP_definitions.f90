@@ -868,6 +868,11 @@
     
     real :: osm_adt_power_scale=1.
     
+    real :: romberg_parameters(3)=0.
+    
+    real :: sig_y_scaling_factor=2.0
+    
+    
     end module uEMEP_definitions
     
     

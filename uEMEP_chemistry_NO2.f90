@@ -123,7 +123,7 @@
             call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out,p_bg_out,p_out)
             !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1),no2_out/nox_out,o3_out/o3_bg
         elseif (no2_chemistry_scheme_flag.eq.3) then
-            call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out)        
+            call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out,romberg_parameters)        
         endif
         
         !write(*,*) nox_out-subgrid(i,j,t,total_subgrid_index,allsource_index,1)
@@ -278,7 +278,7 @@
                 call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out,p_bg_out,p_out)
                 !write(*,'(i,7f8.2,f12.2,3f8.4)') remove_source,nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out
             elseif (no2_chemistry_scheme_flag.eq.3) then
-                call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out)   
+                call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out,romberg_parameters)   
             endif
         
             !write(*,*) nox_out-subgrid(i,j,t,total_subgrid_index,allsource_index,1)
@@ -599,11 +599,12 @@
 
     end subroutine uEMEP_phototimescale_NO2
     
-    subroutine uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out)
+    subroutine uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out,romberg_parameters)
     
     implicit none
     
     real, intent(in) :: nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc
+    real, intent(in) :: romberg_parameters(3)
     real, intent(out) :: nox_out,no2_out,o3_out
     
     !From Norwegian obs fit
@@ -614,7 +615,13 @@
     real :: b_rom=35
     real :: c_rom=0.23
     real ox_init,no2_init
-    !Gral values 30 35 0.18    !Bächlin and Bösinger (2008) 29 35 0.217
+    !Gral values 30 35 0.18    !Bächlin and Bösinger (2008) 29 35 0.217    
+    if (romberg_parameters(1).ne.0) then
+        a_rom=romberg_parameters(1)
+        b_rom=romberg_parameters(2)
+        c_rom=romberg_parameters(3)
+    endif
+    
     nox_out=nox_bg+nox_loc
     no2_out=a_rom*nox_out/(nox_out+b_rom)+nox_out*c_rom
     no2_init=no2_bg+f_no2_loc*nox_loc

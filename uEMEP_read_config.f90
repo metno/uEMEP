@@ -596,6 +596,12 @@
        
         osm_adt_power_scale=read_name_real('osm_adt_power_scale',osm_adt_power_scale,unit_in,unit_logfile)
         
+        romberg_parameters(1)=read_name_real('romberg_parameters(1)',romberg_parameters(1),unit_in,unit_logfile)
+        romberg_parameters(2)=read_name_real('romberg_parameters(2)',romberg_parameters(2),unit_in,unit_logfile)
+        romberg_parameters(3)=read_name_real('romberg_parameters(3)',romberg_parameters(3),unit_in,unit_logfile)
+        
+        sig_y_scaling_factor=read_name_real('sig_y_scaling_factor',sig_y_scaling_factor,unit_in,unit_logfile)
+        
     close (unit_in)
     
     !Call some error traps

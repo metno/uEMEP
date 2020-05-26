@@ -571,7 +571,7 @@
                                         !call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),0.,x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                         !write(*,*) 'H0: ',sig_z_loc
                                     
-                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z_loc,sig_y_loc,FF_zc_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_y_scaling_factor,sig_z_loc,sig_y_loc,FF_zc_loc)
                                         !write(*,*) 'H1: ',sig_z_loc
                                         
                                         !Diagnostic
@@ -715,7 +715,7 @@
                                         do f_loop=1,2
                                         !Set initial values for sigma. Initial sig_y is set here as well but is overridden by Kz dispersion
                                         call uEMEP_set_dispersion_sigma_simple(0.,0.,0.,emission_subgrid_delta(:,source_index)*0.,angle_diff(i_cross_integral,j_cross_integral)*0.,x_loc_fit(f_loop),sig_z_loc_fit(f_loop),sig_y_loc_fit(f_loop),sig_z_0_loc_fit,sig_y_0_loc_fit)
-                                        call uEMEP_set_dispersion_sigma_Kz(x_loc_fit(f_loop),0.,0.,0.,sig_z_loc_fit(f_loop),h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index)*0.,u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z_loc_fit(f_loop),sig_y_loc_fit(f_loop),FF_zc_loc_fit(f_loop))
+                                        call uEMEP_set_dispersion_sigma_Kz(x_loc_fit(f_loop),0.,0.,0.,sig_z_loc_fit(f_loop),h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index)*0.,u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_y_scaling_factor,sig_z_loc_fit(f_loop),sig_y_loc_fit(f_loop),FF_zc_loc_fit(f_loop))
                                         enddo
                                         
                                         !Fit
@@ -732,7 +732,7 @@
                                         !Having made the fit need also to calculate sig_z,y if wind flag 6 is used
                                         if (wind_level_flag.eq.6) then
                                             call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
-                                            call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z_loc,sig_y_loc,FF_zc_loc)
+                                            call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_y_scaling_factor,sig_z_loc,sig_y_loc,FF_zc_loc)
                                         
                                             !Use the average of the emision height and zc to determine wind speed. Is set to true if wind_level_flag=6
                                             !FF_loc=FF_zc_loc
@@ -1321,7 +1321,7 @@
                                         call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                     
                                         !write(*,*) 'IN:  ',x_loc,sig_z_loc,FF_loc
-                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_0_loc,sig_y_0_loc,sigy_0_subgid_width_scale,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z_loc,sig_y_loc,FF_zc_loc)
+                                        call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_0_loc,sig_y_0_loc,sigy_0_subgid_width_scale,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_y_scaling_factor,sig_z_loc,sig_y_loc,FF_zc_loc)
                                         !write(*,*) 'OUT: ',x_loc,sig_z_loc,FF_loc
                                         
                                         sig_y_loc=sig_y_loc+x_loc*abs(angle_diff(i_cross_integral,j_cross_integral))

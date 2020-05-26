@@ -10,11 +10,11 @@
 !   Calculates dispersion based on Kz and wind profiles
 !==========================================================================
 
-    subroutine uEMEP_set_dispersion_sigma_Kz(x_in,sig_z00,sig_y00,sigy_0_subgid_width_scale,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta,u_star0_in,average_zc_h_in_Kz_flag,n_kz_iterations,sig_z,sig_y,u_zc)
+    subroutine uEMEP_set_dispersion_sigma_Kz(x_in,sig_z00,sig_y00,sigy_0_subgid_width_scale,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta,u_star0_in,average_zc_h_in_Kz_flag,n_kz_iterations,sig_y_scaling_factor,sig_z,sig_y,u_zc)
 
     implicit none
     
-    real, intent(in) :: x_in,sig_z00,sig_y00,sigy_0_subgid_width_scale,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta(2),u_star0_in
+    real, intent(in) :: x_in,sig_z00,sig_y00,sigy_0_subgid_width_scale,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta(2),u_star0_in,sig_y_scaling_factor
     integer, intent(in) :: n_kz_iterations
     logical, intent(in) :: average_zc_h_in_Kz_flag
     real, intent(out) :: sig_z,sig_y,u_zc
@@ -130,8 +130,7 @@
     !sig_y=sig_y00+min_xy*sigy_0_subgid_width_scale+sqrt(2.*K_y*l_t*f_t)
     
     !Should change this to what is documented, i.e. 2*sig_z. Need to test
-    !Also sigy_0_subgid_width_scale should perhaps be 0.5, not 0.25. Also need to test
-    sig_y=sig_y00+min_xy*sigy_0_subgid_width_scale+(sig_z-sig_z00)*2.0
+    sig_y=sig_y00+min_xy*sigy_0_subgid_width_scale+(sig_z-sig_z00)*sig_y_scaling_factor
     
     end subroutine uEMEP_set_dispersion_sigma_Kz
     

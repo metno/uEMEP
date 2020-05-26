@@ -70,6 +70,7 @@
     
     !NOTE: temporary for nh3 false is not on
     logical :: use_comp_temporary=.false.
+    logical :: EMEP_region_outside_domain=.false.
     
     !Functions
     double precision date_to_number
@@ -312,6 +313,15 @@
 
         endif
         
+        if (dim_length_nc(x_dim_nc_index).lt.1.or.dim_length_nc(y_dim_nc_index).lt.1) then
+            write(unit_logfile,'(A,2I)') ' WARNING: Selected EMEP region dimensions are less than 1 (i,j): ',dim_length_nc
+            write(unit_logfile,'(A)') ' Setting to 1 but this selected region is invalid and should not be calculated '
+            write(unit_logfile,'(A)') ' This can happen if a receptor is outside the EMEP domain'
+            dim_length_nc=1
+            dim_start_nc(x_dim_nc_index)=1
+            dim_start_nc(y_dim_nc_index)=1
+            EMEP_region_outside_domain=.true.
+        endif
 
         !Allocate the nc arrays for reading
         if (.not.allocated(val_dim_nc)) allocate (val_dim_nc(maxval(dim_length_nc),num_dims_nc)) !x, y, z and time dimension values
@@ -1091,7 +1101,8 @@
 
         where (var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index).lt.ustar_min) var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)=ustar_min
 
-        !Test for 0 wind speed components
+        !Test for 0 wind speed components if valid
+        if (.not.EMEP_region_outside_domain) then
         do j=1,dim_length_nc(y_dim_nc_index)
         do i=1,dim_length_nc(x_dim_nc_index)
         do t=1,dim_length_nc(time_dim_nc_index)
@@ -1140,6 +1151,8 @@
         enddo
         enddo
             
+        endif
+        
         !If no logz0 available. Set to log(0.1)
         !For urban areas a value of 0.3 is used
         where (var3d_nc(:,:,:,logz0_nc_index,:,meteo_p_loop_index).eq.0.0) var3d_nc(:,:,:,logz0_nc_index,:,meteo_p_loop_index)=log(0.3)
