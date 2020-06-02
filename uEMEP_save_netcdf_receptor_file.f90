@@ -150,7 +150,11 @@
         !write(*,*) 'n_valid_receptor',n_valid_receptor
         call check(  nf90_def_dim(ncid,"station_id",n_valid_receptor_in, station_dimid) )
         call check(  nf90_def_dim(ncid,"charlen",n_char, charlen_dimid) )
-        call check(  nf90_def_dim(ncid,"time",n_time_total, time_dimid) )
+        
+        !call check(  nf90_def_dim(ncid,"time",n_time_total, time_dimid) )
+        !To have time as unlimittec (Heiko)
+        call check(  nf90_def_dim(ncid,"time",NF90_UNLIMITED, time_dimid) )
+        
      
         !Define the dimension variables
         call check(  nf90_def_var(ncid, "station_id", NF90_INT, station_dimid, station_varid) )
@@ -194,6 +198,10 @@
         !call check( nf90_put_var(ncid, lat_varid, lat_array) )
         !call check( nf90_put_var(ncid, lon_varid, lon_array) )
         
+        !Put this in to fix unlimitted problem? If works on annual need to check it works other places as well!
+        !call check( nf90_put_var(ncid, time_varid, time_seconds_output_nc(1:nt), start=(/1/), count=(/nt/)) )
+        !call check( nf90_put_var(ncid, time_varid, time_seconds_output_nc(1:nt)) )
+        
         call check( nf90_close(ncid) )
     
     endif
@@ -213,6 +221,11 @@
     call check( nf90_inquire_dimension(ncid, dimids2(2), temp_name, n_dims_length(2)) )
     !Set the starting point to 1
     n_dims_start(1:2)=1
+    
+    
+    !Set time to full length in unlimitted case (Heiko)
+    n_dims_length(2) = n_time_total
+
    ! write(*,*) 'n_dims_length(1) ',n_dims_length(1)
    ! write(*,*) 'n_dims_length(2) ',n_dims_length(2)
 
@@ -303,15 +316,16 @@
       
         !Write time to the file
 
-        !call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )
+        !!call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )
         call check( nf90_put_var(ncid, time_varid, time_seconds_output_nc(1:nt), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )
-        !call check( nf90_put_var(ncid, station_varid, name_rec(:), start = (/1,1/), count=(/n_dims(1),n_char/)) )
+        !!call check( nf90_put_var(ncid, station_varid, name_rec(:), start = (/1,1/), count=(/n_dims(1),n_char/)) )
         
         !Write station index and name
         call check( nf90_put_var(ncid, station_varid, id_rec, start = (/n_dims_start(1),1/), count=(/n_dims_length(1),n_char/)) )
         call check( nf90_put_var(ncid, station_name_varid, name_rec, start = (/1,n_dims_start(1)/), count=(/n_char,n_dims_length(1)/)) )
-        !call check( nf90_put_var(ncid, station_name_varid, name_rec, start = (/1,1/), count=(/n_char,n_dims(1)/)) )
-        !call check( nf90_put_var(ncid, station_name_varid, name_rec, start = (/1/), count=(/n_dims(1)/)) )
+        
+        !!call check( nf90_put_var(ncid, station_name_varid, name_rec, start = (/1,1/), count=(/n_char,n_dims(1)/)) )
+        !!call check( nf90_put_var(ncid, station_name_varid, name_rec, start = (/1/), count=(/n_dims(1)/)) )
       
         !Write the variable to file
         if (nf90_type.eq.NF90_byte) then

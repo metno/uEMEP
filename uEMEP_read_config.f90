@@ -602,6 +602,9 @@
         
         sig_y_scaling_factor=read_name_real('sig_y_scaling_factor',sig_y_scaling_factor,unit_in,unit_logfile)
         
+        read_shipping_from_netcdf_flag=read_name_logical('read_shipping_from_netcdf_flag',read_shipping_from_netcdf_flag,unit_in,unit_logfile)
+        
+        
     close (unit_in)
     
     !Call some error traps

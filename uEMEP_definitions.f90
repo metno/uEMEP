@@ -145,6 +145,11 @@
     character(256) var_name_population_nc(num_var_population_nc)
     character(256) dim_name_population_nc(num_dims_population_nc)
 
+    integer num_var_shipping_nc,num_dims_shipping_nc
+    parameter (num_var_shipping_nc=1,num_dims_shipping_nc=2) !assumes shipping files in lat and lon
+    character(256) var_name_shipping_nc(num_var_shipping_nc)
+    character(256) dim_name_shipping_nc(num_dims_shipping_nc)
+
 
     !dimension netcdf fields
     integer x_dim_nc_index,y_dim_nc_index,z_dim_nc_index,time_dim_nc_index,xdist_dim_nc_index,ydist_dim_nc_index
@@ -872,6 +877,7 @@
     
     real :: sig_y_scaling_factor=2.0
     
+    logical :: read_shipping_from_netcdf_flag=.false.
     
     end module uEMEP_definitions
     

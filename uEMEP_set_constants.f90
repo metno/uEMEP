@@ -172,6 +172,9 @@
         !var_name_population_nc(lat_nc_index)='lat'
         var_name_population_nc(population_nc_index)='Band1'
 
+        dim_name_shipping_nc(x_dim_nc_index)='lon'
+        dim_name_shipping_nc(y_dim_nc_index)='lat'
+        var_name_shipping_nc(population_nc_index)='nox'
        
         !Additional compounds for chemistry and totals
         comp_name_nc=''

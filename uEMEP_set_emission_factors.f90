@@ -34,7 +34,9 @@
     !Test for monthly data
     !emission_factor_conversion(nh3_index,agriculture_index,:)=emission_factor_conversion(nh3_index,agriculture_index,:)*1.06
     
-    if (read_weekly_shipping_data_flag.or.read_monthly_and_daily_shipping_data_flag) then
+    if (read_shipping_from_netcdf_flag) then
+        emission_factor_conversion(:,shipping_index,:)=(1.e+6)/(3600.) ![g/hr]*(ug/sec)=ug/sec. 
+    elseif (read_weekly_shipping_data_flag.or.read_monthly_and_daily_shipping_data_flag) then
         !Convert from g/hour to ug/s
         emission_factor_conversion(:,shipping_index,:)=(1.e+6)/(3600.) ![g/hr]*(ug/sec)=ug/sec. 
     endif
@@ -137,6 +139,11 @@
     real :: emission_scaling_loop
     real :: sigma_loop
     integer :: k
+    
+    !Do not correct if no traffic is to be calculated
+    if (.not.calculate_source(traffic_index)) then
+        return
+    endif
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'

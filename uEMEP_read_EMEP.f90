@@ -1174,6 +1174,15 @@
         !Limit Jd as well in case there is something wrong
         where (var4d_nc(:,:,:,:,J_nc_index,:,:).lt.0) var4d_nc(:,:,:,:,J_nc_index,:,:)=0.
         
+        !Correct the inverse of the wind speed for the factor 0.2 used to create it in EMEP
+        write(unit_logfile,'(A)') ' Correcting inverse wind speed to account for the 0.2 m/s offset: '
+        var3d_nc(:,:,:,inv_FF10_nc_index,:,:)=var3d_nc(:,:,:,inv_FF10_nc_index,:,:)/(1.-0.2*var3d_nc(:,:,:,inv_FF10_nc_index,:,:))
+        var3d_nc(:,:,:,inv_FFgrid_nc_index,:,:)=var3d_nc(:,:,:,inv_FFgrid_nc_index,:,:)/(1.-0.2*var3d_nc(:,:,:,inv_FFgrid_nc_index,:,:))
+        var4d_nc(:,:,:,:,inv_FFgrid_nc_index,:,:)=var4d_nc(:,:,:,:,inv_FFgrid_nc_index,:,:)/(1.-0.2*var4d_nc(:,:,:,:,inv_FFgrid_nc_index,:,:))
+        where (var3d_nc(:,:,:,inv_FF10_nc_index,:,:).gt.4.5) var3d_nc(:,:,:,inv_FF10_nc_index,:,:)=4.5 !Set the limit so that FF can not be less than 0.2222
+        where (var3d_nc(:,:,:,inv_FFgrid_nc_index,:,:).gt.4.5) var3d_nc(:,:,:,inv_FFgrid_nc_index,:,:)=4.5 !Set the limit so that FF can not be less than 0.2222
+        where (var4d_nc(:,:,:,:,inv_FFgrid_nc_index,:,:).gt.4.5) var4d_nc(:,:,:,:,inv_FFgrid_nc_index,:,:)=4.5 !Set the limit so that FF can not be less than 0.2222
+        
         if (FF_scale.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Rescaling wind fields everywhere with factor: ',FF_scale
             var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)*FF_scale
