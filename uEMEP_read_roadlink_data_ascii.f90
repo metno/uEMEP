@@ -133,7 +133,8 @@
                 n_roadlinks=n_roadlinks+n_subnodes-1
                 endif
             enddo
-            n_roadlinks_major=i
+            !Have commented out this in the cases where the number of links are not as written. Can happen with OSM data
+            !n_roadlinks_major=i
             rewind(unit_in)
             call NXTDAT(unit_in,nxtdat_flag)
         endif
@@ -270,7 +271,7 @@
                 n_roadlinks=n_roadlinks+n_subnodes-1
                endif
             enddo
-            n_roadlinks_major=i
+            !n_roadlinks_major=i
             rewind(unit_in)
             call NXTDAT(unit_in,nxtdat_flag)
         endif

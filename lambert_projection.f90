@@ -282,7 +282,7 @@ end subroutine testlambert
     end subroutine LAEA2LL_spherical
     
     subroutine LL2LAEA(x,y,lon_in,lat_in,projection_attributes)
-    !www.epsg.org
+    !https://epsg.io/3035
     
     implicit none
     double precision, intent(in) :: projection_attributes(10)

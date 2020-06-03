@@ -297,6 +297,10 @@
                 i_temp_max=1+floor((temp_x_max-temp_var1d_nc_dp(1,1))/temp_delta(1)+0.5)
                 j_temp_min=1+floor((temp_y_min-temp_var1d_nc_dp(2,1))/temp_delta(2)+0.5)
                 j_temp_max=1+floor((temp_y_max-temp_var1d_nc_dp(2,1))/temp_delta(2)+0.5)
+                i_temp_min=1+floor((temp_x_min-temp_var1d_nc_dp(1,1))/temp_delta(1)+0.5)
+                i_temp_max=1+ceiling((temp_x_max-temp_var1d_nc_dp(1,1))/temp_delta(1)+0.5)
+                j_temp_min=1+floor((temp_y_min-temp_var1d_nc_dp(2,1))/temp_delta(2)+0.5)
+                j_temp_max=1+ceiling((temp_y_max-temp_var1d_nc_dp(2,1))/temp_delta(2)+0.5)
                 !write(unit_logfile,'(A,2I)') ' Reading EMEP i grids: ',i_temp_min,i_temp_max
                 !write(unit_logfile,'(A,2I)') ' Reading EMEP j grids: ',j_temp_min,j_temp_max
                 i_temp_min=max(1,i_temp_min-1-ceiling(1.*EMEP_grid_interpolation_size))

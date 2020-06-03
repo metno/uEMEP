@@ -68,7 +68,6 @@
         dy_temp=dgrid_nc(lat_nc_index)
     endif
     
-    
     subgrid_loop_index(x_dim_index)=floor(dx_temp/subgrid_delta(x_dim_index)*loop_index_scale)
     subgrid_loop_index(y_dim_index)=floor(dy_temp/subgrid_delta(y_dim_index)*loop_index_scale)
 
@@ -115,6 +114,11 @@
         if (calculate_source(i_source)) then
             emission_buffer_index(x_dim_index,i_source)=floor(dx_temp/emission_subgrid_delta(x_dim_index,i_source)*(buffer_index_scale+0.5))
             emission_buffer_index(y_dim_index,i_source)=floor(dy_temp/emission_subgrid_delta(y_dim_index,i_source)*(buffer_index_scale+0.5))       
+            if (local_subgrid_method_flag.eq.3) then
+                !Extend the emission buffer zone 0.5 EMEP grids when redistributing emissions to gurantee all emissions are accounted for
+                emission_buffer_index(x_dim_index,i_source)=floor(dx_temp/emission_subgrid_delta(x_dim_index,i_source)*(buffer_index_scale+1.0))
+                emission_buffer_index(y_dim_index,i_source)=floor(dy_temp/emission_subgrid_delta(y_dim_index,i_source)*(buffer_index_scale+1.0))
+            endif
         endif
         enddo
 
@@ -122,6 +126,11 @@
         if (calculate_source(i_source)) then
             init_emission_buffer_index(x_dim_index,i_source)=floor(dx_temp/init_emission_subgrid_delta(x_dim_index,i_source)*(buffer_index_scale+0.5))
             init_emission_buffer_index(y_dim_index,i_source)=floor(dy_temp/init_emission_subgrid_delta(y_dim_index,i_source)*(buffer_index_scale+0.5))       
+            if (local_subgrid_method_flag.eq.3) then
+                !Extend the emission buffer zone 0.5 EMEP grids when redistributing emissions to gurantee all emissions are accounted for
+                init_emission_buffer_index(x_dim_index,i_source)=floor(dx_temp/init_emission_subgrid_delta(x_dim_index,i_source)*(buffer_index_scale+1.0))
+                init_emission_buffer_index(y_dim_index,i_source)=floor(dy_temp/init_emission_subgrid_delta(y_dim_index,i_source)*(buffer_index_scale+1.0))       
+            endif
         endif
         enddo
 

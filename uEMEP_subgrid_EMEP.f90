@@ -201,6 +201,10 @@
         ii_start=-1-floor(0.5*(EMEP_grid_interpolation_size-1.))
         jj_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
         ii_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
+        jj_start=-1-ceiling(0.5*(EMEP_grid_interpolation_size-1.))
+        ii_start=-1-ceiling(0.5*(EMEP_grid_interpolation_size-1.))
+        jj_end=1+ceiling(0.5*(EMEP_grid_interpolation_size-1.))
+        ii_end=1+ceiling(0.5*(EMEP_grid_interpolation_size-1.))
         
         !Set the size of the region surounding the target grid that is searched
         xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
@@ -528,6 +532,10 @@
             i_nc_end=min(dim_length_nc(x_dim_nc_index)+i_nc-i_w_c,i_nc+1+floor((EMEP_grid_interpolation_size-1.)*0.5))
             j_nc_start=max(1+j_nc-j_w_c,j_nc-1-floor((EMEP_grid_interpolation_size-1.)*0.5))
             j_nc_end=min(dim_length_nc(y_dim_nc_index)+j_nc-j_w_c,j_nc+1+floor((EMEP_grid_interpolation_size-1.)*0.5))
+            i_nc_start=max(1+i_nc-i_w_c,i_nc-1-ceiling((EMEP_grid_interpolation_size-1.)*0.5))
+            i_nc_end=min(dim_length_nc(x_dim_nc_index)+i_nc-i_w_c,i_nc+1+ceiling((EMEP_grid_interpolation_size-1.)*0.5))
+            j_nc_start=max(1+j_nc-j_w_c,j_nc-1-ceiling((EMEP_grid_interpolation_size-1.)*0.5))
+            j_nc_end=min(dim_length_nc(y_dim_nc_index)+j_nc-j_w_c,j_nc+1+ceiling((EMEP_grid_interpolation_size-1.)*0.5))
 
 
             do jj=j_nc_start,j_nc_end
@@ -559,8 +567,10 @@
             !Subtract the additional local emissions from the nonlocal using the new scheme
             nonlocal_correction(tt_dim,i_source,:)=0.
 
-            do jj=-1-floor((EMEP_grid_interpolation_size-1.)*0.5),+1+floor((EMEP_grid_interpolation_size-1.)*0.5)
-            do ii=-1-floor((EMEP_grid_interpolation_size-1.)*0.5),+1+floor((EMEP_grid_interpolation_size-1.)*0.5)
+ !           do jj=-1-floor((EMEP_grid_interpolation_size-1.)*0.5),+1+floor((EMEP_grid_interpolation_size-1.)*0.5)
+ !           do ii=-1-floor((EMEP_grid_interpolation_size-1.)*0.5),+1+floor((EMEP_grid_interpolation_size-1.)*0.5)
+            do jj=-1-ceiling((EMEP_grid_interpolation_size-1.)*0.5),+1+ceiling((EMEP_grid_interpolation_size-1.)*0.5)
+            do ii=-1-ceiling((EMEP_grid_interpolation_size-1.)*0.5),+1+ceiling((EMEP_grid_interpolation_size-1.)*0.5)
                 
                 ii_nc=ii+i_nc
                 jj_nc=jj+j_nc          

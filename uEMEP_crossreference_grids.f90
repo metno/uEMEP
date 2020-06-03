@@ -162,7 +162,7 @@
     do i=1,emission_subgrid_dim(x_dim_index,i_source)
         if (EMEP_projection_type.eq.LL_projection_index) then
             ii=1+floor((lon_emission_subgrid(i,j,i_source)-var1d_nc(1,lon_nc_index))/dgrid_nc(lon_nc_index)+0.5)
-            jj=1+floor((lat_emission_subgrid(i,j,i_source)-var1d_nc(1,lat_nc_index))/dgrid_nc(lat_nc_index)+0.5)     
+            jj=1+floor((lat_emission_subgrid(i,j,i_source)-var1d_nc(1,lat_nc_index))/dgrid_nc(lat_nc_index)+0.5)
             crossreference_emission_to_emep_subgrid(i,j,x_dim_index,i_source)=ii
             crossreference_emission_to_emep_subgrid(i,j,y_dim_index,i_source)=jj
         elseif (EMEP_projection_type.eq.LCC_projection_index) then

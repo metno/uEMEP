@@ -112,6 +112,8 @@
 
                 ii=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,i_source)
                 jj=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,i_source)
+                ii=max(min(ii,dim_length_nc(x_dim_nc_index)),1)
+                jj=max(min(jj,dim_length_nc(y_dim_nc_index)),1)
                 subgrid_count_nc(ii,jj)=subgrid_count_nc(ii,jj)+1
                 total_proxy_subgrid_emission_in_EMEP_grid(ii,jj,i_source,:)=total_proxy_subgrid_emission_in_EMEP_grid(ii,jj,i_source,:)+proxy_emission_subgrid(i,j,i_source,:)
                 emission_subgrid(i,j,:,i_source,:)=var3d_nc(ii,jj,:,emis_nc_index,i_source,:)
@@ -127,10 +129,12 @@
 
                 ii=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,i_source)
                 jj=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,i_source)
+                ii=max(min(ii,dim_length_nc(x_dim_nc_index)),1)
+                jj=max(min(jj,dim_length_nc(y_dim_nc_index)),1)
                 
                 total_proxy_emission_subgrid(i,j,i_source,:)=total_proxy_subgrid_emission_in_EMEP_grid(ii,jj,i_source,:)  
                 subgrid_count_subgrid(i,j,:)=subgrid_count_nc(ii,jj)  
-                
+                !write(*,*) subgrid_count_nc(ii,jj)
                 !Converts from mg/m2/hour(year) to ug/s/subgrid assuming the original EMEP emissions are in mg/m2/hour(year)
                 if (hourly_calculations) emission_subgrid(i,j,:,i_source,:)=emission_subgrid(i,j,:,i_source,:) &
                     *emission_subgrid_delta(x_dim_index,i_source)*emission_subgrid_delta(y_dim_index,i_source)*1000./3600.
