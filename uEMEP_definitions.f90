@@ -878,6 +878,7 @@
     real :: sig_y_scaling_factor=2.0
     
     logical :: read_shipping_from_netcdf_flag=.false.
+    real :: min_proxy_emission_shipping_value=0.
     
     end module uEMEP_definitions
     

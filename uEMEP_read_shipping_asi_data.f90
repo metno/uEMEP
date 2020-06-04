@@ -691,7 +691,7 @@
         !Interpolate to the shipping grid in lat lon coordinates
         !Temporary emissions cutoff
         i_ship=1
-        where (shipping_nc_dp.lt.0.002) shipping_nc_dp=0.
+        where (shipping_nc_dp.lt.min_proxy_emission_shipping_value) shipping_nc_dp=0.
         write(unit_logfile,'(2a,2f12.2)') 'Shipping min and max: ',trim(var_name_nc_temp),minval(shipping_nc_dp(:,:,i_ship)),maxval(shipping_nc_dp(:,:,i_ship))
 
 
