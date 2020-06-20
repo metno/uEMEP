@@ -1264,6 +1264,8 @@
         if (allocated(temp_var3d_nc)) deallocate (temp_var3d_nc)
         if (allocated(species_temp_var3d_nc)) deallocate (species_temp_var3d_nc)
  
+        !Shift the EMEP grid to the west by 0.1 degrees. Portugal test
+        !var1d_nc(:,x_dim_nc_index)=var1d_nc(:,x_dim_nc_index)-0.1
 
     end subroutine uEMEP_read_EMEP
     

@@ -829,7 +829,9 @@
             temp_scale=(temp_delta(1)*correct_lon(1)*temp_delta(2)*correct_lon(2))/(delta_pop_nc(1)*correct_lon(1)*delta_pop_nc(2)*correct_lon(2))
             proxy_emission_subgrid(i,j,source_index,:)=proxy_emission_subgrid(i,j,source_index,:)*temp_scale
             
-  
+            !Apply the power law scaling for population
+            proxy_emission_subgrid(:,:,source_index,1)=proxy_emission_subgrid(:,:,source_index,1)**population_power_scale
+    
             if (isnan(proxy_emission_subgrid(i,j,source_index,1))) then
             write(*,*) 'Stopping, nan in proxy_emission_subgrid'
             write(*,*) temp_scale,correct_lon,delta_pop_nc,temp_delta,temp_lon

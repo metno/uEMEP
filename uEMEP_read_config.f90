@@ -605,6 +605,7 @@
         read_shipping_from_netcdf_flag=read_name_logical('read_shipping_from_netcdf_flag',read_shipping_from_netcdf_flag,unit_in,unit_logfile)
         min_proxy_emission_shipping_value=read_name_real('min_proxy_emission_shipping_value',min_proxy_emission_shipping_value,unit_in,unit_logfile)
         
+        population_power_scale=read_name_real('population_power_scale',population_power_scale,unit_in,unit_logfile)
         
     close (unit_in)
     

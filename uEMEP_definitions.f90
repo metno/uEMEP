@@ -880,6 +880,8 @@
     logical :: read_shipping_from_netcdf_flag=.false.
     real :: min_proxy_emission_shipping_value=0.
     
+    real :: population_power_scale=1.
+    
     end module uEMEP_definitions
     
     
