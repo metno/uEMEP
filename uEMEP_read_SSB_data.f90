@@ -843,11 +843,12 @@
         enddo
         enddo
         
+        !Apply the power law scaling for population to reduce the distribution in higher population areas
+        write(unit_logfile,'(A,f12.2)') 'Power scaling of population using: ',population_power_scale
+        proxy_emission_subgrid(:,:,source_index,:)=proxy_emission_subgrid(:,:,source_index,:)**population_power_scale
+    
         endif
 
-        !Apply the power law scaling for population to reduce the distribution to higher population areas
-        proxy_emission_subgrid(:,:,source_index,1)=proxy_emission_subgrid(:,:,source_index,1)**population_power_scale
-    
        
         if (allocated(population_nc_dp)) deallocate (population_nc_dp)
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
