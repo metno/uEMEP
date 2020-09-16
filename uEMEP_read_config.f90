@@ -552,6 +552,7 @@
         
         use_EMEP_surface_ozone_flag=read_name_logical('use_EMEP_surface_ozone_flag',use_EMEP_surface_ozone_flag,unit_in,unit_logfile)
         use_EMEP_surface_compounds_flag=read_name_logical('use_EMEP_surface_compounds_flag',use_EMEP_surface_compounds_flag,unit_in,unit_logfile)
+        use_water_in_EMEP_surface_pm_flag=read_name_logical('use_water_in_EMEP_surface_pm_flag',use_water_in_EMEP_surface_pm_flag,unit_in,unit_logfile)
 
         save_compounds_as_ascii=read_name_logical('save_compounds_as_ascii',save_compounds_as_ascii,unit_in,unit_logfile)
 
