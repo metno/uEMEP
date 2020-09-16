@@ -834,6 +834,7 @@
     
     logical :: use_EMEP_surface_ozone_flag=.false.
     logical :: use_EMEP_surface_compounds_flag=.false.
+    logical :: use_water_in_EMEP_surface_pm_flag=.false.
     
     logical :: save_compounds_as_ascii=.false.
     

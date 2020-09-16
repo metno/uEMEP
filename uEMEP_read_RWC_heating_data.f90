@@ -76,7 +76,8 @@
     proxy_emission_subgrid(:,:,source_index,:)=0.
 
     !Read in the data in the first g_loop and t_loop
-    if (g_loop.eq.1) then
+    if (first_g_loop) then
+    !if (g_loop.eq.1) then
         pathfilename_heating(RWC_heating_index)=trim(pathname_heating(RWC_heating_index))//trim(filename_heating(RWC_heating_index))
  
         !Test existence of the heating filename. If does not exist then stop

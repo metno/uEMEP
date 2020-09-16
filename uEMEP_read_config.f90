@@ -606,6 +606,17 @@
         min_proxy_emission_shipping_value=read_name_real('min_proxy_emission_shipping_value',min_proxy_emission_shipping_value,unit_in,unit_logfile)
         
         population_power_scale=read_name_real('population_power_scale',population_power_scale,unit_in,unit_logfile)
+        H_emep=read_name_real('H_emep',H_emep,unit_in,unit_logfile)
+        
+        !Allow the user to change the EMEP PM used for nonlocal contribution.
+        !Will be overridden by use_EMEP_surface_compounds_flag and use_water_in_EMEP_surface_pm_flag if they are set to true
+        comp_name_nc(pm10_nc_index)=read_name_char('comp_name_nc(pm10_nc_index)',comp_name_nc(pm10_nc_index),unit_in,unit_logfile)
+        comp_name_nc(pm25_nc_index)=read_name_char('comp_name_nc(pm25_nc_index)',comp_name_nc(pm25_nc_index),unit_in,unit_logfile)
+        comp_name_nc(o3_nc_index)=read_name_char('comp_name_nc(o3_nc_index)',comp_name_nc(o3_nc_index),unit_in,unit_logfile)
+        comp_name_nc(no2_nc_index)=read_name_char('comp_name_nc(no2_nc_index)',comp_name_nc(no2_nc_index),unit_in,unit_logfile)
+        comp_name_nc(nox_nc_index)=read_name_char('comp_name_nc(nox_nc_index)',comp_name_nc(nox_nc_index),unit_in,unit_logfile)
+        comp_name_nc(nh3_nc_index)=read_name_char('comp_name_nc(nh3_nc_index)',comp_name_nc(nh3_nc_index),unit_in,unit_logfile)
+        comp_name_nc(nh4_nc_index)=read_name_char('comp_name_nc(nh4_nc_index)',comp_name_nc(nh4_nc_index),unit_in,unit_logfile)
         
     close (unit_in)
     

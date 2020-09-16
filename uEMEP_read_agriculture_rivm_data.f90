@@ -204,7 +204,7 @@
     !After populating the grid with emission data (kg/yr) then fill all the other untouched grids with EMEP emission data (mg/m^2/yr) or (mg/m^2/hr).
     !Doesn't work. Would need to have a Nederlands mask instead of checking if emissions have been written or not.
     !!Do not use!!
-    if (1.eq.1) then
+    if (1.eq.2) then
         
     if (.not.save_emissions_for_EMEP(agriculture_index)) then
     

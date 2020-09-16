@@ -808,6 +808,12 @@
         comp_name_nc(pm25_nc_index)='SURF_ug_PMFINE'
     endif
     
+    if (use_water_in_EMEP_surface_pm_flag) then
+        write(unit_logfile,'(a)') 'Using EMEP surface PM including water (RH50)'
+        comp_name_nc(pm10_nc_index)='SURF_ug_PM10_rh50'
+        comp_name_nc(pm25_nc_index)='SURF_ug_PM25_rh50'         
+    endif
+     
     !Reset emission names so they will not be read if they are not used
     if (make_EMEP_grid_emission_data(allsource_index).or.local_subgrid_method_flag.ne.2.or.save_emissions_for_EMEP(allsource_index).or.save_emissions) then
     else
