@@ -883,6 +883,8 @@
     
     real :: population_power_scale=1.
     
+    logical :: read_RWC_file_with_extra_HDD=.false.
+    
     end module uEMEP_definitions
     
     

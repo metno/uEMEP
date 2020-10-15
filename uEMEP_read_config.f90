@@ -619,6 +619,9 @@
         comp_name_nc(nh3_nc_index)=read_name_char('comp_name_nc(nh3_nc_index)',comp_name_nc(nh3_nc_index),unit_in,unit_logfile)
         comp_name_nc(nh4_nc_index)=read_name_char('comp_name_nc(nh4_nc_index)',comp_name_nc(nh4_nc_index),unit_in,unit_logfile)
         
+        read_RWC_file_with_extra_HDD=read_name_logical('read_RWC_file_with_extra_HDD',read_RWC_file_with_extra_HDD,unit_in,unit_logfile)
+        
+        
     close (unit_in)
     
     !Call some error traps

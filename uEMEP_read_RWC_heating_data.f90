@@ -18,8 +18,8 @@
     integer unit_in
     integer RWC_pm25_index,RWC_pm10_index,RWC_nox_index
     parameter (RWC_pm25_index=1,RWC_pm10_index=2,RWC_nox_index=3)
-    integer RWC_HDD11_index,RWC_HDD15_index
-    parameter (RWC_HDD11_index=1,RWC_HDD15_index=2)
+    integer RWC_HDD5_index,RWC_HDD8_index,RWC_HDD11_index,RWC_HDD15_index
+    parameter (RWC_HDD5_index=1,RWC_HDD8_index=2,RWC_HDD11_index=3,RWC_HDD15_index=4)
     integer*8 ssb_id
     real x_ssb,y_ssb,lon_ssb,lat_ssb
     integer i_ssb_index,j_ssb_index
@@ -58,11 +58,19 @@
         threshold_index=RWC_HDD15_index
     elseif (HDD_threshold_value.eq.11) then
         threshold_index=RWC_HDD11_index
+    elseif (HDD_threshold_value.eq.8) then
+        threshold_index=RWC_HDD8_index
+    elseif (HDD_threshold_value.eq.5) then
+        threshold_index=RWC_HDD5_index
     else
         write(unit_logfile,'(A,f12.1)') 'HDD_threshold_value is not valid. Stopping. ',HDD_threshold_value
         stop
     endif
-     
+    
+    write(unit_logfile,'(A,f12.1)') 'HDD_threshold_value = ',HDD_threshold_value
+    
+    if (read_RWC_file_with_extra_HDD) write(unit_logfile,'(A,L)') 'read_RWC_file_with_extra_HDD = ',read_RWC_file_with_extra_HDD
+    
     subsource_index=1
     
     !Emission scaling for nox compared to pm25.
@@ -106,7 +114,7 @@
     
         !Allocate the arrays in the first g_loop and t_loop
         allocate (RWC_grid_emission(n_RWC_grids,3))
-        allocate (RWC_grid_HDD(n_RWC_grids,2))
+        allocate (RWC_grid_HDD(n_RWC_grids,4))
         allocate (RWC_grid_id(n_RWC_grids))
         allocate (RWC_region_id(n_RWC_grids))
     
@@ -116,7 +124,15 @@
 
         count=0
         RWC_grid_emission=0.
-        if (read_file_with_nox_and_kommune_number) then
+        
+        if (read_RWC_file_with_extra_HDD) then
+        !Read new version
+        do while(.not.eof(unit_in))
+            count=count+1
+            read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
+            !write(*,'(i,5es,i)') RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
+        enddo
+        elseif (read_file_with_nox_and_kommune_number) then
         !Read new version
         do while(.not.eof(unit_in))
             count=count+1
