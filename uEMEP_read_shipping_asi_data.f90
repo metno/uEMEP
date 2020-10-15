@@ -233,10 +233,10 @@
         if (save_emissions_for_EMEP(shipping_index)) then
             call PROJ2LL(x_ship,y_ship,lon_ship,lat_ship,projection_attributes,projection_type)
             !call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
-            if (projection_type.eq.LL_projection_index) then
+            if (EMEP_projection_type.eq.LL_projection_index) then
                 x_ship=lon_ship
                 y_ship=lat_ship       
-            elseif (projection_type.eq.LCC_projection_index) then
+            elseif (EMEP_projection_type.eq.LCC_projection_index) then
                 call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
             endif
         endif

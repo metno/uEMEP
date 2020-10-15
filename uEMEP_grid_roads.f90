@@ -126,10 +126,10 @@
             do i=1,2
                 call PROJ2LL(x_line_in(i),y_line_in(i),lon_line_in(i),lat_line_in(i),projection_attributes,projection_type)
                 !call UTM2LL(utm_zone,y_line_in(i),x_line_in(i),lat_line_in(i),lon_line_in(i))
-                if (projection_type.eq.LL_projection_index) then
+                if (EMEP_projection_type.eq.LL_projection_index) then
                     x_line_in(i)=lon_line_in(i)
                     y_line_in(i)=lat_line_in(i)        
-                elseif (projection_type.eq.LCC_projection_index) then
+                elseif (EMEP_projection_type.eq.LCC_projection_index) then
                     call lb2lambert2_uEMEP(x_line_in(i),y_line_in(i),lon_line_in(i),lat_line_in(i),EMEP_projection_attributes)
                 endif   
             enddo
