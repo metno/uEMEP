@@ -20,6 +20,7 @@
     character(256) :: replacement_date_str='<>'
     character(256) :: replacement_yesterday_date_str='[]'
     character(256) :: replacement_hour_str='<>'
+    character(256) :: NORTRIP_replacement_hour_str='<>'
     integer :: n_config_files=0
     
     logical :: use_single_time_loop_flag=.false.
@@ -681,6 +682,7 @@
     
     !Forecast hour string for writing to files
     character(256) :: forecast_hour_str='00'
+    character(256) :: NORTRIP_hour_str='01'
     
     !Scenario calculator variables
     character(256) :: pathname_rl_change=''

@@ -91,6 +91,7 @@
         replacement_date_str=read_name_char('replacement_date_str',replacement_date_str,unit_in,unit_logfile)
         replacement_yesterday_date_str=read_name_char('replacement_yesterday_date_str',replacement_yesterday_date_str,unit_in,unit_logfile)
         replacement_hour_str=read_name_char('replacement_hour_str',replacement_hour_str,unit_in,unit_logfile)
+        NORTRIP_replacement_hour_str=read_name_char('NORTRIP_replacement_hour_str',NORTRIP_replacement_hour_str,unit_in,unit_logfile)
 
         input_comp_name=read_name_char('input_comp_name',input_comp_name,unit_in,unit_logfile)
         
@@ -458,6 +459,7 @@
         filename_rl_change=read_name_char('filename_rl_change',filename_rl_change,unit_in,unit_logfile)
 
         forecast_hour_str=read_name_char('forecast_hour_str',forecast_hour_str,unit_in,unit_logfile)
+        NORTRIP_hour_str=read_name_char('NORTRIP_hour_str',NORTRIP_hour_str,unit_in,unit_logfile)
         
         include_o3_in_aqi_index=read_name_logical('include_o3_in_aqi_index',include_o3_in_aqi_index,unit_in,unit_logfile) 
         
@@ -667,8 +669,8 @@
         pathname_output_grid=replace_string_char(forecast_hour_str,replacement_hour_str,pathname_output_grid)
         filename_date_output_grid=replace_string_char(forecast_hour_str,replacement_hour_str,filename_date_output_grid)
         !NORTRIP file and path name
-        pathname_rl(2)=replace_string_char(forecast_hour_str,replacement_hour_str,pathname_rl(2))
-        filename_rl(2)=replace_string_char(forecast_hour_str,replacement_hour_str,filename_rl(2))
+        pathname_rl(2)=replace_string_char(NORTRIP_hour_str,NORTRIP_replacement_hour_str,pathname_rl(2))
+        filename_rl(2)=replace_string_char(NORTRIP_hour_str,NORTRIP_replacement_hour_str,filename_rl(2))
 
     enddo
 

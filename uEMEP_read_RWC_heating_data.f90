@@ -63,11 +63,11 @@
     elseif (HDD_threshold_value.eq.5) then
         threshold_index=RWC_HDD5_index
     else
-        write(unit_logfile,'(A,f12.1)') 'HDD_threshold_value is not valid. Stopping. ',HDD_threshold_value
+        write(unit_logfile,'(A,i6)') 'HDD_threshold_value is not valid. Stopping. ',HDD_threshold_value
         stop
     endif
     
-    write(unit_logfile,'(A,f12.1)') 'HDD_threshold_value = ',HDD_threshold_value
+    write(unit_logfile,'(A,2i6)') 'HDD_threshold_value and index = ',HDD_threshold_value,threshold_index
     
     if (read_RWC_file_with_extra_HDD) write(unit_logfile,'(A,L)') 'read_RWC_file_with_extra_HDD = ',read_RWC_file_with_extra_HDD
     
