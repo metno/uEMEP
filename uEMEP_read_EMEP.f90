@@ -485,7 +485,7 @@
                 status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
                 !write(*,*) temp_num_dims,status_nc
                 if (temp_num_dims.eq.2.and.i_file.eq.1) then
-                    !Read latitude and longitude data into a 2d grid if available. Only lat lon is 2d?
+                    !Read latitude and longitude data into a 2d grid if available. Only lat lon is 2d? Only read for file 1 assuming file 2 is the same. Problem if not
                     if (i.eq.lat_nc_index.or.i.eq.lon_nc_index) then
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, var2d_nc_dp);var2d_nc(:,:,i)=real(var2d_nc_dp)
                     write(unit_logfile,'(A,i3,A,2A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var2d_nc(:,:,i)),maxval(var2d_nc(:,:,i))

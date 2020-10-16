@@ -736,8 +736,10 @@
     logical :: save_seasalt=.false.
 
     !Region ID file names
-    character(256) pathfilename_region_id,pathname_region_id,filename_region_id
-    character(256) region_name
+    character(256) :: pathfilename_region_id=''
+    character(256) :: pathname_region_id=''
+    character(256) :: filename_region_id=''
+    character(256) :: region_name=''
     integer :: region_id=0
     integer :: region_index=0
     real :: region_subgrid_delta=50.

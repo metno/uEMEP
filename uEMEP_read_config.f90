@@ -426,9 +426,9 @@
         calculate_tiling_flag=read_name_logical('calculate_tiling_flag',calculate_tiling_flag,unit_in,unit_logfile)
         calculate_region_tiling_flag=read_name_logical('calculate_region_tiling_flag',calculate_region_tiling_flag,unit_in,unit_logfile)
  
-        pathname_region_id=read_name_char('pathname_region_id','',unit_in,unit_logfile)
-        filename_region_id=read_name_char('filename_region_id','',unit_in,unit_logfile)
-        region_name=read_name_char('region_name','',unit_in,unit_logfile)
+        pathname_region_id=read_name_char('pathname_region_id',pathname_region_id,unit_in,unit_logfile)
+        filename_region_id=read_name_char('filename_region_id',filename_region_id,unit_in,unit_logfile)
+        region_name=read_name_char('region_name',region_name,unit_in,unit_logfile)
         region_id=read_name_integer('region_id',region_id,unit_in,unit_logfile)
         region_index=read_name_integer('region_index',region_index,unit_in,unit_logfile)
         region_subgrid_delta=read_name_real('region_subgrid_delta',region_subgrid_delta,unit_in,unit_logfile)
@@ -436,10 +436,10 @@
         
         max_interpolation_subgrid_size=read_name_real('max_interpolation_subgrid_size',max_interpolation_subgrid_size,unit_in,unit_logfile)
         
-        pathname_tiles=read_name_char('pathname_tiles','',unit_in,unit_logfile)
-        filename_tiles=read_name_char('filename_tiles','',unit_in,unit_logfile)
-        tile_tag=read_name_char('tile_tag','',unit_in,unit_logfile)
-        save_tile_tag=read_name_char('save_tile_tag','',unit_in,unit_logfile)  
+        pathname_tiles=read_name_char('pathname_tiles',pathname_tiles,unit_in,unit_logfile)
+        filename_tiles=read_name_char('filename_tiles',filename_tiles,unit_in,unit_logfile)
+        tile_tag=read_name_char('tile_tag',tile_tag,unit_in,unit_logfile)
+        save_tile_tag=read_name_char('save_tile_tag',save_tile_tag,unit_in,unit_logfile)  
     
         use_NORTRIP_emission_data=read_name_logical('use_NORTRIP_emission_data',use_NORTRIP_emission_data,unit_in,unit_logfile) 
         use_NORTRIP_emission_pollutant(nox_index)=read_name_logical('use_NORTRIP_emission_pollutant(nox_index)',use_NORTRIP_emission_pollutant(nox_index),unit_in,unit_logfile) 
