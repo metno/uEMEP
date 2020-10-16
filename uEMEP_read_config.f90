@@ -626,6 +626,10 @@
         
     close (unit_in)
     
+    enddo !End configuration file number loop
+    
+    !The rest below was inside the file loop before. Have moved to outside now. Hope that works!
+    
     !Call some error traps
     if (len(trim(pathname_output_grid)).eq.0) then
         write (unit_logfile,'(A)') 'WARNING: No output path given in configuration file. Stopping'
@@ -743,8 +747,6 @@
     if (tile_tag.ne.'') then
         file_tag=trim(file_tag)//'_'//trim(tile_tag)
     endif
-    
-    enddo !End configuration file number loop
     
     end subroutine uEMEP_read_config
     
