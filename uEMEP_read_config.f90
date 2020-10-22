@@ -623,6 +623,9 @@
         
         read_RWC_file_with_extra_HDD=read_name_logical('read_RWC_file_with_extra_HDD',read_RWC_file_with_extra_HDD,unit_in,unit_logfile)
         
+        !Allows a scaling of EMEP input ozone. For testing.
+        comp_scale_nc(o3_nc_index)=read_name_real('comp_scale_nc(o3_nc_index)',comp_scale_nc(o3_nc_index),unit_in,unit_logfile)
+        
         
     close (unit_in)
     
