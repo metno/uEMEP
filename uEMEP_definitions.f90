@@ -889,6 +889,8 @@
     
     logical :: read_RWC_file_with_extra_HDD=.false.
     
+    logical :: use_alternative_traveltime_weighting=.false.
+    
     end module uEMEP_definitions
     
     

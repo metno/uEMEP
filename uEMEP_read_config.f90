@@ -625,6 +625,8 @@
         
         !Allows a scaling of EMEP input ozone. For testing.
         comp_scale_nc(o3_nc_index)=read_name_real('comp_scale_nc(o3_nc_index)',comp_scale_nc(o3_nc_index),unit_in,unit_logfile)
+
+        use_alternative_traveltime_weighting=read_name_logical('use_alternative_traveltime_weighting',use_alternative_traveltime_weighting,unit_in,unit_logfile)
         
         
     close (unit_in)

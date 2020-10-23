@@ -652,13 +652,18 @@
                                 if (temp_subgrid_internal.gt.0) then
                                         
                                     distance_subgrid=max(distance_subgrid,distance_subgrid_min)
+                                    
+                                    !Alternative heavier weighting to higher concentrations (pollutant^2). Not in deposition_dispersion routine
+                                    if (use_alternative_traveltime_weighting) then
+                                        time_weight(tt,:)=time_weight(tt,:)+distance_subgrid/FF_loc*temp_subgrid_internal_pollutant*temp_subgrid_internal_pollutant
+                                        time_total(tt,:)=time_total(tt,:)+temp_subgrid_internal_pollutant*temp_subgrid_internal_pollutant
+                                    else
+                                        !Take weighted average (weighted by concentration) of the time
+                                        time_weight(tt,:)=time_weight(tt,:)+distance_subgrid/FF_loc*temp_subgrid_internal_pollutant                                    
+                                        !Calculate sum of the concentration for normalisation
+                                        time_total(tt,:)=time_total(tt,:)+temp_subgrid_internal_pollutant
+                                    endif
 
-                                    !Take weighted average (weighted by concentration) of the time
-                                    time_weight(tt,:)=time_weight(tt,:)+distance_subgrid/FF_loc*temp_subgrid_internal_pollutant
-                                    
-                                    !Calculate sum of the concentration for normalisation
-                                    time_total(tt,:)=time_total(tt,:)+temp_subgrid_internal_pollutant
-                                    
                                 endif
 
                             else
