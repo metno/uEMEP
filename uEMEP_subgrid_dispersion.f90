@@ -655,8 +655,8 @@
                                     
                                     !Alternative heavier weighting to higher concentrations (pollutant^2). Not in deposition_dispersion routine
                                     if (use_alternative_traveltime_weighting) then
-                                        time_weight(tt,:)=time_weight(tt,:)+distance_subgrid/FF_loc*temp_subgrid_internal_pollutant*temp_subgrid_internal_pollutant
-                                        time_total(tt,:)=time_total(tt,:)+temp_subgrid_internal_pollutant*temp_subgrid_internal_pollutant
+                                        time_weight(tt,:)=time_weight(tt,:)+distance_subgrid/FF_loc*temp_subgrid_internal_pollutant**traveltime_power
+                                        time_total(tt,:)=time_total(tt,:)+temp_subgrid_internal_pollutant**traveltime_power
                                     else
                                         !Take weighted average (weighted by concentration) of the time
                                         time_weight(tt,:)=time_weight(tt,:)+distance_subgrid/FF_loc*temp_subgrid_internal_pollutant                                    
