@@ -892,6 +892,9 @@
     logical :: use_alternative_traveltime_weighting=.false.
     real :: traveltime_power=1.
     
+    !Provides a test control for adjusting the traveltime
+    real :: traveltime_scaling=1.
+    
     end module uEMEP_definitions
     
     

@@ -120,7 +120,7 @@
             call uEMEP_photostationary_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
         elseif (no2_chemistry_scheme_flag.eq.2) then
             !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_index))
-            call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out,p_bg_out,p_out)
+            call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index))*traveltime_scaling,nox_out,no2_out,o3_out,p_bg_out,p_out)
             !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1),no2_out/nox_out,o3_out/o3_bg
         elseif (no2_chemistry_scheme_flag.eq.3) then
             call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out,romberg_parameters)        
@@ -275,7 +275,7 @@
                 call uEMEP_photostationary_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
             elseif (no2_chemistry_scheme_flag.eq.2) then
                 !write(*,'(i,7f8.2,f12.2,2f8.2)') remove_source,nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index))
-                call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out,p_bg_out,p_out)
+                call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index))*traveltime_scaling,nox_out,no2_out,o3_out,p_bg_out,p_out)
                 !write(*,'(i,7f8.2,f12.2,3f8.4)') remove_source,nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out
             elseif (no2_chemistry_scheme_flag.eq.3) then
                 call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out,romberg_parameters)   
@@ -615,7 +615,9 @@
     real :: b_rom=35
     real :: c_rom=0.23
     real ox_init,no2_init
-    !Gral values 30 35 0.18    !Bächlin and Bösinger (2008) 29 35 0.217    
+    !Gral values 30 35 0.18
+    !Bächlin and Bösinger (2008) 29 35 0.217
+    
     if (romberg_parameters(1).ne.0) then
         a_rom=romberg_parameters(1)
         b_rom=romberg_parameters(2)

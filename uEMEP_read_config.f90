@@ -628,6 +628,7 @@
 
         use_alternative_traveltime_weighting=read_name_logical('use_alternative_traveltime_weighting',use_alternative_traveltime_weighting,unit_in,unit_logfile)
         traveltime_power=read_name_real('traveltime_power',traveltime_power,unit_in,unit_logfile)
+        traveltime_scaling=read_name_real('traveltime_scaling',traveltime_scaling,unit_in,unit_logfile)
         
     close (unit_in)
     
