@@ -638,7 +638,11 @@
                                     enddo
                                     
                                     !Determine the distance for the travel time calculation
-                                    distance_subgrid=sqrt(x_loc*x_loc+y_loc*y_loc)
+                                    if (use_straightline_traveltime_distance) then
+                                        distance_subgrid=x_loc
+                                    else    
+                                        distance_subgrid=sqrt(x_loc*x_loc+y_loc*y_loc)
+                                    endif
                                     
                                 else
                                     

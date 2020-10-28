@@ -418,9 +418,9 @@
     Jd=J_photo/k1/mol(nox_i)
     
     !Calculate fraction of NO2 in photostationary state
-    fac_sqrt=max(0.0,(1+f_ox+Jd)**2-4*f_ox)
+    fac_sqrt=max(0.0,(1.+f_ox+Jd)**2-4.*f_ox)
     !if (J_photo.ne.0) then
-        f_no2=0.5*((1+f_ox+Jd)-sqrt(fac_sqrt))
+        f_no2=0.5*((1.+f_ox+Jd)-sqrt(fac_sqrt))
     !else
     !    f_no2=min(1.0,f_ox)
     !endif
@@ -506,7 +506,7 @@
     mol(no_i)=max(0.0,mol(nox_i)-mol(no2_i))
     f_ox_bg=mol(ox_i)/mol(nox_i)
     Jd_bg=J_photo/k1/mol(nox_i)
-    f_no2_bg_ps=0.5*((1+f_ox_bg+Jd_bg)-sqrt((1+f_ox_bg+Jd_bg)**2-4*f_ox_bg))
+    f_no2_bg_ps=0.5*((1+f_ox_bg+Jd_bg)-sqrt((1+f_ox_bg+Jd_bg)**2-4.*f_ox_bg))
     f_no2_bg=mol(no2_i)/mol(nox_i)
     p_bg_out=f_no2_bg/f_no2_bg_ps
     !p_bg_out=J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
@@ -528,7 +528,7 @@
     Jd=J_photo/k1/mol(nox_i)
 
     !Calculate photostationary for total nox, ox
-    f_no2_ps=0.5*((1+f_ox+Jd)-sqrt((1+f_ox+Jd)**2-4*f_ox))
+    f_no2_ps=0.5*((1+f_ox+Jd)-sqrt((1+f_ox+Jd)**2-4.*f_ox))
     p_tot_out=f_no2/f_no2_ps
 
     !Test the photostationary state for the input data
@@ -555,7 +555,7 @@
     !if (BB*td.gt.50.) f_no2=-BB/2.+b/2.
     if (isnan(f_no2)) f_no2=-BB/2.+b/2.
     
-    f_no2_ps=0.5*((1+f_ox+Jd)-sqrt((1+f_ox+Jd)**2-4*f_ox))
+    f_no2_ps=0.5*((1+f_ox+Jd)-sqrt((1+f_ox+Jd)**2-4.*f_ox))
     p_out=f_no2/f_no2_ps
     !write(*,*) p_bg_out,p_tot_out,p_out,AA,BB,b,td,exp(AA+BB*td),f_ox
     !write(*,*) o3_bg,no2_bg,nox_bg
