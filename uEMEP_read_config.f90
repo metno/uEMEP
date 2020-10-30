@@ -631,6 +631,10 @@
         traveltime_scaling=read_name_real('traveltime_scaling',traveltime_scaling,unit_in,unit_logfile)
         use_straightline_traveltime_distance=read_name_logical('use_straightline_traveltime_distance',use_straightline_traveltime_distance,unit_in,unit_logfile)
        
+        !Name of the netcdf variable read for population or dwelling proxy
+        var_name_population_nc(population_nc_index)=read_name_char('var_name_population_nc(population_nc_index)',var_name_population_nc(population_nc_index),unit_in,unit_logfile)
+        
+        
     close (unit_in)
     
     enddo !End configuration file number loop
