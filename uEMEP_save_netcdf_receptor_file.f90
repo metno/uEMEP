@@ -104,16 +104,19 @@
     
     !Make the receptor name to fit to netcdf requirements
     do rr=1,nr
-    temp_char=name_rec_in(rr)
-    do tr=1,n_char
-        name_rec(tr,rr)=temp_char(tr:tr)
-        !write(*,*) trim(name_rec_in(rr)),trim(name_rec(rr))
-    enddo
-        tr_0=len_trim(temp_char ) 
-        name_rec(tr_0+1,rr)=char(0)
         id_rec(rr)=rr
+        temp_char=name_rec_in(rr)
+        tr_0=len_trim(temp_char) 
+        do tr=1,tr_0
+            name_rec(tr,rr)=temp_char(tr:tr)
+            !write(*,*) trim(name_rec_in(rr)),trim(name_rec(rr))
+        enddo
+        do tr=tr_0+1,n_char
+            name_rec(tr,rr)=char(0)
+        enddo
     enddo
     
+   
     if (save_netcdf_average_flag) then  
         n_time_total=1
     else
