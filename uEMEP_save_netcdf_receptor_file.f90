@@ -47,6 +47,7 @@
     integer nf90_type
     integer nt
     integer(8) time_seconds_output_nc(nt_in)
+    integer tr_0
 
     !Do not save if no receptor position data is available
     if (nr.eq.0) then
@@ -106,9 +107,11 @@
     temp_char=name_rec_in(rr)
     do tr=1,n_char
         name_rec(tr,rr)=temp_char(tr:tr)
-        id_rec(rr)=rr
         !write(*,*) trim(name_rec_in(rr)),trim(name_rec(rr))
     enddo
+        tr_0=len_trim(temp_char ) 
+        name_rec(tr_0+1,rr)=char(0)
+        id_rec(rr)=rr
     enddo
     
     if (save_netcdf_average_flag) then  
