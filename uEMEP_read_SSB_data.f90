@@ -699,6 +699,14 @@
 
         endif
         
+        if (i_temp_min.ge.i_temp_max.or.j_temp_min.ge.j_temp_max) then
+            !No population data available
+            write(unit_logfile,'(A)') ' WARNING: No population data available in this region. Setting to 0'
+            proxy_emission_subgrid(:,:,source_index,:)=0.
+            population_subgrid(:,:,SSB_data_type)=0
+            
+        else
+            
         if (.not.allocated(population_nc_dp)) allocate (population_nc_dp(dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index),num_var_population_nc)) !Lat and lon
         if (.not.allocated(var2d_nc_dp)) allocate (var2d_nc_dp(max(dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index)),num_dims_population_nc)) !x and y
 
@@ -849,6 +857,7 @@
     
         endif
 
+        endif !No population available
        
         if (allocated(population_nc_dp)) deallocate (population_nc_dp)
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)

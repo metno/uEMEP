@@ -653,90 +653,98 @@
 
         endif
         
-        if (.not.allocated(shipping_nc_dp)) allocate (shipping_nc_dp(dim_length_shipping_nc(x_dim_nc_index),dim_length_shipping_nc(y_dim_nc_index),num_var_shipping_nc)) !Lat and lon
-        if (.not.allocated(var2d_nc_dp)) allocate (var2d_nc_dp(max(dim_length_shipping_nc(x_dim_nc_index),dim_length_shipping_nc(y_dim_nc_index)),num_dims_shipping_nc)) !x and y
+        if (i_temp_min.ge.i_temp_max.or.j_temp_min.ge.j_temp_max) then
+            !No shipping data available
+            write(unit_logfile,'(A)') ' WARNING: No shipping data available in this region. Setting to 0'
+            proxy_emission_subgrid(:,:,source_index,:)=0.
+            
+        else
+            
+            
+            if (.not.allocated(shipping_nc_dp)) allocate (shipping_nc_dp(dim_length_shipping_nc(x_dim_nc_index),dim_length_shipping_nc(y_dim_nc_index),num_var_shipping_nc)) !Lat and lon
+            if (.not.allocated(var2d_nc_dp)) allocate (var2d_nc_dp(max(dim_length_shipping_nc(x_dim_nc_index),dim_length_shipping_nc(y_dim_nc_index)),num_dims_shipping_nc)) !x and y
 
-        !Read the lon and lat values to get the delta
-        do i=1,num_dims_shipping_nc
-            !Identify the variable name and ID in the nc file and read it
-            var_name_nc_temp=dim_name_shipping_nc(i)
-            status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
-            if (status_nc .EQ. NF90_NOERR) then
-                !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc, var2d_nc_dp(1:dim_length_shipping_nc(i),i),start=(/dim_start_shipping_nc(i)/),count=(/dim_length_shipping_nc(i)/))
-            else
-                write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
-            endif            
-        enddo
-        delta_shipping_nc=var2d_nc_dp(2,:)-var2d_nc_dp(1,:)
-        write(unit_logfile,'(A,2f12.6)') 'Shipping grid delta (degrees): ',delta_shipping_nc    
-       !write(*,*) var2d_nc_dp(1,1),var2d_nc_dp(dim_length_shipping_nc(x_dim_nc_index),1)
-       !write(*,*) var2d_nc_dp(1,2),var2d_nc_dp(dim_length_shipping_nc(y_dim_nc_index),2)
+            !Read the lon and lat values to get the delta
+            do i=1,num_dims_shipping_nc
+                !Identify the variable name and ID in the nc file and read it
+                var_name_nc_temp=dim_name_shipping_nc(i)
+                status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                if (status_nc .EQ. NF90_NOERR) then
+                    !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, var2d_nc_dp(1:dim_length_shipping_nc(i),i),start=(/dim_start_shipping_nc(i)/),count=(/dim_length_shipping_nc(i)/))
+                else
+                    write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
+                endif            
+            enddo
+            delta_shipping_nc=var2d_nc_dp(2,:)-var2d_nc_dp(1,:)
+            write(unit_logfile,'(A,2f12.6)') 'Shipping grid delta (degrees): ',delta_shipping_nc    
+           !write(*,*) var2d_nc_dp(1,1),var2d_nc_dp(dim_length_shipping_nc(x_dim_nc_index),1)
+           !write(*,*) var2d_nc_dp(1,2),var2d_nc_dp(dim_length_shipping_nc(y_dim_nc_index),2)
 
-        !Read the shipping data 
-        do i_ship=1,num_var_shipping_nc
-            !Identify the variable name and ID in the nc file and read it
-            var_name_nc_temp=var_name_shipping_nc(i_ship)
-            status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
-            if (status_nc .EQ. NF90_NOERR) then
-                !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc, shipping_nc_dp(:,:,i_ship),start=(/dim_start_shipping_nc(x_dim_nc_index),dim_start_shipping_nc(y_dim_nc_index)/),count=(/dim_length_shipping_nc(x_dim_nc_index),dim_length_shipping_nc(y_dim_nc_index)/))
-                write(unit_logfile,'(2a,2f12.2)') 'Shipping variable min and max: ',trim(var_name_nc_temp),minval(shipping_nc_dp(:,:,i_ship)),maxval(shipping_nc_dp(:,:,i_ship))
-            else
-                write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
-            endif            
-        enddo
+            !Read the shipping data 
+            do i_ship=1,num_var_shipping_nc
+                !Identify the variable name and ID in the nc file and read it
+                var_name_nc_temp=var_name_shipping_nc(i_ship)
+                status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                if (status_nc .EQ. NF90_NOERR) then
+                    !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
+                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, shipping_nc_dp(:,:,i_ship),start=(/dim_start_shipping_nc(x_dim_nc_index),dim_start_shipping_nc(y_dim_nc_index)/),count=(/dim_length_shipping_nc(x_dim_nc_index),dim_length_shipping_nc(y_dim_nc_index)/))
+                    write(unit_logfile,'(2a,2f12.2)') 'Shipping variable min and max: ',trim(var_name_nc_temp),minval(shipping_nc_dp(:,:,i_ship)),maxval(shipping_nc_dp(:,:,i_ship))
+                else
+                    write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
+                endif            
+            enddo
         
-        !Loop through the shipping data and put it in the shipping emission grid
-        !Interpolate to the shipping grid in lat lon coordinates
-        !Temporary emissions cutoff
-        i_ship=1
-        where (shipping_nc_dp.lt.min_proxy_emission_shipping_value) shipping_nc_dp=0.
-        write(unit_logfile,'(2a,2f12.2)') 'Shipping min and max: ',trim(var_name_nc_temp),minval(shipping_nc_dp(:,:,i_ship)),maxval(shipping_nc_dp(:,:,i_ship))
+            !Loop through the shipping data and put it in the shipping emission grid
+            !Interpolate to the shipping grid in lat lon coordinates
+            !Temporary emissions cutoff
+            i_ship=1
+            where (shipping_nc_dp.lt.min_proxy_emission_shipping_value) shipping_nc_dp=0.
+            write(unit_logfile,'(2a,2f12.2)') 'Shipping min and max: ',trim(var_name_nc_temp),minval(shipping_nc_dp(:,:,i_ship)),maxval(shipping_nc_dp(:,:,i_ship))
 
 
-        proxy_emission_subgrid(:,:,source_index,:)=0.
-        do j=1,emission_subgrid_dim(y_dim_nc_index,source_index)
-        do i=1,emission_subgrid_dim(x_dim_nc_index,source_index)
-            !Project the centre position to lat lon
-            call PROJ2LL(x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index),temp_lon(1),temp_lat(1),projection_attributes,projection_type)
-            !Project both sides to get the delta
-            call PROJ2LL(x_emission_subgrid(i,j,source_index)-emission_subgrid_delta(x_dim_index,source_index)/2.,y_emission_subgrid(i,j,source_index),temp_lon(2),temp_lat(2),projection_attributes,projection_type)
-            call PROJ2LL(x_emission_subgrid(i,j,source_index)+emission_subgrid_delta(x_dim_index,source_index)/2.,y_emission_subgrid(i,j,source_index),temp_lon(3),temp_lat(3),projection_attributes,projection_type)            
-            temp_delta(x_dim_index)=temp_lon(3)-temp_lon(2)
-            call PROJ2LL(x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index)-emission_subgrid_delta(y_dim_index,source_index)/2.,temp_lon(2),temp_lat(2),projection_attributes,projection_type)
-            call PROJ2LL(x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index)+emission_subgrid_delta(y_dim_index,source_index)/2.,temp_lon(3),temp_lat(3),projection_attributes,projection_type)            
-            temp_delta(y_dim_index)=temp_lat(3)-temp_lat(2)
+            proxy_emission_subgrid(:,:,source_index,:)=0.
+            do j=1,emission_subgrid_dim(y_dim_nc_index,source_index)
+            do i=1,emission_subgrid_dim(x_dim_nc_index,source_index)
+                !Project the centre position to lat lon
+                call PROJ2LL(x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index),temp_lon(1),temp_lat(1),projection_attributes,projection_type)
+                !Project both sides to get the delta
+                call PROJ2LL(x_emission_subgrid(i,j,source_index)-emission_subgrid_delta(x_dim_index,source_index)/2.,y_emission_subgrid(i,j,source_index),temp_lon(2),temp_lat(2),projection_attributes,projection_type)
+                call PROJ2LL(x_emission_subgrid(i,j,source_index)+emission_subgrid_delta(x_dim_index,source_index)/2.,y_emission_subgrid(i,j,source_index),temp_lon(3),temp_lat(3),projection_attributes,projection_type)            
+                temp_delta(x_dim_index)=temp_lon(3)-temp_lon(2)
+                call PROJ2LL(x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index)-emission_subgrid_delta(y_dim_index,source_index)/2.,temp_lon(2),temp_lat(2),projection_attributes,projection_type)
+                call PROJ2LL(x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index)+emission_subgrid_delta(y_dim_index,source_index)/2.,temp_lon(3),temp_lat(3),projection_attributes,projection_type)            
+                temp_delta(y_dim_index)=temp_lat(3)-temp_lat(2)
             
-            !Make a local correction to lon so it is essentially in the same units as lat so area averaging is correct
-            correct_lon(1)=1./cos(3.14159/180.*temp_lat(1))
-            correct_lon(2)=1.
+                !Make a local correction to lon so it is essentially in the same units as lat so area averaging is correct
+                correct_lon(1)=1./cos(3.14159/180.*temp_lat(1))
+                correct_lon(2)=1.
 
-            !Interpolate on same grid then scale, equivalent to interpolating density and then recalculating
-            proxy_emission_subgrid(i,j,source_index,:)=area_weighted_extended_vectorgrid_interpolation_function( &
-                real(var2d_nc_dp(1:dim_length_shipping_nc(x_dim_nc_index),x_dim_nc_index))*correct_lon(1),real(var2d_nc_dp(1:dim_length_shipping_nc(y_dim_nc_index),y_dim_nc_index)) &
-                ,shipping_nc_dp(:,:,i_ship),dim_length_shipping_nc(x_dim_nc_index),dim_length_shipping_nc(y_dim_nc_index) &
-                ,delta_shipping_nc*correct_lon,temp_lon(1)*correct_lon(1),temp_lat(1),delta_shipping_nc*correct_lon)
+                !Interpolate on same grid then scale, equivalent to interpolating density and then recalculating
+                proxy_emission_subgrid(i,j,source_index,:)=area_weighted_extended_vectorgrid_interpolation_function( &
+                    real(var2d_nc_dp(1:dim_length_shipping_nc(x_dim_nc_index),x_dim_nc_index))*correct_lon(1),real(var2d_nc_dp(1:dim_length_shipping_nc(y_dim_nc_index),y_dim_nc_index)) &
+                    ,shipping_nc_dp(:,:,i_ship),dim_length_shipping_nc(x_dim_nc_index),dim_length_shipping_nc(y_dim_nc_index) &
+                    ,delta_shipping_nc*correct_lon,temp_lon(1)*correct_lon(1),temp_lat(1),delta_shipping_nc*correct_lon)
             
-            temp_scale=(temp_delta(1)*correct_lon(1)*temp_delta(2)*correct_lon(2))/(delta_shipping_nc(1)*correct_lon(1)*delta_shipping_nc(2)*correct_lon(2))
-            proxy_emission_subgrid(i,j,source_index,:)=proxy_emission_subgrid(i,j,source_index,:)*temp_scale
+                temp_scale=(temp_delta(1)*correct_lon(1)*temp_delta(2)*correct_lon(2))/(delta_shipping_nc(1)*correct_lon(1)*delta_shipping_nc(2)*correct_lon(2))
+                proxy_emission_subgrid(i,j,source_index,:)=proxy_emission_subgrid(i,j,source_index,:)*temp_scale
             
   
-            if (isnan(proxy_emission_subgrid(i,j,source_index,1))) then
-            write(*,*) 'Stopping, nan in proxy_emission_subgrid'
-            write(*,*) temp_scale,correct_lon,delta_shipping_nc,temp_delta,temp_lon
-            stop
-            endif
-            if (proxy_emission_subgrid(i,j,source_index,1).lt.0.) then
-            write(*,*) 'Stopping, negative value in proxy_emission_subgrid'
-            write(*,*) temp_scale,correct_lon,delta_shipping_nc,temp_delta,temp_lon
-            stop
-            endif
+                if (isnan(proxy_emission_subgrid(i,j,source_index,1))) then
+                write(*,*) 'Stopping, nan in proxy_emission_subgrid'
+                write(*,*) temp_scale,correct_lon,delta_shipping_nc,temp_delta,temp_lon
+                stop
+                endif
+                if (proxy_emission_subgrid(i,j,source_index,1).lt.0.) then
+                write(*,*) 'Stopping, negative value in proxy_emission_subgrid'
+                write(*,*) temp_scale,correct_lon,delta_shipping_nc,temp_delta,temp_lon
+                stop
+                endif
 
-        enddo
-        enddo
+            enddo
+            enddo
         
-
+        endif !No shipping data available
        
         if (allocated(shipping_nc_dp)) deallocate (shipping_nc_dp)
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
