@@ -338,6 +338,7 @@
 
     !Read in the population data in netcdf format
     !This is particularly used for reading in the global population dataset
+    !This is not used any longer, replaced by uEMEP_read_netcdf_population_latlon
     subroutine uEMEP_read_netcdf_population
  
     use uEMEP_definitions
@@ -567,6 +568,7 @@
     real temp_delta(num_dims_population_nc)
     real correct_lon(2)
     real temp_scale
+    integer :: name_index=0
     
     !Temporary reading rvariables
     real, allocatable :: population_nc_dp(:,:,:)
@@ -580,6 +582,8 @@
     !Always set to this since emissions will be the largest domain, when reducing the reading domain
     !source_index=heating_index
     if (SSB_data_type.eq.dwelling_index) source_index=heating_index
+    if (SSB_data_type.eq.dwelling_index) name_index=dwelling_nc_index
+    if (SSB_data_type.eq.population_index) name_index=population_nc_index
     
         !Set the filename
         pathfilename_population(SSB_data_type)=trim(pathname_population(SSB_data_type))//trim(filename_population(SSB_data_type))
@@ -729,18 +733,20 @@
 
         !Read the population data 
         !write(*,*) 'Reading population data'
-        do i=1,num_var_population_nc
+        !do i=1,num_var_population_nc
+        i=name_index
+        !Uses the population_nc_index as index, =1, but not logical
             !Identify the variable name and ID in the nc file and read it
             var_name_nc_temp=var_name_population_nc(i)
             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
             if (status_nc .EQ. NF90_NOERR) then
                 !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc, population_nc_dp(:,:,i),start=(/dim_start_population_nc(x_dim_nc_index),dim_start_population_nc(y_dim_nc_index)/),count=(/dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index)/))
-                write(unit_logfile,'(2a,2f12.2)') 'Population variable min and max: ',trim(var_name_nc_temp),minval(population_nc_dp(:,:,i)),maxval(population_nc_dp(:,:,i))
+                status_nc = NF90_GET_VAR (id_nc, var_id_nc, population_nc_dp(:,:,population_nc_index),start=(/dim_start_population_nc(x_dim_nc_index),dim_start_population_nc(y_dim_nc_index)/),count=(/dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index)/))
+                write(unit_logfile,'(2a,2f12.2)') 'Population variable min and max: ',trim(var_name_nc_temp),minval(population_nc_dp(:,:,population_nc_index)),maxval(population_nc_dp(:,:,population_nc_index))
             else
                 write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
             endif            
-        enddo
+        !enddo
         !write(*,*) 'Finished reading population data'
         
         !Loop through the population data and put it in the population grid

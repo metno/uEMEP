@@ -633,6 +633,7 @@
        
         !Name of the netcdf variable read for population or dwelling proxy
         var_name_population_nc(population_nc_index)=read_name_char('var_name_population_nc(population_nc_index)',var_name_population_nc(population_nc_index),unit_in,unit_logfile)
+        var_name_population_nc(dwelling_nc_index)=read_name_char('var_name_population_nc(dwelling_nc_index)',var_name_population_nc(dwelling_nc_index),unit_in,unit_logfile)
         
         
     close (unit_in)

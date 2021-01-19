@@ -111,7 +111,25 @@
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
     integer n_source_nc_index
     parameter (n_source_nc_index=6)
-   
+    
+    !All the other GNFR emissions
+    integer publicpower_nc_index,fugitive_nc_index,solvents_nc_index,aviation_nc_index,offroad_nc_index,waste_nc_index,livestock_nc_index,other_nc_index
+    parameter (publicpower_nc_index=7,fugitive_nc_index=8,solvents_nc_index=9,aviation_nc_index=10,offroad_nc_index=11,waste_nc_index=12,livestock_nc_index=13,other_nc_index=14)
+    
+    !A ‘PublicPower’ (1)
+    !B ‘Industry’ (3)
+    !C ‘OtherStationaryComb’ (2)
+    !D ‘Fugitive’ (4)
+    !E ‘Solvents’ (6)
+    !F ‘RoadTransport’ (7)
+    !G ‘Shipping’ (8)
+    !H ‘Aviation’ (8)
+    !I ‘Offroad’ (8)
+    !J ‘Waste’ (9)
+    !K ‘AgriLivestock’ (10)
+    !L ‘AgriOther’ (10)
+    !M ‘Other’ (5)
+    
     !Compound loop for nox chemistry
     !integer :: n_compound_loop = 1
     !integer compound_loop_index(n_compound_nc_index)
@@ -140,9 +158,9 @@
     character(256) input_comp_name
     real comp_scale_nc(n_compound_nc_index)
     
-    integer num_var_population_nc,num_dims_population_nc,population_nc_index
+    integer num_var_population_nc,num_dims_population_nc,population_nc_index,dwelling_nc_index
     !parameter (num_var_population_nc=3,num_dims_population_nc=2,population_nc_index=3) !population_nc_index=3 assumes lat and lon are 1 and 2
-    parameter (num_var_population_nc=1,num_dims_population_nc=2,population_nc_index=1) !population_nc_index=1 assumes population files in lat and lon
+    parameter (num_var_population_nc=2,num_dims_population_nc=2,population_nc_index=1,dwelling_nc_index=2) !population_nc_index=1 assumes population files in lat and lon
     character(256) var_name_population_nc(num_var_population_nc)
     character(256) dim_name_population_nc(num_dims_population_nc)
 
