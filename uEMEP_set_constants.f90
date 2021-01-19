@@ -799,7 +799,7 @@
         write(unit_logfile,'(a)') 'Using EMEP surface compounds instead of gridded'
         comp_name_nc(o3_nc_index)='SURF_ug_O3'
         comp_name_nc(no2_nc_index)='SURF_ug_NO2'
-        comp_name_nc(nox_nc_index)='SURF_ugN_NOX'
+        comp_name_nc(nox_nc_index)='SURF_ugN_NOX' !Not used
         comp_name_nc(nh3_nc_index)='SURF_ug_NH3'
         !comp_name_nc(nh3_nc_index)='nh3'
         comp_name_nc(nh4_nc_index)='SURF_ug_NH4_F'
@@ -812,7 +812,7 @@
     if (use_water_in_EMEP_surface_pm_flag) then
         write(unit_logfile,'(a)') 'Using EMEP surface PM including water (RH50)'
         comp_name_nc(pm10_nc_index)='SURF_ug_PM10_rh50'
-        comp_name_nc(pm25_nc_index)='SURF_ug_PM25_rh50'         
+        comp_name_nc(pm25_nc_index)='SURF_ug_PM25_rh50'
     endif
      
     !Reset emission names so they will not be read if they are not used

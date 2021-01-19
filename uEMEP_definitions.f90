@@ -115,6 +115,7 @@
     !All the other GNFR emissions
     integer publicpower_nc_index,fugitive_nc_index,solvents_nc_index,aviation_nc_index,offroad_nc_index,waste_nc_index,livestock_nc_index,other_nc_index
     parameter (publicpower_nc_index=7,fugitive_nc_index=8,solvents_nc_index=9,aviation_nc_index=10,offroad_nc_index=11,waste_nc_index=12,livestock_nc_index=13,other_nc_index=14)
+    !parameter (n_source_nc_index=14)
     
     !A ‘PublicPower’ (1)
     !B ‘Industry’ (3)
@@ -371,6 +372,10 @@
     parameter (allsource_index=1,traffic_index=2,shipping_index=3,heating_index=4,agriculture_index=5,industry_index=6)
     integer n_source_index
     parameter (n_source_index=6)
+    !All the other GNFR emissions
+    integer publicpower_index,fugitive_index,solvents_index,aviation_index,offroad_index,waste_index,livestock_index,other_index
+    parameter (publicpower_index=7,fugitive_index=8,solvents_index=9,aviation_index=10,offroad_index=11,waste_index=12,livestock_index=13,other_index=14)
+    !parameter (n_source_index=14)
     integer compound_source_index(n_compound_index,n_source_index)
     
     character(256) source_file_postfix(n_source_index)
