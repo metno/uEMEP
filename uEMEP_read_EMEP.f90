@@ -20,7 +20,6 @@
     integer i_file,i_source,i_conc,i_dim
     integer temp_frac_index,temp_file_index,temp_compound_index,temp_source_index
     integer temp_num_dims
-    integer xdist_centre_nc,ydist_centre_nc
     integer temp_start_time_nc_index,temp_end_time_nc_index
     integer i_loop
     integer valid_dim_length_nc(num_dims_nc) !dimensions of file 1
@@ -458,7 +457,7 @@
         
         !Loop through the sources
         do i_source=1,n_source_nc_index
-        if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.i_source.eq.allsource_index) then
         !var_name_nc(num_var_nc,n_compound_nc_index,n_source_nc_index)
             
         !Loop through the variables
@@ -1037,7 +1036,7 @@
         if (use_comp_temporary) then
             write(*,*) 'WARNING: TEMPORARILLY USING COMP FOR LF SOURCE SCALING FOR NH3',pollutant_loop_back_index(nh3_nc_index),nh3_nc_index
             do i_source=1,n_source_index
-            if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+            if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.i_source.eq.allsource_index) then
             var3d_nc(:,:,:,conc_nc_index,i_source,pollutant_loop_back_index(nh3_nc_index))=comp_var3d_nc(:,:,:,nh3_nc_index)               
             endif
             enddo
@@ -1070,7 +1069,7 @@
         enddo
         
         do i_source=1,n_source_index
-            if (calculate_source(i_source)) then
+            if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
                 p_loop=pollutant_loop_back_index(pm10_nc_index)
                 write(unit_logfile,'(2A,f16.4)') ' Average local fraction of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)), &
                 sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,i_source,p_loop)/(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,1)+pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,2)))/(size(var3d_nc,1)*size(var3d_nc,2)*size(var3d_nc,4))

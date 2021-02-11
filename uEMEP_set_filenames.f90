@@ -21,6 +21,8 @@
         filename_grid(emep_subgrid_file_index(i))=trim('EMEP_subgrid')//'_'//trim(source_file_str(i))
         filename_grid(emep_subgrid_nonlocal_file_index(i))=trim('EMEP_nonlocal_subgrid')//'_'//trim(source_file_str(i))
         filename_grid(emep_subgrid_local_file_index(i))=trim('EMEP_local_subgrid')//'_'//trim(source_file_str(i))
+        filename_grid(emep_additional_subgrid_nonlocal_file_index(i))=trim('EMEP_additional_nonlocal_subgrid')//'_'//trim(source_file_str(i))
+        filename_grid(emep_additional_subgrid_local_file_index(i))=trim('EMEP_additional_local_subgrid')//'_'//trim(source_file_str(i))
         filename_grid(emep_subgrid_frac_file_index(i))=trim('EMEP_frac_subgrid')//'_'//trim(source_file_str(i))
         filename_grid(subgrid_local_file_index(i))=trim('local_subgrid')//'_'//trim(source_file_str(i))
         filename_grid(subgrid_total_file_index(i))=trim('total_subgrid')//'_'//trim(source_file_str(i))
@@ -37,11 +39,15 @@
         if (save_netcdf_fraction_as_contribution_flag) then
             filename_grid(emep_subgrid_nonlocal_file_index(i))=trim('EMEP_nonlocal_contribution')
             filename_grid(emep_subgrid_local_file_index(i))=trim('EMEP_local_contribution')//'_'//trim(source_file_str(i))
+            filename_grid(emep_additional_subgrid_nonlocal_file_index(i))=trim('EMEP_additional_nonlocal_contribution')
+            filename_grid(emep_additional_subgrid_local_file_index(i))=trim('EMEP_additional_local_contribution')//'_'//trim(source_file_str(i))
             filename_grid(emep_subgrid_frac_file_index(i))=trim('EMEP_contribution')//'_'//trim(source_file_str(i))
             filename_grid(subgrid_local_file_index(i))=trim('local_contribution')//'_'//trim(source_file_str(i))
         else
             filename_grid(emep_subgrid_nonlocal_file_index(i))=trim('EMEP_nonlocal_fraction')
             filename_grid(emep_subgrid_local_file_index(i))=trim('EMEP_local_fraction')//'_'//trim(source_file_str(i))
+            filename_grid(emep_additional_subgrid_nonlocal_file_index(i))=trim('EMEP_additional_nonlocal_fraction')
+            filename_grid(emep_additional_subgrid_local_file_index(i))=trim('EMEP_additional_local_fraction')//'_'//trim(source_file_str(i))
             filename_grid(emep_subgrid_frac_file_index(i))=trim('EMEP_fraction')//'_'//trim(source_file_str(i))
             filename_grid(subgrid_local_file_index(i))=trim('local_fraction')//'_'//trim(source_file_str(i))           
         endif

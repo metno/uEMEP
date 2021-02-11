@@ -239,8 +239,26 @@
         if (calculate_source(source_index)) then
              subgrid(:,:,:,local_subgrid_index,allsource_index,:)=subgrid(:,:,:,local_subgrid_index,allsource_index,:)+subgrid(:,:,:,local_subgrid_index,source_index,:)
         endif
+        !Add the selected EMEP local sources to this as well, if they are not already included in the subgrid downscaling
+        if (calculate_EMEP_source(source_index).and..not.calculate_source(source_index)) then
+             subgrid(:,:,:,local_subgrid_index,allsource_index,:)=subgrid(:,:,:,local_subgrid_index,allsource_index,:)+subgrid(:,:,:,emep_local_subgrid_index,source_index,:)
+        endif
     enddo
     
+    if (EMEP_additional_grid_interpolation_size.gt.0) then    
+    do i_pollutant=1,n_pollutant_loop
+        !If the compound is PM2.5 or PM10 then add the non PPM part to the non-local
+        if (pollutant_loop_index(i_pollutant).eq.pm25_index.or.pollutant_loop_index(i_pollutant).eq.pm10_index) then
+            write(unit_logfile,'(A,f12.2)') 'MEAN PPM NONLOCAL ADDITIONAL: ',sum((subgrid(:,:,:,emep_additional_nonlocal_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            subgrid(:,:,:,emep_additional_nonlocal_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,emep_additional_nonlocal_subgrid_index,allsource_index,i_pollutant) &
+            +(comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant))
+            write(unit_logfile,'(A,f12.2)') 'MEAN ADD REST NONLOCAL ADDITIONAL: ',sum((comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+        endif
+    
+        !subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,local_subgrid_index,allsource_index,i_pollutant)+subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)
+     
+    enddo
+    endif
     
     do i_pollutant=1,n_pollutant_loop
         !If the compound is PM2.5 or PM10 then add the non PPM part to the non-local
@@ -254,7 +272,6 @@
         subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,local_subgrid_index,allsource_index,i_pollutant)+subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)
      
     enddo
-    
     
      do i_pollutant=1,n_pollutant_loop
        !Place the results in the compound results

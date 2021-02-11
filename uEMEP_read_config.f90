@@ -119,6 +119,33 @@
         calculate_source(heating_index)=read_name_logical('calculate_source(heating_index)',calculate_source(heating_index),unit_in,unit_logfile)
         calculate_source(agriculture_index)=read_name_logical('calculate_source(agriculture_index)',calculate_source(agriculture_index),unit_in,unit_logfile)
         calculate_source(industry_index)=read_name_logical('calculate_source(industry_index)',calculate_source(industry_index),unit_in,unit_logfile)
+        !Additional GNFR sources
+        calculate_source(publicpower_index)=read_name_logical('calculate_source(publicpower_index)',calculate_source(publicpower_index),unit_in,unit_logfile)
+        calculate_source(fugitive_index)=read_name_logical('calculate_source(fugitive_index)',calculate_source(fugitive_index),unit_in,unit_logfile)
+        calculate_source(solvents_index)=read_name_logical('calculate_source(solvents_index)',calculate_source(solvents_index),unit_in,unit_logfile)
+        calculate_source(aviation_index)=read_name_logical('calculate_source(aviation_index)',calculate_source(aviation_index),unit_in,unit_logfile)
+        calculate_source(offroad_index)=read_name_logical('calculate_source(offroad_index)',calculate_source(offroad_index),unit_in,unit_logfile)
+        calculate_source(waste_index)=read_name_logical('calculate_source(waste_index)',calculate_source(waste_index),unit_in,unit_logfile)
+        calculate_source(livestock_index)=read_name_logical('calculate_source(livestock_index)',calculate_source(livestock_index),unit_in,unit_logfile)
+        calculate_source(other_index)=read_name_logical('calculate_source(other_index)',calculate_source(other_index),unit_in,unit_logfile)
+
+        !Choose which EMEP sources to include/calculate. Will not be downscaled but will included as gridded source contributions
+        !calculate_source(:)=read_name_logical('calculate_source(:)',calculate_source(allsource_index),unit_in,unit_logfile)
+        calculate_EMEP_source(traffic_index)=read_name_logical('calculate_EMEP_source(traffic_index)',calculate_EMEP_source(traffic_index),unit_in,unit_logfile)
+        calculate_EMEP_source(shipping_index)=read_name_logical('calculate_EMEP_source(shipping_index)',calculate_EMEP_source(shipping_index),unit_in,unit_logfile)
+        calculate_EMEP_source(heating_index)=read_name_logical('calculate_EMEP_source(heating_index)',calculate_EMEP_source(heating_index),unit_in,unit_logfile)
+        calculate_EMEP_source(agriculture_index)=read_name_logical('calculate_EMEP_source(agriculture_index)',calculate_EMEP_source(agriculture_index),unit_in,unit_logfile)
+        calculate_EMEP_source(industry_index)=read_name_logical('calculate_EMEP_source(industry_index)',calculate_EMEP_source(industry_index),unit_in,unit_logfile)
+        !Additional GNFR sources
+        calculate_EMEP_source(publicpower_index)=read_name_logical('calculate_EMEP_source(publicpower_index)',calculate_EMEP_source(publicpower_index),unit_in,unit_logfile)
+        calculate_EMEP_source(fugitive_index)=read_name_logical('calculate_EMEP_source(fugitive_index)',calculate_EMEP_source(fugitive_index),unit_in,unit_logfile)
+        calculate_EMEP_source(solvents_index)=read_name_logical('calculate_EMEP_source(solvents_index)',calculate_EMEP_source(solvents_index),unit_in,unit_logfile)
+        calculate_EMEP_source(aviation_index)=read_name_logical('calculate_EMEP_source(aviation_index)',calculate_EMEP_source(aviation_index),unit_in,unit_logfile)
+        calculate_EMEP_source(offroad_index)=read_name_logical('calculate_EMEP_source(offroad_index)',calculate_EMEP_source(offroad_index),unit_in,unit_logfile)
+        calculate_EMEP_source(waste_index)=read_name_logical('calculate_EMEP_source(waste_index)',calculate_EMEP_source(waste_index),unit_in,unit_logfile)
+        calculate_EMEP_source(livestock_index)=read_name_logical('calculate_EMEP_source(livestock_index)',calculate_EMEP_source(livestock_index),unit_in,unit_logfile)
+        calculate_EMEP_source(other_index)=read_name_logical('calculate_EMEP_source(other_index)',calculate_EMEP_source(other_index),unit_in,unit_logfile)
+
         !do i_source=1,n_source_index
         !    if (calculate_source(i_source)) calculate_source(allsource_index)=.true.
         !enddo
@@ -129,6 +156,15 @@
         make_EMEP_grid_emission_data(heating_index)=read_name_logical('make_EMEP_grid_emission_data(heating_index)',make_EMEP_grid_emission_data(heating_index),unit_in,unit_logfile)
         make_EMEP_grid_emission_data(agriculture_index)=read_name_logical('make_EMEP_grid_emission_data(agriculture_index)',make_EMEP_grid_emission_data(agriculture_index),unit_in,unit_logfile)
         make_EMEP_grid_emission_data(industry_index)=read_name_logical('make_EMEP_grid_emission_data(industry_index)',make_EMEP_grid_emission_data(industry_index),unit_in,unit_logfile)
+        !Additional GNFR sources
+        make_EMEP_grid_emission_data(publicpower_index)=read_name_logical('make_EMEP_grid_emission_data(publicpower_index)',make_EMEP_grid_emission_data(publicpower_index),unit_in,unit_logfile)
+        make_EMEP_grid_emission_data(fugitive_index)=read_name_logical('make_EMEP_grid_emission_data(fugitive_index)',make_EMEP_grid_emission_data(fugitive_index),unit_in,unit_logfile)
+        make_EMEP_grid_emission_data(solvents_index)=read_name_logical('make_EMEP_grid_emission_data(solvents_index)',make_EMEP_grid_emission_data(solvents_index),unit_in,unit_logfile)
+        make_EMEP_grid_emission_data(aviation_index)=read_name_logical('make_EMEP_grid_emission_data(aviation_index)',make_EMEP_grid_emission_data(aviation_index),unit_in,unit_logfile)
+        make_EMEP_grid_emission_data(offroad_index)=read_name_logical('make_EMEP_grid_emission_data(offroad_index)',make_EMEP_grid_emission_data(offroad_index),unit_in,unit_logfile)
+        make_EMEP_grid_emission_data(waste_index)=read_name_logical('make_EMEP_grid_emission_data(waste_index)',make_EMEP_grid_emission_data(waste_index),unit_in,unit_logfile)
+        make_EMEP_grid_emission_data(livestock_index)=read_name_logical('make_EMEP_grid_emission_data(livestock_index)',make_EMEP_grid_emission_data(livestock_index),unit_in,unit_logfile)
+        make_EMEP_grid_emission_data(other_index)=read_name_logical('make_EMEP_grid_emission_data(other_index)',make_EMEP_grid_emission_data(other_index),unit_in,unit_logfile)
         do i_source=1,n_source_index
             if (make_EMEP_grid_emission_data(i_source)) make_EMEP_grid_emission_data(allsource_index)=.true.
         enddo
@@ -172,6 +208,7 @@
         subgrid_emission_distribution_flag=read_name_logical('subgrid_emission_distribution_flag',subgrid_emission_distribution_flag,unit_in,unit_logfile)
    
         EMEP_grid_interpolation_size=read_name_real('EMEP_grid_interpolation_size',EMEP_grid_interpolation_size,unit_in,unit_logfile)
+        EMEP_additional_grid_interpolation_size=read_name_real('EMEP_additional_grid_interpolation_size',EMEP_additional_grid_interpolation_size,unit_in,unit_logfile)
         use_downwind_position_flag=read_name_logical('use_downwind_position_flag',use_downwind_position_flag,unit_in,unit_logfile)
         local_subgrid_method_flag=read_name_integer('local_subgrid_method_flag',local_subgrid_method_flag,unit_in,unit_logfile)
         
@@ -181,6 +218,7 @@
         wind_level_flag=read_name_integer('wind_level_flag',wind_level_flag,unit_in,unit_logfile)
         wind_level_integral_flag=read_name_integer('wind_level_integral_flag',wind_level_flag,unit_in,unit_logfile) !Default is wind_level_flag
         no2_chemistry_scheme_flag=read_name_integer('no2_chemistry_scheme_flag',no2_chemistry_scheme_flag,unit_in,unit_logfile)
+        no2_background_chemistry_scheme_flag=read_name_integer('no2_background_chemistry_scheme_flag',no2_background_chemistry_scheme_flag,unit_in,unit_logfile)
         
         use_emission_positions_for_auto_subgrid_flag(traffic_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(traffic_index)',use_emission_positions_for_auto_subgrid_flag(traffic_index),unit_in,unit_logfile)
         use_emission_positions_for_auto_subgrid_flag(shipping_index)=read_name_logical('use_emission_positions_for_auto_subgrid_flag(shipping_index)',use_emission_positions_for_auto_subgrid_flag(shipping_index),unit_in,unit_logfile)
@@ -191,9 +229,9 @@
         do i_source=1,n_source_index
             if (use_emission_positions_for_auto_subgrid_flag(i_source).and.i_source.ne.allsource_index) use_emission_positions_for_auto_subgrid_flag(allsource_index)=.true.
         enddo
-        do i_source=1,n_source_index
-            write(*,*) 'Using auto subgrid for source ',trim(source_file_str(i_source)),use_emission_positions_for_auto_subgrid_flag(i_source)
-        enddo
+        !do i_source=1,n_source_index
+            !write(*,*) 'Using auto subgrid for source ',trim(source_file_str(i_source)),use_emission_positions_for_auto_subgrid_flag(i_source)
+        !enddo
                     
         use_receptor_positions_for_auto_subgrid_flag=read_name_logical('use_receptor_positions_for_auto_subgrid_flag',use_receptor_positions_for_auto_subgrid_flag,unit_in,unit_logfile)
         use_population_positions_for_auto_subgrid_flag=read_name_logical('use_population_positions_for_auto_subgrid_flag',use_population_positions_for_auto_subgrid_flag,unit_in,unit_logfile)
@@ -205,6 +243,15 @@
         use_trajectory_flag(heating_index)=read_name_logical('use_trajectory_flag(heating_index)',use_trajectory_flag(heating_index),unit_in,unit_logfile)
         use_trajectory_flag(agriculture_index)=read_name_logical('use_trajectory_flag(agriculture_index)',use_trajectory_flag(agriculture_index),unit_in,unit_logfile)
         use_trajectory_flag(industry_index)=read_name_logical('use_trajectory_flag(industry_index)',use_trajectory_flag(industry_index),unit_in,unit_logfile)
+        !Additional GNFR sources
+        use_trajectory_flag(publicpower_index)=read_name_logical('use_trajectory_flag(publicpower_index)',use_trajectory_flag(publicpower_index),unit_in,unit_logfile)
+        use_trajectory_flag(fugitive_index)=read_name_logical('use_trajectory_flag(fugitive_index)',use_trajectory_flag(fugitive_index),unit_in,unit_logfile)
+        use_trajectory_flag(solvents_index)=read_name_logical('use_trajectory_flag(solvents_index)',use_trajectory_flag(solvents_index),unit_in,unit_logfile)
+        use_trajectory_flag(aviation_index)=read_name_logical('use_trajectory_flag(aviation_index)',use_trajectory_flag(aviation_index),unit_in,unit_logfile)
+        use_trajectory_flag(offroad_index)=read_name_logical('use_trajectory_flag(offroad_index)',use_trajectory_flag(offroad_index),unit_in,unit_logfile)
+        use_trajectory_flag(waste_index)=read_name_logical('use_trajectory_flag(waste_index)',use_trajectory_flag(waste_index),unit_in,unit_logfile)
+        use_trajectory_flag(livestock_index)=read_name_logical('use_trajectory_flag(livestock_index)',use_trajectory_flag(livestock_index),unit_in,unit_logfile)
+        use_trajectory_flag(other_index)=read_name_logical('use_trajectory_flag(other_index)',use_trajectory_flag(other_index),unit_in,unit_logfile)
         
         traj_step_scale=read_name_real('traj_step_scale',traj_step_scale,unit_in,unit_logfile)
 
@@ -251,6 +298,16 @@
         h_emis(heating_index,1)=read_name_real('h_emis(heating_index,1)',h_emis(heating_index,1),unit_in,unit_logfile)
         h_emis(agriculture_index,1)=read_name_real('h_emis(agriculture_index,1)',h_emis(agriculture_index,1),unit_in,unit_logfile)
         h_emis(industry_index,1)=read_name_real('h_emis(industry_index,1)',h_emis(industry_index,1),unit_in,unit_logfile)
+        !Additional GNFR sources
+        h_emis(publicpower_index,1)=read_name_real('h_emis(publicpower_index,1)',h_emis(publicpower_index,1),unit_in,unit_logfile)
+        h_emis(fugitive_index,1)=read_name_real('h_emis(fugitive_index,1)',h_emis(fugitive_index,1),unit_in,unit_logfile)
+        h_emis(solvents_index,1)=read_name_real('h_emis(solvents_index,1)',h_emis(solvents_index,1),unit_in,unit_logfile)
+        h_emis(aviation_index,1)=read_name_real('h_emis(aviation_index,1)',h_emis(aviation_index,1),unit_in,unit_logfile)
+        h_emis(offroad_index,1)=read_name_real('h_emis(offroad_index,1)',h_emis(offroad_index,1),unit_in,unit_logfile)
+        h_emis(waste_index,1)=read_name_real('h_emis(waste_index,1)',h_emis(waste_index,1),unit_in,unit_logfile)
+        h_emis(livestock_index,1)=read_name_real('h_emis(livestock_index,1)',h_emis(livestock_index,1),unit_in,unit_logfile)
+        h_emis(other_index,1)=read_name_real('h_emis(other_index,1)',h_emis(other_index,1),unit_in,unit_logfile)
+
         h_emis(traffic_index,2)=read_name_real('h_emis(traffic_index,2)',h_emis(traffic_index,2),unit_in,unit_logfile)
         h_emis(shipping_index,2)=read_name_real('h_emis(shipping_index,2)',h_emis(shipping_index,2),unit_in,unit_logfile)
         h_emis(heating_index,2)=read_name_real('h_emis(heating_index,2)',h_emis(heating_index,2),unit_in,unit_logfile)
@@ -262,6 +319,16 @@
         sig_y_00(heating_index,1)=read_name_real('sig_y_00(heating_index,1)',sig_y_00(heating_index,1),unit_in,unit_logfile)
         sig_y_00(agriculture_index,1)=read_name_real('sig_y_00(agriculture_index,1)',sig_y_00(agriculture_index,1),unit_in,unit_logfile)
         sig_y_00(industry_index,1)=read_name_real('sig_y_00(industry_index,1)',sig_y_00(industry_index,1),unit_in,unit_logfile)
+        !Additional GNFR sources
+        sig_y_00(publicpower_index,1)=read_name_real('sig_y_00(publicpower_index,1)',sig_y_00(publicpower_index,1),unit_in,unit_logfile)
+        sig_y_00(fugitive_index,1)=read_name_real('sig_y_00(fugitive_index,1)',sig_y_00(fugitive_index,1),unit_in,unit_logfile)
+        sig_y_00(solvents_index,1)=read_name_real('sig_y_00(solvents_index,1)',sig_y_00(solvents_index,1),unit_in,unit_logfile)
+        sig_y_00(aviation_index,1)=read_name_real('sig_y_00(aviation_index,1)',sig_y_00(aviation_index,1),unit_in,unit_logfile)
+        sig_y_00(offroad_index,1)=read_name_real('sig_y_00(offroad_index,1)',sig_y_00(offroad_index,1),unit_in,unit_logfile)
+        sig_y_00(waste_index,1)=read_name_real('sig_y_00(waste_index,1)',sig_y_00(waste_index,1),unit_in,unit_logfile)
+        sig_y_00(livestock_index,1)=read_name_real('sig_y_00(livestock_index,1)',sig_y_00(livestock_index,1),unit_in,unit_logfile)
+        sig_y_00(other_index,1)=read_name_real('sig_y_00(other_index,1)',sig_y_00(other_index,1),unit_in,unit_logfile)
+
         sig_y_00(traffic_index,2)=read_name_real('sig_y_00(traffic_index,2)',sig_y_00(traffic_index,2),unit_in,unit_logfile)
         sig_y_00(shipping_index,2)=read_name_real('sig_y_00(shipping_index,2)',sig_y_00(shipping_index,2),unit_in,unit_logfile)
         sig_y_00(heating_index,2)=read_name_real('sig_y_00(heating_index,2)',sig_y_00(heating_index,2),unit_in,unit_logfile)
@@ -275,6 +342,16 @@
         sig_z_00(heating_index,1)=read_name_real('sig_z_00(heating_index,1)',sig_z_00(heating_index,1),unit_in,unit_logfile)
         sig_z_00(agriculture_index,1)=read_name_real('sig_z_00(agriculture_index,1)',sig_z_00(agriculture_index,1),unit_in,unit_logfile)
         sig_z_00(industry_index,1)=read_name_real('sig_z_00(industry_index,1)',sig_z_00(industry_index,1),unit_in,unit_logfile)
+        !Additional GNFR sources
+        sig_z_00(publicpower_index,1)=read_name_real('sig_z_00(publicpower_index,1)',sig_z_00(publicpower_index,1),unit_in,unit_logfile)
+        sig_z_00(fugitive_index,1)=read_name_real('sig_z_00(fugitive_index,1)',sig_z_00(fugitive_index,1),unit_in,unit_logfile)
+        sig_z_00(solvents_index,1)=read_name_real('sig_z_00(solvents_index,1)',sig_z_00(solvents_index,1),unit_in,unit_logfile)
+        sig_z_00(aviation_index,1)=read_name_real('sig_z_00(aviation_index,1)',sig_z_00(aviation_index,1),unit_in,unit_logfile)
+        sig_z_00(offroad_index,1)=read_name_real('sig_z_00(offroad_index,1)',sig_z_00(offroad_index,1),unit_in,unit_logfile)
+        sig_z_00(waste_index,1)=read_name_real('sig_z_00(waste_index,1)',sig_z_00(waste_index,1),unit_in,unit_logfile)
+        sig_z_00(livestock_index,1)=read_name_real('sig_z_00(livestock_index,1)',sig_z_00(livestock_index,1),unit_in,unit_logfile)
+        sig_z_00(other_index,1)=read_name_real('sig_z_00(other_index,1)',sig_z_00(other_index,1),unit_in,unit_logfile)
+
         sig_z_00(traffic_index,2)=read_name_real('sig_z_00(traffic_index,2)',sig_z_00(traffic_index,2),unit_in,unit_logfile)
         sig_z_00(shipping_index,2)=read_name_real('sig_z_00(shipping_index,2)',sig_z_00(shipping_index,2),unit_in,unit_logfile)
         sig_z_00(heating_index,2)=read_name_real('sig_z_00(heating_index,2)',sig_z_00(heating_index,2),unit_in,unit_logfile)
@@ -481,6 +558,15 @@
         save_emissions_for_EMEP(industry_index)=read_name_logical('save_emissions_for_EMEP(industry_index)',save_emissions_for_EMEP(industry_index),unit_in,unit_logfile)        
         save_emissions_for_EMEP(heating_index)=read_name_logical('save_emissions_for_EMEP(heating_index)',save_emissions_for_EMEP(heating_index),unit_in,unit_logfile)        
         save_emissions_for_EMEP(agriculture_index)=read_name_logical('save_emissions_for_EMEP(agriculture_index)',save_emissions_for_EMEP(agriculture_index),unit_in,unit_logfile)               
+        !Additional GNFR sources
+        save_emissions_for_EMEP(publicpower_index)=read_name_logical('save_emissions_for_EMEP(publicpower_index)',save_emissions_for_EMEP(publicpower_index),unit_in,unit_logfile)
+        save_emissions_for_EMEP(fugitive_index)=read_name_logical('save_emissions_for_EMEP(fugitive_index)',save_emissions_for_EMEP(fugitive_index),unit_in,unit_logfile)
+        save_emissions_for_EMEP(solvents_index)=read_name_logical('save_emissions_for_EMEP(solvents_index)',save_emissions_for_EMEP(solvents_index),unit_in,unit_logfile)
+        save_emissions_for_EMEP(aviation_index)=read_name_logical('save_emissions_for_EMEP(aviation_index)',save_emissions_for_EMEP(aviation_index),unit_in,unit_logfile)
+        save_emissions_for_EMEP(offroad_index)=read_name_logical('save_emissions_for_EMEP(offroad_index)',save_emissions_for_EMEP(offroad_index),unit_in,unit_logfile)
+        save_emissions_for_EMEP(waste_index)=read_name_logical('save_emissions_for_EMEP(waste_index)',save_emissions_for_EMEP(waste_index),unit_in,unit_logfile)
+        save_emissions_for_EMEP(livestock_index)=read_name_logical('save_emissions_for_EMEP(livestock_index)',save_emissions_for_EMEP(livestock_index),unit_in,unit_logfile)
+        save_emissions_for_EMEP(other_index)=read_name_logical('save_emissions_for_EMEP(other_index)',save_emissions_for_EMEP(other_index),unit_in,unit_logfile)
         !Set all source index to true if any of the sources are to be saved. allsource_index defines if the routine is called or not
         do i_source=1,n_source_index
             if (save_emissions_for_EMEP(i_source)) save_emissions_for_EMEP(allsource_index)=.true.
@@ -581,6 +667,15 @@
             uEMEP_to_EMEP_replace_sector(agriculture_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(agriculture_index)',uEMEP_to_EMEP_replace_sector(agriculture_index),unit_in,unit_logfile)
             uEMEP_to_EMEP_replace_sector(heating_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(heating_index)',uEMEP_to_EMEP_replace_sector(heating_index),unit_in,unit_logfile)
             uEMEP_to_EMEP_replace_sector(industry_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(industry_index)',uEMEP_to_EMEP_replace_sector(industry_index),unit_in,unit_logfile)
+            !Additional GNFR sources
+            uEMEP_to_EMEP_replace_sector(publicpower_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(publicpower_index)',uEMEP_to_EMEP_replace_sector(publicpower_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(fugitive_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(fugitive_index)',uEMEP_to_EMEP_replace_sector(fugitive_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(solvents_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(solvents_index)',uEMEP_to_EMEP_replace_sector(solvents_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(aviation_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(aviation_index)',uEMEP_to_EMEP_replace_sector(aviation_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(offroad_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(offroad_index)',uEMEP_to_EMEP_replace_sector(offroad_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(waste_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(waste_index)',uEMEP_to_EMEP_replace_sector(waste_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(livestock_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(livestock_index)',uEMEP_to_EMEP_replace_sector(livestock_index),unit_in,unit_logfile)
+            uEMEP_to_EMEP_replace_sector(other_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(other_index)',uEMEP_to_EMEP_replace_sector(other_index),unit_in,unit_logfile)
         endif
         
         EMEP_emission_aggregation_period=read_name_real('EMEP_emission_aggregation_period',EMEP_emission_aggregation_period,unit_in,unit_logfile)
@@ -602,6 +697,9 @@
         romberg_parameters(1)=read_name_real('romberg_parameters(1)',romberg_parameters(1),unit_in,unit_logfile)
         romberg_parameters(2)=read_name_real('romberg_parameters(2)',romberg_parameters(2),unit_in,unit_logfile)
         romberg_parameters(3)=read_name_real('romberg_parameters(3)',romberg_parameters(3),unit_in,unit_logfile)
+        SRM_parameters(1)=read_name_real('SRM_parameters(1)',SRM_parameters(1),unit_in,unit_logfile)!beta
+        SRM_parameters(2)=read_name_real('SRM_parameters(2)',SRM_parameters(2),unit_in,unit_logfile)!K
+        SRM_parameters(3)=read_name_real('SRM_parameters(3)',SRM_parameters(3),unit_in,unit_logfile)!F
         
         sig_y_scaling_factor=read_name_real('sig_y_scaling_factor',sig_y_scaling_factor,unit_in,unit_logfile)
         
@@ -635,6 +733,7 @@
         var_name_population_nc(population_nc_index)=read_name_char('var_name_population_nc(population_nc_index)',var_name_population_nc(population_nc_index),unit_in,unit_logfile)
         var_name_population_nc(dwelling_nc_index)=read_name_char('var_name_population_nc(dwelling_nc_index)',var_name_population_nc(dwelling_nc_index),unit_in,unit_logfile)
         
+        f_no2_emep=read_name_real('f_no2_emep',f_no2_emep,unit_in,unit_logfile)
         
     close (unit_in)
     

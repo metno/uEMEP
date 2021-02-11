@@ -27,9 +27,10 @@
     integer i,j,k
     character(256) temp_name
     logical exists
-    integer ii,jj,tt
+    integer ii,jj,tt,iii,jjj
     integer i_temp,j_temp,i_file
     integer i_nc_temp,j_nc_temp
+    real, allocatable :: weighting_nc2(:,:,:,:)
     real, allocatable :: weighting_nc(:,:,:,:),weighting_subgrid(:,:,:,:,:)
     real, allocatable :: total_weighting_nc(:,:,:,:,:),proxy_weighting_nc(:,:,:,:,:)
     real, allocatable :: area_weighting_nc(:,:,:,:,:,:)
@@ -37,6 +38,8 @@
     integer i_start,i_end,j_start,j_end,t_start,t_end
     real xpos_min,xpos_max,ypos_min,ypos_max
     real xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
+    real xpos_min2,xpos_max2,ypos_min2,ypos_max2
+    real xpos_area_min2,xpos_area_max2,ypos_area_min2,ypos_area_max2
     integer i_nc,j_nc
     integer id,jd
     integer source_index,emep_subsource
@@ -45,6 +48,7 @@
     integer i_source,i_subsource
     integer id_p,jd_p,id_m,jd_m,in_p,jn_p,in_m,jn_m
     integer ii_nc,jj_nc,ii_w,jj_w
+    integer iii_nc,jjj_nc,iii_w,jjj_w
     integer :: n_weight=3,ii_w0=2,jj_w0=2
     integer weighting_subgrid_dim(2,n_source_index)
     integer i_cross,j_cross
@@ -55,17 +59,25 @@
     integer i_comp
     integer count
     integer ii_start,ii_end,jj_start,jj_end
+    integer iii_start,iii_end,jjj_start,jjj_end
     real u_subgrid_loc,v_subgrid_loc
     real x_downwind,y_downwind
     real xpos_limit,ypos_limit
+    real xpos_limit2,ypos_limit2
     real xpos_subgrid,ypos_subgrid
     real xpos_emission_subgrid,ypos_emission_subgrid
     real xpos_integral_subgrid,ypos_integral_subgrid
     real EMEP_grid_interpolation_size_sqr
     integer :: tt_dim=1
+    integer ii_nc_w0,jj_nc_w0,iii_nc_w,jjj_nc_w
+    integer ii_nc_w,jj_nc_w
    
+    real weighting_val
     integer i_pollutant,i_loop
     integer i_sp,ii_sp
+    real, allocatable :: EMEP_local_contribution(:,:,:,:)
+    integer n_weight_nc_x,n_weight_nc_y
+    real EMEP_grid_interpolation_size_original
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -80,6 +92,13 @@
     comp_EMEP_subgrid(:,:,:,:)=0
     orig_EMEP_subgrid(:,:,:,:)=0
     if (save_emep_species.or.save_seasalt) species_EMEP_subgrid(:,:,:,:,:)=0
+    
+    !Check if the additional EMEP calculation is to be carried out and set parameters
+    if (calculate_EMEP_additional_grid_flag) then
+        EMEP_grid_interpolation_size_original=EMEP_grid_interpolation_size
+        EMEP_grid_interpolation_size=EMEP_additional_grid_interpolation_size 
+	    write(unit_logfile,'(A)') 'Calculating additional EMEP concentrations to subgrids'
+    endif
     
     !Set value used later
     EMEP_grid_interpolation_size_sqr=EMEP_grid_interpolation_size*EMEP_grid_interpolation_size
@@ -100,7 +119,7 @@
     
     !Save the original EMEP directly to subgrid for comparison and visualisation purposes on the target subgrid  
     write(unit_logfile,'(A)')'Calculating original EMEP subgrid using nearest neighbour interpolation'
-        
+    
         do j=1,subgrid_dim(y_dim_index)
         do i=1,subgrid_dim(x_dim_index)
             
@@ -127,22 +146,104 @@
         
         if (tt.eq.t_start) write(unit_logfile,'(A)')'Calculating EMEP local subgrid contribution using nearest neighbour interpolation'
         
+        jj_start=-1-floor(0.5*(EMEP_grid_interpolation_size-1.))
+        ii_start=-1-floor(0.5*(EMEP_grid_interpolation_size-1.))
+        jj_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
+        ii_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
+        
+        if (EMEP_grid_interpolation_size.le.1) then
+            jj_start=0
+            ii_start=0
+            jj_end=0
+            ii_end=0
+        endif
+         
+        write(unit_logfile,'(A,4i)') 'LF loop (ii_start,ii_end,jj_start,jj_end): ',ii_start,ii_end,jj_start,jj_end
+
+        ii_nc_w0=xdist_centre_nc
+        jj_nc_w0=ydist_centre_nc
+
+        !Set weighting indexes
+        n_weight=3+2*floor((EMEP_grid_interpolation_size-1.)*0.5)
+        ii_w0=1+floor(n_weight*.5)
+        jj_w0=1+floor(n_weight*.5)
+
+        n_weight_nc_x=xdist_centre_nc*2-1
+        n_weight_nc_y=ydist_centre_nc*2-1
+
+        !Set the size of the region surounding the target grid that is searched
+        xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
+        ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size
+        
+
         do j=1,subgrid_dim(y_dim_index)
         do i=1,subgrid_dim(x_dim_index)
         if (use_subgrid(i,j,allsource_index)) then
             
-            ii=crossreference_target_to_emep_subgrid(i,j,x_dim_index)
-            jj=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
+            i_nc=crossreference_target_to_emep_subgrid(i,j,x_dim_index)
+            j_nc=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
         
-            if (ii.ge.1.and.ii.le.dim_length_nc(x_dim_nc_index).and.jj.ge.1.and.jj.le.dim_length_nc(y_dim_nc_index)) then
+            if (i_nc.ge.1.and.i_nc.le.dim_length_nc(x_dim_nc_index).and.j_nc.ge.1.and.j_nc.le.dim_length_nc(y_dim_nc_index)) then
             
-            subgrid(i,j,:,emep_subgrid_index,:,:)=var3d_nc(ii,jj,:,conc_nc_index,:,:)
-            subgrid(i,j,:,emep_local_subgrid_index,:,:)=var3d_nc(ii,jj,:,local_nc_index,:,:)
+            subgrid(i,j,:,emep_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,conc_nc_index,:,:)
+            subgrid(i,j,:,emep_local_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,local_nc_index,:,:)
+            
+            !Centre of grid
+            xpos_subgrid=var1d_nc(i_nc,lon_nc_index)
+            ypos_subgrid=var1d_nc(j_nc,lat_nc_index)
+
+            !Set the edges of the search area surounding the target grid
+            xpos_area_min=xpos_subgrid-xpos_limit
+            xpos_area_max=xpos_subgrid+xpos_limit
+            ypos_area_min=ypos_subgrid-ypos_limit
+            ypos_area_max=ypos_subgrid+ypos_limit
+
+            !Calculate the local fraction contribution from within the moving window, limited on the edges.
+            subgrid(i,j,:,emep_local_subgrid_index,:,:)=0 
+            
+            do jj=jj_start,jj_end
+            do ii=ii_start,ii_end
+
+                ii_nc=ii+i_nc
+                jj_nc=jj+j_nc
+                
+                ii_nc_w=ii+ii_nc_w0
+                jj_nc_w=jj+jj_nc_w0
+
+                ii_w=ii+ii_w0
+                jj_w=jj+jj_w0
+                
+                !Put in a limit
+                if (ii_nc.ge.1.and.ii_nc.le.dim_length_nc(x_dim_nc_index).and.jj_nc.ge.1.and.jj_nc.le.dim_length_nc(y_dim_nc_index) &
+                    .and.ii_nc_w.ge.1.and.ii_nc_w.le.n_weight_nc_x.and.jj_nc_w.ge.1.and.jj_nc_w.le.n_weight_nc_y) then
+
+                    !Set the edges to an EMEP grid surounding the EMEP grid being assessed
+                    xpos_min=max(xpos_area_min,var1d_nc(ii_nc,lon_nc_index)-dgrid_nc(lon_nc_index)/2.)
+                    xpos_max=min(xpos_area_max,var1d_nc(ii_nc,lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
+                    ypos_min=max(ypos_area_min,var1d_nc(jj_nc,lat_nc_index)-dgrid_nc(lat_nc_index)/2.)
+                    ypos_max=min(ypos_area_max,var1d_nc(jj_nc,lat_nc_index)+dgrid_nc(lat_nc_index)/2.)
+            
+                    !Calculate area weighting
+                    if (xpos_max.gt.xpos_min.and.ypos_max.gt.ypos_min) then
+                        weighting_val=(ypos_max-ypos_min)*(xpos_max-xpos_min)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)
+                    else
+                        weighting_val=0.
+                    endif                           
+                
+                    !write(*,*) ii,jj,weighting_nc(ii_w,jj_w,tt_dim,allsource_index)
                     
+                    subgrid(i,j,:,emep_local_subgrid_index,:,:)=subgrid(i,j,:,emep_local_subgrid_index,:,:) &
+                                    +lc_var3d_nc(ii_nc_w,jj_nc_w,i_nc,j_nc,:,lc_local_nc_index,:,:)*weighting_val
+                
+                endif
+
+            enddo
+            enddo
+            
             !Interpolate the other EMEP compounds as well to subgrid in the same way
             do i_pollutant=1,n_emep_pollutant_loop
             do i_loop=1,n_pollutant_compound_loop(i_pollutant)
-                comp_EMEP_subgrid(i,j,:,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_var3d_nc(ii,jj,:,pollutant_compound_loop_index(i_pollutant,i_loop))
+                comp_EMEP_subgrid(i,j,:,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_var3d_nc(i_nc,j_nc,:,pollutant_compound_loop_index(i_pollutant,i_loop))
             enddo
             enddo
 
@@ -150,7 +251,7 @@
             do i_sp=1,n_species_loop_index
             ii_sp=species_loop_index(i_sp)
             do i_loop=1,n_pmxx_sp_index
-                species_EMEP_subgrid(i,j,:,i_loop,i_sp)=species_var3d_nc(ii,jj,:,i_loop,i_sp)
+                species_EMEP_subgrid(i,j,:,i_loop,i_sp)=species_var3d_nc(i_nc,j_nc,:,i_loop,i_sp)
             enddo
             enddo
             endif
@@ -160,7 +261,9 @@
         endif
         enddo
         enddo
-        
+
+       
+        !Set the non-local for each source individually
         subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)=subgrid(:,:,:,emep_subgrid_index,:,:)-subgrid(:,:,:,emep_local_subgrid_index,:,:)
    endif
 
@@ -174,9 +277,9 @@
 
     !Quick calculation of area weighting, no edge effects. Does not need to change with time
     !This is done also if there is moving window weighting later as it is used for the nonlocal contribution
-    if (EMEP_grid_interpolation_flag.ge.1) then
+    if (EMEP_grid_interpolation_flag.eq.-1.or.EMEP_grid_interpolation_flag.gt.1) then
         
-        if (tt.eq.t_start) write(unit_logfile,'(A)')'Calculating EMEP local subgrid contribution using area weighted interpolation'
+        if (tt.eq.t_start) write(unit_logfile,'(A)')'Calculating EMEP local subgrid contribution using area weighted interpolation (obsolete version)'
         
         !Set weighting indexes
         n_weight=3+2*floor((EMEP_grid_interpolation_size-1.)*0.5)
@@ -201,10 +304,10 @@
         ii_start=-1-floor(0.5*(EMEP_grid_interpolation_size-1.))
         jj_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
         ii_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
-        jj_start=-1-ceiling(0.5*(EMEP_grid_interpolation_size-1.))
-        ii_start=-1-ceiling(0.5*(EMEP_grid_interpolation_size-1.))
-        jj_end=1+ceiling(0.5*(EMEP_grid_interpolation_size-1.))
-        ii_end=1+ceiling(0.5*(EMEP_grid_interpolation_size-1.))
+        !jj_start=-1-ceiling(0.5*(EMEP_grid_interpolation_size-1.))
+        !ii_start=-1-ceiling(0.5*(EMEP_grid_interpolation_size-1.))
+        !jj_end=1+ceiling(0.5*(EMEP_grid_interpolation_size-1.))
+        !ii_end=1+ceiling(0.5*(EMEP_grid_interpolation_size-1.))
         
         !Set the size of the region surounding the target grid that is searched
         xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
@@ -260,6 +363,7 @@
                             +var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,:)
                         subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,i_pollutant)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,i_pollutant) &
                             +(var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,:,i_pollutant)-var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:,i_pollutant))*weighting_nc(ii_w,jj_w,tt_dim,:)
+
                     enddo
                     
                     
@@ -354,6 +458,196 @@
         
     endif
 
+
+    if (EMEP_grid_interpolation_flag.eq.1) then
+        
+        if (tt.eq.t_start) write(unit_logfile,'(A)')'Calculating EMEP local subgrid contribution using area weighted interpolation v2'
+        
+        !Set weighting indexes
+        n_weight=3+2*floor((EMEP_grid_interpolation_size-1.)*0.5)
+        ii_w0=1+floor(n_weight*.5)
+        jj_w0=1+floor(n_weight*.5)
+
+        ii_nc_w0=xdist_centre_nc
+        jj_nc_w0=ydist_centre_nc
+
+        n_weight_nc_x=xdist_centre_nc*2-1
+        n_weight_nc_y=ydist_centre_nc*2-1
+
+        if (tt.eq.t_start) write(unit_logfile,'(a,3i)') 'Weighting grid dimensions and centres: ',n_weight,ii_w0,jj_w0
+        if (tt.eq.t_start) write(unit_logfile,'(a,4i)') 'EMEP local fraction grid dimensions and centres: ',n_weight_nc_x,n_weight_nc_y,ii_nc_w0,jj_nc_w0
+    
+        if (.not.allocated(EMEP_local_contribution)) allocate (EMEP_local_contribution(n_weight_nc_x,n_weight_nc_y,n_source_index,n_emep_pollutant_loop))
+
+        !Initialise arrays
+        subgrid(:,:,tt,emep_subgrid_index,:,:)=0
+        subgrid(:,:,tt,emep_frac_subgrid_index,:,:)=0
+        subgrid(:,:,tt,emep_local_subgrid_index,:,:)=0
+        subgrid(:,:,tt,emep_nonlocal_subgrid_index,:,:)=0
+        comp_EMEP_subgrid(:,:,tt,:)=0
+        species_EMEP_subgrid(:,:,tt,:,:)=0
+        EMEP_local_contribution=0
+        
+        !Cover the search area necessary for the surounding EMEP grids
+        jj_start=-1-floor(0.5*(EMEP_grid_interpolation_size-1.))
+        ii_start=-1-floor(0.5*(EMEP_grid_interpolation_size-1.))
+        jj_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
+        ii_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
+        
+        !Set the loop sizes for the local area interpolation
+        jjj_start=-1
+        iii_start=-1
+        jjj_end=1
+        iii_end=1
+        
+        !Set the size of the region surounding the target grid that is searched
+        xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
+        ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size
+        xpos_limit2=dgrid_nc(lon_nc_index)/2.
+        ypos_limit2=dgrid_nc(lat_nc_index)/2.
+        
+        !Recheck this!
+        write(unit_logfile,'(a,4i)') 'Loop sizes: ',jj_start,jj_end,ii_start,ii_end
+        
+        do j=1,subgrid_dim(y_dim_index)
+        do i=1,subgrid_dim(x_dim_index)
+        if (use_subgrid(i,j,allsource_index)) then
+         
+            !Assumes it is never on the edge of the EMEP grid as it is not limitted
+            i_nc=crossreference_target_to_emep_subgrid(i,j,x_dim_index)
+            j_nc=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
+
+            xpos_subgrid=xproj_subgrid(i,j)
+            ypos_subgrid=yproj_subgrid(i,j)
+            !xpos_subgrid=var1d_nc(i_nc,lon_nc_index)
+            !ypos_subgrid=var1d_nc(j_nc,lat_nc_index)
+                       
+            !Set the edges of the search area surounding the target grid
+            xpos_area_min=-xpos_limit
+            xpos_area_max=+xpos_limit
+            ypos_area_min=-ypos_limit
+            ypos_area_max=+ypos_limit
+                
+            xpos_area_min2=xpos_subgrid-xpos_limit2
+            xpos_area_max2=xpos_subgrid+xpos_limit2
+            ypos_area_min2=ypos_subgrid-ypos_limit2
+            ypos_area_max2=ypos_subgrid+ypos_limit2
+
+
+            !weighting_nc(:,:,tt_dim,:)=0.
+            !weighting_nc2(:,:,tt_dim,:)=0.
+            
+            !First create an interpolated grid around the x,y position for the species and the compounds
+            EMEP_local_contribution=0
+            do jj=jjj_start,jjj_end
+            do ii=iii_start,iii_end
+                
+                ii_nc=ii+i_nc
+                jj_nc=jj+j_nc
+                
+                ii_w=ii+ii_w0
+                jj_w=jj+jj_w0
+                
+                !Put in a limit
+                if (ii_nc.ge.1.and.ii_nc.le.dim_length_nc(x_dim_nc_index).and.jj_nc.ge.1.and.jj_nc.le.dim_length_nc(y_dim_nc_index)) then
+
+                !Set the edges to an EMEP grid surounding the EMEP grid being assessed
+                xpos_min2=max(xpos_area_min2,var1d_nc(ii_nc,lon_nc_index)-dgrid_nc(lon_nc_index)/2.)
+                xpos_max2=min(xpos_area_max2,var1d_nc(ii_nc,lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
+                ypos_min2=max(ypos_area_min2,var1d_nc(jj_nc,lat_nc_index)-dgrid_nc(lat_nc_index)/2.)
+                ypos_max2=min(ypos_area_max2,var1d_nc(jj_nc,lat_nc_index)+dgrid_nc(lat_nc_index)/2.)
+            
+                !Calculate area weighting
+                if (xpos_max2.gt.xpos_min2.and.ypos_max2.gt.ypos_min2) then
+                    weighting_val=(ypos_max2-ypos_min2)*(xpos_max2-xpos_min2)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)
+                else
+                    weighting_val=0.
+                endif            
+                    
+                subgrid(i,j,:,emep_subgrid_index,:,:)=subgrid(i,j,:,emep_subgrid_index,:,:)+var3d_nc(ii_nc,jj_nc,:,conc_nc_index,:,:)*weighting_val
+
+                EMEP_local_contribution(:,:,:,:)=EMEP_local_contribution(:,:,:,:)+lc_var3d_nc(:,:,ii_nc,jj_nc,tt,lc_local_nc_index,:,:)*weighting_val
+
+                do i_pollutant=1,n_emep_pollutant_loop
+                do i_loop=1,n_pollutant_compound_loop(i_pollutant)
+                    comp_EMEP_subgrid(i,j,tt,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_EMEP_subgrid(i,j,tt,pollutant_compound_loop_index(i_pollutant,i_loop)) &
+                                +comp_var3d_nc(ii_nc,jj_nc,tt,pollutant_compound_loop_index(i_pollutant,i_loop))*weighting_val
+                enddo                     
+                enddo
+
+                if (save_emep_species.or.save_seasalt) then
+                    do i_sp=1,n_species_loop_index
+                    ii_sp=species_loop_index(i_sp)
+                    do i_loop=1,n_pmxx_sp_index
+                        species_EMEP_subgrid(i,j,tt,i_loop,i_sp)=species_EMEP_subgrid(i,j,tt,i_loop,i_sp) &
+                            +species_var3d_nc(ii_nc,jj_nc,tt,i_loop,i_sp)*weighting_val
+                    enddo
+                    enddo
+                endif
+
+                endif
+            enddo
+            enddo
+
+            
+            !Calculate the local contribution within the moving window area
+            do jjj=jj_start,jj_end
+            do iii=ii_start,ii_end
+                
+                ii_nc=ii+i_nc
+                jj_nc=jj+j_nc
+                
+                ii_w=ii+ii_w0
+                jj_w=jj+jj_w0
+                
+                iii_nc_w=iii+ii_nc_w0
+                jjj_nc_w=jjj+jj_nc_w0
+
+                !Put in a limit
+                if (iii_nc_w.ge.1.and.iii_nc_w.le.n_weight_nc_x.and.jjj_nc_w.ge.1.and.jjj_nc_w.le.n_weight_nc_y) then
+
+                !Set the edges to an EMEP grid surounding the EMEP grid being assessed
+                xpos_min=max(xpos_area_min,iii*dgrid_nc(lon_nc_index)-dgrid_nc(lon_nc_index)/2.)
+                xpos_max=min(xpos_area_max,iii*dgrid_nc(lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
+                ypos_min=max(ypos_area_min,jjj*dgrid_nc(lat_nc_index)-dgrid_nc(lat_nc_index)/2.)
+                ypos_max=min(ypos_area_max,jjj*dgrid_nc(lat_nc_index)+dgrid_nc(lat_nc_index)/2.)
+            
+                !Calculate area weighting
+                if (xpos_max.gt.xpos_min.and.ypos_max.gt.ypos_min) then
+                    weighting_val=(ypos_max-ypos_min)*(xpos_max-xpos_min)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)
+                else
+                    weighting_val=0.
+                endif            
+                                    
+                
+                subgrid(i,j,tt,emep_local_subgrid_index,:,:)=subgrid(i,j,tt,emep_local_subgrid_index,:,:)+EMEP_local_contribution(iii_nc_w,jjj_nc_w,:,:)*weighting_val
+
+                !write(*,*) iii,jjj,weighting_val,EMEP_local_contribution(iii_nc_w,jjj_nc_w,traffic_nc_index,allsource_index)
+                endif
+            enddo
+            enddo
+            
+            !Place the EMEP values in the target subgrid
+            !subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)+nonlocal_correction(tt_dim,:,:)
+            subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,emep_subgrid_index,:,:)-subgrid(i,j,tt,emep_local_subgrid_index,:,:)
+            !subgrid(i,j,tt,emep_subgrid_index,:,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)+subgrid(i,j,tt,emep_local_subgrid_index,:,:)
+
+            !Take the already calculated nonlocal depositions to be the fraction of the nonlocal/total EMEP values
+            if (calculate_deposition_flag) then
+                subgrid(i,j,tt,drydepo_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,drydepo_nonlocal_subgrid_index,:,:) &
+                                                                    *subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)/subgrid(i,j,tt,emep_subgrid_index,:,:)
+                subgrid(i,j,tt,wetdepo_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,wetdepo_nonlocal_subgrid_index,:,:) &
+                                                                    *subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)/subgrid(i,j,tt,emep_subgrid_index,:,:)
+            endif
+            
+            
+        endif
+        enddo
+        enddo
+        
+                
+    endif
+
     !Loop through subgrid and carry out a subgrid weighted moving window interpolation
     if (EMEP_grid_interpolation_flag.gt.1) then
 
@@ -393,8 +687,10 @@
             if (.not.allocated(weighting_subgrid)) allocate (weighting_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),tt_dim,n_source_index,n_pollutant_loop))
             if (.not.allocated(crossreference_weighting_to_emep_subgrid)) allocate (crossreference_weighting_to_emep_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),2,n_source_index))
             do i_source=1,n_source_index
+            if (calculate_source(i_source)) then
                 crossreference_weighting_to_emep_subgrid(:,:,:,i_source)=crossreference_integral_to_emep_subgrid
                 weighting_subgrid_dim(:,i_source)=integral_subgrid_dim(1:2)
+            endif
             enddo
             weighting_subgrid(:,:,tt_dim,:,:)=0.
             do i_source=1,n_source_index
@@ -417,8 +713,10 @@
             if (.not.allocated(weighting_subgrid)) allocate (weighting_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
             if (.not.allocated(crossreference_weighting_to_emep_subgrid)) allocate (crossreference_weighting_to_emep_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),2,n_source_index))
             do i_source=1,n_source_index
+            if (calculate_source(i_source)) then
                 crossreference_weighting_to_emep_subgrid(:,:,:,i_source)=crossreference_integral_to_emep_subgrid
                 weighting_subgrid_dim(:,i_source)=integral_subgrid_dim(1:2)
+            endif
             enddo
             !Set the weighting subgrid to the sum of all subsource integral emissions
             weighting_subgrid(:,:,tt_dim,:,:)=integral_subgrid(:,:,tt,hsurf_integral_subgrid_index,:,:)
@@ -623,7 +921,7 @@
         subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=0. !-subgrid(:,:,:,emep_subgrid_index,allsource_index,:)
         count=0
         do i_source=1,n_source_index
-        if (calculate_source(i_source)) then
+        if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
                 
             !Check values for local and totals for each source
             !write(*,*) trim(source_file_str(i_source))
@@ -689,12 +987,20 @@
         endif
         enddo
     
+    !Check if the additional EMEP calculation is to be carried out and set parameters
+    if (calculate_EMEP_additional_grid_flag) then
+        EMEP_grid_interpolation_size=EMEP_grid_interpolation_size_original
+        subgrid(:,:,:,emep_additional_local_subgrid_index,:,:)=subgrid(:,:,:,emep_local_subgrid_index,:,:)
+        subgrid(:,:,:,emep_additional_nonlocal_subgrid_index,:,:)=subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)
+    endif
 
     if (allocated(weighting_nc)) deallocate(weighting_nc)
     if (allocated(area_weighting_nc)) deallocate(area_weighting_nc)
     if (allocated(total_weighting_nc)) deallocate(total_weighting_nc)
     if (allocated(weighting_subgrid)) deallocate(weighting_subgrid)
     if (allocated(nonlocal_correction_average)) deallocate(nonlocal_correction_average)
+    if (allocated(EMEP_local_contribution)) deallocate (EMEP_local_contribution)
+
   
   
     end subroutine uEMEP_subgrid_EMEP

@@ -116,7 +116,9 @@
     !Set the number of levels to match this
     !n_use_subgrid_levels=floor(log(max_use_subgrid_size/sqrt(subgrid_delta(x_dim_index)*subgrid_delta(y_dim_index)))/log(2.)+.5)
         do i_source=1,n_source_index
+        if (calculate_source(i_source)) then
             write(*,*) 'Using auto subgrid for source ',trim(source_file_str(i_source)),use_emission_positions_for_auto_subgrid_flag(i_source)
+        endif
         enddo
 
     do i_source=1,n_source_index

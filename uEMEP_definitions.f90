@@ -45,7 +45,9 @@
     integer :: EMEP_grid_interpolation_flag=0
     integer :: EMEP_meteo_grid_interpolation_flag=1
     real :: EMEP_grid_interpolation_size=1.
+    real :: EMEP_additional_grid_interpolation_size=0.
     integer :: local_subgrid_method_flag=1
+    logical :: calculate_EMEP_additional_grid_flag=.false.
     
     !Single loop time variables
     integer t_loop
@@ -110,13 +112,14 @@
     integer allsource_nc_index,traffic_nc_index,shipping_nc_index,heating_nc_index,agriculture_nc_index,industry_nc_index
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
     integer n_source_nc_index
-    parameter (n_source_nc_index=6)
+    !parameter (n_source_nc_index=6)
     
     !All the other GNFR emissions
     integer publicpower_nc_index,fugitive_nc_index,solvents_nc_index,aviation_nc_index,offroad_nc_index,waste_nc_index,livestock_nc_index,other_nc_index
     parameter (publicpower_nc_index=7,fugitive_nc_index=8,solvents_nc_index=9,aviation_nc_index=10,offroad_nc_index=11,waste_nc_index=12,livestock_nc_index=13,other_nc_index=14)
-    !parameter (n_source_nc_index=14)
+    parameter (n_source_nc_index=14)
     
+    !integer GNFR_index(n_source_nc_index)
     !A ‘PublicPower’ (1)
     !B ‘Industry’ (3)
     !C ‘OtherStationaryComb’ (2)
@@ -198,6 +201,10 @@
     character(256), allocatable :: unit_dim_meteo_nc(:)
     
     integer surface_level_nc
+    
+    !Indicates the centre of the EMEP local fraction distance array. Set in uEMEP_read_EMEP and used in uEMEP_subgrid_EMEP
+    !Source of a significant bug up to febuary 2021 when the EMEP lf grid used in the interpolation were not the same
+    integer :: xdist_centre_nc=0,ydist_centre_nc=0
     
     !Declare road link data arrays
     real, allocatable :: inputdata_rl(:,:)
@@ -323,7 +330,7 @@
 
     !Declaration for all filenames used to save gridded data produced by uEMEP. Up to 200 file names but of course can be more
     integer n_filenames_grid
-    parameter (n_filenames_grid=200)
+    parameter (n_filenames_grid=500)
     character(256) filename_grid(n_filenames_grid)
     character(256) pathname_grid(n_filenames_grid)
     character(256) pathfilename_grid(n_filenames_grid)  !Combined path and filename
@@ -338,14 +345,14 @@
     !Declare subgrid variable indexes for 'subgrid' array
     integer proxy_subgrid_index,proxy_integral_subgrid_index
     integer scaling_factor_subgrid_index,local_subgrid_index,nonlocal_subgrid_index,total_subgrid_index
-    integer emep_subgrid_index,emep_frac_subgrid_index,emep_local_subgrid_index,emep_nonlocal_subgrid_index,proxy_average_integral_subgrid_index
+    integer emep_subgrid_index,emep_frac_subgrid_index,emep_local_subgrid_index,emep_nonlocal_subgrid_index,emep_additional_local_subgrid_index,emep_additional_nonlocal_subgrid_index
     integer drydepo_local_subgrid_index,wetdepo_local_subgrid_index,drydepo_nonlocal_subgrid_index,wetdepo_nonlocal_subgrid_index
     parameter (proxy_subgrid_index=1,proxy_integral_subgrid_index=2)
     parameter (scaling_factor_subgrid_index=3,local_subgrid_index=4,nonlocal_subgrid_index=5,total_subgrid_index=6)
-    parameter (emep_subgrid_index=7,emep_frac_subgrid_index=8,emep_local_subgrid_index=9,emep_nonlocal_subgrid_index=10,proxy_average_integral_subgrid_index=11)
-    parameter (drydepo_local_subgrid_index=12,wetdepo_local_subgrid_index=13,drydepo_nonlocal_subgrid_index=14,wetdepo_nonlocal_subgrid_index=15)
+    parameter (emep_subgrid_index=7,emep_frac_subgrid_index=8,emep_local_subgrid_index=9,emep_nonlocal_subgrid_index=10,emep_additional_local_subgrid_index=11,emep_additional_nonlocal_subgrid_index=12)
+    parameter (drydepo_local_subgrid_index=13,wetdepo_local_subgrid_index=14,drydepo_nonlocal_subgrid_index=15,wetdepo_nonlocal_subgrid_index=16)
     integer n_subgrid_index
-    parameter (n_subgrid_index=15)
+    parameter (n_subgrid_index=16)
 
     !Declare meteo subgrid variables. Does nothave to be the same as the nc version
     integer ugrid_subgrid_index,vgrid_subgrid_index,FF10_subgrid_index,FFgrid_subgrid_index,inv_FFgrid_subgrid_index,inv_FF10_subgrid_index
@@ -371,17 +378,18 @@
     integer allsource_index,traffic_index,shipping_index,heating_index,agriculture_index,industry_index
     parameter (allsource_index=1,traffic_index=2,shipping_index=3,heating_index=4,agriculture_index=5,industry_index=6)
     integer n_source_index
-    parameter (n_source_index=6)
+    !parameter (n_source_index=6)
     !All the other GNFR emissions
     integer publicpower_index,fugitive_index,solvents_index,aviation_index,offroad_index,waste_index,livestock_index,other_index
     parameter (publicpower_index=7,fugitive_index=8,solvents_index=9,aviation_index=10,offroad_index=11,waste_index=12,livestock_index=13,other_index=14)
-    !parameter (n_source_index=14)
+    parameter (n_source_index=14)
     integer compound_source_index(n_compound_index,n_source_index)
     
     character(256) source_file_postfix(n_source_index)
-    logical calculate_source(n_source_index)
+    logical :: calculate_source(n_source_index)=.false.
+    logical :: calculate_EMEP_source(n_source_index)=.false.
     logical :: make_EMEP_grid_emission_data(n_source_index)=.false.
-    logical replace_EMEP_local_with_subgrid_local(n_source_index)
+    logical :: replace_EMEP_local_with_subgrid_local(n_source_index)=.false.
     !logical combine_emission_subsources_during_dispersion(n_source_index)
 
     integer x_dim_index,y_dim_index,t_dim_index,n_dim_index
@@ -580,6 +588,7 @@
     integer proxy_emission_file_index(n_source_index),emission_file_index(n_source_index),proxy_file_index(n_source_index),proxy_integral_file_index(n_source_index)
     integer emep_subgrid_file_index(n_source_index),emep_subgrid_nonlocal_file_index(n_source_index),emep_subgrid_local_file_index(n_source_index),emep_subgrid_frac_file_index(n_source_index)
     integer subgrid_local_file_index(n_source_index),subgrid_total_file_index(n_source_index)
+    integer emep_additional_subgrid_nonlocal_file_index(n_source_index),emep_additional_subgrid_local_file_index(n_source_index)
     !Filename index for meteorological parameters
     integer subgrid_ugrid_file_index,subgrid_vgrid_file_index,subgrid_hmix_file_index,subgrid_kz_file_index,subgrid_logz0_file_index,subgrid_invL_file_index,subgrid_FF10_file_index,subgrid_FFgrid_file_index
     integer subgrid_invFF10_file_index,subgrid_invFFgrid_file_index,subgrid_ustar_file_index,subgrid_J_file_index,subgrid_meteo_file_index
@@ -719,6 +728,8 @@
     
     !Special source allocation for no2 based on leaving out the source in the chemistry calculation
     real, allocatable :: comp_source_fraction_subgrid(:,:,:,:,:)
+    real, allocatable :: comp_source_EMEP_subgrid(:,:,:,:,:)
+    real, allocatable :: comp_source_EMEP_additional_subgrid(:,:,:,:,:)
     
     logical :: save_emissions_for_EMEP(n_source_index)=.false.
     character(256) :: pathname_emissions_for_EMEP=''
@@ -879,8 +890,10 @@
     
     !Define the source sector match between uEMEP and EMEP
     logical :: use_user_specified_sectors_flag=.false.
-    integer :: uEMEP_to_EMEP_sector(n_source_index)
-    integer :: uEMEP_to_EMEP_replace_sector(n_source_index)
+    integer :: uEMEP_to_EMEP_sector(n_source_index)=0
+    integer :: uEMEP_to_EMEP_replace_sector(n_source_index)=0
+    character(2) :: uEMEP_to_EMEP_sector_str(n_source_index)=''
+    character(2) :: uEMEP_to_EMEP_emis_sector_str(n_source_index)=''
     
     !Define the aggregation period for EMEP emissions when these are to be used in calculations. Annual is 365*24=8760 or 8784 for leap years
     real :: EMEP_emission_aggregation_period=1.
@@ -902,6 +915,7 @@
     real :: osm_adt_power_scale=1.
     
     real :: romberg_parameters(3)=0.
+    real :: SRM_parameters(3)=0.
     
     real :: sig_y_scaling_factor=2.0
     
@@ -918,6 +932,9 @@
     
     !Provides a test control for adjusting the traveltime
     real :: traveltime_scaling=1.
+    
+    integer :: no2_background_chemistry_scheme_flag=0
+    real :: f_no2_emep=0.1
     
     end module uEMEP_definitions
     

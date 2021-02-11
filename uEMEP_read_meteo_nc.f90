@@ -22,7 +22,6 @@
     integer i_file,i_source,i_conc,i_dim
     integer temp_frac_index,temp_file_index,temp_compound_index,temp_source_index
     integer temp_num_dims
-    integer xdist_centre_nc,ydist_centre_nc
     integer temp_start_time_nc_index,temp_end_time_nc_index
     integer temp_start_time_meteo_nc_index,temp_end_time_meteo_nc_index
     integer i_loop

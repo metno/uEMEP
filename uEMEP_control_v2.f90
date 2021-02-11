@@ -26,7 +26,7 @@
     
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
-    write(*,*) 'Starting program uEMEP_v6.0'
+    write(*,*) 'Starting program uEMEP_v6.1'
     write(*,*) '------------------------------------------------------------------------'
     
     !Read the command line, assigning the configuration file names and the substitution date_str
@@ -321,6 +321,13 @@
                 call uEMEP_aggregate_proxy_emission_in_EMEP_grid
             endif    
     
+            !Put EMEP data into subgrids for all sources. Run the additional EMEP case
+            if (EMEP_additional_grid_interpolation_size.gt.0) then
+                calculate_EMEP_additional_grid_flag=.true.
+                call uEMEP_subgrid_EMEP
+                calculate_EMEP_additional_grid_flag=.false.
+            endif
+            
             !Put EMEP data into subgrids for all sources
             call uEMEP_subgrid_EMEP
         
@@ -347,6 +354,9 @@
             endif
             
             !Calculate chemistry for NO2 and O3
+            if (EMEP_additional_grid_interpolation_size.gt.0) then
+                calculate_EMEP_additional_grid_flag=.true.
+            endif
             call uEMEP_chemistry
 
             !Calculate exposure
