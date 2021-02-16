@@ -1942,7 +1942,20 @@
         call check(  nf90_put_att(ncid, nf90_global, "Conventions", "CF-1.4" ) )
         call check(  nf90_put_att(ncid, nf90_global, "title", trim(title_str)) )
         call check(  nf90_put_att(ncid, nf90_global, "Model", "uEMEP" ) )        
-    
+        !Save some model flags for later reference
+        call check(  nf90_put_att(ncid, nf90_global, "EMEP_grid_interpolation_flag", EMEP_grid_interpolation_flag ) )        
+        call check(  nf90_put_att(ncid, nf90_global, "no2_chemistry_scheme_flag", no2_chemistry_scheme_flag ) )        
+        call check(  nf90_put_att(ncid, nf90_global, "EMEP_grid_interpolation_size", EMEP_grid_interpolation_size ) )        
+        call check(  nf90_put_att(ncid, nf90_global, "EMEP_additional_grid_interpolation_size", EMEP_additional_grid_interpolation_size ) )        
+        call check(  nf90_put_att(ncid, nf90_global, "no2_background_chemistry_scheme_flag", no2_background_chemistry_scheme_flag ) )        
+        call check(  nf90_put_att(ncid, nf90_global, "local_subgrid_method_flag", local_subgrid_method_flag ) )        
+        call check(  nf90_put_att(ncid, nf90_global, "EMEP_emission_grid_interpolation_flag", EMEP_emission_grid_interpolation_flag ) )        
+        if (limit_emep_grid_interpolation_region_to_calculation_region) then
+            call check(  nf90_put_att(ncid, nf90_global, "limit_emep_grid_interpolation_region_to_calculation_region", "true" ) )        
+        else
+            call check(  nf90_put_att(ncid, nf90_global, "limit_emep_grid_interpolation_region_to_calculation_region", "false" ) )        
+        endif
+   
         !Projection data
         if (projection_type.eq.UTM_projection_index) then
         call check(  nf90_def_var(ncid, "projection_utm", NF90_int, proj_varid) )
