@@ -93,21 +93,22 @@
        
         nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
         
+        !Do not do this because the EMEP contributions are already added into the local contribution
         !Add the additional non-downscaled EMEP local source to the background as these have not been used to calulate travel times
-        do i_source=1,n_source_index
-        if (calculate_EMEP_source(i_source).and..not.calculate_source(i_source).and.i_source.ne.allsource_index) then
-            nox_bg=nox_bg+subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
-        endif
-        enddo
+        !do i_source=1,n_source_index
+        !if (calculate_EMEP_source(i_source).and..not.calculate_source(i_source).and.i_source.ne.allsource_index) then
+        !    nox_bg=nox_bg+subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+        !endif
+        !enddo
         
-        if (calculate_EMEP_additional_grid_flag) then
+        if (EMEP_additional_grid_interpolation_size.gt.0) then
         nox_bg_additional=subgrid(i,j,t,emep_additional_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
-        do i_source=1,n_source_index
-        if (calculate_EMEP_source(i_source).and..not.calculate_source(i_source).and.i_source.ne.allsource_index) then
-            nox_bg_additional=nox_bg_additional+subgrid(i,j,t,emep_additional_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
-        endif
-        enddo
-        subgrid(i,j,t,emep_additional_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))=nox_bg_additional
+        !do i_source=1,n_source_index
+        !if (calculate_EMEP_source(i_source).and..not.calculate_source(i_source).and.i_source.ne.allsource_index) then
+        !    nox_bg_additional=nox_bg_additional+subgrid(i,j,t,emep_additional_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+        !endif
+        !enddo
+        !subgrid(i,j,t,emep_additional_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))=nox_bg_additional
         endif
         
         !nox_bg=subgrid(i,j,t,emep_subgrid_index,allsource_index,emep_subsource)
@@ -126,6 +127,12 @@
             nox_loc=nox_loc+subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
             enddo         
         endif
+        if (calculate_emep_source(i_source).and..not.calculate_source(i_source)) then
+            do i_subsource=1,n_subsource(i_source)
+            f_no2_loc=f_no2_loc+f_no2_emep*subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+            nox_loc=nox_loc+subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+            enddo         
+        endif
         enddo
         if (nox_loc.ne.0.0) then
             f_no2_loc=f_no2_loc/nox_loc
@@ -142,7 +149,7 @@
             call uEMEP_nonlocal_NO2_O3(nox_bg,comp_EMEP_subgrid(i,j,t,nox_index),comp_EMEP_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,o3_index),J_photo,temperature,f_no2_emep,no2_bg,o3_bg)
         endif
         
-        if (calculate_EMEP_additional_grid_flag) then
+        if (EMEP_additional_grid_interpolation_size.gt.0) then
             no2_bg_additional=comp_EMEP_subgrid(i,j,t,no2_index)*nox_bg_additional/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
             if (no2_background_chemistry_scheme_flag.eq.1) then             
                 call uEMEP_nonlocal_NO2_O3(nox_bg_additional,comp_EMEP_subgrid(i,j,t,nox_index),comp_EMEP_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,o3_index),J_photo,temperature,f_no2_emep,no2_bg_additional,o3_bg_additional)
@@ -295,11 +302,11 @@
         nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
         
         !Add the additional non-downscaled EMEP local source to the background as these have not been used to calulate travel times
-        do i_source=1,n_source_index
-        if (calculate_EMEP_source(i_source).and..not.calculate_source(i_source).and.i_source.ne.allsource_index) then
-            nox_bg=nox_bg+subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
-        endif
-        enddo
+        !do i_source=1,n_source_index
+        !if (calculate_EMEP_source(i_source).and..not.calculate_source(i_source).and.i_source.ne.allsource_index) then
+        !    nox_bg=nox_bg+subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+        !endif
+        !enddo
          
         o3_bg=comp_EMEP_subgrid(i,j,t,o3_index)
         !o3_bg=comp_EMEP_subgrid(i,j,t,o3_index)+48./46.*comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_local_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
@@ -317,6 +324,14 @@
                     f_no2_loc=f_no2_loc+emission_factor(no2_index,i_source,i_subsource)/emission_factor(nox_index,i_source,i_subsource)*subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
                     nox_loc=nox_loc+subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
                     enddo       
+                endif
+            endif
+            if (calculate_emep_source(i_source).and..not.calculate_source(i_source)) then
+                if (remove_source.ne.i_source) then
+                    do i_subsource=1,n_subsource(i_source)
+                    f_no2_loc=f_no2_loc+f_no2_emep*subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                    nox_loc=nox_loc+subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                    enddo
                 endif
             endif
             enddo
@@ -386,7 +401,10 @@
         comp_source_fraction_subgrid(i,j,t,:,:)=NODATA_value
         
     endif
-            !Calculate the sum
+    
+    !Normalise the contributions
+    
+    !Calculate the sum
             sum_no2_source_subgrid=0.
             sum_o3_source_subgrid=0.
             do i_source=1,n_source_index
@@ -564,7 +582,7 @@
     real mass(n_i)
     real mmass(n_i)
     real mol(n_i)
-   ! real fac_sqrt
+    real fac_sqrt
     real f_no2,f_ox,Jd,Jd_bg
     real :: min_nox=1.0e-6
     real c,b,BB,td,f_no2_0,f_no2_ps
@@ -627,7 +645,8 @@
     Jd=J_photo/k1/mol(nox_i)
 
     !Calculate photostationary for total nox, ox
-    f_no2_ps=0.5*((1+f_ox+Jd)-sqrt((1+f_ox+Jd)**2-4.*f_ox))
+    fac_sqrt=max(0.,(1+f_ox+Jd)**2-4.*f_ox)
+    f_no2_ps=0.5*((1+f_ox+Jd)-sqrt(fac_sqrt))
     p_tot_out=f_no2/f_no2_ps
 
     !Test the photostationary state for the input data
@@ -654,7 +673,8 @@
     !if (BB*td.gt.50.) f_no2=-BB/2.+b/2.
     if (isnan(f_no2)) f_no2=-BB/2.+b/2.
     
-    f_no2_ps=0.5*((1+f_ox+Jd)-sqrt((1+f_ox+Jd)**2-4.*f_ox))
+    fac_sqrt=max(0.0,(1+f_ox+Jd)**2-4.*f_ox)
+    f_no2_ps=0.5*((1+f_ox+Jd)-sqrt(fac_sqrt))
     p_out=f_no2/f_no2_ps
     !write(*,*) p_bg_out,p_tot_out,p_out,AA,BB,b,td,exp(AA+BB*td),f_ox
     !write(*,*) o3_bg,no2_bg,nox_bg
@@ -787,7 +807,7 @@
     real :: mol_nox_bg,mol_no2_bg,mol_nox_loc,mol_o3_bg,mol_no2_loc,mol_ox_loc,mol_no_bg
     real :: mol_nox_out,mol_no2_out,mol_o3_out
     real :: mol_nox_emep,mol_no2_emep,mol_o3_emep,mol_no_emep
-    real :: b,d,r
+    real :: b,d,r,c
     integer no2_i,no_i,nox_i,o3_i,ox_i,n_i
     parameter (n_i=5)
     real mmass(n_i)
@@ -816,7 +836,8 @@
     r=mol_o3_emep*mol_no_emep/mol_no2_emep
     
     b=mol_ox_loc+mol_nox_bg+mol_nox_loc+r
-    d=sqrt(b**2-4.*mol_ox_loc*(mol_nox_bg+mol_nox_loc))
+    c=max(0.,b**2-4.*mol_ox_loc*(mol_nox_bg+mol_nox_loc)) !Should never be less than 0 but can be -0
+    d=sqrt(c)
     mol_no2_out=(b-d)/2.
     mol_o3_out=mol_ox_loc-mol_no2_out
     
@@ -840,7 +861,7 @@
     real :: mol_nox_bg
     real :: mol_no2_out,mol_o3_out
     real :: mol_nox_emep,mol_no2_emep,mol_o3_emep,mol_ox_emep,mol_no_emep
-    real :: b,d,r
+    real :: b,d,r,c
     real :: Na,Na_fac,k1
     real :: p_phot,r_phot
     integer no2_i,no_i,nox_i,o3_i,ox_i,n_i
@@ -871,7 +892,8 @@
     r=r_phot*Na_fac
     
     b=mol_ox_emep+mol_nox_bg+r
-    d=sqrt(b**2-4.*mol_ox_emep*mol_nox_bg)
+    c=max(0.,b**2-4.*mol_ox_emep*mol_nox_bg) !Should never be less than 0 but can be -0
+    d=sqrt(c)
     mol_no2_out=(b-d)/2.
     mol_o3_out=mol_ox_emep-mol_no2_out
     

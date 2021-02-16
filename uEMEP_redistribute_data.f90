@@ -242,6 +242,7 @@
         !Add the selected EMEP local sources to this as well, if they are not already included in the subgrid downscaling
         if (calculate_EMEP_source(source_index).and..not.calculate_source(source_index)) then
              subgrid(:,:,:,local_subgrid_index,allsource_index,:)=subgrid(:,:,:,local_subgrid_index,allsource_index,:)+subgrid(:,:,:,emep_local_subgrid_index,source_index,:)
+            !write(*,*) source_index,sum(subgrid(:,:,:,emep_local_subgrid_index,source_index,:)),sum(subgrid(:,:,:,local_subgrid_index,allsource_index,:)),sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))
         endif
     enddo
     
@@ -270,7 +271,6 @@
         endif
     
         subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,local_subgrid_index,allsource_index,i_pollutant)+subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)
-     
     enddo
     
      do i_pollutant=1,n_pollutant_loop
@@ -278,6 +278,11 @@
         !do i_loop=1,n_pollutant_compound_loop(i_pollutant)
             comp_subgrid(:,:,:,pollutant_loop_index(i_pollutant))=subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)
         !enddo
+        !write(*,'(2i,4f16.2)') i_pollutant,pollutant_loop_index(i_pollutant)&
+        !    ,sum(subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)&
+        !    ,sum(subgrid(:,:,:,local_subgrid_index,allsource_index,i_pollutant))&
+        !    ,sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant))&
+        !    ,sum(comp_subgrid(:,:,:,pollutant_loop_index(i_pollutant)))
         
      enddo
 

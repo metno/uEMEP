@@ -802,7 +802,7 @@
 
                                 !Add the wind to the calculation
                                 temp_subgrid_rotated=temp_subgrid_rotated/FF_loc
-
+                                
                                 !Changed from 00 to 0 in the sigmas
                                 if (use_target_subgrid) then
                                     temp_target_subgrid(i,j,:)=temp_target_subgrid(i,j,:) + temp_subgrid_rotated
@@ -856,7 +856,25 @@
                                                 
                                     !write(*,*) integral_subgrid(i_cross_target_integral,j_cross_target_integral,tt,:,source_index,:)
                                 endif
-                                
+
+                                do i_pollutant=1,n_pollutant_loop
+                                if (temp_subgrid_rotated(i_pollutant).gt.0) then
+                                        
+                                    distance_subgrid=max(distance_subgrid,distance_subgrid_min)
+                                    
+                                    !Alternative heavier weighting to higher concentrations (pollutant^2). Not in deposition_dispersion routine
+                                    if (use_alternative_traveltime_weighting) then
+                                        time_weight(tt,i_pollutant)=time_weight(tt,i_pollutant)+distance_subgrid/FF_loc*temp_subgrid_rotated(i_pollutant)**traveltime_power
+                                        time_total(tt,i_pollutant)=time_total(tt,i_pollutant)+temp_subgrid_rotated(i_pollutant)**traveltime_power
+                                    else
+                                        !Take weighted average (weighted by concentration) of the time
+                                        time_weight(tt,i_pollutant)=time_weight(tt,i_pollutant)+distance_subgrid/FF_loc*temp_subgrid_rotated(i_pollutant)                                    
+                                        !Calculate sum of the concentration for normalisation
+                                        time_total(tt,i_pollutant)=time_total(tt,i_pollutant)+temp_subgrid_rotated(i_pollutant)
+                                    endif
+
+                                endif
+                                enddo
 
                             endif
                         

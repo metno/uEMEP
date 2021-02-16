@@ -277,6 +277,7 @@
 
     !Quick calculation of area weighting, no edge effects. Does not need to change with time
     !This is done also if there is moving window weighting later as it is used for the nonlocal contribution
+    !This is the old version no longer in use
     if (EMEP_grid_interpolation_flag.eq.-1.or.EMEP_grid_interpolation_flag.gt.1) then
         
         if (tt.eq.t_start) write(unit_logfile,'(A)')'Calculating EMEP local subgrid contribution using area weighted interpolation (obsolete version)'
@@ -631,7 +632,7 @@
             !subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)+nonlocal_correction(tt_dim,:,:)
             subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,emep_subgrid_index,:,:)-subgrid(i,j,tt,emep_local_subgrid_index,:,:)
             !subgrid(i,j,tt,emep_subgrid_index,:,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)+subgrid(i,j,tt,emep_local_subgrid_index,:,:)
-
+            !write(*,*) i,j,sum(subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:))
             !Take the already calculated nonlocal depositions to be the fraction of the nonlocal/total EMEP values
             if (calculate_deposition_flag) then
                 subgrid(i,j,tt,drydepo_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,drydepo_nonlocal_subgrid_index,:,:) &
@@ -960,6 +961,8 @@
         !Set the allsource nonlocal value to the average of the remainder. This can be negative
         if (count.gt.0) then
         subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid(:,:,:,emep_subgrid_index,allsource_index,:)/real(count)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))
+        !write(*,*) calculate_EMEP_additional_grid_flag,sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))
+        !stop
         endif
         
         do i_pollutant=1,n_emep_pollutant_loop

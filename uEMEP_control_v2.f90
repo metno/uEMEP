@@ -321,7 +321,8 @@
                 call uEMEP_aggregate_proxy_emission_in_EMEP_grid
             endif    
     
-            !Put EMEP data into subgrids for all sources. Run the additional EMEP case
+            !Put EMEP data into the additional subgrids for all sources.
+            !Must be run first
             if (EMEP_additional_grid_interpolation_size.gt.0) then
                 calculate_EMEP_additional_grid_flag=.true.
                 call uEMEP_subgrid_EMEP
@@ -354,9 +355,6 @@
             endif
             
             !Calculate chemistry for NO2 and O3
-            if (EMEP_additional_grid_interpolation_size.gt.0) then
-                calculate_EMEP_additional_grid_flag=.true.
-            endif
             call uEMEP_chemistry
 
             !Calculate exposure
