@@ -277,6 +277,14 @@
                 !Read in the first 2 x and y position values from the nc file to get min values and delta values
                 !write(*,*) temp_x_min,temp_x_max,temp_y_min,temp_y_max
                 
+                !Save these values, min and max extent of the calculation grid in emep coordinates, for possible use later
+                if (limit_emep_grid_interpolation_region_to_calculation_region) then
+                subgrid_proj_min(y_dim_index)=temp_y_min
+                subgrid_proj_max(y_dim_index)=temp_y_max
+                subgrid_proj_min(x_dim_index)=temp_x_min
+                subgrid_proj_max(x_dim_index)=temp_x_max
+                endif
+                
                 status_nc = NF90_INQ_VARID (id_nc, trim(dim_name_nc(x_dim_nc_index)), var_id_nc)
                 status_nc = NF90_GET_VAR (id_nc, var_id_nc,temp_var1d_nc_dp(1,1:2),start=(/1/),count=(/2/))
                 status_nc = NF90_INQ_VARID (id_nc, trim(dim_name_nc(y_dim_nc_index)), var_id_nc)

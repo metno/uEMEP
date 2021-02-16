@@ -734,6 +734,9 @@
         var_name_population_nc(dwelling_nc_index)=read_name_char('var_name_population_nc(dwelling_nc_index)',var_name_population_nc(dwelling_nc_index),unit_in,unit_logfile)
         
         f_no2_emep=read_name_real('f_no2_emep',f_no2_emep,unit_in,unit_logfile)
+
+        limit_emep_grid_interpolation_region_to_calculation_region=read_name_logical('limit_emep_grid_interpolation_region_to_calculation_region',limit_emep_grid_interpolation_region_to_calculation_region,unit_in,unit_logfile)
+
         
     close (unit_in)
     

@@ -399,6 +399,7 @@
     !subgrid (i,j,t,type_subgrid,type_source,type_subsource)
     integer subgrid_dim(n_dim_index)
     real subgrid_delta(2),subgrid_min(2),subgrid_max(2)   !Only x and y
+    real subgrid_proj_min(2),subgrid_proj_max(2)   !Only x and y
     integer init_subgrid_dim(n_dim_index)
     real init_subgrid_delta(2),init_subgrid_min(2),init_subgrid_max(2)   !Only x and y
     real, allocatable :: subgrid(:,:,:,:,:,:)
@@ -935,6 +936,8 @@
     
     integer :: no2_background_chemistry_scheme_flag=0
     real :: f_no2_emep=0.1
+    
+    logical :: limit_emep_grid_interpolation_region_to_calculation_region=.false.
     
     end module uEMEP_definitions
     

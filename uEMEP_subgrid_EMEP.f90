@@ -506,7 +506,8 @@
         ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size
         xpos_limit2=dgrid_nc(lon_nc_index)/2.
         ypos_limit2=dgrid_nc(lat_nc_index)/2.
-        
+            
+
         !Recheck this!
         write(unit_logfile,'(a,4i)') 'Loop sizes: ',jj_start,jj_end,ii_start,ii_end
         
@@ -534,7 +535,17 @@
             ypos_area_min2=ypos_subgrid-ypos_limit2
             ypos_area_max2=ypos_subgrid+ypos_limit2
 
-
+            !Limit the region. This will still allow an EMEP contribution from half a grid away
+            !Same limit is NOT applied on the emissions in the moving window so inconsistent
+            !write(*,'(2i,4e12.2)') i,j,xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
+            if (limit_emep_grid_interpolation_region_to_calculation_region) then
+            xpos_area_min=max(xpos_area_min,subgrid_proj_min(x_dim_index)-xpos_subgrid-xpos_limit2)
+            xpos_area_max=min(xpos_area_max,subgrid_proj_max(x_dim_index)-xpos_subgrid+xpos_limit2)
+            ypos_area_min=max(ypos_area_min,subgrid_proj_min(y_dim_index)-ypos_subgrid-ypos_limit2)
+            ypos_area_max=min(ypos_area_max,subgrid_proj_max(y_dim_index)-ypos_subgrid+ypos_limit2)                
+            endif
+            !write(*,'(2i,4e12.2)') i,j,xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
+            
             !weighting_nc(:,:,tt_dim,:)=0.
             !weighting_nc2(:,:,tt_dim,:)=0.
             

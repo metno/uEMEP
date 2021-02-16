@@ -27,6 +27,7 @@
     integer         subsource_index
     real            ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc
     real            xpos_limit,ypos_limit
+    real            xpos_limit2,ypos_limit2
     real            time_weight(subgrid_dim(t_dim_index),n_pollutant_loop),time_total(subgrid_dim(t_dim_index),n_pollutant_loop)
     integer         time_count(subgrid_dim(t_dim_index))
     real            x_downwind,y_downwind
@@ -124,6 +125,8 @@
     !Set the x and y position limits to coincide to half the EMEP grid (refered here as lon and lat but can be also LCC projection) times the number of grids
     xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
     ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size
+    xpos_limit2=dgrid_nc(lon_nc_index)/2.
+    ypos_limit2=dgrid_nc(lat_nc_index)/2.
 
     !Minimum distance for travel time calculation set to  half of a grid diagonal weighted so the circle has the same area as the square with that diagonal
     distance_subgrid_min=sqrt(subgrid_delta(x_dim_index)*subgrid_delta(x_dim_index)+subgrid_delta(y_dim_index)*subgrid_delta(y_dim_index))/2./sqrt(2.)*4./3.14159
@@ -457,7 +460,15 @@
 
                 endif
     
-                !Loop through emission sub_grids in the nearby region
+                !Limit the region. This will still allow a contribution from half an EMEP grid away
+                if (limit_emep_grid_interpolation_region_to_calculation_region) then
+                xpos_area_min=max(xpos_area_min,subgrid_proj_min(x_dim_index)-xpos_limit2)
+                xpos_area_max=min(xpos_area_max,subgrid_proj_max(x_dim_index)+xpos_limit2)
+                ypos_area_min=max(ypos_area_min,subgrid_proj_min(y_dim_index)-ypos_limit2)
+                ypos_area_max=min(ypos_area_max,subgrid_proj_max(y_dim_index)+ypos_limit2)                
+                endif
+
+            !Loop through emission sub_grids in the nearby region
                 do jj=j_start,j_end
                 do ii=i_start,i_end
                     
