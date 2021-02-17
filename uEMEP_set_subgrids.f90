@@ -159,6 +159,8 @@
     !Find centre position in specified coordinates
     if  (projection_type.eq.UTM_projection_index) then
         call LL2UTM(1,utm_zone,select_lat_centre_position,select_lon_centre_position,y_out,x_out)
+    elseif  (projection_type.eq.LTM_projection_index) then
+        call LL2LTM(1,ltm_lon0,select_lat_centre_position,select_lon_centre_position,y_out,x_out)
     elseif (projection_type.eq.LAEA_projection_index) then
         call LL2LAEA(x_out,y_out,select_lon_centre_position,select_lat_centre_position,projection_attributes)
     endif

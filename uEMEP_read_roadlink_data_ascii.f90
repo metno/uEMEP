@@ -191,6 +191,8 @@
                     !write(*,*) i,sub_nodes_x(1),sub_nodes_y(1)
                     call LL2UTM(1,utm_zone,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1))
                     !write(*,*) i,sub_nodes_x(1),sub_nodes_y(1)
+                elseif  (projection_type.eq.LTM_projection_index) then
+                    call LL2LTM(1,ltm_lon0,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1))
                 elseif (projection_type.eq.LCC_projection_index) then
                 elseif (projection_type.eq.LAEA_projection_index) then
                     call LL2LAEA(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),projection_attributes)
@@ -385,6 +387,9 @@
             if  (projection_type.eq.UTM_projection_index) then
                 call LL2UTM(1,utm_zone,inputdata_rl_temp(i,x1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index))
                 call LL2UTM(1,utm_zone,inputdata_rl_temp(i,x2_rl_index),inputdata_rl_temp(i,y2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index))
+            elseif  (projection_type.eq.LTM_projection_index) then
+                call LL2LTM(1,ltm_lon0,inputdata_rl_temp(i,x1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index))
+                call LL2LTM(1,ltm_lon0,inputdata_rl_temp(i,x2_rl_index),inputdata_rl_temp(i,y2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index))
             elseif (projection_type.eq.LCC_projection_index) then
             elseif (projection_type.eq.LAEA_projection_index) then
                 call LL2LAEA(inputdata_rl(i,x1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl_temp(i,x1_rl_index),projection_attributes)
@@ -884,6 +889,11 @@
                 call LL2UTM(1,utm_zone,max_lat,max_lon,y_out(2),x_out(2))
                 call LL2UTM(1,utm_zone,max_lat,min_lon,y_out(3),x_out(3))
                 call LL2UTM(1,utm_zone,min_lat,max_lon,y_out(4),x_out(4))
+            elseif  (projection_type.eq.LTM_projection_index) then
+                call LL2LTM(1,ltm_lon0,min_lat,min_lon,y_out(1),x_out(1))
+                call LL2LTM(1,ltm_lon0,max_lat,max_lon,y_out(2),x_out(2))
+                call LL2LTM(1,ltm_lon0,max_lat,min_lon,y_out(3),x_out(3))
+                call LL2LTM(1,ltm_lon0,min_lat,max_lon,y_out(4),x_out(4))
             elseif (projection_type.eq.LAEA_projection_index) then
                 call LL2LAEA(x_out(1),y_out(1),min_lon,min_lat,projection_attributes)
                 call LL2LAEA(x_out(2),y_out(2),max_lon,max_lat,projection_attributes)
@@ -934,6 +944,8 @@
         
     call PROJ2LL(subgrid_min(x_dim_index),subgrid_min(y_dim_index),lon_grid_min,lat_grid_min,projection_attributes,projection_type)
     call PROJ2LL(subgrid_max(x_dim_index),subgrid_max(y_dim_index),lon_grid_max,lat_grid_max,projection_attributes,projection_type)
+    !write(*,*) projection_attributes
+    !write(*,*) projection_type
     
     !Test
     !lon_grid_max=5.;lat_grid_max=50.

@@ -307,6 +307,8 @@
             !Rotation from lat lon grid to UTM grid. No alternatives
             if (projection_type.eq.UTM_projection_index) then
                 angle_utm2 = atan(tan((lon_integral_subgrid(i,j)-utm_lon0)/180.*pi)*sin(lat_integral_subgrid(i,j)/180.*pi))
+            elseif (projection_type.eq.LTM_projection_index) then
+                angle_utm2 = atan(tan((lon_integral_subgrid(i,j)-ltm_lon0)/180.*pi)*sin(lat_integral_subgrid(i,j)/180.*pi))
             else
                 angle_utm2 = 0.
             endif

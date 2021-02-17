@@ -187,6 +187,8 @@
     !Convert lat lon to utm coords
     if  (projection_type.eq.UTM_projection_index) then
         call LL2UTM(1,utm_zone,industry_lb_pos(industry_number,2),industry_lb_pos(industry_number,1),y_industry,x_industry)
+    elseif  (projection_type.eq.LTM_projection_index) then
+        call LL2LTM(1,ltm_lon0,industry_lb_pos(industry_number,2),industry_lb_pos(industry_number,1),y_industry,x_industry)
     elseif (projection_type.eq.LAEA_projection_index) then
         call LL2LAEA(x_industry,y_industry,industry_lb_pos(industry_number,1),industry_lb_pos(industry_number,2),projection_attributes)
     endif

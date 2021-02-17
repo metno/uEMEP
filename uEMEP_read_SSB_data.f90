@@ -474,6 +474,10 @@
                     call LL2UTM(1,utm_zone,population_nc_dp(i,j,lat_nc_index),population_nc_dp(i,j,lon_nc_index),y_pop,x_pop)
                     !write(*,*) population_nc_dp(i,j,lat_nc_index),population_nc_dp(i,j,lon_nc_index),y_pop,x_pop
 
+                elseif (projection_type.eq.LTM_projection_index) then
+
+                    call LL2LTM(1,ltm_lon0,population_nc_dp(i,j,lat_nc_index),population_nc_dp(i,j,lon_nc_index),y_pop,x_pop)
+                
                 elseif (projection_type.eq.LAEA_projection_index) then
 
                     call LL2LAEA(x_pop,y_pop,population_nc_dp(i,j,lon_nc_index),population_nc_dp(i,j,lat_nc_index),projection_attributes)

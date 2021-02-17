@@ -421,25 +421,32 @@ end subroutine testlambert
     integer, intent(in) :: projection_type_in
     real, intent(out) :: lon_out,lat_out
     integer :: utm_zone_in
+    real :: ltm_lon0_in
     
-    if (projection_type.eq.RDM_projection_index) then
+    if (projection_type_in.eq.RDM_projection_index) then
 
         call RDM2LL(y_in,x_in,lat_out,lon_out)
 
-    elseif (projection_type.eq.UTM_projection_index) then
+    elseif (projection_type_in.eq.UTM_projection_index) then
 
         utm_zone_in=floor(projection_attributes_in(1)+.5)
         call UTM2LL(utm_zone_in,y_in,x_in,lat_out,lon_out)
 
-    elseif (projection_type.eq.LAEA_projection_index) then
+    elseif (projection_type_in.eq.LTM_projection_index) then
+
+        utm_zone_in=floor(projection_attributes_in(1)+.5)
+        ltm_lon0_in=projection_attributes_in(2)
+        call LTM2LL(utm_zone_in,ltm_lon0_in,y_in,x_in,lat_out,lon_out)
+
+    elseif (projection_type_in.eq.LAEA_projection_index) then
 
         call LAEA2LL(x_in,y_in,lon_out,lat_out,projection_attributes_in)
 
-    elseif (projection_type.eq.LCC_projection_index) then
+    elseif (projection_type_in.eq.LCC_projection_index) then
 
         call lambert2lb2_uEMEP(x_in,y_in,lon_out,lat_out,projection_attributes_in)
 
-    elseif (projection_type.eq.LL_projection_index) then
+    elseif (projection_type_in.eq.LL_projection_index) then
     
         lon_out=x_in
         lat_out=y_in

@@ -43,16 +43,16 @@
         call uEMEP_set_subgrid_select_latlon_centre
     endif
         
-    !Autoselect files and countries if required. Place here because it changes config data
-    if (auto_select_OSM_country_flag.or.trim(select_country_by_name).ne.'') then
-        call read_country_bounding_box_data
-    endif
-    
     !Set the pollutant and compound loop definitions
     call uEMEP_set_pollutant_loop
     
     !Reset any constants needed based on the configuration input
     call uEMEP_reset_constants
+    
+    !Autoselect files and countries if required. Place here because it changes config data
+    if (auto_select_OSM_country_flag.or.trim(select_country_by_name).ne.'') then
+        call read_country_bounding_box_data
+    endif
     
     !Set the EMEP species definitions if they are to be read
     call uEMEP_set_species_loop

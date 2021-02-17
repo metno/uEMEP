@@ -949,9 +949,13 @@
     endif
     
     !If utm zones set the projection parameters to these values
-    if (projection_type.eq.utm_projection_index) then    
+    if (projection_type.eq.UTM_projection_index) then    
         projection_attributes(1)=utm_zone
         projection_attributes(2)=utm_lon0
+    endif
+    if (projection_type.eq.LTM_projection_index) then    
+        projection_attributes(1)=utm_zone
+        projection_attributes(2)=ltm_lon0
     endif
     
     

@@ -73,6 +73,8 @@
             !No conversion exists for RDM
         elseif (projection_type.eq.UTM_projection_index) then
             call LL2UTM(1,utm_zone,lat_receptor(k),lon_receptor(k),y_receptor(k),x_receptor(k))
+        elseif (projection_type.eq.LTM_projection_index) then
+            call LL2LTM(1,ltm_lon0,lat_receptor(k),lon_receptor(k),y_receptor(k),x_receptor(k))
         elseif (projection_type.eq.LAEA_projection_index) then
             call LL2LAEA(x_receptor(k),y_receptor(k),lon_receptor(k),lat_receptor(k),projection_attributes)
         endif

@@ -462,6 +462,8 @@
             !Convert lat lon to utm coords
             if (projection_type.eq.UTM_projection_index) then
                 call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
+            elseif (projection_type.eq.LTM_projection_index) then
+                call LL2LTM(1,ltm_lon0,ddlatitude,ddlongitude,y_ship,x_ship)
             elseif (projection_type.eq.LAEA_projection_index) then
                 call LL2LAEA(x_ship,y_ship,ddlongitude,ddlatitude,projection_attributes)
             endif
@@ -940,6 +942,8 @@
             !Convert lat lon to utm coords
             if (projection_type.eq.UTM_projection_index) then
                 call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
+            elseif (projection_type.eq.LTM_projection_index) then
+                call LL2LTM(1,ltm_lon0,ddlatitude,ddlongitude,y_ship,x_ship)
             elseif (projection_type.eq.LAEA_projection_index) then
                 call LL2LAEA(x_ship,y_ship,ddlongitude,ddlatitude,projection_attributes)
             endif

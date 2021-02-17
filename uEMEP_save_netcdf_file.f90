@@ -1970,6 +1970,19 @@
         call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", utm_lon0 ) )
         endif
         
+        if (projection_type.eq.LTM_projection_index) then
+        call check(  nf90_def_var(ncid, "projection_utm", NF90_int, proj_varid) )
+        call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", 6378137.0 ) )
+        call check(  nf90_put_att(ncid, proj_varid, "inverse_flattening", 298.257222101 ) )
+
+        call check(  nf90_put_att(ncid, proj_varid, "grid_mapping_name", "transverse_mercator" ) )
+        call check(  nf90_put_att(ncid, proj_varid, "scale_factor_at_central_meridian", 0.9996 ) )
+        call check(  nf90_put_att(ncid, proj_varid, "latitude_of_projection_origin", 0 ) )
+        call check(  nf90_put_att(ncid, proj_varid, "false_easting", 500000. ) )
+        call check(  nf90_put_att(ncid, proj_varid, "false_northing", 0. ) )
+        call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", ltm_lon0 ) )
+        endif
+
         if (projection_type.eq.RDM_projection_index) then
             !Not properly assigned, same as UTM
         call check(  nf90_def_var(ncid, "projection_RDM", NF90_int, proj_varid) )
@@ -2109,6 +2122,8 @@
         endif
         if (projection_type.eq.UTM_projection_index) then
         call check(  nf90_put_att(ncid, val_varid, "grid_mapping", "projection_utm") )
+        elseif (projection_type.eq.LTM_projection_index) then
+        call check(  nf90_put_att(ncid, val_varid, "grid_mapping", "projection_ltm") )
         elseif (projection_type.eq.LAEA_projection_index) then
         call check(  nf90_put_att(ncid, val_varid, "grid_mapping", "projection_ETRS89_LAEA") )
         elseif (projection_type.eq.RDM_projection_index) then

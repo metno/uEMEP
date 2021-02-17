@@ -182,6 +182,7 @@
         !Present UTM central lon position if not overridden by input
         utm_lon0=abs(utm_zone)*6-180-3
         utm_lon0=read_name_real('utm_lon0',utm_lon0,unit_in,unit_logfile)
+        ltm_lon0=read_name_real('ltm_lon0',ltm_lon0,unit_in,unit_logfile)
 
         !Read the projection attributes for uEMEP if they are available
         projection_attributes(1)=read_name_double('projection_attributes(1)',projection_attributes(1),unit_in,unit_logfile)
