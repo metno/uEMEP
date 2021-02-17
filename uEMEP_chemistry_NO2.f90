@@ -21,9 +21,7 @@
     !NB. Additional is calculated but not necessarily saved!
     real nox_bg_additional,no2_bg_additional,o3_bg_additional
     
-    !Deallocate in case of changing grid sizes (should not happen)
-    !if (allocated(comp_source_fraction_subgrid)) deallocate(comp_source_fraction_subgrid)
-    if (.not.allocated(comp_source_fraction_subgrid)) allocate(comp_source_fraction_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+    if (.not.allocated(comp_source_subgrid)) allocate(comp_source_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
     if (.not.allocated(comp_source_EMEP_subgrid)) allocate(comp_source_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
     if (.not.allocated(comp_source_EMEP_additional_subgrid)) allocate(comp_source_EMEP_additional_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
 
@@ -256,10 +254,9 @@
     !Leave the chemistry routine if nox is not available
     if (.not.nox_available) return  
 
-    !Deallocate in case of changing grid sizes (should not happen)
-    !if (allocated(comp_source_fraction_subgrid)) deallocate(comp_source_fraction_subgrid)
-    if (.not.allocated(comp_source_fraction_subgrid)) allocate(comp_source_fraction_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-!    if (.not.allocated(comp_source_EMEP_subgrid)) allocate(comp_source_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+    if (.not.allocated(comp_source_subgrid)) allocate(comp_source_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+    ! Already allocated in chemistry call
+    !if (.not.allocated(comp_source_EMEP_subgrid)) allocate(comp_source_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
 
     !write(unit_logfile,'(A)') ''
     !write(unit_logfile,'(A)') '================================================================'
@@ -312,7 +309,7 @@
         !o3_bg=comp_EMEP_subgrid(i,j,t,o3_index)+48./46.*comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_local_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
             
         do remove_source=1,n_source_index
-        if (calculate_source(remove_source).or.remove_source.eq.allsource_index) then
+        if (calculate_source(remove_source).or.remove_source.eq.allsource_index.or.(calculate_emep_source(remove_source).and..not.calculate_source(remove_source))) then
         
             f_no2_loc=0.
             nox_loc=0.
@@ -361,7 +358,7 @@
             call uEMEP_nonlocal_NO2_O3(nox_bg,comp_EMEP_subgrid(i,j,t,nox_index),comp_EMEP_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,o3_index),J_photo,temperature,f_no2_emep,no2_bg,o3_bg)
         endif
         
-        if (no2_chemistry_scheme_flag.eq.0) then
+            if (no2_chemistry_scheme_flag.eq.0) then
                 nox_out=nox_bg+nox_loc
                 no2_out=no2_bg+nox_loc*f_no2_loc
                 o3_out=o3_bg
@@ -384,13 +381,17 @@
             !For background just use the result without any sources.
             !There is a problem disturbing the chemistry by removing the background nox and no2 but not changing the o3
             if (remove_source.eq.allsource_index) then
-                comp_source_fraction_subgrid(i,j,t,no2_index,remove_source)=no2_bg
-                comp_source_fraction_subgrid(i,j,t,o3_index,remove_source)=o3_bg
+                comp_source_subgrid(i,j,t,no2_index,remove_source)=no2_bg
+                comp_source_subgrid(i,j,t,o3_index,remove_source)=o3_bg
             else
                 !Avoid round off errors which can occur with small numbers
-                comp_source_fraction_subgrid(i,j,t,no2_index,remove_source)=max(0.0,comp_subgrid(i,j,t,no2_index)-no2_out)
+                comp_source_subgrid(i,j,t,no2_index,remove_source)=max(0.0,comp_subgrid(i,j,t,no2_index)-no2_out)
                 !Can be negative and can be greater than 1 so do not limit
-                comp_source_fraction_subgrid(i,j,t,o3_index,remove_source)=comp_subgrid(i,j,t,o3_index)-o3_out
+                comp_source_subgrid(i,j,t,o3_index,remove_source)=comp_subgrid(i,j,t,o3_index)-o3_out
+                !comp_source_EMEP_subgrid(i,j,t,no2_index,remove_source)=max(0.0,comp_subgrid(i,j,t,no2_index)-no2_out)
+                !Can be negative and can be greater than 1 so do not limit
+                !comp_source_EMEP_subgrid(i,j,t,o3_index,remove_source)=comp_subgrid(i,j,t,o3_index)-o3_out
+                !write(*,*) i,j,comp_source_subgrid(i,j,t,o3_index,remove_source)
             endif
       
         endif
@@ -398,7 +399,7 @@
         
     else
 
-        comp_source_fraction_subgrid(i,j,t,:,:)=NODATA_value
+        comp_source_subgrid(i,j,t,:,:)=NODATA_value
         
     endif
     
@@ -409,43 +410,50 @@
             sum_o3_source_subgrid=0.
             do i_source=1,n_source_index
             !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-            if (calculate_source(i_source)) then
-                sum_no2_source_subgrid=sum_no2_source_subgrid+comp_source_fraction_subgrid(i,j,t,no2_index,i_source)
-                sum_o3_source_subgrid=sum_o3_source_subgrid+comp_source_fraction_subgrid(i,j,t,o3_index,i_source)
+            !if (calculate_source(i_source)) then
+            if (calculate_source(i_source).or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
+                sum_no2_source_subgrid=sum_no2_source_subgrid+comp_source_subgrid(i,j,t,no2_index,i_source)
+                sum_o3_source_subgrid=sum_o3_source_subgrid+comp_source_subgrid(i,j,t,o3_index,i_source)
             endif
+            !if (calculate_emep_source(i_source).and..not.calculate_source(i_source)) then
+            !    sum_no2_source_subgrid=sum_no2_source_subgrid+comp_source_EMEP_subgrid(i,j,t,no2_index,i_source)
+            !    sum_o3_source_subgrid=sum_o3_source_subgrid+comp_source_EMEP_subgrid(i,j,t,o3_index,i_source)
+            !endif
             enddo
             !Set the background fractions so they will not be adjusted with normalisation
-            comp_source_fraction_subgrid(i,j,t,no2_index,allsource_index)=comp_source_fraction_subgrid(i,j,t,no2_index,allsource_index)/comp_subgrid(i,j,t,no2_index)
-            comp_source_fraction_subgrid(i,j,t,o3_index,allsource_index)=comp_source_fraction_subgrid(i,j,t,o3_index,allsource_index)/comp_subgrid(i,j,t,o3_index)
+            !comp_source_subgrid(i,j,t,no2_index,allsource_index)=comp_source_subgrid(i,j,t,no2_index,allsource_index)/comp_subgrid(i,j,t,no2_index)
+            !comp_source_subgrid(i,j,t,o3_index,allsource_index)=comp_source_subgrid(i,j,t,o3_index,allsource_index)/comp_subgrid(i,j,t,o3_index)
             do i_source=1,n_source_index
-            if (calculate_source(i_source)) then
-                !Calculate it as a fraction of the total sources calculated and adjust for the background
-                if (sum_no2_source_subgrid.gt.0) then
-                    comp_source_fraction_subgrid(i,j,t,no2_index,i_source)=comp_source_fraction_subgrid(i,j,t,no2_index,i_source)/sum_no2_source_subgrid
-                    comp_source_fraction_subgrid(i,j,t,no2_index,i_source)=comp_source_fraction_subgrid(i,j,t,no2_index,i_source) &
-                        *(comp_subgrid(i,j,t,no2_index)-comp_source_EMEP_subgrid(i,j,t,no2_index,allsource_index))/comp_subgrid(i,j,t,no2_index)
+            !if (calculate_source(i_source)) then
+            if (calculate_source(i_source).or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
+                !Adjust for the background and normalise
+                if (sum_no2_source_subgrid.ne.0) then
+                    comp_source_subgrid(i,j,t,no2_index,i_source)=comp_source_subgrid(i,j,t,no2_index,i_source)/sum_no2_source_subgrid &
+                     *(comp_subgrid(i,j,t,no2_index)-comp_source_EMEP_subgrid(i,j,t,no2_index,allsource_index))
                 else
-                    comp_source_fraction_subgrid(i,j,t,no2_index,i_source)=0
-                    comp_source_fraction_subgrid(i,j,t,no2_index,allsource_index)=1.
+                    comp_source_subgrid(i,j,t,no2_index,i_source)=0
+                    !comp_source_subgrid(i,j,t,no2_index,allsource_index)=(comp_subgrid(i,j,t,no2_index)-comp_source_EMEP_subgrid(i,j,t,no2_index,allsource_index))
                 endif
-                if (sum_o3_source_subgrid.gt.0) then
-                    comp_source_fraction_subgrid(i,j,t,o3_index,i_source)=comp_source_fraction_subgrid(i,j,t,o3_index,i_source)/sum_o3_source_subgrid
-                    comp_source_fraction_subgrid(i,j,t,o3_index,i_source)=comp_source_fraction_subgrid(i,j,t,o3_index,i_source) &
-                        *(comp_subgrid(i,j,t,o3_index)-comp_source_EMEP_subgrid(i,j,t,o3_index,allsource_index))/comp_subgrid(i,j,t,o3_index)
+                !write(*,*) i,j,i_source,sum_o3_source_subgrid
+                if (sum_o3_source_subgrid.ne.0) then
+                    comp_source_subgrid(i,j,t,o3_index,i_source)=comp_source_subgrid(i,j,t,o3_index,i_source)/sum_o3_source_subgrid &
+                     *(comp_subgrid(i,j,t,o3_index)-comp_source_EMEP_subgrid(i,j,t,o3_index,allsource_index))
                 else
-                    comp_source_fraction_subgrid(i,j,t,o3_index,i_source)=0
-                    comp_source_fraction_subgrid(i,j,t,o3_index,allsource_index)=1.
+                    comp_source_subgrid(i,j,t,o3_index,i_source)=0
+                    !comp_source_subgrid(i,j,t,o3_index,allsource_index)=(comp_subgrid(i,j,t,o3_index)-comp_source_EMEP_subgrid(i,j,t,o3_index,allsource_index))
                 endif
-                if (comp_subgrid(i,j,t,no2_index).eq.0) comp_source_fraction_subgrid(i,j,t,no2_index,i_source)=0
-                if (comp_subgrid(i,j,t,o3_index).eq.0) comp_source_fraction_subgrid(i,j,t,o3_index,i_source)=0
+                if (comp_subgrid(i,j,t,no2_index).le.0) comp_source_subgrid(i,j,t,no2_index,i_source)=0
+                if (comp_subgrid(i,j,t,o3_index).le.0) comp_source_subgrid(i,j,t,o3_index,i_source)=0
+                !if (comp_source_subgrid(i,j,t,no2_index,i_source).le.0) comp_source_subgrid(i,j,t,no2_index,i_source)=0.
+                !if (comp_source_subgrid(i,j,t,o3_index,i_source).le.0) comp_source_subgrid(i,j,t,o3_index,i_source)=0
             
             endif
             enddo
-            !write(*,'(2i4,6f12.6)') i,j,sum_no2_source_subgrid,sum_no2_source_subgrid/comp_subgrid(i,j,t,no2_index),comp_source_fraction_subgrid(i,j,t,no2_index,allsource_index) &
-            !    ,comp_source_fraction_subgrid(i,j,t,no2_index,traffic_index),comp_source_fraction_subgrid(i,j,t,no2_index,shipping_index),comp_source_fraction_subgrid(i,j,t,no2_index,heating_index)
-            !write(*,'(2i4,6f12.6)') i,j,sum_o3_source_subgrid,sum_o3_source_subgrid/comp_subgrid(i,j,t,o3_index),comp_source_fraction_subgrid(i,j,t,o3_index,allsource_index) &
-            !    ,comp_source_fraction_subgrid(i,j,t,o3_index,traffic_index),comp_source_fraction_subgrid(i,j,t,o3_index,shipping_index),comp_source_fraction_subgrid(i,j,t,o3_index,heating_index)
-            !if (comp_source_fraction_subgrid(i,j,t,nor_index,allsource_index).lt.0.or.comp_source_fraction_subgrid(i,j,t,no2_index,traffic_index).lt.0.or.no2_source_fraction_subgrid(i,j,t,shipping_index).lt.0.or.no2_source_fraction_subgrid(i,j,t,heating_index).lt.0) then
+            !write(*,'(2i4,6f12.6)') i,j,sum_no2_source_subgrid,sum_no2_source_subgrid/comp_subgrid(i,j,t,no2_index),comp_source_subgrid(i,j,t,no2_index,allsource_index) &
+            !    ,comp_source_subgrid(i,j,t,no2_index,traffic_index),comp_source_subgrid(i,j,t,no2_index,shipping_index),comp_source_subgrid(i,j,t,no2_index,heating_index)
+            !write(*,'(2i4,6f12.6)') i,j,sum_o3_source_subgrid,sum_o3_source_subgrid/comp_subgrid(i,j,t,o3_index),comp_source_subgrid(i,j,t,o3_index,allsource_index) &
+            !    ,comp_source_subgrid(i,j,t,o3_index,traffic_index),comp_source_subgrid(i,j,t,o3_index,shipping_index),comp_source_subgrid(i,j,t,o3_index,heating_index)
+            !if (comp_source_subgrid(i,j,t,nor_index,allsource_index).lt.0.or.comp_source_subgrid(i,j,t,no2_index,traffic_index).lt.0.or.no2_source_subgrid(i,j,t,shipping_index).lt.0.or.no2_source_fraction_subgrid(i,j,t,heating_index).lt.0) then
              !   write(*,*) 'Traffic value less than 0. comp_subgrid =',comp_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,no2_index) &
              !       ,comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))  &
              !       ,comp_EMEP_subgrid(i,j,t,o3_index)
@@ -833,7 +841,11 @@
     
     mol_ox_loc=mol_o3_bg+mol_no2_bg+mol_no2_loc
 
-    r=mol_o3_emep*mol_no_emep/mol_no2_emep
+    if (mol_no2_emep.gt.0) then
+        r=mol_o3_emep*mol_no_emep/mol_no2_emep
+    else
+        r=0.
+    endif  
     
     b=mol_ox_loc+mol_nox_bg+mol_nox_loc+r
     c=max(0.,b**2-4.*mol_ox_loc*(mol_nox_bg+mol_nox_loc)) !Should never be less than 0 but can be -0
@@ -886,20 +898,25 @@
     mol_nox_bg=nox_bg/mmass(nox_i)*Na_fac
     mol_no_emep=max(0.,mol_nox_emep-mol_no2_emep)
     
-    r=mol_o3_emep*mol_no_emep/mol_no2_emep
-    p_phot=J_photo/k1*mol_no2_emep/mol_o3_emep/mol_no_emep
-    r_phot=J_photo/k1/Na_fac
-    r=r_phot*Na_fac
+    if (mol_no2_emep.gt.0) then
+        r=mol_o3_emep*mol_no_emep/mol_no2_emep
+        p_phot=J_photo/k1*mol_no2_emep/mol_o3_emep/mol_no_emep
+        r_phot=J_photo/k1/Na_fac
+        r=r_phot*Na_fac
     
-    b=mol_ox_emep+mol_nox_bg+r
-    c=max(0.,b**2-4.*mol_ox_emep*mol_nox_bg) !Should never be less than 0 but can be -0
-    d=sqrt(c)
-    mol_no2_out=(b-d)/2.
-    mol_o3_out=mol_ox_emep-mol_no2_out
+        b=mol_ox_emep+mol_nox_bg+r
+        c=max(0.,b**2-4.*mol_ox_emep*mol_nox_bg) !Should never be less than 0 but can be -0.0
+        d=sqrt(c)
+        mol_no2_out=(b-d)/2.
+        mol_o3_out=mol_ox_emep-mol_no2_out
     
-    no2_out=mol_no2_out*mmass(no2_i)/Na_fac
-    o3_out=mol_o3_out*mmass(o3_i)/Na_fac
-
+        no2_out=mol_no2_out*mmass(no2_i)/Na_fac
+        o3_out=mol_o3_out*mmass(o3_i)/Na_fac
+    else
+        no2_out=0.
+        o3_out=o3_emep       
+    endif
+    
     !write(*,'(a,9f12.3)') 'BG(r,r_phot,p_phot,nox_emep,no2_emep,o3_emep,nox_bg,no2_out,o3_out): ',r/Na_fac,r_phot,p_phot,nox_emep,no2_emep,o3_emep,nox_bg,no2_out,o3_out
     
     end subroutine uEMEP_nonlocal_NO2_O3

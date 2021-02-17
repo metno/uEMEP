@@ -9,6 +9,8 @@
     !Directory seperator for linux (/) or windows (\)
     character(1) :: slash='\'
 
+    character(256) :: model_version_str='uEMEP_vx.x'
+    
     !Configuration file name entered in command line
     integer n_max_config_files
     parameter(n_max_config_files=10)
@@ -729,7 +731,7 @@
     integer :: n_kz_iterations=2
     
     !Special source allocation for no2 based on leaving out the source in the chemistry calculation
-    real, allocatable :: comp_source_fraction_subgrid(:,:,:,:,:)
+    real, allocatable :: comp_source_subgrid(:,:,:,:,:)
     real, allocatable :: comp_source_EMEP_subgrid(:,:,:,:,:)
     real, allocatable :: comp_source_EMEP_additional_subgrid(:,:,:,:,:)
     

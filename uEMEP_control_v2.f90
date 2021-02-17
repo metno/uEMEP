@@ -22,11 +22,13 @@
     logical :: have_read_emep=.false.
     !real temp_val,area_weighted_interpolation_function
     
+    model_version_str='uEMEP_v6.1'
+    
     call CPU_TIME(start_time_cpu)
     
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
-    write(*,*) 'Starting program uEMEP_v6.1'
+    write(*,*) 'Starting program '//trim(model_version_str)
     write(*,*) '------------------------------------------------------------------------'
     
     !Read the command line, assigning the configuration file names and the substitution date_str

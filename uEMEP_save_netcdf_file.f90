@@ -460,7 +460,9 @@
     endif
     
     if (save_no2_source_contributions) then
-    
+        
+        valid_min=-1000.
+        
         if (save_netcdf_fraction_as_contribution_flag) then
             variable_type='float'
             unit_str="ug/m3"
@@ -471,12 +473,17 @@
 
         do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-        if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
         
             if (i_source.eq.allsource_index) then
+            !if (i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
                 i_file=emep_subgrid_nonlocal_file_index(i_source)
             else
                 i_file=subgrid_local_file_index(i_source)
+            endif
+            if (i_source.ne.allsource_index.and.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
+                i_file=emep_subgrid_local_file_index(i_source)
             endif
             
             if (i_source.eq.traffic_index) then
@@ -485,9 +492,9 @@
                 var_name_temp=trim(var_name_nc(conc_nc_index,no2_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))
             endif
             if (save_netcdf_fraction_as_contribution_flag) then
-                temp_subgrid=comp_source_fraction_subgrid(:,:,:,no2_index,i_source)*comp_subgrid(:,:,:,no2_index)
+                temp_subgrid=comp_source_subgrid(:,:,:,no2_index,i_source)
             else
-                temp_subgrid=comp_source_fraction_subgrid(:,:,:,no2_index,i_source)*100.
+                temp_subgrid=comp_source_subgrid(:,:,:,no2_index,i_source)/comp_subgrid(:,:,:,no2_index)*100.
             endif
             if (i_source.eq.allsource_index) then
             if (save_netcdf_fraction_as_contribution_flag) then
@@ -495,7 +502,6 @@
             else
                 temp_subgrid=comp_source_EMEP_subgrid(:,:,:,no2_index,i_source)/comp_EMEP_subgrid(:,:,:,no2_index)*100.
             endif
-
             endif
             
             
@@ -548,6 +554,8 @@
             endif
         endif   
         enddo
+        
+        valid_min=0.
 
     endif
     
@@ -561,34 +569,39 @@
             unit_str="%"
         endif
     
-        valid_min=0.
+        valid_min=-1000.
 
         do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
         !Only save the nonlocal part as 100%
-        if (i_source.eq.allsource_index) then
+        !if (i_source.eq.allsource_index) then
         
             if (i_source.eq.allsource_index) then
                 i_file=emep_subgrid_nonlocal_file_index(i_source)
             else
                 i_file=subgrid_local_file_index(i_source)
             endif
-            
-            !Temporary measure is to set nonlocal to 100% and the sources to 0.
-            !This correctly says that all ozone comes from outside, it just does not say how much is removed by the local sources
-            if (i_source.eq.allsource_index) then
-                !comp_source_fraction_subgrid(:,:,:,o3_index,i_source)=1.
-            else
-                !comp_source_fraction_subgrid(:,:,:,o3_index,i_source)=0.
+             if (i_source.ne.allsource_index.and.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
+                i_file=emep_subgrid_local_file_index(i_source)
             endif
-             
+                        
             var_name_temp=trim(var_name_nc(conc_nc_index,o3_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))
             if (save_netcdf_fraction_as_contribution_flag) then
-                temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)
+                !temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)
+                temp_subgrid=comp_source_subgrid(:,:,:,o3_index,i_source)
                 !temp_subgrid=subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,pollutant_loop_back_index(o3_nc_index))
             else
-                temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_EMEP_subgrid(:,:,:,o3_index)*100.
+                temp_subgrid=comp_source_subgrid(:,:,:,o3_index,i_source)/comp_subgrid(:,:,:,o3_index)*100.
+                !temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_EMEP_subgrid(:,:,:,o3_index)*100.
                 !temp_subgrid=100.*subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,pollutant_loop_back_index(o3_nc_index))/subgrid(:,:,:,emep_subgrid_index,i_source,pollutant_loop_back_index(o3_nc_index))
+            endif
+            if (i_source.eq.allsource_index) then
+            if (save_netcdf_fraction_as_contribution_flag) then
+                temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)
+            else
+                temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_EMEP_subgrid(:,:,:,o3_index)*100.
+            endif
             endif
             
             if (save_netcdf_file_flag) then
@@ -608,7 +621,8 @@
                     ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
             endif
             
-            !Save the additional EMEP source contributions here
+            !Save the additional EMEP source contributions here, only background
+            if (i_source.eq.allsource_index) then
             if (EMEP_additional_grid_interpolation_size.gt.0) then
             i_file=emep_additional_subgrid_nonlocal_file_index(i_source)
             var_name_temp=trim(var_name_nc(conc_nc_index,o3_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))
@@ -638,7 +652,7 @@
             endif
                 
             endif
-            
+            endif
             
         endif
         enddo
@@ -1882,7 +1896,11 @@
     integer n_time_total
     integer nt
     integer(8) time_seconds_output_nc(nt_in) !Need integer 8 for the averaging
-
+    integer i_file,i_source
+    character(2) temp_str
+    integer i
+    character(256) temp_str2
+    
     if (trim(variable_type).eq.'byte') nf90_type=NF90_BYTE
     if (trim(variable_type).eq.'short') nf90_type=NF90_SHORT
     if (trim(variable_type).eq.'float') nf90_type=NF90_FLOAT
@@ -1941,7 +1959,8 @@
         !Specify global attributes
         call check(  nf90_put_att(ncid, nf90_global, "Conventions", "CF-1.4" ) )
         call check(  nf90_put_att(ncid, nf90_global, "title", trim(title_str)) )
-        call check(  nf90_put_att(ncid, nf90_global, "Model", "uEMEP" ) )        
+        call check(  nf90_put_att(ncid, nf90_global, "Model", trim(model_version_str) ) )        
+        
         !Save some model flags for later reference
         call check(  nf90_put_att(ncid, nf90_global, "EMEP_grid_interpolation_flag", EMEP_grid_interpolation_flag ) )        
         call check(  nf90_put_att(ncid, nf90_global, "no2_chemistry_scheme_flag", no2_chemistry_scheme_flag ) )        
@@ -1955,6 +1974,28 @@
         else
             call check(  nf90_put_att(ncid, nf90_global, "limit_emep_grid_interpolation_region_to_calculation_region", "false" ) )        
         endif
+        
+        !Write out sources
+        i=0
+        do i_source=1,n_source_index
+        if (calculate_source(i_source)) then
+            i=i+1
+            write (temp_str,'(i0)') i
+            temp_str2="uEMEP_source("//trim(temp_str)//")"
+            call check(  nf90_put_att(ncid, nf90_global, trim(temp_str2), trim(source_file_str(i_source)) ) )
+        endif
+        enddo
+        call check(  nf90_put_att(ncid, nf90_global, "n_uEMEP_sources", i ))        
+        i=0
+        do i_source=1,n_source_index
+        if (calculate_EMEP_source(i_source).and..not.calculate_source(i_source)) then
+            i=i+1
+            write (temp_str,'(i0)') i
+            temp_str2="EMEP_source("//trim(temp_str)//")"
+            call check(  nf90_put_att(ncid, nf90_global, trim(temp_str2), trim(source_file_str(i_source)) ) )
+        endif
+        enddo
+        call check(  nf90_put_att(ncid, nf90_global, "n_EMEP_sources", i ))        
    
         !Projection data
         if (projection_type.eq.UTM_projection_index) then
@@ -1980,7 +2021,8 @@
         call check(  nf90_put_att(ncid, proj_varid, "latitude_of_projection_origin", 0 ) )
         call check(  nf90_put_att(ncid, proj_varid, "false_easting", 500000. ) )
         call check(  nf90_put_att(ncid, proj_varid, "false_northing", 0. ) )
-        call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", ltm_lon0 ) )
+        call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", ltm_lon0 ) )        
+
         endif
 
         if (projection_type.eq.RDM_projection_index) then
