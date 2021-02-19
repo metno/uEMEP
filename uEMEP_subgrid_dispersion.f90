@@ -577,10 +577,10 @@
                                     endif
                                     
                                     if (stability_scheme_flag.eq.3) then
-                                        !Need to make 10 m winds if they are not selected by the wind_level_flag
-                                        !if (hourly_calculations.and.(wind_level_flag.eq.1.or.wind_level_flag.eq.2)) then
-                                        !    call u_profile_neutral_val_func(10.,meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index),H_meteo,h_mix_loc,exp(logz0_loc),FF10_loc,u_star0_loc)
-                                        !endif
+                                        !Need to make 10 m winds if they are not selected by the wind_level_flag and do not exist
+                                        if (hourly_calculations.and.(wind_level_flag.eq.1.or.wind_level_flag.eq.2).and.FF10_loc.eq.0) then
+                                            call u_profile_neutral_val_func(10.,meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index),H_meteo,h_mix_loc,exp(logz0_loc),FF10_loc,u_star0_loc)
+                                        endif
 
                                         !Set initial values for sigma. Initial sig_y is set here as well but is overridden by Kz dispersion
                                         call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
