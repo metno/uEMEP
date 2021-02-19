@@ -96,6 +96,8 @@
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_landuse_subgrid(i,j),yproj_landuse_subgrid(i,j),lon_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),EMEP_projection_attributes)
+        elseif (EMEP_projection_type.eq.PS_projection_index) then
+            call LL2PS_spherical(xproj_landuse_subgrid(i,j),yproj_landuse_subgrid(i,j),lon_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),EMEP_projection_attributes)
         else
             xproj_landuse_subgrid(i,j)=lon_landuse_subgrid(i,j)
             yproj_landuse_subgrid(i,j)=lat_landuse_subgrid(i,j)            

@@ -94,7 +94,7 @@
             if (EMEP_projection_type.eq.LL_projection_index) then
                 delta_area(1)=xpos_limit*EMEP_grid_interpolation_size*110570.*cos(3.14159/180.*var1d_nc(j_nc,lat_nc_index))
                 delta_area(2)=ypos_limit*EMEP_grid_interpolation_size*110570.                
-            elseif (EMEP_projection_type.eq.LCC_projection_index) then
+            elseif (EMEP_projection_type.eq.LCC_projection_index.or.EMEP_projection_type.eq.PS_projection_index) then
                 delta_area(1)=xpos_limit*EMEP_grid_interpolation_size
                 delta_area(2)=ypos_limit*EMEP_grid_interpolation_size
             endif

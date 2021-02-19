@@ -100,6 +100,8 @@
                 y_ship=lat_ship       
             elseif (EMEP_projection_type.eq.LCC_projection_index) then
                 call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
+            elseif (EMEP_projection_type.eq.PS_projection_index) then
+                call LL2PS_spherical(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
             endif
         endif
 
@@ -238,6 +240,8 @@
                 y_ship=lat_ship       
             elseif (EMEP_projection_type.eq.LCC_projection_index) then
                 call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
+            elseif (EMEP_projection_type.eq.PS_projection_index) then
+                call LL2PS_spherical(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
             endif
         endif
 
@@ -457,6 +461,8 @@
             !elseif (EMEP_projection_type.eq.LL_projection_index) then
                 !lon_ship=ddlongitude
                 !lat_ship=ddlatitude
+            elseif (EMEP_projection_type.eq.PS_projection_index) then
+                call LL2PS_spherical(x_ship,y_ship,ddlongitude,ddlatitude,EMEP_projection_attributes)
             endif           
         else
             !Convert lat lon to utm coords

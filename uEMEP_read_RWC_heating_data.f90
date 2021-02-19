@@ -233,6 +233,8 @@
                 y_ssb=lat_ssb
             elseif (EMEP_projection_type.eq.LCC_projection_index) then
                 call lb2lambert2_uEMEP(x_ssb,y_ssb,lon_ssb,lat_ssb,EMEP_projection_attributes)
+            elseif (EMEP_projection_type.eq.PS_projection_index) then
+                call LL2PS_spherical(x_ssb,y_ssb,lon_ssb,lat_ssb,EMEP_projection_attributes)
             endif
         endif
                 

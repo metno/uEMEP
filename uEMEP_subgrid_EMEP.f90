@@ -185,6 +185,7 @@
         
             if (i_nc.ge.1.and.i_nc.le.dim_length_nc(x_dim_nc_index).and.j_nc.ge.1.and.j_nc.le.dim_length_nc(y_dim_nc_index)) then
             
+            !Read from the local fraction file
             subgrid(i,j,:,emep_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,conc_nc_index,:,:)
             subgrid(i,j,:,emep_local_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,local_nc_index,:,:)
             
@@ -240,7 +241,7 @@
             enddo
             enddo
             
-            !Interpolate the other EMEP compounds as well to subgrid in the same way
+            !Interpolate the other EMEP compounds as well to subgrid in the same way. Read from the normal EMEP file
             do i_pollutant=1,n_emep_pollutant_loop
             do i_loop=1,n_pollutant_compound_loop(i_pollutant)
                 comp_EMEP_subgrid(i,j,:,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_var3d_nc(i_nc,j_nc,:,pollutant_compound_loop_index(i_pollutant,i_loop))

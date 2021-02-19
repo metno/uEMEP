@@ -131,11 +131,12 @@
                     y_line_in(i)=lat_line_in(i)        
                 elseif (EMEP_projection_type.eq.LCC_projection_index) then
                     call lb2lambert2_uEMEP(x_line_in(i),y_line_in(i),lon_line_in(i),lat_line_in(i),EMEP_projection_attributes)
+                elseif (EMEP_projection_type.eq.PS_projection_index) then
+                    call LL2PS_spherical(x_line_in(i),y_line_in(i),lon_line_in(i),lat_line_in(i),EMEP_projection_attributes)
                 endif   
             enddo
             !write(*,*) x_line_in(1),y_line_in(1),lon_line_in(1),lat_line_in(1)
-        endif
-        
+        endif        
         
         i_traffic_index=1+floor((x_line_in-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
         j_traffic_index=1+floor((y_line_in-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))

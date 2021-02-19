@@ -764,13 +764,13 @@
     
     endif
 
-    !Save the EMEP data interpolated to the subgrid
+    !Save the EMEP data interpolated to the subgrid. These are based on the gridded concentrations
     if (save_emep_source_contributions) then
     do i_pollutant=1,n_pollutant_loop
     do i_source=1,n_source_index
         if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.i_source.eq.allsource_index) then
             
-            !Only save the allsource value here
+            !Only save the allsource value here 'EMEP_allsources'
             if (i_source.eq.allsource_index) then
                 variable_type='float'
                 i_file=emep_subgrid_file_index(i_source)
@@ -860,7 +860,7 @@
     enddo
     endif
     
-    !Save the other interpolated EMEP compounds used for nox chemistry as well
+    !Save the other interpolated EMEP compounds used for nox chemistry as well. These are based on the surface comp values
     if (save_for_chemistry) then
     variable_type='float'
     do i_pollutant=1,n_emep_pollutant_loop
@@ -1988,7 +1988,7 @@
         call check(  nf90_put_att(ncid, nf90_global, "n_uEMEP_sources", i ))        
         i=0
         do i_source=1,n_source_index
-        if (calculate_EMEP_source(i_source).and..not.calculate_source(i_source)) then
+        if (calculate_EMEP_source(i_source)) then
             i=i+1
             write (temp_str,'(i0)') i
             temp_str2="EMEP_source("//trim(temp_str)//")"

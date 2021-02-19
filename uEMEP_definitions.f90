@@ -576,8 +576,8 @@
     !integer num_NN_nc
     !parameter (num_NN_nc=9)                  ! number of readable near neighbours
 
-    integer UTM_projection_index,RDM_projection_index,LCC_projection_index,LL_projection_index,LAEA_projection_index,LTM_projection_index
-    parameter (UTM_projection_index=1,RDM_projection_index=2,LCC_projection_index=3,LL_projection_index=4,LAEA_projection_index=5,LTM_projection_index=6)
+    integer UTM_projection_index,RDM_projection_index,LCC_projection_index,LL_projection_index,LAEA_projection_index,LTM_projection_index,PS_projection_index
+    parameter (UTM_projection_index=1,RDM_projection_index=2,LCC_projection_index=3,LL_projection_index=4,LAEA_projection_index=5,LTM_projection_index=6,PS_projection_index=7)
     integer :: projection_type=UTM_projection_index
     integer :: EMEP_projection_type=LCC_projection_index
     double precision :: EMEP_projection_attributes(10)

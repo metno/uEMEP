@@ -824,7 +824,13 @@
     no2_i=1;no_i=2;nox_i=3;o3_i=4;ox_i=5
 
     !Reference
-    !
+    !Düring, I., Bächlin, W., Ketzel, M., Baum, A., Friedrich, U., Wurzler, S., 2011.
+    !A new simplified NO/NO2 conversion model under consideration of direct NO2-emissions.
+    !Meteorol. Zeitschrift 20, 67–73. doi:10.1127/0941-2948/2011/0491
+    
+    !Improved Methodologies for NO2 Exposure Assessment in the EU, page 53
+    !https://ec.europa.eu/environment/air/pdf/NO2_Exposure_Final_Report.pdf
+    
     !Normally multiplied by *Na_fac but not necessary as it is just a scaling
         
     mol_no2_bg=no2_bg/mmass(no2_i)

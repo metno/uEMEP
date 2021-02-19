@@ -142,17 +142,20 @@
         status_nc = NF90_OPEN (pathfilename_EMEP(i_file), nf90_nowrite, id_nc)
         if (status_nc .NE. NF90_NOERR) write(unit_logfile,'(A,I)') 'ERROR opening netcdf file: ',status_nc
     
+        EMEP_projection_type=LL_projection_index
+
         !Find the projection. If no projection then in lat lon coordinates
         status_nc = NF90_INQ_VARID (id_nc,'projection_lambert',var_id_nc)
         
         if (status_nc.eq.NF90_NOERR) then
             !If there is a projection then read in the attributes. All these are doubles
             !status_nc = nf90_inquire_variable(id_nc, var_id_nc, natts = numAtts_projection)
-                status_nc = nf90_get_att(id_nc, var_id_nc, 'standard_parallel', EMEP_projection_attributes(1:2))
-                status_nc = nf90_get_att(id_nc, var_id_nc, 'longitude_of_central_meridian', EMEP_projection_attributes(3))
-                status_nc = nf90_get_att(id_nc, var_id_nc, 'latitude_of_projection_origin', EMEP_projection_attributes(4))
-                status_nc = nf90_get_att(id_nc, var_id_nc, 'earth_radius', EMEP_projection_attributes(5))
-                EMEP_projection_type=LCC_projection_index
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'standard_parallel', EMEP_projection_attributes(1:2))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'longitude_of_central_meridian', EMEP_projection_attributes(3))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'latitude_of_projection_origin', EMEP_projection_attributes(4))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'earth_radius', EMEP_projection_attributes(5))
+                
+            EMEP_projection_type=LCC_projection_index
 
                 !Reset names of the x,y coordinates
             dim_name_nc(x_dim_nc_index)='i'
@@ -169,10 +172,37 @@
             endif
             !Always set to true
             use_alternative_LCC_projection_flag=.true.
-        else
-            EMEP_projection_type=LL_projection_index
         endif
         
+        !Find the projection. If no projection then in lat lon coordinates
+        status_nc = NF90_INQ_VARID (id_nc,'Polar_Stereographic',var_id_nc)
+        
+        if (status_nc.eq.NF90_NOERR) then
+            !If there is a projection then read in the attributes. All these are doubles
+            !status_nc = nf90_inquire_variable(id_nc, var_id_nc, natts = numAtts_projection)
+            EMEP_projection_attributes=0.
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'straight_vertical_longitude_from_pole', EMEP_projection_attributes(1))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'latitude_of_projection_origin', EMEP_projection_attributes(2))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'false_easting', EMEP_projection_attributes(3))
+            if (status_nc.ne.NF90_NOERR) EMEP_projection_attributes(3)=0.
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'false_northing', EMEP_projection_attributes(4))
+            if (status_nc.ne.NF90_NOERR) EMEP_projection_attributes(4)=0.
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'earth_radius', EMEP_projection_attributes(5))
+            if (status_nc.ne.NF90_NOERR) EMEP_projection_attributes(5)=6.370e6
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor_at_projection_origin', EMEP_projection_attributes(6))
+            if (status_nc.ne.NF90_NOERR) EMEP_projection_attributes(6)=1.
+                
+            EMEP_projection_type=PS_projection_index
+
+            !Reset names of the x,y coordinates
+            dim_name_nc(x_dim_nc_index)='i'
+            dim_name_nc(y_dim_nc_index)='j'
+            var_name_nc(lon_nc_index,:,allsource_index)='lon'
+            var_name_nc(lat_nc_index,:,allsource_index)='lat'
+            
+            write(unit_logfile,'(A,6f12.2)') 'Reading Polar_Stereographic: ',EMEP_projection_attributes(1:6)
+        endif
+
         !Find the (x,y,z,time,xdist,ydist) dimensions of the file
         do i_dim=1,num_dims_nc
             status_nc = NF90_INQ_DIMID (id_nc,dim_name_nc(i_dim),dim_id_nc(i_dim))
@@ -255,6 +285,11 @@
                         enddo            
                             !write(*,*) temp_x
                             !write(*,*) temp_y
+                    elseif (EMEP_projection_type.eq.PS_projection_index) then
+                        !Convert lat lon corners to Polar Stereo
+                        do i=1,4
+                            call LL2PS_spherical(temp_x(i),temp_y(i),temp_lon(i),temp_lat(i),EMEP_projection_attributes)
+                        enddo            
                     elseif (EMEP_projection_type.eq.LL_projection_index) then
                         !Set lat lon corners if EMEP is in lat lon
                         temp_x=temp_lon;temp_y=temp_lat

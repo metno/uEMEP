@@ -194,6 +194,7 @@
                 elseif  (projection_type.eq.LTM_projection_index) then
                     call LL2LTM(1,ltm_lon0,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1))
                 elseif (projection_type.eq.LCC_projection_index) then
+                elseif (projection_type.eq.PS_projection_index) then
                 elseif (projection_type.eq.LAEA_projection_index) then
                     call LL2LAEA(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),projection_attributes)
                 endif
@@ -391,6 +392,7 @@
                 call LL2LTM(1,ltm_lon0,inputdata_rl_temp(i,x1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index))
                 call LL2LTM(1,ltm_lon0,inputdata_rl_temp(i,x2_rl_index),inputdata_rl_temp(i,y2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index))
             elseif (projection_type.eq.LCC_projection_index) then
+            elseif (projection_type.eq.PS_projection_index) then
             elseif (projection_type.eq.LAEA_projection_index) then
                 call LL2LAEA(inputdata_rl(i,x1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl_temp(i,x1_rl_index),projection_attributes)
                 call LL2LAEA(inputdata_rl(i,x2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl_temp(i,y2_rl_index),inputdata_rl_temp(i,x2_rl_index),projection_attributes)

@@ -446,6 +446,10 @@ end subroutine testlambert
 
         call lambert2lb2_uEMEP(x_in,y_in,lon_out,lat_out,projection_attributes_in)
 
+    elseif (projection_type_in.eq.PS_projection_index) then
+
+        call PS2LL_spherical(x_in,y_in,lon_out,lat_out,projection_attributes_in)
+
     elseif (projection_type_in.eq.LL_projection_index) then
     
         lon_out=x_in
@@ -454,3 +458,94 @@ end subroutine testlambert
     endif
 
     end subroutine PROJ2LL
+
+    subroutine LL2PS_spherical(x,y,lon_in,lat_in,projection_attributes)
+    !https://mathworld.wolfram.com/StereographicProjection.html
+    
+    implicit none
+    double precision, intent(in) :: projection_attributes(10)
+    real, intent(in) ::lon_in,lat_in
+    real, intent(out)::x,y
+    real ::r
+    real ::PI
+    real :: earth_radius
+    real deg2rad,rad2deg,k_ps
+    real lat0,lat0_in,lon0,lon0_in
+    real false_easting,false_northing
+    real scaling
+    real lon,lat
+    
+    !grid_mapping_name = Polar_Stereographic
+    !Map parameters:
+    !longitude_of_projection_origin
+    !latitude_of_projection_origin
+    !false_easting - This parameter is optional (default is 0)
+    !false_northing - This parameter is optional (default is 0)lat_stand1_lambert=projection_attributes(1)
+    lon0_in=projection_attributes(1)
+    lat0_in=projection_attributes(2)
+    false_easting=projection_attributes(3)
+    false_northing=projection_attributes(4) 
+    earth_radius = projection_attributes(5)
+    scaling = projection_attributes(6)
+    
+    PI=3.14159265358979323
+    deg2rad=PI/180.
+    rad2deg=180./PI
+    r=earth_radius
+    
+    lat0=lat0_in*deg2rad
+    lon0=lon0_in*deg2rad
+    lon=lon_in*deg2rad
+    lat=lat_in*deg2rad
+    
+    k_ps=2.*r*scaling/(1.+sin(lat0)*sin(lat)+cos(lat0)*cos(lat)*cos(lon-lon0))
+    x=false_easting+k_ps*cos(lat)*sin(lon-lon0)
+    y=false_northing+k_ps*(cos(lat0)*sin(lat)-sin(lat0)*cos(lat)*cos(lon-lon0))
+    
+    end subroutine LL2PS_spherical
+
+    subroutine PS2LL_spherical(x,y,lon,lat,projection_attributes)
+    !https://mathworld.wolfram.com/StereographicProjection.html
+     
+    implicit none
+    double precision, intent(in) :: projection_attributes(10)
+    real, intent(out) :: lon,lat
+    real, intent(in)::x,y
+    real :: r,rho,c
+    real :: PI
+    real :: earth_radius
+    real deg2rad,rad2deg
+    real lat0,lat0_in,lon0,lon0_in
+    real false_easting,false_northing
+    real scaling
+    
+    !grid_mapping_name = Polar_Stereographic
+    !Map parameters:
+    !longitude_of_projection_origin
+    !latitude_of_projection_origin
+    !false_easting - This parameter is optional (default is 0)
+    !false_northing - This parameter is optional (default is 0)
+    !NOTE scale_factor_at_projection_origin =0.5(1+sin(Standard Parallel))
+    lon0_in=projection_attributes(1)
+    lat0_in=projection_attributes(2)
+    false_easting=projection_attributes(3)
+    false_northing=projection_attributes(4) 
+    earth_radius = projection_attributes(5)
+    scaling = projection_attributes(6)
+    
+    PI=3.14159265358979323
+    deg2rad=PI/180.
+    rad2deg=180./PI
+    r=earth_radius
+    
+    lat0=lat0_in*deg2rad
+    lon0=lon0_in*deg2rad
+    
+    rho=sqrt((x-false_easting)*(x-false_easting)+(y-false_northing)*(y-false_northing))
+    c=2*atan(rho*0.5/r/scaling)
+    lat=asin(cos(c)*sin(lat0)+(y-false_northing)/rho*sin(c)*cos(lat0))
+    lon=lon0+atan((x-false_easting)*sin(c)/(rho*cos(lat0)*cos(c)-(y-false_northing)*sin(lat0)*sin(c)))
+    lat=lat*rad2deg
+    lon=lon*rad2deg
+    
+    end subroutine PS2LL_spherical

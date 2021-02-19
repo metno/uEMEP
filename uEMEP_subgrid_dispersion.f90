@@ -1330,11 +1330,14 @@
                                     invL_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)
                                     FFgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index)
                                     logz0_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,logz0_subgrid_index)
-                                    u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),ustar_min)
+                                    !u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),ustar_min)
                                     FF10_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FF10_subgrid_index)
                                     sig_y_00_loc=emission_properties_subgrid(ii,jj,emission_sigy00_index,source_index)
                                     sig_z_00_loc=emission_properties_subgrid(ii,jj,emission_sigz00_index,source_index)
                                     h_emis_loc=emission_properties_subgrid(ii,jj,emission_h_index,source_index)
+                                    !Set ustar 0 to be consistent with FF10 and z0
+                                    call u_profile_neutral_val_func(10.,FF10_loc,10.,h_mix_loc,exp(logz0_loc),FF10_loc,u_star0_loc)
+                                    u_star0_loc=max(u_star0_loc,ustar_min)
 
                                     if (wind_level_integral_flag.eq.5) then
                                         FF_loc=temp_FF_emission_subgrid(ii,jj)

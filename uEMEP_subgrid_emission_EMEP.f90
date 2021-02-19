@@ -248,9 +248,11 @@
                         call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
                     endif
                     !call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                elseif (EMEP_projection_type.eq.PS_projection_index) then
+                    call LL2PS_spherical(xpos_subgrid,ypos_subgrid,lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),EMEP_projection_attributes)
                 endif
 
-                    !Calculate the area weighted EMEP grid emissions at each subgrid
+                !Calculate the area weighted EMEP grid emissions at each subgrid
                 do jj=-1,+1
                 do ii=-1,+1
                 
@@ -297,6 +299,8 @@
                             call lb2lambert_uEMEP(xpos_subgrid2,ypos_subgrid2,lon_emission_subgrid(ii,jj,i_source),lat_emission_subgrid(ii,jj,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
                         endif
                         !call lb2lambert_uEMEP(xpos_subgrid2,ypos_subgrid2,lon_emission_subgrid(ii,jj,i_source),lat_emission_subgrid(ii,jj,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                    elseif (EMEP_projection_type.eq.PS_projection_index) then
+                        call LL2PS_spherical(xpos_subgrid2,ypos_subgrid2,lon_emission_subgrid(ii,jj,i_source),lat_emission_subgrid(ii,jj,i_source),EMEP_projection_attributes)
                     endif
 
                     if (abs(xpos_subgrid-xpos_subgrid2).le.dgrid_nc(lon_nc_index)/2. &
@@ -418,6 +422,8 @@
                         call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
                     endif
                     !call lb2lambert_uEMEP(xpos_subgrid,ypos_subgrid,lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                elseif (EMEP_projection_type.eq.PS_projection_index) then
+                    call LL2PS_spherical(xpos_subgrid,ypos_subgrid,lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),EMEP_projection_attributes)
                 endif
 
                 do jj=j_start,j_end
@@ -433,6 +439,8 @@
                             call lb2lambert_uEMEP(xpos_subgrid2,ypos_subgrid2,lon_emission_subgrid(ii,jj,i_source),lat_emission_subgrid(ii,jj,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
                         endif
                         !call lb2lambert_uEMEP(xpos_subgrid2,ypos_subgrid2,lon_emission_subgrid(ii,jj,i_source),lat_emission_subgrid(ii,jj,i_source),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+                    elseif (EMEP_projection_type.eq.PS_projection_index) then
+                        call LL2PS_spherical(xpos_subgrid2,ypos_subgrid2,lon_emission_subgrid(ii,jj,i_source),lat_emission_subgrid(ii,jj,i_source),EMEP_projection_attributes)
                     endif
 
                     if (abs(xpos_subgrid-xpos_subgrid2).le.dgrid_nc(lon_nc_index)/2. &

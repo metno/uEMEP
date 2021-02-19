@@ -118,6 +118,8 @@
                     x_agriculture=ddlongitude        
                 elseif (projection_type.eq.LCC_projection_index) then
                     call lb2lambert2_uEMEP(x_agriculture,y_agriculture,ddlongitude,ddlatitude,EMEP_projection_attributes)
+                elseif (projection_type.eq.PS_projection_index) then
+                    call LL2PS_spherical(x_agriculture,y_agriculture,ddlongitude,ddlatitude,EMEP_projection_attributes)
                 endif   
         endif
 
@@ -159,6 +161,8 @@
                     nh3emission_scale=emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index) &
                         /(nh3_gridsize(x_dim_index)*nh3_gridsize(y_dim_index))
                 elseif (projection_type.eq.LCC_projection_index) then
+                    !Do nothing
+                elseif (projection_type.eq.PS_projection_index) then
                     !Do nothing
                 endif   
             endif

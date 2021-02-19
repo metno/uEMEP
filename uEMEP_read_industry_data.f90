@@ -200,10 +200,11 @@
             y_industry=industry_lb_pos(industry_number,2)        
         elseif (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(x_industry,y_industry,industry_lb_pos(industry_number,1),industry_lb_pos(industry_number,2),EMEP_projection_attributes)
+        elseif (EMEP_projection_type.eq.PS_projection_index) then
+            call LL2PS_spherical(x_industry,y_industry,industry_lb_pos(industry_number,1),industry_lb_pos(industry_number,2),EMEP_projection_attributes)
         endif
     endif
-    
-        
+
         !Find the grid index it belongs to
         i_industry_index=1+floor((x_industry-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
         j_industry_index=1+floor((y_industry-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))

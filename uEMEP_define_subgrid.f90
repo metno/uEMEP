@@ -317,6 +317,8 @@
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_subgrid(i,j),yproj_subgrid(i,j),lon_subgrid(i,j),lat_subgrid(i,j),EMEP_projection_attributes)
+        elseif (EMEP_projection_type.eq.PS_projection_index) then
+            call LL2PS_spherical(xproj_subgrid(i,j),yproj_subgrid(i,j),lon_subgrid(i,j),lat_subgrid(i,j),EMEP_projection_attributes)
         else
             xproj_subgrid(i,j)=lon_subgrid(i,j)
             yproj_subgrid(i,j)=lat_subgrid(i,j)            
@@ -364,6 +366,8 @@
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_integral_subgrid(i,j),yproj_integral_subgrid(i,j),lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),EMEP_projection_attributes)
+        elseif (EMEP_projection_type.eq.PS_projection_index) then
+            call LL2PS_spherical(xproj_integral_subgrid(i,j),yproj_integral_subgrid(i,j),lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),EMEP_projection_attributes)
         else
             xproj_integral_subgrid(i,j)=lon_integral_subgrid(i,j)
             yproj_integral_subgrid(i,j)=lat_integral_subgrid(i,j)            
@@ -371,12 +375,14 @@
         if (use_alternative_meteorology_flag) then
         if (meteo_nc_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(meteo_nc_xproj_integral_subgrid(i,j),meteo_nc_yproj_integral_subgrid(i,j),lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),meteo_nc_projection_attributes)
+        elseif (meteo_nc_projection_type.eq.PS_projection_index) then
+            call LL2PS_spherical(meteo_nc_xproj_integral_subgrid(i,j),meteo_nc_yproj_integral_subgrid(i,j),lon_integral_subgrid(i,j),lat_integral_subgrid(i,j),meteo_nc_projection_attributes)
         else
             meteo_nc_xproj_integral_subgrid(i,j)=lon_integral_subgrid(i,j)
             meteo_nc_yproj_integral_subgrid(i,j)=lat_integral_subgrid(i,j)            
         endif
         endif
-   enddo
+    enddo
     enddo
 
     !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
@@ -448,6 +454,8 @@
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_emission_subgrid(i,j,i_source),yproj_emission_subgrid(i,j,i_source),lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),EMEP_projection_attributes)
+        elseif (EMEP_projection_type.eq.PS_projection_index) then
+            call LL2PS_spherical(xproj_emission_subgrid(i,j,i_source),yproj_emission_subgrid(i,j,i_source),lon_emission_subgrid(i,j,i_source),lat_emission_subgrid(i,j,i_source),EMEP_projection_attributes)
         else
             xproj_emission_subgrid(i,j,i_source)=lon_emission_subgrid(i,j,i_source)
             yproj_emission_subgrid(i,j,i_source)=lat_emission_subgrid(i,j,i_source)            
@@ -494,6 +502,8 @@
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_population_subgrid(i,j),yproj_population_subgrid(i,j),lon_population_subgrid(i,j),lat_population_subgrid(i,j),EMEP_projection_attributes)
+        elseif (EMEP_projection_type.eq.PS_projection_index) then
+            call LL2PS_spherical(xproj_population_subgrid(i,j),yproj_population_subgrid(i,j),lon_population_subgrid(i,j),lat_population_subgrid(i,j),EMEP_projection_attributes)
         else
             xproj_population_subgrid(i,j)=lon_population_subgrid(i,j)
             yproj_population_subgrid(i,j)=lat_population_subgrid(i,j)            
@@ -553,6 +563,8 @@
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_deposition_subgrid(i,j),yproj_deposition_subgrid(i,j),lon_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),EMEP_projection_attributes)
+        elseif (EMEP_projection_type.eq.PS_projection_index) then
+            call LL2PS_spherical(xproj_deposition_subgrid(i,j),yproj_deposition_subgrid(i,j),lon_deposition_subgrid(i,j),lat_deposition_subgrid(i,j),EMEP_projection_attributes)
         else
             xproj_deposition_subgrid(i,j)=lon_deposition_subgrid(i,j)
             yproj_deposition_subgrid(i,j)=lat_deposition_subgrid(i,j)            
@@ -599,6 +611,8 @@
         !If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon
         if (EMEP_projection_type.eq.LCC_projection_index) then
             call lb2lambert2_uEMEP(xproj_landuse_subgrid(i,j),yproj_landuse_subgrid(i,j),lon_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),EMEP_projection_attributes)
+        elseif (EMEP_projection_type.eq.PS_projection_index) then
+            call LL2PS_spherical(xproj_landuse_subgrid(i,j),yproj_landuse_subgrid(i,j),lon_landuse_subgrid(i,j),lat_landuse_subgrid(i,j),EMEP_projection_attributes)
         else
             xproj_landuse_subgrid(i,j)=lon_landuse_subgrid(i,j)
             yproj_landuse_subgrid(i,j)=lat_landuse_subgrid(i,j)            

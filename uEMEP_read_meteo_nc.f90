@@ -199,6 +199,8 @@
             stop
         endif
         
+        meteo_nc_projection_type=LL_projection_index
+        
         !Find the projection. If no projection then in lat lon coordinates
         status_nc = NF90_INQ_VARID (id_nc,'projection_lambert',var_id_nc)
         
@@ -220,10 +222,28 @@
             endif
             !Always set to true. i.e. not use anymore
             use_alternative_LCC_projection_flag=.true.
-        else
-            meteo_nc_projection_type=LL_projection_index             
         endif
         
+        !Find the projection. If no projection then in lat lon coordinates
+        status_nc = NF90_INQ_VARID (id_nc,'Polar_Stereographic',var_id_nc)
+
+        if (status_nc.eq.NF90_NOERR) then
+
+            EMEP_projection_attributes=0.
+            EMEP_projection_attributes(5)=6.370e6
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'straight_vertical_longitude_from_pole', meteo_nc_projection_attributes(1))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'latitude_of_projection_origin', meteo_nc_projection_attributes(2))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'false_easting', meteo_nc_projection_attributes(3))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'false_northing', meteo_nc_projection_attributes(4))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'earth_radius', meteo_nc_projection_attributes(5))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor_at_projection_origin', meteo_nc_projection_attributes(6))
+                
+            meteo_nc_projection_type=PS_projection_index
+                        
+            write(unit_logfile,'(A,5f12.2)') 'Reading Polar_Stereographic projection. ',meteo_nc_projection_attributes(1:5)
+        
+        endif
+
         !Find the (x,y,z,time) dimensions of the file
         do i_dim=1,num_dims_meteo_nc
             status_nc = NF90_INQ_DIMID (id_nc,dim_name_meteo_nc(i_dim),dim_id_nc(i_dim))
@@ -288,6 +308,11 @@
                         do i=1,4
                             call lb2lambert2_uEMEP(temp_x(i),temp_y(i),temp_lon(i),temp_lat(i),meteo_nc_projection_attributes)
                         enddo            
+                    elseif (meteo_nc_projection_type.eq.PS_projection_index) then
+                        !Convert lat lon corners to lambert
+                        do i=1,4
+                            call LL2PS_spherical(temp_x(i),temp_y(i),temp_lon(i),temp_lat(i),meteo_nc_projection_attributes)
+                        enddo            
                     elseif (meteo_nc_projection_type.eq.LL_projection_index) then
                         !Set lat lon corners if EMEP is in lat lon
                         temp_x=temp_lon;temp_y=temp_lat
@@ -329,17 +354,20 @@
                 !write(*,*) temp_delta
 
                 if ((meteo_nc_projection_type.eq.LCC_projection_index.and.EMEP_projection_type.eq.LCC_projection_index) &
-                .or.(meteo_nc_projection_type.eq.LL_projection_index.and.EMEP_projection_type.eq.LL_projection_index)) then
+                .or.(meteo_nc_projection_type.eq.LL_projection_index.and.EMEP_projection_type.eq.LL_projection_index) &
+                    .or.(meteo_nc_projection_type.eq.PS_projection_index.and.EMEP_projection_type.eq.PS_projection_index)) then
                     !If both EMEP and meteo are in the same coordinates then set the EMEP size to be the same as the meteo siz
                     EMEP_temp_delta(1)=dgrid_nc(lon_nc_index)
                     EMEP_temp_delta(2)=dgrid_nc(lat_nc_index)
-                elseif (meteo_nc_projection_type.eq.LCC_projection_index.and.EMEP_projection_type.eq.LL_projection_index) then
+                    elseif ((meteo_nc_projection_type.eq.LCC_projection_index.and.EMEP_projection_type.eq.LL_projection_index) &
+                    .or.(meteo_nc_projection_type.eq.PS_projection_index.and.EMEP_projection_type.eq.LL_projection_index)) then
                      !EMEP is in latlon, convert to local coordinates
                     EMEP_temp_delta(1)=dgrid_nc(lon_nc_index)*111000.*cos(temp_lat_mean*3.14159/180.) 
                     EMEP_temp_delta(2)=dgrid_nc(lat_nc_index)*111000.
-                elseif (meteo_nc_projection_type.eq.LL_projection_index.and.EMEP_projection_type.eq.LCC_projection_index) then
+                    elseif ((meteo_nc_projection_type.eq.LL_projection_index.and.EMEP_projection_type.eq.LCC_projection_index)&
+                    .or.(meteo_nc_projection_type.eq.LL_projection_index.and.EMEP_projection_type.eq.PS_projection_index)) then
                     !This conversion not available
-                    write(unit_logfile,'(A,3I)') 'Use of lat lon projection in meteo data, together with Lambert in EMEP not available. Stopping'
+                    write(unit_logfile,'(A,3I)') 'Use of lat lon projection in meteo data, together with Lambert or PS in EMEP not available. Stopping'
                     stop
                 else
                     write(unit_logfile,'(A,3I)') 'Use of current projections in meteo and EMEP data not available. Stopping'
