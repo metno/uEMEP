@@ -510,7 +510,7 @@ end subroutine testlambert
     implicit none
     double precision, intent(in) :: projection_attributes(10)
     real, intent(out) :: lon,lat
-    real, intent(in)::x,y
+    real, intent(in) :: x,y
     real :: r,rho,c
     real :: PI
     real :: earth_radius
@@ -538,13 +538,16 @@ end subroutine testlambert
     rad2deg=180./PI
     r=earth_radius
     
+    !lat0=(90.-lat0_in)*deg2rad
     lat0=lat0_in*deg2rad
     lon0=lon0_in*deg2rad
     
     rho=sqrt((x-false_easting)*(x-false_easting)+(y-false_northing)*(y-false_northing))
-    c=2*atan(rho*0.5/r/scaling)
+    c=2.*atan(rho*0.5/r/scaling)
+    !write(*,*) x,y,r,scaling
     lat=asin(cos(c)*sin(lat0)+(y-false_northing)/rho*sin(c)*cos(lat0))
     lon=lon0+atan((x-false_easting)*sin(c)/(rho*cos(lat0)*cos(c)-(y-false_northing)*sin(lat0)*sin(c)))
+    !lat=90.-lat*rad2deg
     lat=lat*rad2deg
     lon=lon*rad2deg
     

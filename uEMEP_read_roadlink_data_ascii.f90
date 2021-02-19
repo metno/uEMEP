@@ -203,11 +203,18 @@
                 read(unit_in,*) sub_nodes_x(1)
                 read(unit_in,*) sub_nodes_y(1)            
             endif
-            !Convert to EMEP coordinates from UTM to lambert. No choices here
+            !Convert to EMEP coordinates from UTM to lambert. No choices here. Special case but should be changed
             if (save_emissions_for_EMEP(traffic_index)) then
                 call PROJ2LL(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1),projection_attributes,projection_type)
                 !call UTM2LL(utm_zone,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_lat(1),sub_nodes_lon(1))
-                call lb2lambert2_uEMEP(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1),EMEP_projection_attributes)
+                if (projection_type.eq.LCC_projection_index) then
+                    call lb2lambert2_uEMEP(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1),EMEP_projection_attributes)
+                elseif (projection_type.eq.PS_projection_index) then
+                    call LL2PS_spherical(sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1),EMEP_projection_attributes)
+                else
+                    !Remains as lat lon
+                endif
+                
                 !write(*,*) sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1)
             endif
                 !write(*,*) sub_nodes_x(1),sub_nodes_y(1)

@@ -577,6 +577,11 @@
                                     endif
                                     
                                     if (stability_scheme_flag.eq.3) then
+                                        !Need to make 10 m winds if they are not selected by the wind_level_flag
+                                        !if (hourly_calculations.and.(wind_level_flag.eq.1.or.wind_level_flag.eq.2)) then
+                                        !    call u_profile_neutral_val_func(10.,meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index),H_meteo,h_mix_loc,exp(logz0_loc),FF10_loc,u_star0_loc)
+                                        !endif
+
                                         !Set initial values for sigma. Initial sig_y is set here as well but is overridden by Kz dispersion
                                         call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
                                         !call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),0.,x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
@@ -623,7 +628,7 @@
                                     !Calculate the dispersion
                                     temp_subgrid_internal=gauss_plume_cartesian_sigma_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc)
                                     
-                                    !if (ii.eq.i_cross.and.jj.eq.j_cross) write(*,'(9es12.2)') x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,temp_subgrid_internal
+                                    !if (ii.eq.i_cross.and.jj.eq.j_cross) write(*,'(10es12.2)') x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,temp_subgrid_internal,temp_emission_subgrid(ii,jj,1)
                                     !if (tt.ge.18.and.tt.le.18.and.temp_subgrid_internal.gt.1.e-3) then
                                         !write(*,'(2i,12es12.2)') ii,jj,x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,temp_emission_subgrid(ii,jj,1),temp_subgrid_internal,sin_subgrid_loc,cos_subgrid_loc
                                     !endif

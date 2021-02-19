@@ -21,6 +21,7 @@
     real start_time_cpu,end_time_cpu
     logical :: have_read_emep=.false.
     !real temp_val,area_weighted_interpolation_function
+    !real x_temp,y_temp,lon_temp,lat_temp
     
     model_version_str='uEMEP_v6.1'
     
@@ -147,7 +148,6 @@
                 call uEMEP_read_EMEP
             endif
 
-            
             !If read EMEP only once flag is on then turn off the EMEP reading
             !This is intended for use with multiple receptor files and requires alot of memory so is permanently turned off
             if (read_EMEP_only_once_flag) have_read_emep=.true.
