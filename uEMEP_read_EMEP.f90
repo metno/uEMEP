@@ -475,7 +475,7 @@
             if (i.eq.time_dim_nc_index) then
                 !write(unit_logfile,'(3A,2i12)') ' ',trim(dim_name_nc(i)),' (min, max in hours): ' &
                 !    ,minval(int((var1d_nc(1:dim_length_nc(i),i)-var1d_nc(dim_start_nc(i),i))/3600.+.5)+1) &
-                !    ,maxval(int((var1d_nc(1:dim_length_nc(i),i)-var1d_nc(dim_start_nc(i),i))/3600.+.5)+1)                     
+                !    ,maxval(int((var1d_nc(1:divar1d_ncm_length_nc(i),i)-var1d_nc(dim_start_nc(i),i))/3600.+.5)+1)                     
             else
                 write(unit_logfile,'(3A,2f12.2)') ' ',trim(dim_name_nc(i)),' (min, max): ' &
                     ,minval(var1d_nc(1:dim_length_nc(i),i)),maxval(var1d_nc(1:dim_length_nc(i),i)) 

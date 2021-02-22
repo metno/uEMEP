@@ -63,7 +63,7 @@
         dx_temp=111000.*dgrid_nc(lon_nc_index)*cos(lat_temp*pi/180.)
         dy_temp=111000.*dgrid_nc(lat_nc_index)
     else
-        !Assumed LCC
+        !Assumed LCC or PS
         dx_temp=dgrid_nc(lon_nc_index)
         dy_temp=dgrid_nc(lat_nc_index)
     endif

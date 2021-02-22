@@ -17,6 +17,8 @@
     !integer i_comp,i_file
     !character(256) temp_name
     integer i_integral,j_integral
+    real FF_loc,distance_grid
+    integer i_cross_integral,j_cross_integral,i_nc,j_nc
     
     !NB. Additional is calculated but not necessarily saved!
     real nox_bg_additional,no2_bg_additional,o3_bg_additional
@@ -61,6 +63,42 @@
 
     nox_bg=0.;no2_bg=0.;o3_bg=0.;nox_loc=0.;f_no2_loc=0.;J_photo=0.;temperature=0.;
         
+    !Before calculating travel time then include the other EMEP sources not downscaled
+    !Travel time is set to EMEP Grid_width/FFgrid
+    do t=t_start,t_end
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        i_cross_integral=crossreference_target_to_integral_subgrid(i,j,x_dim_index)
+        j_cross_integral=crossreference_target_to_integral_subgrid(i,j,y_dim_index)
+        FF_loc=1.
+        if (hourly_calculations) then
+            FF_loc=max(FF_min_dispersion,meteo_subgrid(i_cross_integral,j_cross_integral,t,FFgrid_subgrid_index))
+        elseif (annual_calculations) then
+            FF_loc=max(FF_min_dispersion,1./meteo_subgrid(i_cross_integral,j_cross_integral,t,inv_FFgrid_subgrid_index))
+        endif
+        
+        i_nc=crossreference_target_to_emep_subgrid(i,j,x_dim_index)
+        j_nc=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
+
+        if (EMEP_projection_type.eq.LL_projection_index) then
+            distance_grid=111000.*sqrt(dgrid_nc(lon_nc_index)*cos(var1d_nc(j_nc,lat_nc_index)*pi/180.)*dgrid_nc(lat_nc_index))
+        else
+        !Assumed LCC or PS
+            distance_grid=sqrt(dgrid_nc(lon_nc_index)*dgrid_nc(lat_nc_index))
+        endif
+
+        do i_source=1,n_source_index
+        if (calculate_emep_source(i_source).and..not.calculate_source(i_source)) then
+            traveltime_subgrid(i,j,t,1,:)=traveltime_subgrid(i,j,t,1,:) &
+                +distance_grid/FF_loc*subgrid(i,j,t,emep_local_subgrid_index,i_source,:)**traveltime_power
+            traveltime_subgrid(i,j,t,2,:)=traveltime_subgrid(i,j,t,2,:)+subgrid(i,j,t,emep_local_subgrid_index,i_source,:)**traveltime_power
+        !write(*,'(3i,4f12.2)') i,j,i_source,distance_grid,FF_loc,distance_grid/FF_loc,subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+        endif
+        enddo
+    enddo
+    enddo
+    enddo    
+    
     !Calculate the weighted travel time from the totals calculated in uEMEP_subgrid_dispersion
     do t=t_start,t_end
         traveltime_subgrid(:,:,t,1,:)=traveltime_subgrid(:,:,t,1,:)/traveltime_subgrid(:,:,t,2,:)
@@ -226,7 +264,7 @@
     !Special source allocation for no2 based on leaving out one source at a time in the chemistry calculation
     !This will always give a sum less, but not much less than, the total no2
     !This is normalised in order for it to be used
-    !
+    !Vhemistry scheme must have been run prior to implementing this
     
     use uEMEP_definitions
 
