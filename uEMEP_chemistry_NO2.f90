@@ -19,6 +19,8 @@
     integer i_integral,j_integral
     real FF_loc,distance_grid
     integer i_cross_integral,j_cross_integral,i_nc,j_nc
+    real sum_p_bg_out,sum_p_out,count_p_out
+    real max_p_bg_out,max_p_out,min_p_bg_out,min_p_out
     
     !NB. Additional is calculated but not necessarily saved!
     real nox_bg_additional,no2_bg_additional,o3_bg_additional
@@ -116,6 +118,10 @@
     enddo
     enddo
     
+    sum_p_bg_out=0.
+    sum_p_out=0.
+    count_p_out=0
+    max_p_bg_out=-1000.;min_p_bg_out=1000.;max_p_out=-1000.;min_p_out=1000.
     do t=t_start,t_end
     do j=1,subgrid_dim(y_dim_index)
     do i=1,subgrid_dim(x_dim_index)
@@ -225,8 +231,14 @@
         elseif (no2_chemistry_scheme_flag.eq.4) then
             call uEMEP_SRM_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out,SRM_parameters)
         elseif (no2_chemistry_scheme_flag.eq.5) then
-            call uEMEP_During_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,comp_EMEP_subgrid(i,j,t,nox_index),comp_EMEP_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,o3_index),nox_out,no2_out,o3_out)
+            call uEMEP_During_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,comp_EMEP_subgrid(i,j,t,nox_index),comp_EMEP_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,o3_index),J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
         endif
+        
+        sum_p_bg_out=sum_p_bg_out+p_bg_out
+        sum_p_out=sum_p_out+p_out
+        count_p_out=count_p_out+1
+        max_p_bg_out=max(max_p_bg_out,p_bg_out);min_p_bg_out=min(min_p_bg_out,p_bg_out)
+        max_p_out=max(max_p_out,p_out);min_p_out=min(min_p_out,p_out)
         
         !write(*,*) nox_out-subgrid(i,j,t,total_subgrid_index,allsource_index,1)
         
@@ -255,7 +267,10 @@
     enddo
     enddo
     enddo
-    
+
+    write(*,'(A,2f12.3)') 'P value (nonlocal,local): ',sum_p_bg_out/count_p_out,sum_p_out/count_p_out
+    write(*,'(A,2f12.3)') 'P max (nonlocal,local): ',max_p_bg_out,max_p_out
+    write(*,'(A,2f12.3)') 'P min (nonlocal,local): ',min_p_bg_out,min_p_out
 
     
     end subroutine uEMEP_chemistry
@@ -283,6 +298,8 @@
     integer i_integral,j_integral
     integer remove_source
     real sum_no2_source_subgrid,sum_o3_source_subgrid
+    real, allocatable  :: comp_source_temp_subgrid(:,:,:,:,:)
+    real, allocatable  :: comp_source_EMEP_temp_subgrid(:,:,:,:,:)
     
     !Search for nox in the pollutants
     do i_pollutant=1,n_pollutant_loop
@@ -293,6 +310,15 @@
     if (.not.nox_available) return  
 
     if (.not.allocated(comp_source_subgrid)) allocate(comp_source_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+    if (calculate_EMEP_additional_grid_flag) then
+        if (.not.allocated(comp_source_additional_subgrid)) allocate(comp_source_additional_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        !Temporary array for storing the comp_source_subgrid to avoid rewriting large parts of the routine when running the additional version
+        if (.not.allocated(comp_source_temp_subgrid)) allocate(comp_source_temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        if (.not.allocated(comp_source_EMEP_temp_subgrid)) allocate(comp_source_EMEP_temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        comp_source_temp_subgrid=comp_source_subgrid
+        comp_source_EMEP_temp_subgrid=comp_source_EMEP_subgrid
+        comp_source_EMEP_subgrid=comp_source_EMEP_additional_subgrid
+    endif
     ! Already allocated in chemistry call
     !if (.not.allocated(comp_source_EMEP_subgrid)) allocate(comp_source_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
 
@@ -334,7 +360,12 @@
         J_photo=meteo_subgrid(i_integral,j_integral,t,J_subgrid_index)
         temperature=meteo_subgrid(i_integral,j_integral,t,t2m_subgrid_index)
        
-        nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
+        
+        if (calculate_EMEP_additional_grid_flag) then
+            nox_bg=subgrid(i,j,t,emep_additional_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
+        else
+            nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
+        endif
         
         !Add the additional non-downscaled EMEP local source to the background as these have not been used to calulate travel times
         !do i_source=1,n_source_index
@@ -360,7 +391,10 @@
                     nox_loc=nox_loc+subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
                     enddo       
                 endif
-            endif
+            endif             
+
+            !Include the local EMEP that are not being downscaled
+            if (.not.calculate_EMEP_additional_grid_flag) then
             if (calculate_emep_source(i_source).and..not.calculate_source(i_source)) then
                 if (remove_source.ne.i_source) then
                     do i_subsource=1,n_subsource(i_source)
@@ -369,13 +403,41 @@
                     enddo
                 endif
             endif
+            endif
+            
+            if (calculate_EMEP_additional_grid_flag) then
+            !If calculating the additional region then use the additional local EMEP not being downscaled 
+            if (calculate_emep_source(i_source).and..not.calculate_source(i_source)) then
+                if (remove_source.ne.i_source) then
+                    do i_subsource=1,n_subsource(i_source)
+                    f_no2_loc=f_no2_loc+f_no2_emep*subgrid(i,j,t,emep_additional_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                    nox_loc=nox_loc+subgrid(i,j,t,emep_additional_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                    enddo
+                endif
+            endif
+            !If calculating the additional region then include the difference BG-BG_additional to the local EMEP that is being downscaled
+            if (calculate_source(i_source)) then
+                if (remove_source.ne.i_source) then
+                    do i_subsource=1,n_subsource(i_source)
+                    f_no2_loc=f_no2_loc+f_no2_emep* &
+                        (subgrid(i,j,t,emep_nonlocal_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index)) &
+                        -subgrid(i,j,t,emep_additional_nonlocal_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index)))
+                    nox_loc=nox_loc+subgrid(i,j,t,emep_nonlocal_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index)) &
+                        -subgrid(i,j,t,emep_additional_nonlocal_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                    enddo
+                endif
+            endif                
+            endif
+            
             enddo
+
             if (nox_loc.ne.0.0) then
                 f_no2_loc=f_no2_loc/nox_loc
             else
                 f_no2_loc=0.
             endif
  
+            
             !Use the all source index to calculate the contribution from the background
             !This is done by removing all the sources, rather than the difference as done for the local sources
             !This is because the chemistry is disturbed when removing background nox and no2
@@ -391,7 +453,7 @@
                 f_no2_loc=0.
             endif
             
-        !Assume stationary state to derive no2 and o3 background
+        !Assume stationary state to derive no2 and o3 background. Overwrites the previous setting
         if (no2_background_chemistry_scheme_flag.eq.1) then
             call uEMEP_nonlocal_NO2_O3(nox_bg,comp_EMEP_subgrid(i,j,t,nox_index),comp_EMEP_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,o3_index),J_photo,temperature,f_no2_emep,no2_bg,o3_bg)
         endif
@@ -411,7 +473,7 @@
             elseif (no2_chemistry_scheme_flag.eq.4) then
                 call uEMEP_SRM_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out,SRM_parameters)
             elseif (no2_chemistry_scheme_flag.eq.5) then
-                call uEMEP_During_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,comp_EMEP_subgrid(i,j,t,nox_index),comp_EMEP_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,o3_index),nox_out,no2_out,o3_out)
+                call uEMEP_During_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,comp_EMEP_subgrid(i,j,t,nox_index),comp_EMEP_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,o3_index),J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
             endif
         
             !write(*,*) nox_out-subgrid(i,j,t,total_subgrid_index,allsource_index,1)
@@ -501,7 +563,17 @@
     enddo
     enddo
     enddo
-    
+
+    !Transfer the arrays to the right outputs
+    if (calculate_EMEP_additional_grid_flag) then
+        comp_source_additional_subgrid=comp_source_subgrid
+        comp_source_subgrid=comp_source_temp_subgrid
+        comp_source_EMEP_subgrid=comp_source_EMEP_temp_subgrid
+        !EMEP_additional is unchanged
+        if (allocated(comp_source_temp_subgrid)) deallocate(comp_source_temp_subgrid)
+        if (allocated(comp_source_EMEP_temp_subgrid)) deallocate(comp_source_EMEP_temp_subgrid)        
+    endif
+
     end subroutine uEMEP_source_fraction_chemistry
     
     
@@ -554,7 +626,14 @@
     mol=mass/mmass*Na_fac !(molecules per cm3)
     mol(ox_i)=mol(o3_i)+mol(no2_i)
     mol(no_i)=max(0.0,mol(nox_i)-mol(no2_i))
-    p_bg_out=J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
+    !Test the photostationary state for the bg input data
+    if (J_photo.ne.0.and.mol(no_i).ne.0..and.mol(o3_i).ne.0.) then
+         p_bg_out=J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
+    else
+        !p_bg_out=mol(no2_i)/mol(ox_i)
+        p_bg_out=mol(no2_i)/(mol(ox_i)+mol(nox_i)-abs(mol(ox_i)-mol(nox_i)))*2.
+    endif
+   
     !if (J_photo.ne.0.) write(*,*) p_bg_out,J_photo,mol(no2_i),k1,mol(o3_i),mol(no_i)
     
     !Add the local contribution for calculation
@@ -570,11 +649,12 @@
     f_no2=mol(no2_i)/mol(nox_i)
     f_ox=mol(ox_i)/mol(nox_i)
     
-    !Test the photostationary state for the input data
+    !Test the photostationary state for the input data. Will not be in equilibrium
     if (J_photo.ne.0.and.mol(no_i).ne.0..and.mol(o3_i).ne.0.) then
         p_out=J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
     else
-        p_out=mol(no2_i)/mol(nox_i)
+        !p_out=mol(no2_i)/mol(ox_i)
+        p_out=mol(no2_i)/(mol(ox_i)+mol(nox_i)-abs(mol(ox_i)-mol(nox_i)))*2.
     endif
 
     !Set the photolysis rate
@@ -593,7 +673,7 @@
     !Convert back to mass
     mol(no2_i)=f_no2*mol(nox_i);
     mol(o3_i)=max(0.,mol(ox_i)-mol(no2_i))  !Rounding errors possible
-    !mol(no_i)=max(0.,mol(nox_i)-mol(no2_i)) !Rounding errors possible
+    mol(no_i)=max(0.,mol(nox_i)-mol(no2_i)) !Rounding errors possible
     mass=mol*mmass/Na_fac !(ug/m3)
 
 
@@ -605,7 +685,8 @@
     if (J_photo.ne.0.and.mol(no_i).ne.0..and.mol(o3_i).ne.0.) then
         p_out=J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
     else
-        p_out=mol(no2_i)/mol(nox_i)
+        !p_out=mol(no2_i)/mol(ox_i)
+        p_out=mol(no2_i)/(mol(ox_i)+mol(nox_i)-abs(mol(ox_i)-mol(nox_i)))*2.
     endif
     
 
@@ -672,7 +753,15 @@
     f_no2_bg_ps=0.5*((1+f_ox_bg+Jd_bg)-sqrt((1+f_ox_bg+Jd_bg)**2-4.*f_ox_bg))
     f_no2_bg=mol(no2_i)/mol(nox_i)
     p_bg_out=f_no2_bg/f_no2_bg_ps
-    !p_bg_out=J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
+    
+    !Check input
+    if (J_photo.ne.0.and.mol(no_i).ne.0..and.mol(o3_i).ne.0.) then
+        p_bg_out=J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
+    else
+        !p_bg_out=mol(no2_i)/mol(ox_i)
+        p_bg_out=mol(no2_i)/(mol(ox_i)+mol(nox_i)-abs(mol(ox_i)-mol(nox_i)))*2.
+    endif
+    
     !if (J_photo.ne.0.) write(*,*) p_bg_out,J_photo,mol(no2_i),k1,mol(o3_i),mol(no_i)
     
     !Add the local contribution for calculation
@@ -735,7 +824,7 @@
     !Convert back to mass
     mol(no2_i)=f_no2*mol(nox_i);
     mol(o3_i)=max(0.,mol(ox_i)-mol(no2_i))  !Rounding errors possible
-    !mol(no_i)=max(0.,mol(nox_i)-mol(no2_i)) !Rounding errors possible
+    mol(no_i)=max(0.,mol(nox_i)-mol(no2_i)) !Rounding errors possible
     mass=mol*mmass/Na_fac !(ug/m3)
 
 
@@ -753,11 +842,12 @@
     
 
     !Check output
-    !if (J_photo.ne.0.and.mol(no_i).ne.0..and.mol(o3_i).ne.0.) then
-    !    p_out=J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
-    !else
-    !    p_out=mol(no2_i)/mol(nox_i)
-    !endif
+    if (J_photo.ne.0.and.mol(no_i).ne.0..and.mol(o3_i).ne.0.) then
+        p_out=J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
+    else
+        !p_out=mol(no2_i)/mol(ox_i)
+        p_out=mol(no2_i)/(mol(ox_i)+mol(nox_i)-abs(mol(ox_i)-mol(nox_i)))*2.
+    endif
     
 
     !write(*,'(A,9ES12.1)') 'MASS: ',mass(nox_i),mass(no2_i),mass(o3_i),mass(ox_i),f_no2,f_ox,Jd,f_no2,p_out
@@ -842,18 +932,20 @@
     
     end subroutine uEMEP_SRM_NO2
 
-    subroutine uEMEP_During_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_emep,no2_emep,o3_emep,nox_out,no2_out,o3_out)
+    subroutine uEMEP_During_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_emep,no2_emep,o3_emep,J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
     
     implicit none
     
-    real, intent(in) :: nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc
+    real, intent(in) :: nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,J_photo,temperature
     real, intent(in) :: nox_emep,no2_emep,o3_emep
     real, intent(out) :: nox_out,no2_out,o3_out
+    real, intent(out) :: p_bg_out,p_out
     
-    real :: mol_nox_bg,mol_no2_bg,mol_nox_loc,mol_o3_bg,mol_no2_loc,mol_ox_loc,mol_no_bg
-    real :: mol_nox_out,mol_no2_out,mol_o3_out
-    real :: mol_nox_emep,mol_no2_emep,mol_o3_emep,mol_no_emep
-    real :: b,d,r,c
+    real :: mol_nox_bg,mol_no2_bg,mol_nox_loc,mol_o3_bg,mol_no2_loc,mol_ox_loc,mol_no_bg,mol_ox_bg
+    real :: mol_nox_out,mol_no2_out,mol_o3_out,mol_no_out
+    real :: mol_nox_emep,mol_no2_emep,mol_o3_emep,mol_no_emep,mol_ox_emep,p_emep_out
+    real :: b,d,r,c,k1
+    real :: Na,Na_fac
     integer no2_i,no_i,nox_i,o3_i,ox_i,n_i
     parameter (n_i=5)
     real mmass(n_i)
@@ -869,6 +961,10 @@
     !Improved Methodologies for NO2 Exposure Assessment in the EU, page 53
     !https://ec.europa.eu/environment/air/pdf/NO2_Exposure_Final_Report.pdf
     
+    k1=1.4e-12*exp(-1310./temperature); !(cm^3/s) and temperature in Kelvin
+
+    Na=6.022e23        !(molecules/mol)
+    Na_fac=Na/1.0e12   !Conversion from ug/m3 to molecules/cm3 included
     !Normally multiplied by *Na_fac but not necessary as it is just a scaling
         
     mol_no2_bg=no2_bg/mmass(no2_i)
@@ -877,11 +973,13 @@
     mol_nox_loc=nox_loc/mmass(nox_i)
     mol_o3_bg=o3_bg/mmass(o3_i)
     mol_no_bg=(nox_bg-no2_bg)/mmass(nox_i)
-
+    mol_ox_bg=mol_o3_bg+mol_no2_bg
+    
     mol_o3_emep=o3_emep/mmass(o3_i)
     mol_nox_emep=nox_emep/mmass(nox_i)
     mol_no2_emep=no2_emep/mmass(no2_i)
     mol_no_emep=max(0.,mol_nox_emep-mol_no2_emep)
+    mol_ox_emep=mol_o3_emep+mol_no2_emep
     
     mol_ox_loc=mol_o3_bg+mol_no2_bg+mol_no2_loc
 
@@ -896,13 +994,30 @@
     d=sqrt(c)
     mol_no2_out=(b-d)/2.
     mol_o3_out=mol_ox_loc-mol_no2_out
+    mol_no_out=mol_nox_bg+mol_nox_loc-mol_no2_out
     
     nox_out=nox_bg+nox_loc    
     no2_out=mol_no2_out*mmass(no2_i)
     o3_out=mol_o3_out*mmass(o3_i)
 
+    !Not correct as it does not calculate the actual photostationary equation
+    p_out=r !/Na_fac
+    p_bg_out=mol_o3_bg*mol_no_bg/mol_no2_bg !/Na_fac
     !write(*,*) r,nox_out,no2_out,o3_out
-    
+
+        !Check output
+    if (J_photo.ne.0.and.mol_no_out.ne.0..and.mol_o3_out.ne.0.) then
+        p_out=J_photo*mol_no2_out/k1/mol_o3_out/mol_no_out/Na_fac
+        p_emep_out=J_photo*mol_no2_emep/k1/mol_o3_emep/mol_no_emep/Na_fac
+        p_bg_out=J_photo*mol_no2_bg/k1/mol_o3_bg/mol_no_bg/Na_fac
+    else
+        p_out=mol_no2_out/(mol_ox_loc+mol_nox_bg+mol_nox_loc-abs(mol_ox_loc-mol_nox_bg-mol_nox_loc))*2.
+        p_emep_out=mol_no2_emep/(mol_ox_emep+mol_nox_emep-abs(mol_ox_emep-mol_nox_emep))*2.
+        p_bg_out=mol_no2_bg/(mol_ox_bg+mol_nox_bg-abs(mol_ox_bg-mol_nox_bg))*2.
+    endif
+    !p_out and p_emep are the same, or should be. Tested that way
+    !p_out=p_emep_out
+
     end subroutine uEMEP_During_NO2
 
     subroutine uEMEP_nonlocal_NO2_O3(nox_bg,nox_emep,no2_emep,o3_emep,J_photo,temperature,f_no2,no2_out,o3_out)

@@ -732,6 +732,7 @@
     
     !Special source allocation for no2 based on leaving out the source in the chemistry calculation
     real, allocatable :: comp_source_subgrid(:,:,:,:,:)
+    real, allocatable :: comp_source_additional_subgrid(:,:,:,:,:)
     real, allocatable :: comp_source_EMEP_subgrid(:,:,:,:,:)
     real, allocatable :: comp_source_EMEP_additional_subgrid(:,:,:,:,:)
     

@@ -2012,7 +2012,7 @@
         endif
         
         if (projection_type.eq.LTM_projection_index) then
-        call check(  nf90_def_var(ncid, "projection_utm", NF90_int, proj_varid) )
+        call check(  nf90_def_var(ncid, "projection_tm", NF90_int, proj_varid) )
         call check(  nf90_put_att(ncid, proj_varid, "semi_major_axis", 6378137.0 ) )
         call check(  nf90_put_att(ncid, proj_varid, "inverse_flattening", 298.257222101 ) )
 
@@ -2165,7 +2165,7 @@
         if (projection_type.eq.UTM_projection_index) then
         call check(  nf90_put_att(ncid, val_varid, "grid_mapping", "projection_utm") )
         elseif (projection_type.eq.LTM_projection_index) then
-        call check(  nf90_put_att(ncid, val_varid, "grid_mapping", "projection_ltm") )
+        call check(  nf90_put_att(ncid, val_varid, "grid_mapping", "projection_tm") )
         elseif (projection_type.eq.LAEA_projection_index) then
         call check(  nf90_put_att(ncid, val_varid, "grid_mapping", "projection_ETRS89_LAEA") )
         elseif (projection_type.eq.RDM_projection_index) then
