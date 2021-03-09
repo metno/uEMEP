@@ -689,7 +689,6 @@
         p_out=mol(no2_i)/(mol(ox_i)+mol(nox_i)-abs(mol(ox_i)-mol(nox_i)))*2.
     endif
     
-
     !write(*,'(A,9ES12.1)') 'MASS: ',mass(nox_i),mass(no2_i),mass(o3_i),mass(ox_i),f_no2,f_ox,Jd,f_no2,p_out
 
     end subroutine uEMEP_photostationary_NO2
@@ -848,7 +847,9 @@
         !p_out=mol(no2_i)/mol(ox_i)
         p_out=mol(no2_i)/(mol(ox_i)+mol(nox_i)-abs(mol(ox_i)-mol(nox_i)))*2.
     endif
-    
+
+    !write(*,'(6f12.2)') 1./(k1*mol(nox_i)),1./J_photo,time_scale,f_no2/f_no2_ps,p_out,nox_loc/(nox_loc+nox_bg)
+
 
     !write(*,'(A,9ES12.1)') 'MASS: ',mass(nox_i),mass(no2_i),mass(o3_i),mass(ox_i),f_no2,f_ox,Jd,f_no2,p_out
 

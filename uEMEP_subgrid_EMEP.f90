@@ -510,7 +510,7 @@
             
 
         !Recheck this!
-        write(unit_logfile,'(a,4i)') 'Loop sizes: ',jj_start,jj_end,ii_start,ii_end
+        if (tt.eq.t_start) write(unit_logfile,'(a,4i)') 'Loop sizes: ',jj_start,jj_end,ii_start,ii_end
         
         do j=1,subgrid_dim(y_dim_index)
         do i=1,subgrid_dim(x_dim_index)

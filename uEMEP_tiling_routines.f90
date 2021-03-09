@@ -784,7 +784,7 @@
     real search_delta(n_search)
     integer temp_search
     
-    data search_str /'1000m','500m','250m','100m','50m'/
+    data search_str /'_1000m','_500m','_250m','_100m','_50m'/
     data search_delta /1000.,500.,250.,100.,50./
 
     write(unit_logfile,'(A)') ''
