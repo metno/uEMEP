@@ -699,6 +699,10 @@
     
 
     subroutine uEMEP_set_region_tile_grids
+    !This routine creates the tile files for regions/municipalities
+    !It is based on the variable tile make 'uEMEP_set_tile_grids' so has a lot of unused code in it
+    !It basically reads the masking file, in SSB coordinates, and then finds the extent of this to create municipality tile limits and various resolutions
+    
 
     use uEMEP_definitions
      

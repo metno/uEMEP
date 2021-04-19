@@ -156,7 +156,7 @@
             if (save_emissions_for_EMEP(agriculture_index)) then
                 if (projection_type.eq.LL_projection_index) then
                     !Approximate grid size in degrees
-                    nh3_gridsize(x_dim_index)=nh3_gridsize(x_dim_index)/(110570.*cos(3.14159/180.*y_agriculture))      
+                    nh3_gridsize(x_dim_index)=nh3_gridsize(x_dim_index)/110570./cos(3.14159/180.*y_agriculture)
                     nh3_gridsize(y_dim_index)=nh3_gridsize(y_dim_index)/110570.     
                     nh3emission_scale=emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(y_dim_index,source_index) &
                         /(nh3_gridsize(x_dim_index)*nh3_gridsize(y_dim_index))

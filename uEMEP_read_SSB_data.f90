@@ -777,7 +777,7 @@
             temp_delta(y_dim_index)=temp_lat(3)-temp_lat(2)
             
             !Make a local correction to lon so it is essentially in the same units as lat so area averaging is correct
-            correct_lon(1)=1./cos(3.14159/180.*temp_lat(1))
+            correct_lon(1)=cos(3.14159/180.*temp_lat(1))
             correct_lon(2)=1.
             !write(*,*) correct_lon
            ! population_subgrid(i,j,SSB_data_type)=area_weighted_extended_vectorgrid_interpolation_function( &
@@ -835,7 +835,7 @@
             temp_delta(y_dim_index)=temp_lat(3)-temp_lat(2)
             
             !Make a local correction to lon so it is essentially in the same units as lat so area averaging is correct
-            correct_lon(1)=1./cos(3.14159/180.*temp_lat(1))
+            correct_lon(1)=cos(3.14159/180.*temp_lat(1))
             correct_lon(2)=1.
 
             !Interpolate on same grid then scale, equivalent to interpolating density and then recalculating
