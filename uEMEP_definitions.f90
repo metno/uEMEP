@@ -74,28 +74,36 @@
     integer end_dim_nc(num_dims_nc)
     integer start_dim_nc(num_dims_nc)
 
+    
     integer lat_nc_index,lon_nc_index
     integer ugrid_nc_index,vgrid_nc_index,FF10_nc_index,FFgrid_nc_index,inv_FFgrid_nc_index,inv_FF10_nc_index
     integer hmix_nc_index,kz_nc_index,invL_nc_index,ustar_nc_index,logz0_nc_index,J_nc_index
-    integer conc_nc_index,frac_nc_index,local_nc_index,emis_nc_index
+    integer conc_nc_index,emis_nc_index
     integer x_nc_index,y_nc_index,ZTOP_nc_index
     integer u10_nc_index,v10_nc_index,uw_nc_index,vw_nc_index,Hflux_nc_index,t2m_nc_index,precip_nc_index,wetdepo_nc_index,drydepo_nc_index
     parameter (lon_nc_index=1,lat_nc_index=2)
     parameter (ugrid_nc_index=3,vgrid_nc_index=4,FF10_nc_index=5,FFgrid_nc_index=6,inv_FFgrid_nc_index=7,inv_FF10_nc_index=8)
     parameter (hmix_nc_index=9,kz_nc_index=10,invL_nc_index=11,ustar_nc_index=12,logz0_nc_index=13,J_nc_index=14)
-    parameter (conc_nc_index=15,frac_nc_index=16,local_nc_index=17,emis_nc_index=18)
+    !parameter (conc_nc_index=15,frac_nc_index=16,local_nc_index=17,emis_nc_index=18)
+    parameter (conc_nc_index=15,emis_nc_index=18) !frac_nc_index,local_nc_index have now become variables to be set with the loop_index (multiple EMEP lf grids)
     parameter (x_nc_index=19,y_nc_index=20,ZTOP_nc_index=21)
     parameter (u10_nc_index=22,v10_nc_index=23,uw_nc_index=24,vw_nc_index=25,Hflux_nc_index=26,t2m_nc_index=27,precip_nc_index=28,wetdepo_nc_index=29,drydepo_nc_index=30)
-    integer num_var_nc
-    parameter (num_var_nc=30)                  ! number of readable variables
+    integer num_var_nc  !This will be set later when the number local fraction grids is known
+    integer num_var_nc_start    
+    integer num_var_nc_name
+    parameter (num_var_nc_start=30)                  ! number of readable variables
+    parameter (num_var_nc_name=50)                  ! number of possible variable names, add 20 to include any extra local fraction grids
     integer num_var_meteo_nc
-    parameter (num_var_meteo_nc=num_var_nc)
+    parameter (num_var_meteo_nc=num_var_nc_start)
     
-    integer lc_frac_nc_index,lc_local_nc_index
-    parameter (lc_frac_nc_index=1,lc_local_nc_index=2)
-    integer num_lc_var_nc
-    parameter (num_lc_var_nc=2)                  ! number of readable local contribution variables
+    !parameter (lc_frac_nc_index=1,lc_local_nc_index=2)
+    integer num_lc_var_nc_start
+    parameter (num_lc_var_nc_start=2)                  ! number of readable local contribution variables
     
+    integer :: frac_nc_index=num_var_nc_start+1,local_nc_index=num_var_nc_start+2
+    integer :: lc_frac_nc_index=1,lc_local_nc_index=2
+    integer :: num_lc_var_nc=num_lc_var_nc_start
+
     integer compound_index
 
     integer no2_nc_index,nox_nc_index,pm25_nc_index,pm10_nc_index,nh3_nc_index,o3_nc_index,so2_nc_index,pmex_nc_index
@@ -157,7 +165,7 @@
     integer :: meteo_p_loop_index=1
     character(256) :: pollutant_file_str(n_pollutant_nc_index)=''
 
-    character(256) var_name_nc(num_var_nc,n_pollutant_nc_index,n_source_nc_index)
+    character(256) var_name_nc(num_var_nc_name,n_pollutant_nc_index,n_source_nc_index)
     character(256) dim_name_nc(num_dims_nc)
     character(256) var_name_meteo_nc(num_var_meteo_nc)
     character(256) dim_name_meteo_nc(num_dims_meteo_nc)
@@ -708,6 +716,7 @@
     real, allocatable :: RWC_grid_HDD(:,:)
     integer*8, allocatable :: RWC_grid_id(:)
     integer, allocatable :: RWC_region_id(:)
+    real, allocatable :: RWC_grid_height(:,:)
     real, allocatable :: DMT_EMEP_grid_nc(:,:,:)
     integer :: HDD_threshold_value=15
     real :: DMT_min_value=-20. !Minimum allowable daily mean temperature for heating degree day calculation
@@ -930,6 +939,7 @@
     real :: population_power_scale=1.
     
     logical :: read_RWC_file_with_extra_HDD=.false.
+    logical :: read_RWC_file_with_extra_HDD_and_height=.false.
     
     logical :: use_alternative_traveltime_weighting=.false.
     real :: traveltime_power=1.
@@ -942,6 +952,21 @@
     real :: f_no2_emep=0.1
     
     logical :: limit_emep_grid_interpolation_region_to_calculation_region=.false.
+    
+    !Additional multiple local fraction variables
+    logical :: use_local_fraction_naming_template_flag=.false.
+    logical :: use_local_fraction_grid_size_in_template_flag=.false.
+    character(256) :: local_fraction_naming_template_str='sec<n>_local_fraction'
+    integer :: n_local_fraction_grids=1
+    integer max_n_local_fraction_grids
+    parameter (max_n_local_fraction_grids=3)
+    integer :: local_fraction_grid_size(max_n_local_fraction_grids)=1
+    integer frac_nc_loop_index(max_n_local_fraction_grids),local_nc_loop_index(max_n_local_fraction_grids)
+    integer lc_frac_nc_loop_index(max_n_local_fraction_grids),lc_local_nc_loop_index(max_n_local_fraction_grids)
+    integer min_frac_nc_loop_index,max_frac_nc_loop_index
+    integer min_lc_frac_nc_loop_index,max_lc_frac_nc_loop_index
+    integer convert_local_to_fraction_loop_index(max_n_local_fraction_grids*2)
+    integer convert_frac_to_lc_frac_loop_index(num_var_nc_name)
     
     end module uEMEP_definitions
     

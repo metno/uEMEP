@@ -318,9 +318,9 @@
                 call uEMEP_interpolate_auto_subgrid
             endif
     
-            !Old diagnostic for comparing EMEP and proxy data emissions. Working only on lat lon EMEP grids
+            !Old diagnostic for comparing EMEP and proxy data emissions. Working only on lat lon EMEP grids. Do not use
             if (make_EMEP_grid_emission_data(allsource_index)) then
-                call uEMEP_aggregate_proxy_emission_in_EMEP_grid
+                !call uEMEP_aggregate_proxy_emission_in_EMEP_grid
             endif    
     
             !Put EMEP data into the additional subgrids for all sources.

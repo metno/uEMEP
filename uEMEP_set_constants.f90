@@ -14,6 +14,20 @@
 	calculate_source=.false.
 	calculate_EMEP_source=.false.
     
+    !Initialise the number of variables read in EMEP
+    num_lc_var_nc=num_lc_var_nc_start
+    frac_nc_index=num_var_nc_start+1
+    local_nc_index=num_var_nc_start+2
+    num_var_nc=num_var_nc_start+2
+    frac_nc_loop_index=frac_nc_index
+    local_nc_loop_index=local_nc_index
+    lc_frac_nc_loop_index=lc_frac_nc_index
+    lc_local_nc_loop_index=lc_local_nc_index
+    min_frac_nc_loop_index=minval(frac_nc_loop_index)
+    max_frac_nc_loop_index=maxval(frac_nc_loop_index)
+    min_lc_frac_nc_loop_index=minval(lc_frac_nc_loop_index)
+    max_lc_frac_nc_loop_index=maxval(lc_frac_nc_loop_index)
+    convert_local_to_fraction_loop_index(lc_local_nc_loop_index)=lc_frac_nc_loop_index
     
     dim_name_nc(x_dim_nc_index)='lon'
     dim_name_nc(y_dim_nc_index)='lat'
@@ -67,6 +81,8 @@
         var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)='pm10'
         var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)='pmco'
         var_name_nc(conc_nc_index,pmex_nc_index,allsource_nc_index)='pmex'
+        var_name_nc(conc_nc_index,so2_nc_index,allsource_nc_index)='so2'
+        var_name_nc(conc_nc_index,pm_nc_index,allsource_nc_index)='pm'
         var_name_nc(conc_nc_index,all_nc_index,allsource_nc_index)='all'
         var_name_nc(conc_nc_index,all_sand_nc_index,allsource_nc_index)='all_sand'
         var_name_nc(conc_nc_index,all_sand_salt_nc_index,allsource_nc_index)='all_sand_salt'
@@ -646,11 +662,12 @@
     
     integer index_start
     character(256) prefix_str,postfix_str
-    integer i
+    integer i,j
     character(8) sector_str_lf,sector_str_emis
     integer sector_index
     character(256) temp_str
-    integer i_comp,i_source
+    integer i_comp,i_source,p_loop
+    character(256) local_fraction_naming_template_str_temp,local_fraction_grid_size_str
     
      if (index(alternative_meteorology_type,'nortrip').gt.0) then
         var_name_meteo_nc(lon_nc_index)='lon'
@@ -830,21 +847,6 @@
         write(unit_logfile,'(a)') 'Using emission name template for GNFR sectors: '//trim(emission_naming_template_str)
            do i=1,n_pollutant_nc_index
             do i_source=1,n_source_nc_index
-                !write(unit_logfile,'(a)') 'Using emission name template for: '//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !write(*,*) i_pollutant,i
-                !var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !var_name_nc(emis_nc_index,i,agriculture_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index)) !GNFR is 11 and 12 so currently using total
-                !var_name_nc(emis_nc_index,i,traffic_nc_index)=trim(prefix_str)//'6'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !var_name_nc(emis_nc_index,i,shipping_nc_index)=trim(prefix_str)//'7'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !var_name_nc(emis_nc_index,i,heating_nc_index)=trim(prefix_str)//'3'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !var_name_nc(emis_nc_index,i,industry_nc_index)=trim(prefix_str)//'2'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !write(unit_logfile,'(6a32)') trim(var_name_nc(emis_nc_index,i,allsource_nc_index)) &
-                !                        ,trim(var_name_nc(emis_nc_index,i,agriculture_nc_index)) &
-                !                        ,trim(var_name_nc(emis_nc_index,i,traffic_nc_index)) &
-                !                        ,trim(var_name_nc(emis_nc_index,i,shipping_nc_index)) &
-                !                        ,trim(var_name_nc(emis_nc_index,i,heating_nc_index)) &
-                !                        ,trim(var_name_nc(emis_nc_index,i,industry_nc_index))
-                
                 var_name_nc(emis_nc_index,i,i_source)=trim(prefix_str)//trim(uEMEP_to_EMEP_emis_sector_str(i_source))//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 if (i_source.eq.allsource_nc_index) then
                     var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
@@ -859,20 +861,6 @@
             
             do i=1,n_pollutant_nc_index
             do i_source=1,n_source_nc_index
-                !write(unit_logfile,'(a)') 'Using emission name template for: '//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !write(*,*) i_pollutant,i
-                !var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !var_name_nc(emis_nc_index,i,agriculture_nc_index)=trim(prefix_str)//'10'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !var_name_nc(emis_nc_index,i,traffic_nc_index)=trim(prefix_str)//'7'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !var_name_nc(emis_nc_index,i,shipping_nc_index)=trim(prefix_str)//'8'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !var_name_nc(emis_nc_index,i,heating_nc_index)=trim(prefix_str)//'2'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !var_name_nc(emis_nc_index,i,industry_nc_index)=trim(prefix_str)//'4'//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
-                !write(unit_logfile,'(6a32)') trim(var_name_nc(emis_nc_index,i,allsource_nc_index)) &
-                !                        ,trim(var_name_nc(emis_nc_index,i,agriculture_nc_index)) &
-                !                        ,trim(var_name_nc(emis_nc_index,i,traffic_nc_index)) &
-                !                        ,trim(var_name_nc(emis_nc_index,i,shipping_nc_index)) &
-                !                        ,trim(var_name_nc(emis_nc_index,i,heating_nc_index)) &
-                !                        ,trim(var_name_nc(emis_nc_index,i,industry_nc_index))
                 var_name_nc(emis_nc_index,i,i_source)=trim(prefix_str)//trim(uEMEP_to_EMEP_emis_sector_str(i_source))//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 if (i_source.eq.allsource_nc_index) then
                     var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
@@ -883,7 +871,90 @@
         
 
     endif
- 
+
+    !Set the indexes for the local fraction data and increase the number of variables appropriately
+    !Include a conversion array between the local and fraction arrays
+    if (use_local_fraction_naming_template_flag) then
+        
+        i=0
+        do j=1,n_local_fraction_grids
+            i=i+1;lc_frac_nc_loop_index(j)=i
+        enddo
+        do j=1,n_local_fraction_grids
+            i=i+1;lc_local_nc_loop_index(j)=i
+            convert_local_to_fraction_loop_index(lc_local_nc_loop_index(j))=lc_frac_nc_loop_index(j)
+        enddo
+        num_lc_var_nc=i
+        write(unit_logfile,'(a,i)') 'New number of num_lc_var_nc variables with additional LF EMEP: ',num_lc_var_nc
+        min_lc_frac_nc_loop_index=minval(lc_frac_nc_loop_index)
+        max_lc_frac_nc_loop_index=maxval(lc_frac_nc_loop_index)
+
+        i=num_var_nc_start
+        do j=1,n_local_fraction_grids
+            i=i+1;frac_nc_loop_index(j)=i
+            convert_frac_to_lc_frac_loop_index(frac_nc_loop_index(j))=lc_frac_nc_loop_index(j)
+            !write(*,*) i,j,frac_nc_loop_index(j),convert_frac_to_lc_frac_loop_index(frac_nc_loop_index(j))
+        enddo
+        do j=1,n_local_fraction_grids
+            i=i+1;local_nc_loop_index(j)=i         
+        enddo
+        num_var_nc=i
+        write(unit_logfile,'(a,i)') 'New number of num_var_nc variables with additional LF EMEP: ',num_var_nc
+        min_frac_nc_loop_index=minval(frac_nc_loop_index)
+        max_frac_nc_loop_index=maxval(frac_nc_loop_index)
+        
+        
+    endif
+        
+    if (use_local_fraction_naming_template_flag) then
+        !Set the prefix and postfix part of the emission name string based on the template
+        !Assumes compound is added at the end
+        do j=1,n_local_fraction_grids
+        local_fraction_naming_template_str_temp=local_fraction_naming_template_str
+        index_start=INDEX(local_fraction_naming_template_str_temp,'<n>')
+        if (index_start.eq.0) then
+            prefix_str=''
+        else
+            prefix_str=local_fraction_naming_template_str_temp(1:index_start-1)
+        endif
+        if (index_start+3.gt.len_trim(local_fraction_naming_template_str_temp)) then
+            postfix_str=''
+        else
+            postfix_str=local_fraction_naming_template_str_temp(index_start+3:)
+        endif
+        
+        !Create the local fraction grid size for appending to the variable name
+        write(temp_str,'(i2)') local_fraction_grid_size(j)
+        local_fraction_grid_size_str='_'//trim(adjustl(temp_str))//'x'//trim(adjustl(temp_str))
+        if (.not.use_local_fraction_grid_size_in_template_flag) then
+            local_fraction_grid_size_str=''
+        endif
+        
+        !write(*,*) index_start,index_start+3,len_trim(emission_naming_template_str)
+        write(unit_logfile,'(a,i)') 'Using local fraction name template: '//trim(local_fraction_naming_template_str_temp)//' for lf grid = ',j
+           !do i=1,n_pollutant_nc_index
+           do p_loop=1,n_emep_pollutant_loop+1
+            if (p_loop.le.n_emep_pollutant_loop) then
+                i=pollutant_loop_index(p_loop)
+            else
+                i=pmco_nc_index !Necessary to include this
+            endif
+
+            do i_source=1,n_source_nc_index
+            if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.i_source.eq.allsource_nc_index) then
+                var_name_nc(frac_nc_loop_index(j),i,i_source)=trim(var_name_nc(conc_nc_index,i,allsource_nc_index))//'_'//trim(prefix_str)//trim(uEMEP_to_EMEP_sector_str(i_source))//trim(postfix_str)//trim(local_fraction_grid_size_str)
+                if (i_source.eq.allsource_nc_index) then
+                    var_name_nc(frac_nc_loop_index(j),i,allsource_nc_index)=trim(var_name_nc(conc_nc_index,i,allsource_nc_index))//trim(postfix_str)//trim(local_fraction_grid_size_str)
+                endif
+                write(unit_logfile,'(2i6,2a)') i,i_source,'  ',trim(var_name_nc(frac_nc_loop_index(j),i,i_source))
+            endif
+            enddo
+           enddo
+        enddo
+        
+    endif
+    
+    !Only works on the old sectors and lf names
     if (use_user_specified_sectors_flag) then
         
             write(unit_logfile,'(a)') 'Replacing sector index in EMEP (sector,pollutant,lf_name,emis_name)'
@@ -901,7 +972,13 @@
                         sector_str_emis=''
                     endif
                     do i=1,n_pollutant_nc_index
-                        var_name_nc(frac_nc_index,i,sector_index)=trim(var_name_nc(conc_nc_index,i,allsource_nc_index))//trim(sector_str_lf)//'_local_fraction'
+                        !Can fix the above problem here
+                        if (use_local_fraction_naming_template_flag) then
+                            var_name_nc(frac_nc_index,i,sector_index)=trim(prefix_str)//trim(sector_str_lf)//trim(postfix_str)
+                        else
+                            var_name_nc(frac_nc_index,i,sector_index)=trim(var_name_nc(conc_nc_index,i,allsource_nc_index))//trim(sector_str_lf)//'_local_fraction'
+                        endif
+                        
                         !var_name_nc(frac_nc_index,pmco_nc_index,sector_index)='pmco'//trim(sector_str)//'_local_fraction'
                         !var_name_nc(frac_nc_index,pm25_nc_index,sector_index)='pm25'//trim(sector_str)//'_local_fraction'
 

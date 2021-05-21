@@ -55,7 +55,7 @@
     date_num_start=date_to_number(a,ref_year_meteo)
     week_of_year=1+int((date_num-date_num_start)/7.)
     week_of_year=max(min(week_of_year,52),1)
-    write(*,*) week_of_year
+    !write(*,*) week_of_year
     write(week_of_year_str,'(i2)') week_of_year
     write(unit_logfile,'(a)') 'Week of year: '//trim(ADJUSTL(week_of_year_str))
     

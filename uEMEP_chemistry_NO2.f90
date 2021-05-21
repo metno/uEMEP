@@ -869,7 +869,7 @@
     !From model fit
     real :: a_rom=30
     real :: b_rom=35
-    real :: c_rom=0.23
+    real :: c_rom=0.20
     real ox_init,no2_init,no2_equ
     real beta,F,K
     !Gral values 30 35 0.18
@@ -911,6 +911,11 @@
     real :: F=0.2
     real ox_init,no2_init,no2_equ
 
+    !From RIVM Briefrapport 2014-0109
+    !beta=1
+    !K=100
+    !F=0.2
+    
     !Reference
     !https://core.ac.uk/download/pdf/58774365.pdf
     

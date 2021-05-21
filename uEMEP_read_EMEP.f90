@@ -514,7 +514,8 @@
             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
             !write(*,*) 'Status1: ',status_nc,var_id_nc,trim(var_name_nc_temp),i_source
             !Exception for pm10
-            if ((i.eq.conc_nc_index.or.i.eq.frac_nc_index.or.i.eq.emis_nc_index).and.i_pollutant.eq.pm10_nc_index) then
+            !if ((i.eq.conc_nc_index.or.i.eq.frac_nc_index.or.i.eq.emis_nc_index).and.i_pollutant.eq.pm10_nc_index) then
+            if ((i.eq.conc_nc_index.or.(i.ge.min_frac_nc_loop_index.and.i.le.max_frac_nc_loop_index).or.i.eq.emis_nc_index).and.i_pollutant.eq.pm10_nc_index) then
                 var_name_nc_temp=var_name_nc(i,pmco_nc_index,i_source)
                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                 !write(*,*) '-------------------',trim(var_name_nc_temp),status_nc
@@ -582,20 +583,22 @@
                     !write(*,*) dim_start_nc(z_dim_nc_index),dim_length_nc(z_dim_nc_index)
                     !write(*,*) maxval(var4d_nc(:,:,1,1,i,i_source)),maxval(var4d_nc(:,:,1,2,i,i_source))
                 elseif (temp_num_dims.eq.6.and.i_file.eq.2) then
-                    if (i.eq.frac_nc_index.and.i_pollutant.eq.pm10_nc_index) then
+                    !if (i.eq.frac_nc_index.and.i_pollutant.eq.pm10_nc_index) then
+                    lc_frac_nc_index=convert_frac_to_lc_frac_loop_index(i)
+                    if (i.ge.min_frac_nc_loop_index.and.i.le.max_frac_nc_loop_index.and.i_pollutant.eq.pm10_nc_index) then
                         var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1))
+                        write(unit_logfile,'(A,2I,3A,2f16.4)') ' Reading: ',i,temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1))
                         var_name_nc_temp2=var_name_nc(i,pm25_nc_index,i_source)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2))
+                        write(unit_logfile,'(A,2I,3A,2f16.4)') ' Reading: ',i,temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2))
                         !Not used but calculated for writing
                         !lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index)=pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1)+pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)
                     else
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index)),maxval(lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index))
+                        write(unit_logfile,'(A,2I,3A,2f16.4)') ' Reading: ',i,temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index)),maxval(lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index))
                     endif
                     !write(*,*) shape(lc_var4d_nc)
                     !write(*,*) maxval(lc_var4d_nc(3,3,:,:,:,1,lc_frac_nc_index,i_source)),maxval(lc_var4d_nc(3,3,:,:,:,2,lc_frac_nc_index,i_source))
@@ -1091,31 +1094,28 @@
         do i=1,dim_length_nc(xdist_dim_nc_index)
         
         do p_loop=1,n_pollutant_loop
-            
+            do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
+            lc_frac_nc_index=convert_local_to_fraction_loop_index(lc_local_nc_index)
             if (pollutant_loop_index(p_loop).eq.pm10_nc_index) then
                 lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,1)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,1) &
                     +pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,2)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,2)
-                !write(*,*) sum(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)), &
-                !    sum(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,shipping_index,1)),sum(pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,shipping_index,1)), &
-                !    sum(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,shipping_index,2)),sum(pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,shipping_index,2))
-
             else
-            !lc_var4d_nc(i,j,:,:,:,:,lc_local_nc_index,:)=var4d_nc(:,:,:,:,conc_nc_index,:)*lc_var4d_nc(i,j,:,:,:,:,lc_frac_nc_index,:)
-            lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=var3d_nc(:,:,:,conc_nc_index,:,p_loop)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop)
-            !write(*,*) sum(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)),sum(var3d_nc(:,:,:,conc_nc_index,:,p_loop)),sum(lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop))
-            
+                lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,p_loop)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop)
+                !write(*,*) sum(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)),sum(var3d_nc(:,:,:,conc_nc_index,:,p_loop)),sum(lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop))          
             endif
+            enddo
         enddo
-            
-        
+                 
         enddo
         enddo
         
         do i_source=1,n_source_index
             if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
+            do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
                 p_loop=pollutant_loop_back_index(pm10_nc_index)
                 write(unit_logfile,'(2A,f16.4)') ' Average local fraction of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)), &
                 sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,i_source,p_loop)/(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,1)+pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,2)))/(size(var3d_nc,1)*size(var3d_nc,2)*size(var3d_nc,4))
+            enddo
             endif
         enddo
             
@@ -1127,8 +1127,15 @@
         !write(*,*) shape(lc_var4d_nc)
         !write(*,*) shape(var4d_nc)
         !Commented out as these are not used?
-        !var4d_nc(:,:,:,:,frac_nc_index,:)=lc_var4d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,:,lc_frac_nc_index,:)
-        !do i_pollutant=1,n_pollutant_loop
+
+        
+        !REset these variables to what they would be with 1 EMEP grid
+        frac_nc_index=num_var_nc_start+1
+        lc_frac_nc_index=1
+        local_nc_index=num_var_nc_start+2
+        lc_local_nc_index=2
+        
+        !This is no longer in use, but just in case set the variables to the first EMEP LC grid
         var3d_nc(:,:,:,frac_nc_index,:,:)=lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_frac_nc_index,:,:)
         var3d_nc(:,:,:,local_nc_index,:,:)=var3d_nc(:,:,:,conc_nc_index,:,:)*var3d_nc(:,:,:,frac_nc_index,:,:)
                 

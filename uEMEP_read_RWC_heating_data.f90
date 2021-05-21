@@ -28,6 +28,7 @@
     real :: ssb_dx=250.,ssb_dy=250.
     integer RWC_compound_index
     real sum_RWC_grid_emission(3)
+    real sum_RWC_grid_height(3)
     integer :: subsource_index=1
     real emission_scaling(3)
     logical :: read_file_with_nox_and_kommune_number=.true.
@@ -38,6 +39,7 @@
     integer region_scaling_id_back_index(n_region_back_max)
     real, allocatable :: region_heating_scaling(:,:)
     integer n_region,k,k_index
+    integer, allocatable :: count_subgrid(:,:)
     
     
     integer i_pollutant
@@ -70,6 +72,7 @@
     write(unit_logfile,'(A,2i6)') 'HDD_threshold_value and index = ',HDD_threshold_value,threshold_index
     
     if (read_RWC_file_with_extra_HDD) write(unit_logfile,'(A,L)') 'read_RWC_file_with_extra_HDD = ',read_RWC_file_with_extra_HDD
+    if (read_RWC_file_with_extra_HDD_and_height) write(unit_logfile,'(A,L)') 'read_RWC_file_with_extra_HDD_and_height = ',read_RWC_file_with_extra_HDD_and_height
     
     subsource_index=1
     
@@ -116,8 +119,10 @@
         allocate (RWC_grid_emission(n_RWC_grids,3))
         allocate (RWC_grid_HDD(n_RWC_grids,4))
         allocate (RWC_grid_id(n_RWC_grids))
-        allocate (RWC_region_id(n_RWC_grids))
-    
+        allocate (RWC_grid_height(n_RWC_grids,2))
+        allocate (RWC_region_id(n_RWC_grids))    
+        allocate (count_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
+
         !Read header      SSBID    PM25_2016    PM10_2016       HDD_11       HDD_15
         read(unit_in,*) header_str
        ! write(unit_logfile,'(6A24)') 'Headers: ',trim(header_str(1)),trim(header_str(2)),trim(header_str(3)),trim(header_str(4)),trim(header_str(5))
@@ -125,7 +130,14 @@
         count=0
         RWC_grid_emission=0.
         
-        if (read_RWC_file_with_extra_HDD) then
+        if (read_RWC_file_with_extra_HDD_and_height) then
+        !Read new version
+        do while(.not.eof(unit_in))
+            count=count+1
+            read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_grid_height(count,1),RWC_grid_height(count,2),RWC_region_id(count)
+            !write(*,'(i,9es,i)') RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_grid_height(count,1),RWC_grid_height(count,2),RWC_region_id(count)
+        enddo
+        elseif (read_RWC_file_with_extra_HDD) then
         !Read new version
         do while(.not.eof(unit_in))
             count=count+1
@@ -218,7 +230,12 @@
     !Put the data into the subgrid for all g_loop calls
     count_grid=0
     sum_RWC_grid_emission=0
-    
+    sum_RWC_grid_height=0
+    if (read_RWC_file_with_extra_HDD_and_height) then
+        !Set the existing heights to 0 as these will be replaced
+        emission_properties_subgrid(:,:,emission_h_index,source_index)=0
+    endif
+
     do count=1,n_RWC_grids
 
         ssb_id=RWC_grid_id(count)
@@ -275,14 +292,31 @@
             
             enddo
            
-            !count_subgrid(i_ssb_index,j_ssb_index)=count_subgrid(i_ssb_index,j_ssb_index)+1
+            if (read_RWC_file_with_extra_HDD_and_height) then
+                !Replace the existing height that is given by h_emis
+                emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_h_index,source_index)=emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_h_index,source_index)+RWC_grid_height(count,1)
+                sum_RWC_grid_height(1)=sum_RWC_grid_height(1)+RWC_grid_height(count,1)
+                !Add additional standard deviation to the pre-existing value based on variability within the sub-grid
+                emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_sigz00_index,source_index)=sqrt(emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_sigz00_index,source_index)**2+RWC_grid_height(count,2)**2)
+                sum_RWC_grid_height(2)=sum_RWC_grid_height(2)+RWC_grid_height(count,2)**2
+                sum_RWC_grid_height(3)=sum_RWC_grid_height(3)+emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_sigz00_index,source_index)
+            endif
+            
+            count_subgrid(i_ssb_index,j_ssb_index)=count_subgrid(i_ssb_index,j_ssb_index)+1
             count_grid=count_grid+1
             !write(*,*) count,proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,subsource_index)
         endif
                     
              
     enddo
-    
+
+    !It is assumed that it is possible that more than one ssb_grid can be found in a subgrid, so the total becomes the mean, no weighted avraging
+   if (read_RWC_file_with_extra_HDD_and_height) then
+       where(count_subgrid.gt.0) emission_properties_subgrid(:,:,emission_h_index,source_index)=emission_properties_subgrid(:,:,emission_h_index,source_index)/count_subgrid
+       where(count_subgrid.gt.0) emission_properties_subgrid(:,:,emission_sigz00_index,source_index)=emission_properties_subgrid(:,:,emission_sigz00_index,source_index)/count_subgrid
+   endif
+   
+
     write(unit_logfile,'(A,i)') 'Number of RWC grid placements in emission subgrid =',count_grid
     
     do i_pollutant=1,n_pollutant_loop
@@ -297,8 +331,14 @@
             write(unit_logfile,'(A,f12.2)') 'Total subgrid RWC emissions for '//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//' (tonne/year) =',sum_RWC_grid_emission(RWC_compound_index)/1.e6
         endif
     enddo
+    if (read_RWC_file_with_extra_HDD_and_height) then
+        write(unit_logfile,'(A,f12.2)') 'Average heating emission height for replaced values = ',sum_RWC_grid_height(1)/count_grid
+        write(unit_logfile,'(A,f12.2)') 'Average heating emission height total standard deviation = ',sum_RWC_grid_height(3)/count_grid
+        write(unit_logfile,'(A,f12.2)') 'Additional RMS average heating emission height standard deviation = ',sqrt(sum_RWC_grid_height(2))/count_grid
+   endif
              
     if (allocated(region_heating_scaling)) deallocate(region_heating_scaling)
+    if (allocated(count_subgrid)) deallocate(count_subgrid)
     
     return
 10  write(unit_logfile,'(A)') 'ERROR reading scaling heating file'
