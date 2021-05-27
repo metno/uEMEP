@@ -482,7 +482,7 @@
             else
                 i_file=subgrid_local_file_index(i_source)
             endif
-            if (i_source.ne.allsource_index.and.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
+            if (i_source.ne.allsource_index.and.(calculate_emep_source(i_source).and..not.calculate_source(i_source)).and.save_emep_source_contributions) then
                 i_file=emep_subgrid_local_file_index(i_source)
             endif
             
@@ -582,7 +582,7 @@
             else
                 i_file=subgrid_local_file_index(i_source)
             endif
-             if (i_source.ne.allsource_index.and.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
+             if (i_source.ne.allsource_index.and.(calculate_emep_source(i_source).and..not.calculate_source(i_source)).and.save_emep_source_contributions) then
                 i_file=emep_subgrid_local_file_index(i_source)
             endif
                         
@@ -766,7 +766,8 @@
 
     !Save the EMEP data interpolated to the subgrid. These are based on the gridded concentrations
     if (save_emep_source_contributions) then
-    do i_pollutant=1,n_pollutant_loop
+    do i_pollutant=1,n_emep_pollutant_loop
+    !EMEP does not have all pollutants so only save to n_emep_pollutant_loop
     do i_source=1,n_source_index
         if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.i_source.eq.allsource_index) then
             
