@@ -1113,7 +1113,7 @@
             if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
             do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
                 p_loop=pollutant_loop_back_index(pm10_nc_index)
-                write(unit_logfile,'(2A,f16.4)') ' Average local fraction of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)), &
+                write(unit_logfile,'(2A,i,f16.4)') ' Average local fraction of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)), &
                 sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,i_source,p_loop)/(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,1)+pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,2)))/(size(var3d_nc,1)*size(var3d_nc,2)*size(var3d_nc,4))
             enddo
             endif
@@ -1130,6 +1130,7 @@
 
         
         !REset these variables to what they would be with 1 EMEP grid
+        !Not necessary once the rest of the code is adapted to the loop data
         frac_nc_index=num_var_nc_start+1
         lc_frac_nc_index=1
         local_nc_index=num_var_nc_start+2

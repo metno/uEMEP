@@ -13,6 +13,7 @@
     
     !Cross referencing must be done for each new grid when using multiple grids
     if (allocated(crossreference_target_to_emep_subgrid)) deallocate (crossreference_target_to_emep_subgrid)
+    if (allocated(crossreference_target_to_localfraction_subgrid)) deallocate (crossreference_target_to_localfraction_subgrid)
     if (allocated(crossreference_integral_to_emep_subgrid)) deallocate (crossreference_integral_to_emep_subgrid)
     if (allocated(crossreference_target_to_integral_subgrid)) deallocate (crossreference_target_to_integral_subgrid)
     if (allocated(crossreference_target_to_emission_subgrid)) deallocate (crossreference_target_to_emission_subgrid)
@@ -33,6 +34,7 @@
     endif
     
     allocate (crossreference_target_to_emep_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2))
+    allocate (crossreference_target_to_localfraction_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2,n_local_fraction_grids))
     allocate (crossreference_integral_to_emep_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),2))
     allocate (crossreference_target_to_integral_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2))
     allocate (crossreference_target_to_emission_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2,n_source_index))
@@ -83,6 +85,41 @@
         
     enddo
     enddo
+    
+    
+    write(unit_logfile,'(A)')'Allocating EMEP local fraction grid index to subgrid index'
+    !Loop through subgrid and find those subgrids within EMEP grids and allocate concentrations directly from EMEP grids.         
+    do k=1,n_local_fraction_grids
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+        if (EMEP_projection_type.eq.LL_projection_index) then
+            ii=1+floor((lon_subgrid(i,j)-var1d_nc(1,lon_nc_index))/dgrid_nc(lon_nc_index)/local_fraction_grid_size(k)+0.5)
+            jj=1+floor((lat_subgrid(i,j)-var1d_nc(1,lat_nc_index))/dgrid_nc(lat_nc_index)/local_fraction_grid_size(k)+0.5)     
+        elseif (EMEP_projection_type.eq.LCC_projection_index) then
+            !When EMEP is read as x,y projection then var1d_nc(:,lon/lat_nc_index) are the x, y projection indexes, actually
+            !if (use_alternative_LCC_projection_flag) then
+            call lb2lambert2_uEMEP(x_temp,y_temp,lon_subgrid(i,j),lat_subgrid(i,j),EMEP_projection_attributes)
+            !else
+            !    call lb2lambert_uEMEP(x_temp,y_temp,lon_subgrid(i,j),lat_subgrid(i,j),real(EMEP_projection_attributes(3)),real(EMEP_projection_attributes(4)))
+            !endif
+            ii=1+floor((x_temp-var1d_nc(1,lon_nc_index))/dgrid_nc(lon_nc_index)/local_fraction_grid_size(k)+0.5)
+            jj=1+floor((y_temp-var1d_nc(1,lat_nc_index))/dgrid_nc(lat_nc_index)/local_fraction_grid_size(k)+0.5)     
+        elseif (EMEP_projection_type.eq.PS_projection_index) then
+            call LL2PS_spherical(x_temp,y_temp,lon_subgrid(i,j),lat_subgrid(i,j),EMEP_projection_attributes)
+            ii=1+floor((x_temp-var1d_nc(1,lon_nc_index))/dgrid_nc(lon_nc_index)/local_fraction_grid_size(k)+0.5)
+            jj=1+floor((y_temp-var1d_nc(1,lat_nc_index))/dgrid_nc(lat_nc_index)/local_fraction_grid_size(k)+0.5)     
+        else
+            write(unit_logfile,'(A)')'No valid projection in use. Stopping'
+            stop
+        endif
+       
+        crossreference_target_to_localfraction_subgrid(i,j,x_dim_index,k)=ii
+        crossreference_target_to_localfraction_subgrid(i,j,y_dim_index,k)=jj
+        
+    enddo
+    enddo
+    enddo
+    
     write(unit_logfile,'(A)')'Allocating integral grid index to subgrid index'
     do j=1,subgrid_dim(y_dim_index)
     do i=1,subgrid_dim(x_dim_index)

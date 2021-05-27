@@ -534,6 +534,7 @@
     
     !
     integer, allocatable :: crossreference_target_to_emep_subgrid(:,:,:) !(i,j,dim)
+    integer, allocatable :: crossreference_target_to_localfraction_subgrid(:,:,:,:) !(i,j,dim,n_lf_grids)
     integer, allocatable :: crossreference_integral_to_emep_subgrid(:,:,:) !(i,j,dim)
     integer, allocatable :: crossreference_integral_to_meteo_nc_subgrid(:,:,:) !(i,j,dim)
     integer, allocatable :: crossreference_target_to_integral_subgrid(:,:,:) !(i,j,dim)
@@ -893,6 +894,7 @@
     logical :: first_g_loop=.true.
 
     logical :: use_GNFR_emissions_from_EMEP_flag=.false.
+    logical :: use_alphabetic_GNFR_emissions_from_EMEP_flag=.false.
     
     logical :: use_emission_naming_template_flag=.false.
     character(256) :: emission_naming_template_str='Sec<n>_Emis_mgm2_'

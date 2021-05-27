@@ -707,21 +707,6 @@
         uEMEP_to_EMEP_sector(waste_nc_index)=10
         uEMEP_to_EMEP_sector(livestock_nc_index)=11
         uEMEP_to_EMEP_sector(other_nc_index)=13
-
-        !uEMEP_to_EMEP_sector_str(allsource_index)=''
-        !uEMEP_to_EMEP_sector_str(traffic_index)='06'
-        !uEMEP_to_EMEP_sector_str(shipping_index)='07'
-        !uEMEP_to_EMEP_sector_str(agriculture_index)='12'
-        !uEMEP_to_EMEP_sector_str(heating_index)='03'
-        !uEMEP_to_EMEP_sector_str(industry_index)='02'
-        !uEMEP_to_EMEP_sector_str(publicpower_nc_index)='01'
-        !uEMEP_to_EMEP_sector_str(fugitive_nc_index)='04'
-        !uEMEP_to_EMEP_sector_str(solvents_nc_index)='05'
-        !uEMEP_to_EMEP_sector_str(aviation_nc_index)='08'
-        !uEMEP_to_EMEP_sector_str(offroad_nc_index)='09'
-        !uEMEP_to_EMEP_sector_str(waste_nc_index)='10'
-        !uEMEP_to_EMEP_sector_str(livestock_nc_index)='11'
-        !uEMEP_to_EMEP_sector_str(other_nc_index)='13'
     endif  
 
     !Create the sector strings, different for emissions to the local fraction strings, no leading 0's
@@ -744,6 +729,22 @@
 
     enddo
     
+    if (use_alphabetic_GNFR_emissions_from_EMEP_flag) then
+        uEMEP_to_EMEP_emis_sector_str(allsource_index)=''
+        uEMEP_to_EMEP_emis_sector_str(traffic_index)='F'
+        uEMEP_to_EMEP_emis_sector_str(shipping_index)='G'
+        uEMEP_to_EMEP_emis_sector_str(agriculture_index)='L'
+        uEMEP_to_EMEP_emis_sector_str(heating_index)='C'
+        uEMEP_to_EMEP_emis_sector_str(industry_index)='B'
+        uEMEP_to_EMEP_emis_sector_str(publicpower_nc_index)='A'
+        uEMEP_to_EMEP_emis_sector_str(fugitive_nc_index)='D'
+        uEMEP_to_EMEP_emis_sector_str(solvents_nc_index)='E'
+        uEMEP_to_EMEP_emis_sector_str(aviation_nc_index)='H'
+        uEMEP_to_EMEP_emis_sector_str(offroad_nc_index)='I'
+        uEMEP_to_EMEP_emis_sector_str(waste_nc_index)='J'
+        uEMEP_to_EMEP_emis_sector_str(livestock_nc_index)='K'
+        uEMEP_to_EMEP_emis_sector_str(other_nc_index)='M'
+    endif  
         
     !integer GNFR_index(n_source_nc_index)
     !A 1 ‘PublicPower’ (1)
@@ -842,14 +843,24 @@
         else
             postfix_str=emission_naming_template_str(index_start+3:)
         endif
+    
         !write(*,*) index_start,index_start+3,len_trim(emission_naming_template_str)
-        if (use_GNFR_emissions_from_EMEP_flag) then
+        if (use_GNFR_emissions_from_EMEP_flag.or.use_alphabetic_GNFR_emissions_from_EMEP_flag) then
         write(unit_logfile,'(a)') 'Using emission name template for GNFR sectors: '//trim(emission_naming_template_str)
            do i=1,n_pollutant_nc_index
             do i_source=1,n_source_nc_index
                 var_name_nc(emis_nc_index,i,i_source)=trim(prefix_str)//trim(uEMEP_to_EMEP_emis_sector_str(i_source))//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 if (i_source.eq.allsource_nc_index) then
                     var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                    if (use_alphabetic_GNFR_emissions_from_EMEP_flag) then
+                        !Remove any leading '_' in the postfix_str
+                        index_start=INDEX(postfix_str,'_')
+                        if (index_start.eq.1) then
+                        var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(postfix_str(2:))//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                        else
+                        var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                        endif
+                    endif                    
                 endif
                 !write(*,*) i,i_source,trim(var_name_nc(emis_nc_index,i,i_source))
 
