@@ -585,6 +585,7 @@
                 elseif (temp_num_dims.eq.6.and.i_file.eq.2) then
                     !if (i.eq.frac_nc_index.and.i_pollutant.eq.pm10_nc_index) then
                     lc_frac_nc_index=convert_frac_to_lc_frac_loop_index(i)
+                    !write(*,*) i,lc_frac_nc_index
                     if (i.ge.min_frac_nc_loop_index.and.i.le.max_frac_nc_loop_index.and.i_pollutant.eq.pm10_nc_index) then
                         var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
@@ -1096,6 +1097,7 @@
         do p_loop=1,n_pollutant_loop
             do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
             lc_frac_nc_index=convert_local_to_fraction_loop_index(lc_local_nc_index)
+            !write(*,*) lc_local_nc_index,lc_frac_nc_index
             if (pollutant_loop_index(p_loop).eq.pm10_nc_index) then
                 lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,1)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,1) &
                     +pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,2)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,2)
@@ -1109,12 +1111,13 @@
         enddo
         enddo
         
+        !Check output
         do i_source=1,n_source_index
             if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
             do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
                 p_loop=pollutant_loop_back_index(pm10_nc_index)
-                write(unit_logfile,'(2A,i,f16.4)') ' Average local fraction of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)), &
-                sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,i_source,p_loop)/(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,1)+pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,2)))/(size(var3d_nc,1)*size(var3d_nc,2)*size(var3d_nc,4))
+                write(unit_logfile,'(3A,f16.4)') ' Average local fraction of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)),' '//trim(source_file_str(i_source)), &
+                sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,i_source,p_loop)/(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,1)+pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,2)))/(size(lc_var3d_nc,3)*size(lc_var3d_nc,4)*size(lc_var3d_nc,5))
             enddo
             endif
         enddo
@@ -1129,12 +1132,12 @@
         !Commented out as these are not used?
 
         
-        !REset these variables to what they would be with 1 EMEP grid
+        !Reset these variables to what they would be with 1 EMEP grid
         !Not necessary once the rest of the code is adapted to the loop data
         frac_nc_index=num_var_nc_start+1
         lc_frac_nc_index=1
-        local_nc_index=num_var_nc_start+2
-        lc_local_nc_index=2
+        local_nc_index=num_var_nc_start+n_local_fraction_grids+1
+        lc_local_nc_index=n_local_fraction_grids+1
         
         !This is no longer in use, but just in case set the variables to the first EMEP LC grid
         var3d_nc(:,:,:,frac_nc_index,:,:)=lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_frac_nc_index,:,:)

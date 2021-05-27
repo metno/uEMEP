@@ -917,6 +917,7 @@
         
     endif
         
+        
     if (use_local_fraction_naming_template_flag) then
         !Set the prefix and postfix part of the emission name string based on the template
         !Assumes compound is added at the end
