@@ -362,7 +362,7 @@
         do i_pollutant=1,n_pollutant_loop
         !if (pollutant_loop_index(i_pollutant).ne.pmex_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm10_sand_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm10_salt_nc_index &
         !    .and.pollutant_loop_index(i_pollutant).ne.pm25_sand_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm25_salt_nc_index) then
-        if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index.or.pollutant_loop_index(i_pollutant).eq.pm25_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_nc_index.or.pollutant_loop_index(i_pollutant).eq.nh3_nc_index) then
+        if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index.or.pollutant_loop_index(i_pollutant).eq.pm25_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_nc_index.or.pollutant_loop_index(i_pollutant).eq.nh3_nc_index.or.pollutant_loop_index(i_pollutant).eq.pmex_nc_index) then
                 i_file=emission_file_index(i_source)
                 var_name_temp=trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),allsource_index)) !//'_'//trim(filename_grid(i_file))
                 
