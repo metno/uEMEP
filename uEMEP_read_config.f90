@@ -750,6 +750,9 @@
         
         local_fraction_naming_template_str=read_name_char('local_fraction_naming_template_str',local_fraction_naming_template_str,unit_in,unit_logfile)
         
+        local_fraction_grid_for_EMEP_grid_interpolation=read_name_integer('local_fraction_grid_for_EMEP_grid_interpolation',local_fraction_grid_for_EMEP_grid_interpolation,unit_in,unit_logfile)
+        local_fraction_grid_for_EMEP_additional_grid_interpolation=read_name_integer('local_fraction_grid_for_EMEP_additional_grid_interpolation',local_fraction_grid_for_EMEP_additional_grid_interpolation,unit_in,unit_logfile)
+
         
     close (unit_in)
     

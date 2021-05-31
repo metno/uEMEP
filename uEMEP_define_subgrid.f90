@@ -43,6 +43,7 @@
     endif
     enddo
 
+
     !Allocate buffers and adjust the dimensions appropriately
     !Calculate the max loop size to cover the nearest EMEP grids. This avoids looping through all the grids
     loop_index_scale=1.2*EMEP_grid_interpolation_size/2. !Was 1.5

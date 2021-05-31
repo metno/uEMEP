@@ -895,6 +895,9 @@
             i=i+1;lc_local_nc_loop_index(j)=i
             convert_local_to_fraction_loop_index(lc_local_nc_loop_index(j))=lc_frac_nc_loop_index(j)
         enddo
+        !do j=1,n_local_fraction_grids
+        !    convert_fraction_to_local_loop_index(lc_fraction_nc_loop_index(j))=lc_local_nc_loop_index(j)
+        !enddo
         num_lc_var_nc=i
         write(unit_logfile,'(a,i)') 'New number of num_lc_var_nc variables with additional LF EMEP: ',num_lc_var_nc
         min_lc_frac_nc_loop_index=minval(lc_frac_nc_loop_index)
@@ -1047,5 +1050,13 @@
         projection_attributes(2)=ltm_lon0
     endif
     
+    !Reset the EMEP grid region based on the size of the selected local fraction
+    local_fraction_grid_size_scaling=real(local_fraction_grid_size(local_fraction_grid_for_EMEP_grid_interpolation))
+    EMEP_grid_interpolation_size_original=EMEP_grid_interpolation_size
+    EMEP_grid_interpolation_size=EMEP_grid_interpolation_size_original*local_fraction_grid_size_scaling
+    local_fraction_additional_grid_size_scaling=real(local_fraction_grid_size(local_fraction_grid_for_EMEP_additional_grid_interpolation))
+    EMEP_additional_grid_interpolation_size_original=EMEP_additional_grid_interpolation_size
+    EMEP_additional_grid_interpolation_size=EMEP_additional_grid_interpolation_size_original*local_fraction_additional_grid_size_scaling
+
     
     end subroutine uEMEP_reset_constants

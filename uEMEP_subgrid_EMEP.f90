@@ -77,7 +77,10 @@
     integer i_sp,ii_sp
     real, allocatable :: EMEP_local_contribution(:,:,:,:)
     integer n_weight_nc_x,n_weight_nc_y
-    real EMEP_grid_interpolation_size_original
+    real dgrid_lf_offset_x,dgrid_lf_offset_y
+    real amod_temp
+    real EMEP_grid_interpolation_size_saved
+    real local_fraction_grid_size_scaling_temp
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -94,9 +97,13 @@
     if (save_emep_species.or.save_seasalt) species_EMEP_subgrid(:,:,:,:,:)=0
     
     !Check if the additional EMEP calculation is to be carried out and set parameters
+    EMEP_grid_interpolation_size_saved=EMEP_grid_interpolation_size
+    lc_local_nc_index=lc_local_nc_loop_index(local_fraction_grid_for_EMEP_grid_interpolation)
+    local_fraction_grid_size_scaling_temp=local_fraction_grid_size_scaling
     if (calculate_EMEP_additional_grid_flag) then
-        EMEP_grid_interpolation_size_original=EMEP_grid_interpolation_size
-        EMEP_grid_interpolation_size=EMEP_additional_grid_interpolation_size 
+        EMEP_grid_interpolation_size=EMEP_additional_grid_interpolation_size
+        local_fraction_grid_size_scaling_temp=local_fraction_additional_grid_size_scaling
+        lc_local_nc_index=lc_local_nc_loop_index(local_fraction_grid_for_EMEP_additional_grid_interpolation)
 	    write(unit_logfile,'(A)') 'Calculating additional EMEP concentrations to subgrids'
     endif
     
@@ -187,7 +194,7 @@
             
             !Read from the local fraction file
             subgrid(i,j,:,emep_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,conc_nc_index,:,:)
-            subgrid(i,j,:,emep_local_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,local_nc_index,:,:)
+            !subgrid(i,j,:,emep_local_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,local_nc_index,:,:)
             
             !Centre of grid
             xpos_subgrid=var1d_nc(i_nc,lon_nc_index)
@@ -198,6 +205,15 @@
             xpos_area_max=xpos_subgrid+xpos_limit
             ypos_area_min=ypos_subgrid-ypos_limit
             ypos_area_max=ypos_subgrid+ypos_limit
+
+            !Set the offset to the centre of the local fraction grid when using larger local fraction grids
+            !Requires knowledge of the total EMEP grid index so uses dim_start_nc
+            amod_temp=amod(real(dim_start_nc(x_dim_nc_index)-1+i_nc),local_fraction_grid_size_scaling_temp)
+            if (amod_temp.eq.0) amod_temp=local_fraction_grid_size_scaling_temp
+            dgrid_lf_offset_x=0.5-(amod_temp-0.5)/local_fraction_grid_size_scaling_temp
+            amod_temp=amod(real(dim_start_nc(y_dim_nc_index)-1+j_nc),local_fraction_grid_size_scaling_temp)
+            if (amod_temp.eq.0) amod_temp=local_fraction_grid_size_scaling_temp
+            dgrid_lf_offset_y=0.5-(amod_temp-0.5)/local_fraction_grid_size_scaling_temp
 
             !Calculate the local fraction contribution from within the moving window, limited on the edges.
             subgrid(i,j,:,emep_local_subgrid_index,:,:)=0 
@@ -219,14 +235,14 @@
                     .and.ii_nc_w.ge.1.and.ii_nc_w.le.n_weight_nc_x.and.jj_nc_w.ge.1.and.jj_nc_w.le.n_weight_nc_y) then
 
                     !Set the edges to an EMEP grid surounding the EMEP grid being assessed
-                    xpos_min=max(xpos_area_min,var1d_nc(ii_nc,lon_nc_index)-dgrid_nc(lon_nc_index)/2.)
-                    xpos_max=min(xpos_area_max,var1d_nc(ii_nc,lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
-                    ypos_min=max(ypos_area_min,var1d_nc(jj_nc,lat_nc_index)-dgrid_nc(lat_nc_index)/2.)
-                    ypos_max=min(ypos_area_max,var1d_nc(jj_nc,lat_nc_index)+dgrid_nc(lat_nc_index)/2.)
+                    xpos_min=max(xpos_area_min,var1d_nc(ii_nc,lon_nc_index)-dgrid_nc(lon_nc_index)/2.*local_fraction_grid_size_scaling_temp+dgrid_lf_offset_x*dgrid_nc(lon_nc_index)*local_fraction_grid_size_scaling_temp)
+                    xpos_max=min(xpos_area_max,var1d_nc(ii_nc,lon_nc_index)+dgrid_nc(lon_nc_index)/2.*local_fraction_grid_size_scaling_temp+dgrid_lf_offset_x*dgrid_nc(lon_nc_index)*local_fraction_grid_size_scaling_temp)
+                    ypos_min=max(ypos_area_min,var1d_nc(jj_nc,lat_nc_index)-dgrid_nc(lat_nc_index)/2.*local_fraction_grid_size_scaling_temp+dgrid_lf_offset_y*dgrid_nc(lat_nc_index)*local_fraction_grid_size_scaling_temp)
+                    ypos_max=min(ypos_area_max,var1d_nc(jj_nc,lat_nc_index)+dgrid_nc(lat_nc_index)/2.*local_fraction_grid_size_scaling_temp+dgrid_lf_offset_y*dgrid_nc(lat_nc_index)*local_fraction_grid_size_scaling_temp)
             
                     !Calculate area weighting
                     if (xpos_max.gt.xpos_min.and.ypos_max.gt.ypos_min) then
-                        weighting_val=(ypos_max-ypos_min)*(xpos_max-xpos_min)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)
+                        weighting_val=(ypos_max-ypos_min)*(xpos_max-xpos_min)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)/local_fraction_grid_size_scaling_temp/local_fraction_grid_size_scaling_temp
                     else
                         weighting_val=0.
                     endif                           
@@ -603,6 +619,17 @@
             enddo
             enddo
 
+            !Set the offset to the centre of the local fraction grid when using larger local fraction grids
+            !Requires knowledge of the total EMEP grid index so uses dim_start_nc
+            amod_temp=amod(real(dim_start_nc(x_dim_nc_index)-1+i_nc),local_fraction_grid_size_scaling_temp)
+            if (amod_temp.eq.0) amod_temp=local_fraction_grid_size_scaling_temp
+            dgrid_lf_offset_x=0.5-(amod_temp-0.5)/local_fraction_grid_size_scaling_temp
+            amod_temp=amod(real(dim_start_nc(y_dim_nc_index)-1+j_nc),local_fraction_grid_size_scaling_temp)
+            if (amod_temp.eq.0) amod_temp=local_fraction_grid_size_scaling_temp
+            dgrid_lf_offset_y=0.5-(amod_temp-0.5)/local_fraction_grid_size_scaling_temp
+            !write(*,*) dim_start_nc(x_dim_nc_index)-1+i_nc,dim_start_nc(y_dim_nc_index)-1+j_nc,amod_temp,dgrid_lf_offset_x,dgrid_lf_offset_y
+                
+            !Still need to change the dispersion routines for distance calculated and the size of the domain read in by EMEP and the other emissions
             
             !Calculate the local contribution within the moving window area
             do jjj=jj_start,jj_end
@@ -621,14 +648,14 @@
                 if (iii_nc_w.ge.1.and.iii_nc_w.le.n_weight_nc_x.and.jjj_nc_w.ge.1.and.jjj_nc_w.le.n_weight_nc_y) then
 
                 !Set the edges to an EMEP grid surounding the EMEP grid being assessed
-                xpos_min=max(xpos_area_min,iii*dgrid_nc(lon_nc_index)-dgrid_nc(lon_nc_index)/2.)
-                xpos_max=min(xpos_area_max,iii*dgrid_nc(lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
-                ypos_min=max(ypos_area_min,jjj*dgrid_nc(lat_nc_index)-dgrid_nc(lat_nc_index)/2.)
-                ypos_max=min(ypos_area_max,jjj*dgrid_nc(lat_nc_index)+dgrid_nc(lat_nc_index)/2.)
+                xpos_min=max(xpos_area_min,((iii+dgrid_lf_offset_x)*dgrid_nc(lon_nc_index)-dgrid_nc(lon_nc_index)/2.)*local_fraction_grid_size_scaling_temp)
+                xpos_max=min(xpos_area_max,((iii+dgrid_lf_offset_x)*dgrid_nc(lon_nc_index)+dgrid_nc(lon_nc_index)/2.)*local_fraction_grid_size_scaling_temp)
+                ypos_min=max(ypos_area_min,((jjj+dgrid_lf_offset_y)*dgrid_nc(lat_nc_index)-dgrid_nc(lat_nc_index)/2.)*local_fraction_grid_size_scaling_temp)
+                ypos_max=min(ypos_area_max,((jjj+dgrid_lf_offset_y)*dgrid_nc(lat_nc_index)+dgrid_nc(lat_nc_index)/2.)*local_fraction_grid_size_scaling_temp)
             
                 !Calculate area weighting
                 if (xpos_max.gt.xpos_min.and.ypos_max.gt.ypos_min) then
-                    weighting_val=(ypos_max-ypos_min)*(xpos_max-xpos_min)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)
+                    weighting_val=(ypos_max-ypos_min)*(xpos_max-xpos_min)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)/local_fraction_grid_size_scaling_temp/local_fraction_grid_size_scaling_temp
                 else
                     weighting_val=0.
                 endif            
@@ -1005,8 +1032,8 @@
         enddo
     
     !Check if the additional EMEP calculation is to be carried out and set parameters
+    EMEP_grid_interpolation_size=EMEP_grid_interpolation_size_saved
     if (calculate_EMEP_additional_grid_flag) then
-        EMEP_grid_interpolation_size=EMEP_grid_interpolation_size_original
         subgrid(:,:,:,emep_additional_local_subgrid_index,:,:)=subgrid(:,:,:,emep_local_subgrid_index,:,:)
         subgrid(:,:,:,emep_additional_nonlocal_subgrid_index,:,:)=subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)
     endif

@@ -86,6 +86,7 @@
     real sig_z_0_loc_fit,sig_y_0_loc_fit
     integer f_loop
     
+
     !functions
     real gauss_plume_second_order_rotated_func
     !real gauss_plume_second_order_rotated_integral_func
@@ -95,7 +96,6 @@
     real gauss_plume_cartesian_sigma_func
     real gauss_plume_second_order_rotated_reflected_func
     real gauss_plume_second_order_rotated_reflected_integral_func
-    
     
     
     write(unit_logfile,'(A)') ''
@@ -122,6 +122,7 @@
     temp_FF_emission_subgrid=0.
     angle_diff=0.
         
+
     !Set the x and y position limits to coincide to half the EMEP grid (refered here as lon and lat but can be also LCC projection) times the number of grids
     xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
     ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size
@@ -1008,6 +1009,7 @@
 !   Calculates the vertically integrated proxy concentrations based on Gaussian distribution
 !   Generic for all sources and subsources
 !   Seperate routine to the target grid as the integrated form may be of lower resolution
+!   Is outdated and should not be used any more
 !==========================================================================
     subroutine uEMEP_subgrid_dispersion_integral(source_index)
     

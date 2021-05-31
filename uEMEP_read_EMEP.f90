@@ -71,6 +71,8 @@
     logical :: use_comp_temporary=.false.
     logical :: EMEP_region_outside_domain=.false.
     
+    real EMEP_grid_interpolation_size_temp
+    
     !Functions
     double precision date_to_number
     
@@ -238,7 +240,10 @@
         
         !Calculate the necessary extent of the EMEP grid region and only read these grids
         if (reduce_EMEP_region_flag) then
-            write(unit_logfile,'(A)') 'Reducing EMEP domain'
+            EMEP_grid_interpolation_size_temp=max(EMEP_grid_interpolation_size,EMEP_additional_grid_interpolation_size_original)
+            
+            write(unit_logfile,'(A,f12.2)') 'Reducing EMEP domain. EMEP grid extent = ',EMEP_grid_interpolation_size_temp
+            
             !Determine the LL cordinates of the target grid
             !if (EMEP_projection_type.eq.LCC_projection_index) then
                 !Retrieve the four corners of the target grid in lat and lon
@@ -334,7 +339,7 @@
                 temp_delta(1)=temp_var1d_nc_dp(1,2)-temp_var1d_nc_dp(1,1)
                 temp_delta(2)=temp_var1d_nc_dp(2,2)-temp_var1d_nc_dp(2,1)
                 !write(*,*) temp_delta
-                !Find grid position of the max and min coordinates and add2 grids*EMEP_grid_interpolation_size
+                !Find grid position of the max and min coordinates and add2 grids*EMEP_grid_interpolation_size_temp
                 i_temp_min=1+floor((temp_x_min-temp_var1d_nc_dp(1,1))/temp_delta(1)+0.5)
                 i_temp_max=1+floor((temp_x_max-temp_var1d_nc_dp(1,1))/temp_delta(1)+0.5)
                 j_temp_min=1+floor((temp_y_min-temp_var1d_nc_dp(2,1))/temp_delta(2)+0.5)
@@ -345,10 +350,10 @@
                 j_temp_max=1+ceiling((temp_y_max-temp_var1d_nc_dp(2,1))/temp_delta(2)+0.5)
                 !write(unit_logfile,'(A,2I)') ' Reading EMEP i grids: ',i_temp_min,i_temp_max
                 !write(unit_logfile,'(A,2I)') ' Reading EMEP j grids: ',j_temp_min,j_temp_max
-                i_temp_min=max(1,i_temp_min-1-ceiling(1.*EMEP_grid_interpolation_size))
-                i_temp_max=min(dim_length_nc(x_dim_nc_index),i_temp_max+1+ceiling(1.*EMEP_grid_interpolation_size))
-                j_temp_min=max(1,j_temp_min-1-ceiling(1.*EMEP_grid_interpolation_size))
-                j_temp_max=min(dim_length_nc(y_dim_nc_index),j_temp_max+1+ceiling(1.*EMEP_grid_interpolation_size))
+                i_temp_min=max(1,i_temp_min-1-ceiling(1.*EMEP_grid_interpolation_size_temp))
+                i_temp_max=min(dim_length_nc(x_dim_nc_index),i_temp_max+1+ceiling(1.*EMEP_grid_interpolation_size_temp))
+                j_temp_min=max(1,j_temp_min-1-ceiling(1.*EMEP_grid_interpolation_size_temp))
+                j_temp_max=min(dim_length_nc(y_dim_nc_index),j_temp_max+1+ceiling(1.*EMEP_grid_interpolation_size_temp))
                 dim_length_nc(x_dim_nc_index)=i_temp_max-i_temp_min+1
                 dim_length_nc(y_dim_nc_index)=j_temp_max-j_temp_min+1
                 dim_start_nc(x_dim_nc_index)=i_temp_min
