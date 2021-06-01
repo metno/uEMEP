@@ -971,12 +971,16 @@
     integer convert_frac_to_lc_frac_loop_index(num_var_nc_name)
     
     integer :: local_fraction_grid_for_EMEP_grid_interpolation=1
+    integer :: local_fraction_grid_for_EMEP_grid_interpolation_source(n_source_index)=1
     integer :: local_fraction_grid_for_EMEP_additional_grid_interpolation=1
     real :: local_fraction_grid_size_scaling=1.
     real :: EMEP_grid_interpolation_size_original=1.
+    real :: EMEP_grid_interpolation_size_source(n_source_index)=1.
     real :: local_fraction_additional_grid_size_scaling=1.
     real :: EMEP_additional_grid_interpolation_size_original=0.
 
+    logical :: save_traffic_emissions_for_EMEP_as_exhaust_nonexhaust_flag=.false.
+    
     end module uEMEP_definitions
     
     

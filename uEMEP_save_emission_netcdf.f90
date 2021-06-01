@@ -362,17 +362,34 @@
         do i_pollutant=1,n_pollutant_loop
         !if (pollutant_loop_index(i_pollutant).ne.pmex_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm10_sand_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm10_salt_nc_index &
         !    .and.pollutant_loop_index(i_pollutant).ne.pm25_sand_nc_index.and.pollutant_loop_index(i_pollutant).ne.pm25_salt_nc_index) then
-        if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index.or.pollutant_loop_index(i_pollutant).eq.pm25_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_nc_index.or.pollutant_loop_index(i_pollutant).eq.nh3_nc_index.or.pollutant_loop_index(i_pollutant).eq.pmex_nc_index) then
+        if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index.or.pollutant_loop_index(i_pollutant).eq.pm25_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_nc_index.or.pollutant_loop_index(i_pollutant).eq.nh3_nc_index &
+            .or.(pollutant_loop_index(i_pollutant).eq.pmex_nc_index.and.i_source.eq.traffic_index)) then
                 i_file=emission_file_index(i_source)
                 var_name_temp=trim(var_name_nc(emis_nc_index,pollutant_loop_index(i_pollutant),allsource_index)) !//'_'//trim(filename_grid(i_file))
                 
                 !Calculate the emissions in the target grid            
-                temp_subgrid(:,:,:)=emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,i_pollutant)
+                temp_subgrid(:,:,:)=emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,i_pollutant) 
 
+                if (save_traffic_emissions_for_EMEP_as_exhaust_nonexhaust_flag.and.i_source.eq.traffic_index.and.pollutant_loop_index(i_pollutant).eq.pm25_nc_index) then
+                    var_name_temp=trim(var_name_nc(emis_nc_index,pm25_nc_index,allsource_index))//'_'//'nonexhaust'
+                    temp_subgrid(:,:,:)=emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,pollutant_loop_back_index(pm25_nc_index))-emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,pollutant_loop_back_index(pmex_nc_index))                
+                endif
+                if (save_traffic_emissions_for_EMEP_as_exhaust_nonexhaust_flag.and.i_source.eq.traffic_index.and.pollutant_loop_index(i_pollutant).eq.pmex_nc_index) then
+                    var_name_temp=trim(var_name_nc(emis_nc_index,pm25_nc_index,allsource_index))//'_'//'exhaust'
+                    temp_subgrid(:,:,:)=emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,pollutant_loop_back_index(pmex_nc_index))                
+                endif
+                
                 !Convert the PM10 to PMco, special case
                 if (pollutant_loop_index(i_pollutant).eq.pm10_nc_index) then
                     var_name_temp=trim(var_name_nc(emis_nc_index,pmco_nc_index,allsource_index)) !//'_'//trim(filename_grid(i_file))
                     temp_subgrid(:,:,:)=emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,pollutant_loop_back_index(pm10_nc_index))-emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,pollutant_loop_back_index(pm25_nc_index))
+                    
+                    if (save_traffic_emissions_for_EMEP_as_exhaust_nonexhaust_flag.and.i_source.eq.traffic_index) then
+                        var_name_temp=trim(var_name_nc(emis_nc_index,pmco_nc_index,allsource_index))//'_'//'nonexhaust'
+                        temp_subgrid(:,:,:)=emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,pollutant_loop_back_index(pm10_nc_index)) &
+                                            -emission_subgrid(:,:,save_emissions_start_index:save_emissions_end_index,i_source,pollutant_loop_back_index(pm25_nc_index))
+                    endif
+                
                 endif
 
                 !Subgrid emissions are in units ug/sec/subgrid. Convert to mg/m2/hour. Acount for the difference in subgrid sizes here             
@@ -390,6 +407,7 @@
                 endif
                 
                 !write(*,'(4i,a)') i_pollutant,i_file,i_source,pollutant_loop_index(i_pollutant),trim(var_name_temp)
+                
                 
                 if (save_netcdf_file_flag.or.save_netcdf_receptor_flag) then
                     write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid(:,:,:))/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
