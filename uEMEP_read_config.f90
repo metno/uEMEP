@@ -136,7 +136,7 @@
         calculate_EMEP_source(heating_index)=read_name_logical('calculate_EMEP_source(heating_index)',calculate_EMEP_source(heating_index),unit_in,unit_logfile)
         calculate_EMEP_source(agriculture_index)=read_name_logical('calculate_EMEP_source(agriculture_index)',calculate_EMEP_source(agriculture_index),unit_in,unit_logfile)
         calculate_EMEP_source(industry_index)=read_name_logical('calculate_EMEP_source(industry_index)',calculate_EMEP_source(industry_index),unit_in,unit_logfile)
-        !Additional GNFR sources
+        !Additional GNFR13 sources
         calculate_EMEP_source(publicpower_index)=read_name_logical('calculate_EMEP_source(publicpower_index)',calculate_EMEP_source(publicpower_index),unit_in,unit_logfile)
         calculate_EMEP_source(fugitive_index)=read_name_logical('calculate_EMEP_source(fugitive_index)',calculate_EMEP_source(fugitive_index),unit_in,unit_logfile)
         calculate_EMEP_source(solvents_index)=read_name_logical('calculate_EMEP_source(solvents_index)',calculate_EMEP_source(solvents_index),unit_in,unit_logfile)
@@ -145,6 +145,14 @@
         calculate_EMEP_source(waste_index)=read_name_logical('calculate_EMEP_source(waste_index)',calculate_EMEP_source(waste_index),unit_in,unit_logfile)
         calculate_EMEP_source(livestock_index)=read_name_logical('calculate_EMEP_source(livestock_index)',calculate_EMEP_source(livestock_index),unit_in,unit_logfile)
         calculate_EMEP_source(other_index)=read_name_logical('calculate_EMEP_source(other_index)',calculate_EMEP_source(other_index),unit_in,unit_logfile)
+        !GNFR19 sources. Note nc_index not in the input
+        calculate_EMEP_source(traffic_gasoline_nc_index)=read_name_logical('calculate_EMEP_source(traffic_gasoline_index)',calculate_EMEP_source(traffic_gasoline_nc_index),unit_in,unit_logfile)
+        calculate_EMEP_source(traffic_diesel_nc_index)=read_name_logical('calculate_EMEP_source(traffic_diesel_index)',calculate_EMEP_source(traffic_diesel_nc_index),unit_in,unit_logfile)
+        calculate_EMEP_source(traffic_gas_nc_index)=read_name_logical('calculate_EMEP_source(traffic_gas_index)',calculate_EMEP_source(traffic_gas_nc_index),unit_in,unit_logfile)
+        calculate_EMEP_source(traffic_nonexhaust_nc_index)=read_name_logical('calculate_EMEP_source(traffic_nonexhaust_index)',calculate_EMEP_source(traffic_nonexhaust_nc_index),unit_in,unit_logfile)
+        calculate_EMEP_source(publicpower_point_nc_index)=read_name_logical('calculate_EMEP_source(publicpower_point_index)',calculate_EMEP_source(publicpower_point_nc_index),unit_in,unit_logfile)
+        calculate_EMEP_source(publicpower_area_nc_index)=read_name_logical('calculate_EMEP_source(publicpower_area_index)',calculate_EMEP_source(publicpower_area_nc_index),unit_in,unit_logfile)
+        
 
         !do i_source=1,n_source_index
         !    if (calculate_source(i_source)) calculate_source(allsource_index)=.true.

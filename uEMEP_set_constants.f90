@@ -714,12 +714,12 @@
         uEMEP_to_EMEP_sector(waste_nc_index)=10
         uEMEP_to_EMEP_sector(livestock_nc_index)=11
         uEMEP_to_EMEP_sector(other_nc_index)=13
-        !uEMEP_to_EMEP_sector(publicpower_point_nc_index)=14
-        !uEMEP_to_EMEP_sector(publicpower_area_nc_index)=15
-        !uEMEP_to_EMEP_sector(traffic_gasoline_nc_index)=16
-        !uEMEP_to_EMEP_sector(traffic_diesel_nc_index)=17
-        !uEMEP_to_EMEP_sector(traffic_gas_nc_index)=18
-        !uEMEP_to_EMEP_sector(traffic_nonexhaust_nc_index)=19
+        uEMEP_to_EMEP_sector(publicpower_point_nc_index)=14
+        uEMEP_to_EMEP_sector(publicpower_area_nc_index)=15
+        uEMEP_to_EMEP_sector(traffic_gasoline_nc_index)=16
+        uEMEP_to_EMEP_sector(traffic_diesel_nc_index)=17
+        uEMEP_to_EMEP_sector(traffic_gas_nc_index)=18
+        uEMEP_to_EMEP_sector(traffic_nonexhaust_nc_index)=19
     endif  
 
     !Create the sector strings, different for emissions to the local fraction strings, no leading 0's
@@ -764,7 +764,17 @@
         uEMEP_to_EMEP_emis_sector_str(publicpower_point_nc_index)='A1'
         uEMEP_to_EMEP_emis_sector_str(publicpower_area_nc_index)='A2'
     endif  
-        
+
+    !Automatically set these extra files to be read
+    if (use_GNFR19_emissions_from_EMEP_flag) then
+        calculate_EMEP_source(traffic_gasoline_nc_index)=.true.
+        calculate_EMEP_source(traffic_diesel_nc_index)=.true.
+        calculate_EMEP_source(traffic_gas_nc_index)=.true.
+        calculate_EMEP_source(traffic_nonexhaust_nc_index)=.true.
+        calculate_EMEP_source(publicpower_point_nc_index)=.true.
+        calculate_EMEP_source(publicpower_area_nc_index)=.true.
+    endif
+    
     !integer GNFR_index(n_source_nc_index)
     !A 1 ‘PublicPower’ (1)
     !B 2 ‘Industry’ (3)
