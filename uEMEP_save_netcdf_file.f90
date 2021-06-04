@@ -795,7 +795,9 @@
                 endif
                 
             endif
-    
+
+            !When pollutant is pmex then only save traffic
+            if (pollutant_loop_index(i_pollutant).ne.pmex_nc_index.or.(pollutant_loop_index(i_pollutant).eq.pmex_nc_index.and.i_source.eq.traffic_nc_index)) then
                 if (save_netcdf_fraction_as_contribution_flag) then
                     variable_type='float'
                     unit_str="ug/m3"
@@ -856,6 +858,8 @@
                 endif
                 
                 endif
+            endif
+            
         endif
     enddo
     enddo
