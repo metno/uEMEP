@@ -512,6 +512,7 @@
         !Remove the sand and salt PM2.5, not necessary. Fixed ratio if needed n_pollutant_loop=6
         if (pollutant_index.eq.all_sand_salt_nc_index) then
             n_emep_pollutant_loop=3
+            if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
             n_pollutant_loop=6
             pollutant_loop_index(1)=nox_nc_index
             pollutant_loop_index(2)=pm25_nc_index
@@ -531,6 +532,7 @@
             pollutant_loop_back_index(pm25_salt_nc_index)=8
         elseif (pollutant_index.eq.all_salt_nc_index) then
             n_emep_pollutant_loop=3
+            if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
             n_pollutant_loop=5
             pollutant_loop_index(1)=nox_nc_index
             pollutant_loop_index(2)=pm25_nc_index
@@ -546,6 +548,7 @@
             pollutant_loop_back_index(pm25_salt_nc_index)=6
         elseif (pollutant_index.eq.all_sand_nc_index) then
             n_emep_pollutant_loop=3
+            if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
             n_pollutant_loop=5
             pollutant_loop_index(1)=nox_nc_index
             pollutant_loop_index(2)=pm25_nc_index
@@ -561,6 +564,7 @@
             pollutant_loop_back_index(pm25_sand_nc_index)=6
         elseif (pollutant_index.eq.all_nc_index) then
             n_emep_pollutant_loop=3
+            if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
             n_pollutant_loop=4
             pollutant_loop_index(1)=nox_nc_index
             pollutant_loop_index(2)=pm25_nc_index
@@ -690,6 +694,9 @@
     endif
     
 
+    !If GNFR19 emissions are true then so are the GNFR13 emissions
+    if (use_GNFR19_emissions_from_EMEP_flag) use_GNFR_emissions_from_EMEP_flag=.true.
+    
     !Set the emission sector index to be read to standard GNFR.
     !Not actually used now but could be used in the loop below
     if (use_GNFR_emissions_from_EMEP_flag) then
@@ -707,6 +714,12 @@
         uEMEP_to_EMEP_sector(waste_nc_index)=10
         uEMEP_to_EMEP_sector(livestock_nc_index)=11
         uEMEP_to_EMEP_sector(other_nc_index)=13
+        !uEMEP_to_EMEP_sector(publicpower_point_nc_index)=14
+        !uEMEP_to_EMEP_sector(publicpower_area_nc_index)=15
+        !uEMEP_to_EMEP_sector(traffic_gasoline_nc_index)=16
+        !uEMEP_to_EMEP_sector(traffic_diesel_nc_index)=17
+        !uEMEP_to_EMEP_sector(traffic_gas_nc_index)=18
+        !uEMEP_to_EMEP_sector(traffic_nonexhaust_nc_index)=19
     endif  
 
     !Create the sector strings, different for emissions to the local fraction strings, no leading 0's
@@ -744,6 +757,12 @@
         uEMEP_to_EMEP_emis_sector_str(waste_nc_index)='J'
         uEMEP_to_EMEP_emis_sector_str(livestock_nc_index)='K'
         uEMEP_to_EMEP_emis_sector_str(other_nc_index)='M'
+        uEMEP_to_EMEP_emis_sector_str(traffic_gasoline_nc_index)='F1'
+        uEMEP_to_EMEP_emis_sector_str(traffic_diesel_nc_index)='F2'
+        uEMEP_to_EMEP_emis_sector_str(traffic_gas_nc_index)='F3'
+        uEMEP_to_EMEP_emis_sector_str(traffic_nonexhaust_nc_index)='F4'
+        uEMEP_to_EMEP_emis_sector_str(publicpower_point_nc_index)='A1'
+        uEMEP_to_EMEP_emis_sector_str(publicpower_area_nc_index)='A2'
     endif  
         
     !integer GNFR_index(n_source_nc_index)
@@ -813,7 +832,7 @@
                 
     endif
     
-    !General setting of names
+    !General setting of names. Overrides all other presets
     do i_comp=1,n_pollutant_nc_index
     do i_source=1,n_source_nc_index
         

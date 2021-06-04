@@ -127,8 +127,12 @@
     
     !All the other GNFR emissions
     integer publicpower_nc_index,fugitive_nc_index,solvents_nc_index,aviation_nc_index,offroad_nc_index,waste_nc_index,livestock_nc_index,other_nc_index
+    integer traffic_gasoline_nc_index,traffic_diesel_nc_index,traffic_gas_nc_index,traffic_nonexhaust_nc_index,traffic_exhaust_nc_index
+    integer publicpower_point_nc_index,publicpower_area_nc_index
     parameter (publicpower_nc_index=7,fugitive_nc_index=8,solvents_nc_index=9,aviation_nc_index=10,offroad_nc_index=11,waste_nc_index=12,livestock_nc_index=13,other_nc_index=14)
-    parameter (n_source_nc_index=14)
+    parameter (traffic_gasoline_nc_index=15,traffic_diesel_nc_index=16,traffic_gas_nc_index=17,traffic_exhaust_nc_index=18,traffic_nonexhaust_nc_index=19)
+    parameter (publicpower_point_nc_index=20,publicpower_area_nc_index=21)
+    parameter (n_source_nc_index=21)
     
     !integer GNFR_index(n_source_nc_index)
     !A ‘PublicPower’ (1)
@@ -396,11 +400,11 @@
     parameter (n_source_index=14)
     integer compound_source_index(n_compound_index,n_source_index)
     
-    character(256) source_file_postfix(n_source_index)
-    logical :: calculate_source(n_source_index)=.false.
-    logical :: calculate_EMEP_source(n_source_index)=.false.
-    logical :: make_EMEP_grid_emission_data(n_source_index)=.false.
-    logical :: replace_EMEP_local_with_subgrid_local(n_source_index)=.false.
+    character(256) source_file_postfix(n_source_nc_index)
+    logical :: calculate_source(n_source_nc_index)=.false.
+    logical :: calculate_EMEP_source(n_source_nc_index)=.false.
+    logical :: make_EMEP_grid_emission_data(n_source_nc_index)=.false.
+    logical :: replace_EMEP_local_with_subgrid_local(n_source_nc_index)=.false.
     !logical combine_emission_subsources_during_dispersion(n_source_index)
 
     integer x_dim_index,y_dim_index,t_dim_index,n_dim_index
@@ -895,6 +899,7 @@
 
     logical :: use_GNFR_emissions_from_EMEP_flag=.false.
     logical :: use_alphabetic_GNFR_emissions_from_EMEP_flag=.false.
+    logical :: use_GNFR19_emissions_from_EMEP_flag=.false.
     
     logical :: use_emission_naming_template_flag=.false.
     character(256) :: emission_naming_template_str='Sec<n>_Emis_mgm2_'
@@ -906,10 +911,10 @@
     
     !Define the source sector match between uEMEP and EMEP
     logical :: use_user_specified_sectors_flag=.false.
-    integer :: uEMEP_to_EMEP_sector(n_source_index)=0
-    integer :: uEMEP_to_EMEP_replace_sector(n_source_index)=0
-    character(2) :: uEMEP_to_EMEP_sector_str(n_source_index)=''
-    character(2) :: uEMEP_to_EMEP_emis_sector_str(n_source_index)=''
+    integer :: uEMEP_to_EMEP_sector(n_source_nc_index)=0
+    integer :: uEMEP_to_EMEP_replace_sector(n_source_nc_index)=0
+    character(2) :: uEMEP_to_EMEP_sector_str(n_source_nc_index)=''
+    character(2) :: uEMEP_to_EMEP_emis_sector_str(n_source_nc_index)=''
     
     !Define the aggregation period for EMEP emissions when these are to be used in calculations. Annual is 365*24=8760 or 8784 for leap years
     real :: EMEP_emission_aggregation_period=1.
