@@ -346,6 +346,8 @@
     source_file_str(waste_index)='waste'
     source_file_str(livestock_index)='livestock'
     source_file_str(other_index)='other'
+    source_file_str(traffic_exhaust_index)='traffic_exhaust'
+    source_file_str(traffic_nonexhaust_index)='traffic_nonexhaust'
 
     do i=1,n_pollutant_nc_index
         pollutant_file_str(i)=var_name_nc(conc_nc_index,i,allsource_nc_index)
@@ -512,7 +514,7 @@
         !Remove the sand and salt PM2.5, not necessary. Fixed ratio if needed n_pollutant_loop=6
         if (pollutant_index.eq.all_sand_salt_nc_index) then
             n_emep_pollutant_loop=3
-            if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
+            !if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
             n_pollutant_loop=6
             pollutant_loop_index(1)=nox_nc_index
             pollutant_loop_index(2)=pm25_nc_index
@@ -532,7 +534,7 @@
             pollutant_loop_back_index(pm25_salt_nc_index)=8
         elseif (pollutant_index.eq.all_salt_nc_index) then
             n_emep_pollutant_loop=3
-            if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
+            !if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
             n_pollutant_loop=5
             pollutant_loop_index(1)=nox_nc_index
             pollutant_loop_index(2)=pm25_nc_index
@@ -548,7 +550,7 @@
             pollutant_loop_back_index(pm25_salt_nc_index)=6
         elseif (pollutant_index.eq.all_sand_nc_index) then
             n_emep_pollutant_loop=3
-            if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
+            !if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
             n_pollutant_loop=5
             pollutant_loop_index(1)=nox_nc_index
             pollutant_loop_index(2)=pm25_nc_index
@@ -564,7 +566,7 @@
             pollutant_loop_back_index(pm25_sand_nc_index)=6
         elseif (pollutant_index.eq.all_nc_index) then
             n_emep_pollutant_loop=3
-            if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
+            !if (use_GNFR19_emissions_from_EMEP_flag) n_emep_pollutant_loop=4 !Include exhaust
             n_pollutant_loop=4
             pollutant_loop_index(1)=nox_nc_index
             pollutant_loop_index(2)=pm25_nc_index
@@ -763,6 +765,7 @@
         uEMEP_to_EMEP_emis_sector_str(traffic_nonexhaust_nc_index)='F4'
         uEMEP_to_EMEP_emis_sector_str(publicpower_point_nc_index)='A1'
         uEMEP_to_EMEP_emis_sector_str(publicpower_area_nc_index)='A2'
+        uEMEP_to_EMEP_emis_sector_str(traffic_exhaust_nc_index)='F1-3' !Not read
     endif  
 
     !Automatically set these extra files to be read
@@ -770,6 +773,7 @@
         calculate_EMEP_source(traffic_gasoline_nc_index)=.true.
         calculate_EMEP_source(traffic_diesel_nc_index)=.true.
         calculate_EMEP_source(traffic_gas_nc_index)=.true.
+        calculate_EMEP_source(traffic_exhaust_nc_index)=.true.
         calculate_EMEP_source(traffic_nonexhaust_nc_index)=.true.
         calculate_EMEP_source(publicpower_point_nc_index)=.true.
         calculate_EMEP_source(publicpower_area_nc_index)=.true.

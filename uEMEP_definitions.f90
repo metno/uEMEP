@@ -127,10 +127,10 @@
     
     !All the other GNFR emissions
     integer publicpower_nc_index,fugitive_nc_index,solvents_nc_index,aviation_nc_index,offroad_nc_index,waste_nc_index,livestock_nc_index,other_nc_index
-    integer traffic_gasoline_nc_index,traffic_diesel_nc_index,traffic_gas_nc_index,traffic_nonexhaust_nc_index,traffic_exhaust_nc_index
+    integer traffic_exhaust_nc_index,traffic_nonexhaust_nc_index,traffic_gasoline_nc_index,traffic_diesel_nc_index,traffic_gas_nc_index
     integer publicpower_point_nc_index,publicpower_area_nc_index
     parameter (publicpower_nc_index=7,fugitive_nc_index=8,solvents_nc_index=9,aviation_nc_index=10,offroad_nc_index=11,waste_nc_index=12,livestock_nc_index=13,other_nc_index=14)
-    parameter (traffic_gasoline_nc_index=15,traffic_diesel_nc_index=16,traffic_gas_nc_index=17,traffic_exhaust_nc_index=18,traffic_nonexhaust_nc_index=19)
+    parameter (traffic_exhaust_nc_index=15,traffic_nonexhaust_nc_index=16,traffic_gasoline_nc_index=17,traffic_diesel_nc_index=18,traffic_gas_nc_index=19)
     parameter (publicpower_point_nc_index=20,publicpower_area_nc_index=21)
     parameter (n_source_nc_index=21)
     
@@ -396,8 +396,10 @@
     !parameter (n_source_index=6)
     !All the other GNFR emissions
     integer publicpower_index,fugitive_index,solvents_index,aviation_index,offroad_index,waste_index,livestock_index,other_index
+    integer traffic_exhaust_index,traffic_nonexhaust_index
     parameter (publicpower_index=7,fugitive_index=8,solvents_index=9,aviation_index=10,offroad_index=11,waste_index=12,livestock_index=13,other_index=14)
-    parameter (n_source_index=14)
+    parameter (traffic_exhaust_index=15,traffic_nonexhaust_index=16) !Not used
+    parameter (n_source_index=16)
     integer compound_source_index(n_compound_index,n_source_index)
     
     character(256) source_file_postfix(n_source_nc_index)

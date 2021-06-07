@@ -729,6 +729,7 @@
         comp_name_nc(nox_nc_index)=read_name_char('comp_name_nc(nox_nc_index)',comp_name_nc(nox_nc_index),unit_in,unit_logfile)
         comp_name_nc(nh3_nc_index)=read_name_char('comp_name_nc(nh3_nc_index)',comp_name_nc(nh3_nc_index),unit_in,unit_logfile)
         comp_name_nc(nh4_nc_index)=read_name_char('comp_name_nc(nh4_nc_index)',comp_name_nc(nh4_nc_index),unit_in,unit_logfile)
+        comp_name_nc(pmex_nc_index)=read_name_char('comp_name_nc(pmex_nc_index)',comp_name_nc(pmex_nc_index),unit_in,unit_logfile)
         
         read_RWC_file_with_extra_HDD=read_name_logical('read_RWC_file_with_extra_HDD',read_RWC_file_with_extra_HDD,unit_in,unit_logfile)
         read_RWC_file_with_extra_HDD_and_height=read_name_logical('read_RWC_file_with_extra_HDD_and_height',read_RWC_file_with_extra_HDD_and_height,unit_in,unit_logfile)

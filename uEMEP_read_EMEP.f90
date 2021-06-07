@@ -1118,47 +1118,59 @@
         enddo
  
 
-        !Check output
-        do i_source=1,n_source_index
-            if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
-            do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
-                p_loop=pollutant_loop_back_index(pm10_nc_index)
-                write(unit_logfile,'(3A,f16.4)') ' Average local fraction of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)),' '//trim(source_file_str(i_source)), &
-                sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,i_source,p_loop)/(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,1)+pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,i_source,2)))/(size(lc_var3d_nc,3)*size(lc_var3d_nc,4)*size(lc_var3d_nc,5))
-            enddo
-            endif
-        enddo
-
     !Take account of the fact that the GNFR emissions can be version 13 or 19
-    !In which case traffic is split into 4 and power is split into two
+    !In which case traffic is split into 4 and power is split into 2
     !This is valid only for the local fraction sources
     if (use_GNFR19_emissions_from_EMEP_flag) then
-        write(unit_logfile,'(3A,f16.4)') ' Aggregating GNFR19 to GNFR13 or 14'
+        write(unit_logfile,'(3A,f16.4)') ' Aggregating GNFR19 to GNFR13 or GNFR14'
         do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
-        !Put all source into into traffic
+        !No allocation of exhaust emissions to PM10 because only course is read
+        lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gasoline_nc_index,pollutant_loop_back_index(pm10_nc_index))=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gasoline_nc_index,pollutant_loop_back_index(pm25_nc_index))
+        lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_diesel_nc_index,pollutant_loop_back_index(pm10_nc_index))=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_diesel_nc_index,pollutant_loop_back_index(pm25_nc_index))
+        lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gas_nc_index,pollutant_loop_back_index(pm10_nc_index))=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gas_nc_index,pollutant_loop_back_index(pm25_nc_index))
+        !Put all source into traffic
         lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_nc_index,:)=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_nc_index,:) &
                                                                     +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gasoline_nc_index,:) &
                                                                     +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_diesel_nc_index,:) &
                                                                     +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gas_nc_index,:) &
-                                                                    +lc_var3d_nc(:,:,:,:,:,lc_frac_nc_index,traffic_nonexhaust_nc_index,:)
+                                                                    +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_nonexhaust_nc_index,:)
         !Put the three exhaust into traffic. If exhaust not included then it will be 0
-        lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_nc_index,pollutant_loop_back_index(pmex_nc_index))=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gasoline_nc_index,pollutant_loop_back_index(pm25_nc_index)) &
-                                                                    +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_diesel_nc_index,pollutant_loop_back_index(pm25_nc_index)) &
-                                                                    +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gas_nc_index,pollutant_loop_back_index(pm25_nc_index))
+        !lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_exhaust_nc_index,pollutant_loop_back_index(pm25_nc_index))=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gasoline_nc_index,pollutant_loop_back_index(pm25_nc_index)) &
+        !                                                            +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_diesel_nc_index,pollutant_loop_back_index(pm25_nc_index)) &
+        !                                                            +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gas_nc_index,pollutant_loop_back_index(pm25_nc_index))
+        !lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_exhaust_nc_index,pollutant_loop_back_index(pm10_nc_index))=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_exhaust_nc_index,pollutant_loop_back_index(pm25_nc_index))
+        lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_exhaust_nc_index,:)=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gasoline_nc_index,:) &
+                                                                    +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_diesel_nc_index,:) &
+                                                                    +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_gas_nc_index,:)
+        !Special case for PM10 because traffic exhaust is not read for PM10
+        !lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_exhaust_nc_index,pollutant_loop_back_index(pm10_nc_index))=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_exhaust_nc_index,pollutant_loop_back_index(pm25_nc_index))
         !Aggregate the two public powers
         lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_nc_index,:)=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_nc_index,:) &
                                                                     +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_point_nc_index,:) &
                                                                     +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_area_nc_index,:)
         enddo
         do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
-        write(unit_logfile,'(A,i,a,f16.4)') 'Mean exhaust EMEP contribution centre lc grid: ',lc_local_nc_index,' ' &
-            ,sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,traffic_nc_index,pollutant_loop_back_index(pmex_nc_index)))/(size(lc_var3d_nc,3)*size(lc_var3d_nc,4)*size(lc_var3d_nc,5))
+        write(unit_logfile,'(A,i,a,f16.4)') 'Mean exhaust PM2.5 EMEP contribution centre lc grid: ',lc_local_nc_index,' ' &
+            ,sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,traffic_exhaust_nc_index,pollutant_loop_back_index(pm25_nc_index)))/(size(lc_var3d_nc,3)*size(lc_var3d_nc,4)*size(lc_var3d_nc,5))
+        write(unit_logfile,'(A,i,a,f16.4)') 'Mean nonexhaust PM2.5 EMEP contribution centre lc grid: ',lc_local_nc_index,' ' &
+            ,sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,traffic_nonexhaust_nc_index,pollutant_loop_back_index(pm25_nc_index)))/(size(lc_var3d_nc,3)*size(lc_var3d_nc,4)*size(lc_var3d_nc,5))
         enddo
     !else
     !    do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
     !    lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_nc_index,pollutant_loop_back_index(pmex_nc_index))=0
     !    enddo
     endif
+
+        !Check output
+        do i_source=1,n_source_index
+            if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
+            do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
+                p_loop=pollutant_loop_back_index(pm10_nc_index)
+                write(unit_logfile,'(3A,f16.4)') ' Average local contribution of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)),' '//trim(source_file_str(i_source)), &
+                sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,i_source,p_loop))/(size(lc_var3d_nc,3)*size(lc_var3d_nc,4)*size(lc_var3d_nc,5))
+            enddo
+            endif
+        enddo
 
         if (allocated(pm_lc_var4d_nc)) deallocate(pm_lc_var4d_nc)
         if (allocated(pm_var4d_nc)) deallocate(pm_var4d_nc)

@@ -475,6 +475,9 @@
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
         if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
+        if (i_source.eq.traffic_nonexhaust_index) then
+            !Do not save nonexhaust for exhaust gas emissions
+        else
         
             if (i_source.eq.allsource_index) then
             !if (i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
@@ -521,6 +524,7 @@
                     ,z_rec(allsource_index,1) &
                     ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
             endif
+        endif
         endif
 
         !Save the additional EMEP nonlocal source contributions here
@@ -576,6 +580,9 @@
         if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
         !Only save the nonlocal part as 100%
         !if (i_source.eq.allsource_index) then
+        if (i_source.eq.traffic_nonexhaust_nc_index) then
+            !Do not save nonexhaust for exhaust gas emissions
+        else
         
             if (i_source.eq.allsource_index) then
                 i_file=emep_subgrid_nonlocal_file_index(i_source)
@@ -654,6 +661,7 @@
             endif
             endif
             
+        endif
         endif
         enddo
     
@@ -797,7 +805,14 @@
             endif
 
             !When pollutant is pmex then only save traffic
-            if (pollutant_loop_index(i_pollutant).ne.pmex_nc_index.or.(pollutant_loop_index(i_pollutant).eq.pmex_nc_index.and.i_source.eq.traffic_nc_index)) then
+            !if (pollutant_loop_index(i_pollutant).ne.pmex_nc_index.or.(pollutant_loop_index(i_pollutant).eq.pmex_nc_index.and.i_source.eq.traffic_nc_index)) then
+            !Do not save for the additional GNFR sources
+            if (i_source.ne.traffic_gasoline_nc_index.and.i_source.ne.traffic_diesel_nc_index.and.i_source.ne.traffic_gas_nc_index.and.i_source.ne.publicpower_point_nc_index.and.i_source.ne.publicpower_area_nc_index) then
+            !Do not save nonexhaust for no2 and nox
+            if (i_source.eq.traffic_nonexhaust_nc_index.and.(pollutant_loop_index(i_pollutant).eq.no2_index.or.pollutant_loop_index(i_pollutant).eq.nox_index.or.pollutant_loop_index(i_pollutant).eq.o3_index)) then
+                !Do not save nonexhaust for exhaust gas emissions
+            else
+                
                 if (save_netcdf_fraction_as_contribution_flag) then
                     variable_type='float'
                     unit_str="ug/m3"
@@ -808,6 +823,8 @@
 
                 i_file=emep_subgrid_local_file_index(i_source)
                 var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
+                !if (i_source.eq.traffic_exhaust_nc_index) var_name_temp=var_name_temp//'_exhaust'
+                !if (i_source.eq.traffic_nonexhaust_nc_index) var_name_temp=var_name_temp//'_nonexhaust'
                 if (save_netcdf_fraction_as_contribution_flag) then
                     temp_subgrid=subgrid(:,:,:,emep_local_subgrid_index,i_source,i_pollutant)
                 else
@@ -858,6 +875,7 @@
                 endif
                 
                 endif
+            endif
             endif
             
         endif
@@ -1979,6 +1997,24 @@
         else
             call check(  nf90_put_att(ncid, nf90_global, "limit_emep_grid_interpolation_region_to_calculation_region", "false" ) )        
         endif
+        call check(  nf90_put_att(ncid, nf90_global, "n_local_fraction_grids", n_local_fraction_grids ) )        
+        do i=1,n_local_fraction_grids
+            write (temp_str,'(i0)') i
+            temp_str2="local_fraction_grid_size("//trim(temp_str)//")"
+            call check(  nf90_put_att(ncid, nf90_global, trim(temp_str2), local_fraction_grid_size(i)) )        
+        enddo
+        call check(  nf90_put_att(ncid, nf90_global, "local_fraction_grid_for_EMEP_grid_interpolation", local_fraction_grid_for_EMEP_grid_interpolation ) )        
+        call check(  nf90_put_att(ncid, nf90_global, "local_fraction_grid_for_EMEP_additional_grid_interpolation", local_fraction_grid_for_EMEP_additional_grid_interpolation ) )        
+        if (.not.use_GNFR_emissions_from_EMEP_flag) then
+            call check(  nf90_put_att(ncid, nf90_global, "use_GNFR_emissions_from_EMEP_flag", "false" ) )        
+        endif
+        if (use_GNFR_emissions_from_EMEP_flag.and..not.use_GNFR19_emissions_from_EMEP_flag) then
+            call check(  nf90_put_att(ncid, nf90_global, "use_GNFR13_emissions_from_EMEP_flag", "true" ) )        
+        endif
+        if (use_GNFR19_emissions_from_EMEP_flag) then
+            call check(  nf90_put_att(ncid, nf90_global, "use_GNFR19_emissions_from_EMEP_flag", "true" ) )        
+        endif
+
         
         !Write out sources
         i=0
@@ -1990,17 +2026,17 @@
             call check(  nf90_put_att(ncid, nf90_global, trim(temp_str2), trim(source_file_str(i_source)) ) )
         endif
         enddo
-        call check(  nf90_put_att(ncid, nf90_global, "n_uEMEP_sources", i ))        
+        call check(  nf90_put_att(ncid, nf90_global, "n_uEMEP_sources", i ))
         i=0
         do i_source=1,n_source_index
         if (calculate_EMEP_source(i_source)) then
             i=i+1
             write (temp_str,'(i0)') i
-            temp_str2="EMEP_source("//trim(temp_str)//")"
+            temp_str2="Extra EMEP_source("//trim(temp_str)//")"
             call check(  nf90_put_att(ncid, nf90_global, trim(temp_str2), trim(source_file_str(i_source)) ) )
         endif
         enddo
-        call check(  nf90_put_att(ncid, nf90_global, "n_EMEP_sources", i ))        
+        call check(  nf90_put_att(ncid, nf90_global, "Extra n_EMEP_sources", i ))        
    
         !Projection data
         if (projection_type.eq.UTM_projection_index) then
