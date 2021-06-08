@@ -392,19 +392,20 @@
     !Declare source indexes (type_source) must be the same as source_nc_index
     integer allsource_index,traffic_index,shipping_index,heating_index,agriculture_index,industry_index
     parameter (allsource_index=1,traffic_index=2,shipping_index=3,heating_index=4,agriculture_index=5,industry_index=6)
-    integer n_source_index
+    integer n_source_index,n_source_calculate_index
     !parameter (n_source_index=6)
     !All the other GNFR emissions
     integer publicpower_index,fugitive_index,solvents_index,aviation_index,offroad_index,waste_index,livestock_index,other_index
     integer traffic_exhaust_index,traffic_nonexhaust_index
     parameter (publicpower_index=7,fugitive_index=8,solvents_index=9,aviation_index=10,offroad_index=11,waste_index=12,livestock_index=13,other_index=14)
     parameter (traffic_exhaust_index=15,traffic_nonexhaust_index=16) !Not used
-    parameter (n_source_index=16)
+    parameter (n_source_index=16,n_source_calculate_index=14)
     integer compound_source_index(n_compound_index,n_source_index)
     
     character(256) source_file_postfix(n_source_nc_index)
     logical :: calculate_source(n_source_nc_index)=.false.
     logical :: calculate_EMEP_source(n_source_nc_index)=.false.
+    logical :: save_EMEP_source(n_source_nc_index)=.false.
     logical :: make_EMEP_grid_emission_data(n_source_nc_index)=.false.
     logical :: replace_EMEP_local_with_subgrid_local(n_source_nc_index)=.false.
     !logical combine_emission_subsources_during_dispersion(n_source_index)
@@ -616,7 +617,7 @@
     integer use_subgrid_file_index(n_source_index)
     integer emep_emission_subgrid_file_index(n_source_index)
     
-    character(256) source_file_str(n_source_index)
+    character(256) :: source_file_str(n_source_nc_index)=''
     real :: unit_conversion(n_source_index)=1.
     
     real :: emission_factor_conversion(n_compound_nc_index,n_source_index,n_possible_subsource)=0.

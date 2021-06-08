@@ -768,15 +768,20 @@
         uEMEP_to_EMEP_emis_sector_str(traffic_exhaust_nc_index)='F1-3' !Not read
     endif  
 
+    save_EMEP_source=calculate_EMEP_source
+    
     !Automatically set these extra files to be read
+    !Of these only the traffic exhaust and nonexhaust will be saved
     if (use_GNFR19_emissions_from_EMEP_flag) then
         calculate_EMEP_source(traffic_gasoline_nc_index)=.true.
         calculate_EMEP_source(traffic_diesel_nc_index)=.true.
         calculate_EMEP_source(traffic_gas_nc_index)=.true.
-        calculate_EMEP_source(traffic_exhaust_nc_index)=.true.
-        calculate_EMEP_source(traffic_nonexhaust_nc_index)=.true.
         calculate_EMEP_source(publicpower_point_nc_index)=.true.
         calculate_EMEP_source(publicpower_area_nc_index)=.true.
+        calculate_EMEP_source(traffic_exhaust_nc_index)=.true.
+        calculate_EMEP_source(traffic_nonexhaust_nc_index)=.true.
+        save_EMEP_source(traffic_exhaust_nc_index)=.true.
+        save_EMEP_source(traffic_nonexhaust_nc_index)=.true.
     endif
     
     !integer GNFR_index(n_source_nc_index)

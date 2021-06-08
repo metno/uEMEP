@@ -120,9 +120,8 @@
         allocate (RWC_grid_HDD(n_RWC_grids,4))
         allocate (RWC_grid_id(n_RWC_grids))
         allocate (RWC_grid_height(n_RWC_grids,2))
-        allocate (RWC_region_id(n_RWC_grids))    
-        allocate (count_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
-
+        allocate (RWC_region_id(n_RWC_grids))
+        
         !Read header      SSBID    PM25_2016    PM10_2016       HDD_11       HDD_15
         read(unit_in,*) header_str
        ! write(unit_logfile,'(6A24)') 'Headers: ',trim(header_str(1)),trim(header_str(2)),trim(header_str(3)),trim(header_str(4)),trim(header_str(5))
@@ -228,6 +227,10 @@
 
     
     !Put the data into the subgrid for all g_loop calls
+    if (allocated(count_subgrid)) deallocate(count_subgrid)
+    allocate (count_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
+    count_subgrid=0
+    
     count_grid=0
     sum_RWC_grid_emission=0
     sum_RWC_grid_height=0
@@ -302,9 +305,9 @@
                 sum_RWC_grid_height(3)=sum_RWC_grid_height(3)+emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_sigz00_index,source_index)
             endif
             
+            !write(*,*) count,i_ssb_index,j_ssb_index,emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index)
             count_subgrid(i_ssb_index,j_ssb_index)=count_subgrid(i_ssb_index,j_ssb_index)+1
             count_grid=count_grid+1
-            !write(*,*) count,proxy_emission_subgrid(i_ssb_index,j_ssb_index,source_index,subsource_index)
         endif
                     
              
