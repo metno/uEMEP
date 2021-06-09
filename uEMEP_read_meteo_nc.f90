@@ -55,6 +55,8 @@
     double precision date_to_number
     character(256) replace_string_char
     
+    real EMEP_grid_interpolation_size_temp
+    
     !Temporary reading rvariables
     double precision, allocatable :: var1d_nc_dp(:)
     double precision, allocatable :: var2d_nc_dp(:,:)
@@ -286,6 +288,7 @@
         !Calculate the necessary extent of the meteo_nc grid region and only read these grids
         if (reduce_EMEP_region_flag) then
             !Determine the LL cordinates of the target grid
+            EMEP_grid_interpolation_size_temp=max(EMEP_grid_interpolation_size*local_fraction_grid_size_scaling,EMEP_additional_grid_interpolation_size_original)
 
             !Retrieve the four corners of the target grid in lat and lon
             call PROJ2LL(init_subgrid_min(x_dim_index),init_subgrid_min(y_dim_index),temp_lon(1),temp_lat(1),projection_attributes,projection_type)
@@ -387,10 +390,10 @@
                 j_temp_max=1+floor((temp_y_max-temp_var1d_nc_dp(2,1))/temp_delta(2)+0.5)
                 !write(unit_logfile,'(A,2I)') ' Reading EMEP i grids: ',i_temp_min,i_temp_max
                 !write(unit_logfile,'(A,2I)') ' Reading EMEP j grids: ',j_temp_min,j_temp_max
-                i_temp_min=max(1,i_temp_min-1-ceiling(scale_grid_interpolation_size(1)*EMEP_grid_interpolation_size))
-                i_temp_max=min(dim_length_meteo_nc(x_dim_nc_index),i_temp_max+1+ceiling(scale_grid_interpolation_size(1)*EMEP_grid_interpolation_size))
-                j_temp_min=max(1,j_temp_min-1-ceiling(scale_grid_interpolation_size(2)*EMEP_grid_interpolation_size))
-                j_temp_max=min(dim_length_meteo_nc(y_dim_nc_index),j_temp_max+1+ceiling(scale_grid_interpolation_size(2)*EMEP_grid_interpolation_size))
+                i_temp_min=max(1,i_temp_min-1-ceiling(scale_grid_interpolation_size(1)*EMEP_grid_interpolation_size_temp))
+                i_temp_max=min(dim_length_meteo_nc(x_dim_nc_index),i_temp_max+1+ceiling(scale_grid_interpolation_size(1)*EMEP_grid_interpolation_size_temp))
+                j_temp_min=max(1,j_temp_min-1-ceiling(scale_grid_interpolation_size(2)*EMEP_grid_interpolation_size_temp))
+                j_temp_max=min(dim_length_meteo_nc(y_dim_nc_index),j_temp_max+1+ceiling(scale_grid_interpolation_size(2)*EMEP_grid_interpolation_size_temp))
                 dim_length_meteo_nc(x_dim_nc_index)=i_temp_max-i_temp_min+1
                 dim_length_meteo_nc(y_dim_nc_index)=j_temp_max-j_temp_min+1
                 dim_start_meteo_nc(x_dim_nc_index)=i_temp_min

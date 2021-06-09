@@ -975,7 +975,7 @@
     integer lc_frac_nc_loop_index(max_n_local_fraction_grids),lc_local_nc_loop_index(max_n_local_fraction_grids)
     integer min_frac_nc_loop_index,max_frac_nc_loop_index
     integer min_lc_frac_nc_loop_index,max_lc_frac_nc_loop_index
-    integer convert_local_to_fraction_loop_index(max_n_local_fraction_grids*2)
+    !integer convert_local_to_fraction_loop_index(max_n_local_fraction_grids*2)
     integer convert_frac_to_lc_frac_loop_index(num_var_nc_name)
     
     integer :: local_fraction_grid_for_EMEP_grid_interpolation=1

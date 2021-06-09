@@ -240,9 +240,9 @@
         
         !Calculate the necessary extent of the EMEP grid region and only read these grids
         if (reduce_EMEP_region_flag) then
-            EMEP_grid_interpolation_size_temp=max(EMEP_grid_interpolation_size,EMEP_additional_grid_interpolation_size_original)
+            EMEP_grid_interpolation_size_temp=max(EMEP_grid_interpolation_size*local_fraction_grid_size_scaling,EMEP_additional_grid_interpolation_size_original)
             
-            write(unit_logfile,'(A,f12.2)') 'Reducing EMEP domain. EMEP grid extent = ',EMEP_grid_interpolation_size_temp
+            write(unit_logfile,'(A,f12.2)') 'Reducing EMEP domain. EMEP grid interpolation size is now = ',EMEP_grid_interpolation_size_temp
             
             !Determine the LL cordinates of the target grid
             !if (EMEP_projection_type.eq.LCC_projection_index) then
@@ -1102,8 +1102,11 @@
         do i=1,dim_length_nc(xdist_dim_nc_index)
         
         do p_loop=1,n_pollutant_loop
-            do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
-            lc_frac_nc_index=convert_local_to_fraction_loop_index(lc_local_nc_index)
+            !do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
+            do ii=1,n_local_fraction_grids
+                lc_local_nc_index=lc_local_nc_loop_index(ii)
+                lc_frac_nc_index=lc_frac_nc_loop_index(ii)
+            !lc_frac_nc_index=convert_local_to_fraction_loop_index(lc_local_nc_index)
             !write(*,*) lc_local_nc_index,lc_frac_nc_index
             if (pollutant_loop_index(p_loop).eq.pm10_nc_index) then
                 lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,1)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,1) &
@@ -1117,7 +1120,6 @@
                  
         enddo
         enddo
- 
 
     !Take account of the fact that the GNFR emissions can be version 13 or 19
     !In which case traffic is split into 4 and power is split into 2

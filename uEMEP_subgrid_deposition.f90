@@ -133,8 +133,8 @@
     allocate (angle_diff(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
         
     !Set the x and y position limits to coincide to half the EMEP grid (refered here as lon and lat but can be also LCC projection) times the number of grids
-    xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
-    ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size
+    xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
+    ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
 
     !Minimum distance for travel time calculation set to half of a grid diagonal weighted so the circle has the same area as the square with that diagonal
     distance_subgrid_min=sqrt(subgrid_delta(x_dim_index)*subgrid_delta(x_dim_index)+subgrid_delta(y_dim_index)*subgrid_delta(y_dim_index))/2./sqrt(2.)*4./3.14159

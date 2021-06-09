@@ -45,8 +45,8 @@
 
     write(unit_logfile,'(2A)')'Calculating the scaling factor and local contribution at each subgrid for ',trim(source_file_str(source_index))
 
-    xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
-    ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size
+    xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
+    ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
 
     !Set the start and end times of the loop
     t_start=1

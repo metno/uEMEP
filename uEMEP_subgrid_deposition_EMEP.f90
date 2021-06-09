@@ -92,11 +92,11 @@
             j_nc=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
 
             if (EMEP_projection_type.eq.LL_projection_index) then
-                delta_area(1)=xpos_limit*EMEP_grid_interpolation_size*110570.*cos(3.14159/180.*var1d_nc(j_nc,lat_nc_index))
-                delta_area(2)=ypos_limit*EMEP_grid_interpolation_size*110570.                
+                delta_area(1)=xpos_limit*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling*110570.*cos(3.14159/180.*var1d_nc(j_nc,lat_nc_index))
+                delta_area(2)=ypos_limit*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling*110570.                
             elseif (EMEP_projection_type.eq.LCC_projection_index.or.EMEP_projection_type.eq.PS_projection_index) then
-                delta_area(1)=xpos_limit*EMEP_grid_interpolation_size
-                delta_area(2)=ypos_limit*EMEP_grid_interpolation_size
+                delta_area(1)=xpos_limit*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
+                delta_area(2)=ypos_limit*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
             endif
             
             !write(*,*) delta_area

@@ -328,12 +328,13 @@
             if (EMEP_additional_grid_interpolation_size.gt.0) then
                 calculate_EMEP_additional_grid_flag=.true.
                 call uEMEP_subgrid_EMEP
-                calculate_EMEP_additional_grid_flag=.false.
+                calculate_EMEP_additional_grid_flag=.false. 
+                !stop
             endif
             
             !Put EMEP data into subgrids for all sources
             call uEMEP_subgrid_EMEP
-        
+
             if (calculate_deposition_flag) then
                 call uEMEP_subgrid_deposition_EMEP
             endif

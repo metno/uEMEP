@@ -124,8 +124,8 @@
         
 
     !Set the x and y position limits to coincide to half the EMEP grid (refered here as lon and lat but can be also LCC projection) times the number of grids
-    xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
-    ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size
+    xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
+    ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
     xpos_limit2=dgrid_nc(lon_nc_index)/2.
     ypos_limit2=dgrid_nc(lat_nc_index)/2.
 
@@ -1071,8 +1071,8 @@
     temp_FF_emission_subgrid=0.
     angle_diff=0.
 
-    xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size
-    ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size
+    xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
+    ypos_limit=dgrid_nc(lat_nc_index)/2.*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
 
     !Minimum distance for dispersion set to  half of an emission grid diagonal weighted so the circle has the same area as the square with that diagonal
     distance_emission_subgrid_min=sqrt(emission_subgrid_delta(x_dim_index,source_index)*emission_subgrid_delta(x_dim_index,source_index) &
