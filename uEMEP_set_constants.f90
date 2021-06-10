@@ -780,6 +780,8 @@
         calculate_EMEP_source(publicpower_area_nc_index)=.true.
         calculate_EMEP_source(traffic_exhaust_nc_index)=.true.
         calculate_EMEP_source(traffic_nonexhaust_nc_index)=.true.
+        calculate_EMEP_source(traffic_exhaust_nc_index)=.false.
+        calculate_EMEP_source(traffic_nonexhaust_nc_index)=.false.
         save_EMEP_source(traffic_exhaust_nc_index)=.true.
         save_EMEP_source(traffic_nonexhaust_nc_index)=.true.
     endif
@@ -994,7 +996,7 @@
             endif
 
             do i_source=1,n_source_nc_index
-            if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.i_source.eq.allsource_nc_index) then
+            if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source).or.i_source.eq.allsource_nc_index) then
                 var_name_nc(frac_nc_loop_index(j),i,i_source)=trim(var_name_nc(conc_nc_index,i,allsource_nc_index))//'_'//trim(prefix_str)//trim(uEMEP_to_EMEP_sector_str(i_source))//trim(postfix_str)//trim(local_fraction_grid_size_str)
                 if (i_source.eq.allsource_nc_index) then
                     var_name_nc(frac_nc_loop_index(j),i,allsource_nc_index)=trim(var_name_nc(conc_nc_index,i,allsource_nc_index))//trim(postfix_str)//trim(local_fraction_grid_size_str)

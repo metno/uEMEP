@@ -39,6 +39,7 @@
     real xpos_min,xpos_max,ypos_min,ypos_max
     real xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
     real xpos_min2,xpos_max2,ypos_min2,ypos_max2
+    real xpos_min3,xpos_max3,ypos_min3,ypos_max3
     real xpos_area_min2,xpos_area_max2,ypos_area_min2,ypos_area_max2
     integer i_nc,j_nc
     integer id,jd
@@ -72,7 +73,7 @@
     integer ii_nc_w0,jj_nc_w0,iii_nc_w,jjj_nc_w
     integer ii_nc_w,jj_nc_w
    
-    real weighting_val
+    real weighting_val,weighting_val3
     integer i_pollutant,i_loop
     integer i_sp,ii_sp
     real, allocatable :: EMEP_local_contribution(:,:,:,:)
@@ -84,6 +85,8 @@
     real weight_check
     
     real xpos_lf_area_min,xpos_lf_area_max,ypos_lf_area_min,ypos_lf_area_max
+    logical :: first_interpolate_lf=.false.
+    logical :: set_lf_offset_to_0=.true.
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -586,8 +589,13 @@
             endif
             !write(*,'(2i,4e12.2)') i,j,xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
             
-            !weighting_nc(:,:,tt_dim,:)=0.
-            !weighting_nc2(:,:,tt_dim,:)=0.
+            !Set the offset to the centre of the local fraction grid when using larger local fraction grids
+            amod_temp=amod(real(dim_start_nc(x_dim_nc_index)-1+i_nc),local_fraction_grid_size_scaling_temp)
+            if (amod_temp.eq.0) amod_temp=local_fraction_grid_size_scaling_temp
+            dgrid_lf_offset_x=0.5-(amod_temp-0.5)/local_fraction_grid_size_scaling_temp
+            amod_temp=amod(real(dim_start_nc(y_dim_nc_index)-1+j_nc),local_fraction_grid_size_scaling_temp)
+            if (amod_temp.eq.0) amod_temp=local_fraction_grid_size_scaling_temp
+            dgrid_lf_offset_y=0.5-(amod_temp-0.5)/local_fraction_grid_size_scaling_temp
             
             !First create an interpolated grid around the x,y position for the species and the compounds
             EMEP_local_contribution=0
@@ -608,7 +616,8 @@
                 xpos_max2=min(xpos_area_max2,var1d_nc(ii_nc,lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
                 ypos_min2=max(ypos_area_min2,var1d_nc(jj_nc,lat_nc_index)-dgrid_nc(lat_nc_index)/2.)
                 ypos_max2=min(ypos_area_max2,var1d_nc(jj_nc,lat_nc_index)+dgrid_nc(lat_nc_index)/2.)
-            
+
+
                 !Calculate area weighting
                 if (xpos_max2.gt.xpos_min2.and.ypos_max2.gt.ypos_min2) then
                     weighting_val=(ypos_max2-ypos_min2)*(xpos_max2-xpos_min2)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)
@@ -617,8 +626,6 @@
                 endif            
                     
                 subgrid(i,j,:,emep_subgrid_index,:,:)=subgrid(i,j,:,emep_subgrid_index,:,:)+var3d_nc(ii_nc,jj_nc,:,conc_nc_index,:,:)*weighting_val
-
-                EMEP_local_contribution(:,:,:,:)=EMEP_local_contribution(:,:,:,:)+lc_var3d_nc(:,:,ii_nc,jj_nc,tt,lc_local_nc_index,:,:)*weighting_val
 
                 do i_pollutant=1,n_emep_pollutant_loop
                 do i_loop=1,n_pollutant_compound_loop(i_pollutant)
@@ -637,6 +644,33 @@
                     enddo
                 endif
 
+                if (first_interpolate_lf) then
+                !Set the area surrounding the multi LF grid, centred on 0
+                xpos_lf_area_min=(ii-1/2.+dgrid_lf_offset_x)*dgrid_nc(lon_nc_index)*local_fraction_grid_size_scaling_temp
+                xpos_lf_area_max=(ii+1/2.+dgrid_lf_offset_x)*dgrid_nc(lon_nc_index)*local_fraction_grid_size_scaling_temp
+                ypos_lf_area_min=(jj-1/2.+dgrid_lf_offset_y)*dgrid_nc(lat_nc_index)*local_fraction_grid_size_scaling_temp
+                ypos_lf_area_max=(jj+1/2.+dgrid_lf_offset_y)*dgrid_nc(lat_nc_index)*local_fraction_grid_size_scaling_temp
+                
+                xpos_min3=max(xpos_area_min,xpos_lf_area_min)
+                xpos_max3=min(xpos_area_max,xpos_lf_area_max)
+                ypos_min3=max(ypos_area_min,ypos_lf_area_min)
+                ypos_max3=min(ypos_area_max,ypos_lf_area_max)
+                
+                !Calculate area weighting LF grid
+                if (xpos_max3.gt.xpos_min3.and.ypos_max3.gt.ypos_min3) then
+                    weighting_val3=(ypos_max3-ypos_min3)*(xpos_max3-xpos_min3)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)/local_fraction_grid_size_scaling_temp/local_fraction_grid_size_scaling_temp
+                else
+                    weighting_val3=0.
+                endif            
+
+                else
+                    weighting_val3=weighting_val
+                endif
+                
+                !write(*,*) weighting_val3
+                
+                EMEP_local_contribution(:,:,:,:)=EMEP_local_contribution(:,:,:,:)+lc_var3d_nc(:,:,ii_nc,jj_nc,tt,lc_local_nc_index,:,:)*weighting_val3
+
                 endif
             enddo
             enddo
@@ -651,6 +685,15 @@
             dgrid_lf_offset_y=0.5-(amod_temp-0.5)/local_fraction_grid_size_scaling_temp
             !write(*,*) dim_start_nc(x_dim_nc_index)-1+i_nc,dim_start_nc(y_dim_nc_index)-1+j_nc,amod_temp,dgrid_lf_offset_x,dgrid_lf_offset_y
                 
+            if (first_interpolate_lf) then
+                dgrid_lf_offset_x=0
+                dgrid_lf_offset_y=0
+            endif
+            if (set_lf_offset_to_0) then
+                dgrid_lf_offset_x=0
+                dgrid_lf_offset_y=0
+            endif
+            
             !Still need to change the dispersion routines for distance calculated and the size of the domain read in by EMEP and the other emissions
             
             !Calculate the local contribution within the moving window area
@@ -986,7 +1029,7 @@
         count=0
         do i_source=1,n_source_index
         !do i_source=1,n_source_calculate_index
-        if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
+        if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source)) then
                 
             !Check values for local and totals for each source
             !write(*,*) trim(source_file_str(i_source))

@@ -473,8 +473,8 @@
 
         do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-        if (calculate_source(i_source).or.i_source.eq.allsource_index) then
-        !if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
+        !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
         if (i_source.eq.traffic_nonexhaust_index) then
             !Do not save nonexhaust for exhaust gas emissions
         else
@@ -576,7 +576,8 @@
         valid_min=-1000.
 
         do i_source=1,n_source_index
-        if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
+        if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
         !if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
         !Only save the nonlocal part as 100%
         !if (i_source.eq.allsource_index) then
@@ -2036,7 +2037,7 @@
             call check(  nf90_put_att(ncid, nf90_global, trim(temp_str2), trim(source_file_str(i_source)) ) )
         endif
         enddo
-        call check(  nf90_put_att(ncid, nf90_global, "Extra n_EMEP_sources", i ))        
+        call check(  nf90_put_att(ncid, nf90_global, "n_EMEP_sources", i ))        
    
         !Projection data
         if (projection_type.eq.UTM_projection_index) then

@@ -506,7 +506,7 @@
         !Loop through the sources
         do i_source=1,n_source_nc_index
         !write(*,*) i_source,trim(source_file_str(i_source)),uEMEP_to_EMEP_sector(i_source),calculate_source(i_source),calculate_EMEP_source(i_source)
-        if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.i_source.eq.allsource_index) then
+        if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source).or.i_source.eq.allsource_index) then
         !var_name_nc(num_var_nc,n_compound_nc_index,n_source_nc_index)
             
         !Loop through the variables
@@ -1128,8 +1128,8 @@
         write(unit_logfile,'(3A,f16.4)') ' Aggregating GNFR19 to GNFR13 or GNFR14'
         
         !Reset these flags so they are no longer calculated as EMEP contributions after being read
-        calculate_EMEP_source(traffic_exhaust_nc_index)=.false.
-        calculate_EMEP_source(traffic_nonexhaust_nc_index)=.false.
+        !calculate_EMEP_source(traffic_exhaust_nc_index)=.false.
+        !calculate_EMEP_source(traffic_nonexhaust_nc_index)=.false.
 
         do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
         !No allocation of exhaust emissions to PM10 because only course is read
@@ -1171,7 +1171,7 @@
 
         !Check output
         do i_source=1,n_source_index
-            if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
+            if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source)) then
             do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
                 p_loop=pollutant_loop_back_index(pm10_nc_index)
                 write(unit_logfile,'(3A,f16.4)') ' Average local contribution of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)),' '//trim(source_file_str(i_source)), &
