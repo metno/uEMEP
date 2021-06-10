@@ -1029,7 +1029,7 @@
         count=0
         do i_source=1,n_source_index
         !do i_source=1,n_source_calculate_index
-        if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source)) then
+        if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
                 
             !Check values for local and totals for each source
             !write(*,*) trim(source_file_str(i_source))
