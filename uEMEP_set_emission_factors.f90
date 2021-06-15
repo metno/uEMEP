@@ -130,7 +130,7 @@
     real :: ref_scaling2=1.
     real :: emission_scaling
     real :: temperature
-    real :: emission_scaling_average
+    real :: emission_scaling_average,temperature_average
     integer :: emission_scaling_average_count
     
     real :: weighting_loop_sum
@@ -163,6 +163,7 @@
     !This is so it will work for saving emissions for EMEP as well since the meteo and cross reference subgrids are not calculated
     emission_scaling_average=0.
     emission_scaling_average_count=0
+    temperature_average=0
     
     do t=t_start,t_end
     do j=1,emission_subgrid_dim(y_dim_index,traffic_index)
@@ -220,6 +221,7 @@
         endif
             
         emission_scaling_average=emission_scaling_average+emission_scaling
+        temperature_average=temperature_average+temperature
         emission_scaling_average_count=emission_scaling_average_count+1
         
         !subgrid(i,j,t,local_subgrid_index,traffic_index,pollutant_loop_back_index(nox_nc_index))=emission_scaling*subgrid(i,j,t,local_subgrid_index,traffic_index,pollutant_loop_back_index(nox_nc_index))
@@ -229,7 +231,9 @@
     enddo
     enddo
     
-    write(unit_logfile,'(a,f12.2)') 'Average emissions scaling factor for traffic NOx ',emission_scaling_average/emission_scaling_average_count
+
+    write(unit_logfile,'(a,2f12.2)') 'Average emissions scaling factor and temperature for traffic NOx: ',emission_scaling_average/emission_scaling_average_count,temperature_average/emission_scaling_average_count
+    write(unit_logfile,'(a,4f12.2)') 'Parameters ref_temperature1,ref_temperature2,ref_scaling1,ref_scaling2: ',ref_temperature1,ref_temperature2,ref_scaling1,ref_scaling2
 
     
     end subroutine uEMEP_nox_emission_temperature

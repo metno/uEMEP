@@ -764,6 +764,8 @@
         local_fraction_grid_for_EMEP_additional_grid_interpolation=read_name_integer('local_fraction_grid_for_EMEP_additional_grid_interpolation',local_fraction_grid_for_EMEP_additional_grid_interpolation,unit_in,unit_logfile)
 
         save_traffic_emissions_for_EMEP_as_exhaust_nonexhaust_flag=read_name_logical('save_traffic_emissions_for_EMEP_as_exhaust_nonexhaust_flag',save_traffic_emissions_for_EMEP_as_exhaust_nonexhaust_flag,unit_in,unit_logfile)
+        
+        n_var_av=read_name_integer('n_var_av',n_var_av,unit_in,unit_logfile)
 
         
     close (unit_in)
