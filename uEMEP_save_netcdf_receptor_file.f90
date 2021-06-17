@@ -48,6 +48,10 @@
     integer nt
     integer(8) time_seconds_output_nc(nt_in)
     integer tr_0
+    integer i_source
+    character(2) temp_str
+    integer i
+    character(256) temp_str2
 
     !Do not save if no receptor position data is available
     if (nr.eq.0) then
@@ -134,7 +138,7 @@
         !Specify global attributes
         call check(  nf90_put_att(ncid, nf90_global, "Conventions", "CF-1.6" ) )
         call check(  nf90_put_att(ncid, nf90_global, "title", trim(title_str)) )
-        call check(  nf90_put_att(ncid, nf90_global, "Model", "uEMEP" ) )        
+        call check(  nf90_put_att(ncid, nf90_global, "Model", trim(model_version_str) ) )        
         call check(  nf90_put_att(ncid, nf90_global, "featureType", "timeSeries" ) )        
 
         !Save some model flags for later reference
@@ -150,6 +154,45 @@
         else
             call check(  nf90_put_att(ncid, nf90_global, "limit_emep_grid_interpolation_region_to_calculation_region", "false" ) )        
         endif
+        call check(  nf90_put_att(ncid, nf90_global, "n_local_fraction_grids", n_local_fraction_grids ) )        
+        do i=1,n_local_fraction_grids
+            write (temp_str,'(i0)') i
+            temp_str2="local_fraction_grid_size("//trim(temp_str)//")"
+            call check(  nf90_put_att(ncid, nf90_global, trim(temp_str2), local_fraction_grid_size(i)) )        
+        enddo
+        call check(  nf90_put_att(ncid, nf90_global, "local_fraction_grid_for_EMEP_grid_interpolation", local_fraction_grid_for_EMEP_grid_interpolation ) )        
+        call check(  nf90_put_att(ncid, nf90_global, "local_fraction_grid_for_EMEP_additional_grid_interpolation", local_fraction_grid_for_EMEP_additional_grid_interpolation ) )        
+        if (.not.use_GNFR_emissions_from_EMEP_flag) then
+            call check(  nf90_put_att(ncid, nf90_global, "use_GNFR_emissions_from_EMEP_flag", "false" ) )        
+        endif
+        if (use_GNFR_emissions_from_EMEP_flag.and..not.use_GNFR19_emissions_from_EMEP_flag) then
+            call check(  nf90_put_att(ncid, nf90_global, "use_GNFR13_emissions_from_EMEP_flag", "true" ) )        
+        endif
+        if (use_GNFR19_emissions_from_EMEP_flag) then
+            call check(  nf90_put_att(ncid, nf90_global, "use_GNFR19_emissions_from_EMEP_flag", "true" ) )        
+        endif
+
+        !Write out sources
+        i=0
+        do i_source=1,n_source_index
+        if (calculate_source(i_source)) then
+            i=i+1
+            write (temp_str,'(i0)') i
+            temp_str2="uEMEP_source("//trim(temp_str)//")"
+            call check(  nf90_put_att(ncid, nf90_global, trim(temp_str2), trim(source_file_str(i_source)) ) )
+        endif
+        enddo
+        call check(  nf90_put_att(ncid, nf90_global, "n_uEMEP_sources", i ))
+        i=0
+        do i_source=1,n_source_index
+        if (calculate_EMEP_source(i_source)) then
+            i=i+1
+            write (temp_str,'(i0)') i
+            temp_str2="EMEP_source("//trim(temp_str)//")"
+            call check(  nf90_put_att(ncid, nf90_global, trim(temp_str2), trim(source_file_str(i_source)) ) )
+        endif
+        enddo
+        call check(  nf90_put_att(ncid, nf90_global, "n_EMEP_sources", i ))        
 
         !Projection data
         if (projection_type.eq.UTM_projection_index) then

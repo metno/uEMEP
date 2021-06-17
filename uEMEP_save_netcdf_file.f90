@@ -1981,9 +1981,10 @@
         call check(  nf90_create(filename_netcdf, IOR(NF90_HDF5, NF90_CLASSIC_MODEL), ncid) ) !New
 
         !Specify global attributes
-        call check(  nf90_put_att(ncid, nf90_global, "Conventions", "CF-1.4" ) )
+        call check(  nf90_put_att(ncid, nf90_global, "Conventions", "CF-1.6" ) )
         call check(  nf90_put_att(ncid, nf90_global, "title", trim(title_str)) )
         call check(  nf90_put_att(ncid, nf90_global, "Model", trim(model_version_str) ) )        
+
         
         !Save some model flags for later reference
         call check(  nf90_put_att(ncid, nf90_global, "EMEP_grid_interpolation_flag", EMEP_grid_interpolation_flag ) )        
