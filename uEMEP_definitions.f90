@@ -39,6 +39,7 @@
     !integer i,j,k
     
     integer :: unit_logfile=0
+    integer :: unit_finishedfile=20
     integer :: n_roadlinks=0
     integer :: n_roadlinks_major=0
     integer :: n_roadlinks_major_selected=0
@@ -988,6 +989,12 @@
     real :: EMEP_additional_grid_interpolation_size_original=0.
 
     logical :: save_traffic_emissions_for_EMEP_as_exhaust_nonexhaust_flag=.false.
+    
+    character(256) :: finished_filename=''
+    character(256) :: finished_file=''
+    character(256) :: finished_file_rec=''
+    character(256) :: finished_subpath='finished/'
+    
     
     end module uEMEP_definitions
     

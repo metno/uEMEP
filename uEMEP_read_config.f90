@@ -767,6 +767,9 @@
         
         n_var_av=read_name_integer('n_var_av',n_var_av,unit_in,unit_logfile)
 
+        finished_filename=read_name_char('finished_filename',finished_filename,unit_in,unit_logfile)
+        finished_subpath=read_name_char('finished_subpath',finished_subpath,unit_in,unit_logfile)
+                
         
     close (unit_in)
     

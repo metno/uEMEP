@@ -103,7 +103,14 @@
     temp_name=trim(pathname_grid(i_file))//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'.nc'
     temp_name_rec=trim(pathname_grid(i_file))//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'.nc'
     endif
-       
+    
+    finished_file=trim(pathname_grid(i_file))//trim(finished_subpath)//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//trim(temp_date_str)//'.'//trim(finished_filename)
+    finished_file_rec=trim(pathname_grid(i_file))//trim(finished_subpath)//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//trim(temp_date_str)//'.'//trim(finished_filename)
+    if (save_netcdf_average_flag) then
+    finished_file=trim(pathname_grid(i_file))//trim(finished_subpath)//trim(station_name_str)//'uEMEP_'//trim(file_tag)//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'.'//trim(finished_filename)
+    finished_file_rec=trim(pathname_grid(i_file))//trim(finished_subpath)//'uEMEP_'//trim(file_tag)//'_station'//trim(temp_compound_str)//'_mean'//trim(temp_date_str)//'.'//trim(finished_filename)
+    endif
+    
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Saving netcdf data (uEMEP_save_netcdf_control)'
