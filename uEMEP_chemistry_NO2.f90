@@ -1085,3 +1085,36 @@
     !write(*,'(a,9f12.3)') 'BG(r,r_phot,p_phot,nox_emep,no2_emep,o3_emep,nox_bg,no2_out,o3_out): ',r/Na_fac,r_phot,p_phot,nox_emep,no2_emep,o3_emep,nox_bg,no2_out,o3_out
     
     end subroutine uEMEP_nonlocal_NO2_O3
+    
+    subroutine uEMEP_annual_mean_pdf_correction_NO2_O3(no2_in,o3_in,J_photo,temperature,no2_out,o3_out)
+    
+    implicit none
+
+    real, intent(in) :: J_photo,temperature
+    real, intent(in) :: no2_in,o3_in
+    real, intent(out) :: no2_out,o3_out
+
+    real :: mol_nox_bg
+    real :: mol_no2_out,mol_o3_out
+    real :: mol_nox_emep,mol_no2_emep,mol_o3_emep,mol_ox_emep,mol_no_emep
+    real :: b,d,r,c
+    real :: Na,Na_fac,k1
+    real :: p_phot,r_phot
+    integer no2_i,no_i,nox_i,o3_i,ox_i,n_i
+    parameter (n_i=5)
+    real mmass(n_i)
+    DATA mmass /46.,30.,46.,48.,47./
+
+    no2_i=1;no_i=2;nox_i=3;o3_i=4;ox_i=5
+
+    !Reference
+    !
+    Na=6.022e23        !(molecules/mol)
+    Na_fac=Na/1.0e12   !Conversion from ug/m3 to molecules/cm3 included
+
+    k1=1.4e-12*exp(-1310./temperature); !(cm^3/s) and temperature in Kelvin
+    
+    no2_out=no2_in
+    o3_out=o3_in
+    
+    end subroutine uEMEP_annual_mean_pdf_correction_NO2_O3

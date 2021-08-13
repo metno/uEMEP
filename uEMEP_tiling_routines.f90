@@ -1046,7 +1046,9 @@
     do i=1,population_subgrid_dim(x_dim_index)
         i_tile=crossreference_population_to_tile_subgrid(i,j,x_dim_index)
         j_tile=crossreference_population_to_tile_subgrid(i,j,y_dim_index)
+        if (i_tile.gt.0.and.j_tile.gt.0) then
         tile_subgrid(i_tile,j_tile,tile_population_index)=tile_subgrid(i_tile,j_tile,tile_population_index)+population_subgrid(i,j,population_data_type)
+        endif
     enddo
     enddo
 
@@ -1056,7 +1058,9 @@
     do i=1,emission_subgrid_dim(x_dim_index,i_source)
         i_tile=crossreference_emission_to_tile_subgrid(i,j,x_dim_index,i_source)
         j_tile=crossreference_emission_to_tile_subgrid(i,j,y_dim_index,i_source)
+        if (i_tile.gt.0.and.j_tile.gt.0) then
         tile_subgrid(i_tile,j_tile,traffic_index)=tile_subgrid(i_tile,j_tile,i_source)+(proxy_emission_subgrid(i,j,i_source,1))/1000. !ADT*km
+        endif
     enddo
     enddo
 
@@ -1066,7 +1070,9 @@
     do i=1,emission_subgrid_dim(x_dim_index,i_source)
         i_tile=crossreference_emission_to_tile_subgrid(i,j,x_dim_index,i_source)
         j_tile=crossreference_emission_to_tile_subgrid(i,j,y_dim_index,i_source)
+        if (i_tile.gt.0.and.j_tile.gt.0) then
         tile_subgrid(i_tile,j_tile,i_source)=tile_subgrid(i_tile,j_tile,i_source)+(proxy_emission_subgrid(i,j,i_source,1)) !emission for the time period
+        endif
     enddo
     enddo
 

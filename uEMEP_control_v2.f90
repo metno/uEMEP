@@ -395,12 +395,13 @@
 
     !Save finished file
     if (trim(finished_filename).ne.'') then
-	    write(*,'(2A)') 'Writing finished file for uEMEP output: ',trim(finished_file)
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+	        write(*,'(2A)') 'Writing finished file for uEMEP output: ',trim(finished_file_rec)
             open(unit_finishedfile,file=finished_file_rec,status='replace')
             close(unit_finishedfile)
         endif
         if (save_netcdf_file_flag) then
+	        write(*,'(2A)') 'Writing finished file for uEMEP output: ',trim(finished_file)
             open(unit_finishedfile,file=finished_file,status='replace')
             close(unit_finishedfile)
         endif

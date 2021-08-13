@@ -77,7 +77,7 @@
                 open(unit_logfile,file=trim(pathfilename_log_file),access='sequential',form='formatted',status='unknown')
                 if (unit_logfile.ne.0) then 
                 write(unit_logfile,*) '------------------------------------------------------------------------'
-                write(unit_logfile,*) 'Starting programm uEMEP_v2.5'
+                write(unit_logfile,*) 'Starting programm ',trim(model_version_str)
                 write(unit_logfile,*) '------------------------------------------------------------------------'
                 endif
             else
@@ -730,6 +730,9 @@
         comp_name_nc(nh3_nc_index)=read_name_char('comp_name_nc(nh3_nc_index)',comp_name_nc(nh3_nc_index),unit_in,unit_logfile)
         comp_name_nc(nh4_nc_index)=read_name_char('comp_name_nc(nh4_nc_index)',comp_name_nc(nh4_nc_index),unit_in,unit_logfile)
         comp_name_nc(pmex_nc_index)=read_name_char('comp_name_nc(pmex_nc_index)',comp_name_nc(pmex_nc_index),unit_in,unit_logfile)
+        comp_name_nc(co_nc_index)=read_name_char('comp_name_nc(co_nc_index)',comp_name_nc(co_nc_index),unit_in,unit_logfile)
+        comp_name_nc(bap_nc_index)=read_name_char('comp_name_nc(bap_nc_index)',comp_name_nc(bap_nc_index),unit_in,unit_logfile)
+        comp_name_nc(c6h6_nc_index)=read_name_char('comp_name_nc(c6h6_nc_index)',comp_name_nc(c6h6_nc_index),unit_in,unit_logfile)
         
         read_RWC_file_with_extra_HDD=read_name_logical('read_RWC_file_with_extra_HDD',read_RWC_file_with_extra_HDD,unit_in,unit_logfile)
         read_RWC_file_with_extra_HDD_and_height=read_name_logical('read_RWC_file_with_extra_HDD_and_height',read_RWC_file_with_extra_HDD_and_height,unit_in,unit_logfile)
@@ -770,6 +773,8 @@
         finished_filename=read_name_char('finished_filename',finished_filename,unit_in,unit_logfile)
         finished_subpath=read_name_char('finished_subpath',finished_subpath,unit_in,unit_logfile)
                 
+        use_annual_mean_pdf_chemistry_correction=read_name_logical('use_annual_mean_pdf_chemistry_correction',use_annual_mean_pdf_chemistry_correction,unit_in,unit_logfile)
+        
         
     close (unit_in)
     
