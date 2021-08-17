@@ -168,6 +168,11 @@
         dim_name_meteo_nc(z_dim_nc_index)='height3'
         dim_name_meteo_nc(time_dim_nc_index)='time'
 
+        !Landuse
+        dim_name_landuse_nc(x_dim_nc_index)='lon'
+        dim_name_landuse_nc(y_dim_nc_index)='lat'
+        var_name_landuse_nc='Band1'
+
         var_name_meteo_nc=''
         !Depends which file you read unfortunately. My files lat, MEPS latitude WHY?
         !Put these in the config file

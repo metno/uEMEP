@@ -192,6 +192,13 @@
     character(256) var_name_shipping_nc(num_var_shipping_nc)
     character(256) dim_name_shipping_nc(num_dims_shipping_nc)
 
+    integer num_var_landuse_nc,num_dims_landuse_nc
+    parameter (num_var_landuse_nc=1,num_dims_landuse_nc=2) !assumes landuse files in lat and lon
+    character(256) var_name_landuse_nc(num_var_landuse_nc)
+    character(256) dim_name_landuse_nc(num_dims_landuse_nc)
+    integer dim_length_landuse_nc(num_dims_landuse_nc)
+    integer dim_start_landuse_nc(num_dims_landuse_nc)
+    data dim_start_landuse_nc /1, 1/                 ! start at first value
 
     !dimension netcdf fields
     integer x_dim_nc_index,y_dim_nc_index,z_dim_nc_index,time_dim_nc_index,xdist_dim_nc_index,ydist_dim_nc_index
@@ -868,9 +875,9 @@
     real landuse_subgrid_min(2),landuse_subgrid_max(2)  !Only x and y
     !landuse_subgrid (i,j,n_landuse_index) Fraction of landuse type
     integer temp_conif_index,temp_decid_index,med_needle_index,med_broadleaf_index,temp_crop_index,med_crop_index,root_crop_index
-    integer moorland_index,grass_index,medscrub_index,wetlands_index,tundra_index,desert_index,water_index,ice_index,urban_index,grid_index,n_landuse_index
+    integer moorland_index,grass_index,medscrub_index,wetlands_index,tundra_index,desert_index,water_index,ice_index,urban_index,grid_index,clc_index,n_landuse_index
     parameter (temp_conif_index=1,temp_decid_index=2,med_needle_index=3,med_broadleaf_index=4,temp_crop_index=5,med_crop_index=6,root_crop_index=7)
-    parameter (moorland_index=8,grass_index=9,medscrub_index=10,wetlands_index=11,tundra_index=12,desert_index=13,water_index=13,ice_index=14,urban_index=15,grid_index=16,n_landuse_index=16)
+    parameter (moorland_index=8,grass_index=9,medscrub_index=10,wetlands_index=11,tundra_index=12,desert_index=13,water_index=13,ice_index=14,urban_index=15,grid_index=16,clc_index=17,n_landuse_index=17)
     real, allocatable :: landuse_subgrid(:,:,:)
     real, allocatable :: x_landuse_subgrid(:,:)
     real, allocatable :: y_landuse_subgrid(:,:)
@@ -1006,6 +1013,10 @@
     real :: nox_sigma_ratio_pdf=0.
     real :: max_bin_pdf=1000.
     real :: log10_step_bin_pdf=0.05
+    
+    !Landuse proxy
+    logical :: use_landuse_as_proxy=.false.
+    logical :: read_rivm_landuse_flag=.false.
     
     end module uEMEP_definitions
     

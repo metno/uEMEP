@@ -231,7 +231,7 @@
                     !Currently only data from RIVM here
                     call uEMEP_read_agriculture_rivm_data
                 endif
-                if (calculate_deposition_flag.and.read_landuse_flag) then
+                if (read_rivm_landuse_flag) then
                     call uEMEP_read_landuse_rivm_data
                 endif
 
@@ -247,6 +247,11 @@
                     endif
                 endif
 
+                if (use_landuse_as_proxy.or.read_landuse_flag) then
+                    call uEMEP_read_netcdf_landuse_latlon
+                    !stop
+                endif
+                
                 !Autogrid setting for selecting which subgrids to calculate
                 if (use_emission_positions_for_auto_subgrid_flag(allsource_index)) then
                     call uEMEP_grid_roads

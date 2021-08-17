@@ -780,7 +780,10 @@
         max_bin_pdf=read_name_real('max_bin_pdf',max_bin_pdf,unit_in,unit_logfile)
         log10_step_bin_pdf=read_name_real('log10_step_bin_pdf',log10_step_bin_pdf,unit_in,unit_logfile)
 
-        
+        use_landuse_as_proxy=read_name_logical('use_landuse_as_proxy',use_landuse_as_proxy,unit_in,unit_logfile)
+        read_rivm_landuse_flag=read_name_logical('read_rivm_landuse_flag',read_rivm_landuse_flag,unit_in,unit_logfile)
+        var_name_landuse_nc(num_var_landuse_nc)=read_name_char('var_name_landuse_nc',var_name_landuse_nc(num_var_landuse_nc),unit_in,unit_logfile)
+       
     close (unit_in)
     
     enddo !End configuration file number loop
