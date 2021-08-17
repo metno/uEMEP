@@ -868,7 +868,7 @@
     !Test existence of the road link filename (2). If does not exist then use default
     inquire(file=trim(pathfilename_boundingbox),exist=exists)
     if (.not.exists) then
-        write(unit_logfile,'(A,A)') ' ERROR: Bounding box file does not exist: ', trim(filename_boundingbox)
+        write(unit_logfile,'(A,A)') ' ERROR: Bounding box file does not exist: ', trim(pathfilename_boundingbox)
         stop
     endif
     

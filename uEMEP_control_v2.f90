@@ -23,7 +23,7 @@
     !real temp_val,area_weighted_interpolation_function
     !real x_temp,y_temp,lon_temp,lat_temp
     
-    model_version_str='uEMEP_v6.1'
+    model_version_str='uEMEP_v6.2'
     
     call CPU_TIME(start_time_cpu)
     
@@ -359,6 +359,12 @@
             
             !Calculate chemistry for NO2 and O3
             call uEMEP_chemistry
+            
+            !Correct annual mean chemistry for pdf
+            if (use_annual_mean_pdf_chemistry_correction) then
+                call correct_annual_mean_chemistry
+            endif
+            
 
             !Calculate exposure
             if (calculate_population_exposure_flag) then

@@ -132,7 +132,7 @@
 
         J_photo=meteo_subgrid(i_integral,j_integral,t,J_subgrid_index)
         temperature=meteo_subgrid(i_integral,j_integral,t,t2m_subgrid_index)
-       
+
         nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
         
         !Do not do this because the EMEP contributions are already added into the local contribution
@@ -1085,36 +1085,304 @@
     !write(*,'(a,9f12.3)') 'BG(r,r_phot,p_phot,nox_emep,no2_emep,o3_emep,nox_bg,no2_out,o3_out): ',r/Na_fac,r_phot,p_phot,nox_emep,no2_emep,o3_emep,nox_bg,no2_out,o3_out
     
     end subroutine uEMEP_nonlocal_NO2_O3
+
+    subroutine correct_annual_mean_chemistry
     
-    subroutine uEMEP_annual_mean_pdf_correction_NO2_O3(no2_in,o3_in,J_photo,temperature,no2_out,o3_out)
+    use uEMEP_definitions
+
+    implicit none
+
+    integer i,j,t
+    integer t_start,t_end
+    integer i_integral,j_integral
+    real o3_in,nox_in,no2_in,J_photo_in,temperature_in,lon_in,lat_in
+    real ox_sigma_ratio_in,nox_sigma_ratio_in
+    real o3_out,no2_out
+    real sum_no2_in,sum_no2_out,mean_no2_in,mean_no2_out
+    integer no2_count
+    logical run_all_flag
+
+    
+    write(unit_logfile,'(A)') ''
+    write(unit_logfile,'(A)') '================================================================'
+	write(unit_logfile,'(A)') 'Correcting annual mean NO2 and O3 (correct_annual_mean_chemistry)'
+	write(unit_logfile,'(A)') '================================================================'
+
+    t_start=1
+    t_end=subgrid_dim(t_dim_index)
+
+    sum_no2_in=0
+    sum_no2_out=0
+    no2_count=0
+    do t=t_start,t_end
+        
+        !Run the conversion routine once to get the Jd distribution which is saved. This is to save time as this is slow. Done in the centre of the grid
+        if (quick_annual_mean_pdf_chemistry_correction) then
+            run_all_flag=.false.
+            i=subgrid_dim(x_dim_index)/2
+            j=subgrid_dim(y_dim_index)/2
+            o3_in=comp_subgrid(i,j,t,o3_index)
+            no2_in=comp_subgrid(i,j,t,no2_index)
+            nox_in=comp_subgrid(i,j,t,nox_index)
+            i_integral=crossreference_target_to_integral_subgrid(i,j,x_dim_index)
+            j_integral=crossreference_target_to_integral_subgrid(i,j,y_dim_index)
+            J_photo_in=meteo_subgrid(i_integral,j_integral,t,J_subgrid_index)
+            temperature_in=meteo_subgrid(i_integral,j_integral,t,t2m_subgrid_index)
+            lon_in=lon_subgrid(i,j)
+            lat_in=lat_subgrid(i,j)        
+            ox_sigma_ratio_in=ox_sigma_ratio_pdf
+            nox_sigma_ratio_in=nox_sigma_ratio_pdf
+            call uEMEP_annual_mean_pdf_correction_NO2_O3(max_bin_pdf,log10_step_bin_pdf,.true.,no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out)
+        else
+            run_all_flag=.true.
+        endif
+        
+    do j=1,subgrid_dim(y_dim_index)
+    do i=1,subgrid_dim(x_dim_index)
+
+        o3_in=comp_subgrid(i,j,t,o3_index)
+        no2_in=comp_subgrid(i,j,t,no2_index)
+        nox_in=comp_subgrid(i,j,t,nox_index)
+
+        i_integral=crossreference_target_to_integral_subgrid(i,j,x_dim_index)
+        j_integral=crossreference_target_to_integral_subgrid(i,j,y_dim_index)
+        J_photo_in=meteo_subgrid(i_integral,j_integral,t,J_subgrid_index)
+        temperature_in=meteo_subgrid(i_integral,j_integral,t,t2m_subgrid_index)
+
+        lon_in=lon_subgrid(i,j)
+        lat_in=lat_subgrid(i,j)
+        
+        ox_sigma_ratio_in=ox_sigma_ratio_pdf
+        nox_sigma_ratio_in=nox_sigma_ratio_pdf
+        
+        if (o3_in.le.0.or.nox_in.le.0.or.no2_in.le.0) then
+            o3_out=o3_in
+            no2_out=no2_in
+        else
+            call uEMEP_annual_mean_pdf_correction_NO2_O3(max_bin_pdf,log10_step_bin_pdf,run_all_flag,no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out)
+        endif
+
+        comp_subgrid(i,j,t,o3_index)=o3_out
+        comp_subgrid(i,j,t,no2_index)=no2_out
+
+        !write(*,'(a)') 'no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out'
+        !write(*,'(11es12.2)') no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out
+        
+        sum_no2_in=sum_no2_in+no2_in
+        sum_no2_out=sum_no2_out+no2_out
+        no2_count=no2_count+1
+       if (isnan(no2_out)) then
+            write(unit_logfile,'(a,2i,4f12.4)') 'NaN in pdf output. Stopping ',i,j,no2_in,no2_out,o3_in,o3_out
+            stop
+        endif
+        
+        
+    enddo
+    enddo
+    enddo
+    
+    write(unit_logfile,'(a,f12.4)') 'Average NO2 scaling with pdf correction = ',sum_no2_out/sum_no2_in
+    
+    end subroutine correct_annual_mean_chemistry
+
+    subroutine uEMEP_annual_mean_pdf_correction_NO2_O3(bin_max,delta_log10_bin,run_all,no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out)
     
     implicit none
 
-    real, intent(in) :: J_photo,temperature
-    real, intent(in) :: no2_in,o3_in
+    real, intent(in) :: bin_max,delta_log10_bin
+    logical, intent(in) :: run_all
+    real, intent(in) :: J_photo_in,temperature_in
+    real, intent(in) :: no2_in,nox_in,o3_in
+    real, intent(in) :: ox_sigma_ratio_in,nox_sigma_ratio_in
+    real, intent(in) :: lon_in,lat_in
     real, intent(out) :: no2_out,o3_out
 
     real :: mol_nox_bg
     real :: mol_no2_out,mol_o3_out
     real :: mol_nox_emep,mol_no2_emep,mol_o3_emep,mol_ox_emep,mol_no_emep
-    real :: b,d,r,c
     real :: Na,Na_fac,k1
-    real :: p_phot,r_phot
     integer no2_i,no_i,nox_i,o3_i,ox_i,n_i
-    parameter (n_i=5)
+    parameter (no2_i=1,no_i=2,nox_i=3,o3_i=4,ox_i=5,n_i=5)
     real mmass(n_i)
     DATA mmass /46.,30.,46.,48.,47./
 
-    no2_i=1;no_i=2;nox_i=3;o3_i=4;ox_i=5
+    real bin_min,log10_bin_max,log10_bin_min
+    real, allocatable :: log10_bin(:),bin(:),delta_bin(:)
+    integer n_bin
+    real nox_sigma_ratio,ox_sigma_ratio
+    real ox_sigma,ox_sig_sqr,ox_mu,nox_sigma,nox_sig_sqr,nox_mu
+    real, allocatable :: y_nox(:),y_ox(:), y_Jd(:)
+    integer nbin_Jd,bin_temp
+    parameter (nbin_Jd=8760) !Hours in a year
+    real, save :: y_Jd_acc(nbin_Jd)
+    real mean_y_Jd_acc,y_Jd_acc_temp,y_Jd_acc_temp_log10
+    real y_all_val,y_all_prob,y_all_sum,y_all_prob_sum,y_all,y_annual,y_scale
+    real solar_net,azimuth_ang,zenith_ang
+    real mol_nox,mol_no2,mol_ox,mol_o3,Jd
+    double precision date_num
+    integer i,j,k,l
+    real :: pi=3.14159265
+    integer date_array(6)
+    real :: min_sigma_ratio=0.01
+    real bin_temp2
 
-    !Reference
-    !
     Na=6.022e23        !(molecules/mol)
     Na_fac=Na/1.0e12   !Conversion from ug/m3 to molecules/cm3 included
 
-    k1=1.4e-12*exp(-1310./temperature); !(cm^3/s) and temperature in Kelvin
-    
+    k1=1.4e-12*exp(-1310./temperature_in) !(cm^3/s) and temperature in Kelvin
+    mol_nox=nox_in*Na_fac/mmass(nox_i)
+    mol_no2=no2_in*Na_fac/mmass(no2_i)
+    mol_o3=o3_in*Na_fac/mmass(o3_i)
+    mol_ox=mol_no2+mol_o3
+    Jd=J_photo_in/k1
+
     no2_out=no2_in
     o3_out=o3_in
+    
+    !Create the bins for the pdf in (mol/cm3). ox, nox and J
+    !bin_max=1000. !In ug/m^3
+    !delta_log10_bin=0.05
+    !delta_log10_bin=0.01
+    bin_min=0.1
+    log10_bin_max=log10(bin_max)
+    log10_bin_min=log10(bin_min)
+    n_bin=(log10_bin_max-log10_bin_min)/delta_log10_bin+1
+    !Creates 80 bins with these settings
+    
+    allocate (log10_bin(n_bin))
+    allocate (bin(n_bin))
+    allocate (delta_bin(n_bin))
+    
+    do i=1,n_bin
+        log10_bin(i)=log10_bin_min+(i-1)*delta_log10_bin
+    enddo
+    do i=1,n_bin
+        bin(i)=(10.**log10_bin(i))*Na_fac/mmass(nox_i)
+        delta_bin(i)=(10.**(log10_bin(i)+delta_log10_bin/2.)-10.**(log10_bin(i)-delta_log10_bin/2.))*Na_fac/mmass(nox_i)
+    enddo
+    
+    !Distribute concentrations into the pdf bins
+    !Minimum needed to avoid NaNs in the calculation
+    nox_sigma_ratio=1.14
+    ox_sigma_ratio=0.21
+    if (nox_sigma_ratio_in.ne.0) nox_sigma_ratio=max(nox_sigma_ratio_in,min_sigma_ratio)
+    if (ox_sigma_ratio_in.ne.0) ox_sigma_ratio=max(ox_sigma_ratio_in,min_sigma_ratio)
+    
+    ox_sigma=mol_ox*ox_sigma_ratio
+    ox_sig_sqr=log(1+ox_sigma**2./mol_ox**2.)
+    ox_mu=log(mol_ox**2./sqrt(mol_ox**2.+ox_sigma**2.))
+    nox_sigma=mol_nox*nox_sigma_ratio
+    nox_sig_sqr=log(1+nox_sigma**2./mol_nox**2.)
+    nox_mu=log(mol_nox**2./sqrt(mol_nox**2.+nox_sigma**2.))
+
+    allocate (y_ox(n_bin))
+    allocate (y_nox(n_bin))
+    if (.not.allocated(y_Jd)) allocate (y_Jd(n_bin))
+    y_Jd=0
+    y_ox=0
+    y_nox=0
+    
+    do i=1,n_bin
+        y_ox(i)=1./bin(i)/sqrt(ox_sig_sqr)/sqrt(2.*pi)*exp(-((log(bin(i))-ox_mu)**2)/2./ox_sig_sqr)*delta_bin(i)
+        y_nox(i)=1./bin(i)/sqrt(nox_sig_sqr)/sqrt(2.*pi)*exp(-((log(bin(i))-nox_mu)**2)/2./nox_sig_sqr)*delta_bin(i)
+        !write(*,*) i,bin(i),delta_bin(i),y_ox(i),y_nox(i)
+    enddo
+    
+    !Create the Jd_acc distribution by looping through every hour in the year and extracting the zenith angle
+    !Only do this if requested for the first time
+    if (run_all) then
+        
+    y_Jd_acc=0
+    do i=1,nbin_Jd
+        date_num=1+i/24.
+        !call number_to_date(date_num,date_array,2000)
+        date_array=0
+        zenith_ang=0
+        call global_radiation_sub(lat_in,lon_in,date_array,date_num,0.,0.,0.,0.,solar_net,azimuth_ang,zenith_ang)    
+        if (zenith_ang.ge.90) then
+            y_Jd_acc(i)=0
+        else
+            y_Jd_acc(i)=((cosd(zenith_ang))**0.28)
+        endif
+        !write(*,*) i,zenith_ang,y_Jd_acc(i)
+    enddo
+    
+    endif
+    
+    mean_y_Jd_acc=sum(y_Jd_acc)/nbin_Jd
+    do i=1,nbin_Jd
+        y_Jd_acc_temp=Jd*y_Jd_acc(i)/mean_y_Jd_acc   
+        if (y_Jd_acc_temp/Na_fac*mmass(nox_i)<bin_min) then
+            bin_temp=1
+        else
+            y_Jd_acc_temp_log10=log10(y_Jd_acc_temp/Na_fac*mmass(nox_i))
+            bin_temp=floor((y_Jd_acc_temp_log10-log10_bin_min)/delta_log10_bin+0.5)+1
+            bin_temp=min(max(bin_temp,1),n_bin)
+        endif
+        !write(*,'(2i,4es12.2)') i,bin_temp,Jd,y_Jd_acc_temp,y_Jd_acc_temp_log10,log10_bin_min
+        y_Jd(bin_temp)= y_Jd(bin_temp)+1
+    enddo
+
+    
+    !Test
+    !y_Jd=0;y_Jd(1)=1
+    !y_ox=0
+    !y_nox=0
+   
+    !Normalise all distributions
+    y_Jd=y_Jd/sum(y_Jd)
+    y_ox=y_ox/sum(y_ox)
+    y_nox=y_nox/sum(y_nox)
+    
+    !do i=1,n_bin
+    !    write(*,'(i,5ES12.2)') i,bin(i),delta_bin(i),y_ox(i),y_nox(i),y_Jd(i)
+    !enddo
+
+    !allocate (y_all_val)
+    !Calculate scaling based on photostationary assumption
+    y_all_sum=0
+    y_all_prob_sum=0
+    
+    do j=1,n_bin
+    do k=1,n_bin
+    do l=1,n_bin
+        !y_all_val(j,k,l)=((bin(j)+bin(k)+bin(l)) - sqrt((bin(j)+bin(k)+bin(l))**2 - 4.*bin(j)*bin(l)))/2.
+        !y_all_prob(j,k,l)=y_nox(j)*y_Jd(k)*y_ox(l)
+        !Calculate weighting
+        y_all_prob=y_nox(j)*y_Jd(k)*y_ox(l)
+        if (y_all_prob.gt.0) then
+        !Calculate NO2 value
+        bin_temp2=bin(j)+bin(k)+bin(l)
+        y_all_val=(bin_temp2 - sqrt(bin_temp2*bin_temp2 - 4.*bin(j)*bin(l)))/2.
+        !Add weighted value
+        y_all_sum=y_all_sum+y_all_val*y_all_prob
+        !Calculate sum of weights for normalisation later
+        y_all_prob_sum=y_all_prob_sum+y_all_prob
+        endif
+    enddo
+    enddo
+    enddo
+    !y_all_prob=y_all_prob/sum(y_all_prob)
+    !y_all=y_all_val*y_all_prob
+    !y_all_sum=sum(y_all)
+    y_all=y_all_sum/y_all_prob_sum
+    
+    !Calculate the mean value
+    y_annual=((mol_nox+Jd+mol_ox) - sqrt((mol_nox+Jd+mol_ox)**2 - 4.*mol_nox*mol_ox))/2.
+    y_scale=y_all/y_annual
+    !write(*,*) y_scale,y_all,y_annual
+    
+    mol_no2_out=y_scale*mol_no2
+    mol_o3_out=mol_ox-mol_no2_out
+    
+    no2_out=mol_no2_out/Na_fac*mmass(no2_i)
+    o3_out=mol_o3_out/Na_fac*mmass(o3_i)
+    
+    deallocate (log10_bin)
+    deallocate (bin)
+    deallocate (delta_bin)
+    deallocate (y_ox)
+    deallocate (y_nox)
+    deallocate (y_Jd)
     
     end subroutine uEMEP_annual_mean_pdf_correction_NO2_O3

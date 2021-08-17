@@ -160,7 +160,7 @@
     !Loop for all pollutants to be calculated
     integer pollutant_index
     integer n_pollutant_nc_index
-    parameter (n_pollutant_nc_index=20) !Includes the addition naming indexes index
+    parameter (n_pollutant_nc_index=21) !Includes the addition naming indexes index
     integer :: n_pollutant_loop = 1
     integer :: n_emep_pollutant_loop = 1
     integer pollutant_loop_index(n_pollutant_nc_index)
@@ -1001,6 +1001,11 @@
     character(256) :: finished_subpath='finished/'
     
     logical :: use_annual_mean_pdf_chemistry_correction=.false.
+    logical :: quick_annual_mean_pdf_chemistry_correction=.true.
+    real :: ox_sigma_ratio_pdf=0.
+    real :: nox_sigma_ratio_pdf=0.
+    real :: max_bin_pdf=1000.
+    real :: log10_step_bin_pdf=0.05
     
     end module uEMEP_definitions
     
