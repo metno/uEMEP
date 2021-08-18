@@ -155,6 +155,7 @@
     subroutine uEMEP_read_netcdf_landuse_latlon
  
     use uEMEP_definitions
+    !use uEMEP_landuse_definitions
     use netcdf
     
     implicit none
@@ -174,8 +175,9 @@
     real correct_lon(2)
     real temp_scale
     integer :: name_index=0
+    integer i_source,i_landuse
     
-    !Temporary reading rvariables
+    !Temporary reading variables
     real, allocatable :: landuse_nc_dp(:,:)
     double precision, allocatable :: var2d_nc_dp(:,:)
     double precision, allocatable :: temp_var2d_nc_dp(:,:)
@@ -398,7 +400,36 @@
         write(unit_logfile,'(A,2f12.2)') 'Max and min landuse in read domain: ',maxval(landuse_nc_dp(:,:)),minval(landuse_nc_dp(:,:))
         write(unit_logfile,'(A,2f12.2)') 'Max and min landuse in subgrid domain: ',maxval(landuse_subgrid(:,:,clc_index)),minval(landuse_subgrid(:,:,clc_index))
 
+        if (use_landuse_as_proxy) then
+        !Place the landuse as a proxy emission with the appropriate weights
+        !loop through all sources and landuses
+        do i_source=1,n_source_index
+        !If source is to be downscaled and at least one landuse is selected then calculate the proxy emission weighting
+        if (calculate_source(i_source).and.sum(landuse_proxy_weighting(i_source,:)).gt.0) then
+            proxy_emission_subgrid(:,:,i_source,:)=0.
+            do i_landuse=1,n_clc_landuse_index 
+                if (landuse_proxy_weighting(i_source,i_landuse).gt.0) then
+                    write(unit_logfile,'(A,i4,A,A,a,i4)') 'Distributing landuse index ',i_landuse,' to uEMEP sector "',trim(source_file_str(i_source)),'" and GNFR sector ',convert_uEMEP_to_GNFR_sector_index(i_source)
+                    
+                    do j=1,emission_subgrid_dim(y_dim_nc_index,i_source)
+                    do i=1,emission_subgrid_dim(x_dim_nc_index,i_source)
 
+                        i_landuse_index=crossreference_emission_to_landuse_subgrid(i,j,x_dim_index,i_source)
+                        j_landuse_index=crossreference_emission_to_landuse_subgrid(i,j,y_dim_index,i_source)
+                
+                        if (int(landuse_subgrid(i_landuse_index,j_landuse_index,clc_index)).eq.i_landuse) then
+                            proxy_emission_subgrid(i,j,i_source,:)=proxy_emission_subgrid(i,j,i_source,:)+landuse_proxy_weighting(i_source,i_landuse)
+                            !write(*,'(6i,2f12.2)') i,j,i_landuse_index,j_landuse_index,i_source,i_landuse,landuse_proxy_weighting(i_source,i_landuse),proxy_emission_subgrid(i,j,i_source,1)
+                        endif
+                
+                    enddo
+                    enddo
+                endif   
+            enddo
+        endif
+        enddo
+        endif
+            
         endif !No landuse available
        
         if (allocated(landuse_nc_dp)) deallocate (landuse_nc_dp)
@@ -407,3 +438,78 @@
     
     end subroutine uEMEP_read_netcdf_landuse_latlon
 
+    module uEMEP_landuse_definitions
+        
+    implicit none
+    
+    integer Continuous_urban_fabric_value,Discontinuous_urban_fabric_value,Industrial_or_commercial_units_value,Road_and_rail_networks_and_associated_land_value,Port_areas_value
+    integer Airports_value,Mineral_extraction_sites_value,Dump_sites_value,Construction_sites_value,Green_urban_areas_value
+    integer Sport_and_leisure_facilities_value,Non_irrigated_arable_land_value,Permanently_irrigated_land_value,Rice_fields_value,Vineyards_value
+    integer Fruit_trees_and_berry_plantations_value,Olive_groves_value,Pastures_value,Annual_crops_associated_with_permanent_crops_value,Complex_cultivation_patterns_value
+    integer Land_principally_occupied_by_agriculture_value,Agro_forestry_areas_value,Broad_leaved_forest_value,Coniferous_forest_value,Mixed_forest_value
+    integer Natural_grasslands_value,Moors_and_heathland_value,Sclerophyllous_vegetation_value,Transitional_woodland_shrub_value,Beaches_dunes_sands_value
+    integer Bare_rocks_value,Sparsely_vegetated_areas_value,Burnt_areas_value,Glaciers_and_perpetual_snow_value,Inland_marshes_value
+    integer Peat_bogs_value,Salt_marshes_value,Salines_value,Intertidal_flats_value,Water_courses_value,Water_bodies_value,Coastal_lagoons_value,Estuaries_value,Sea_and_ocean_value
+    integer NODATA_clc_value
+    
+    end module uEMEP_landuse_definitions
+
+    subroutine uEMEP_set_landuse_classes
+    
+    use uEMEP_definitions
+    use uEMEP_landuse_definitions
+    
+    implicit none
+    
+    Continuous_urban_fabric_value=1
+    Discontinuous_urban_fabric_value=2
+    Industrial_or_commercial_units_value=3
+    Road_and_rail_networks_and_associated_land_value=4
+    Port_areas_value=5
+    Airports_value=6
+    Mineral_extraction_sites_value=7
+    Dump_sites_value=8
+    Construction_sites_value=9
+    Green_urban_areas_value=10
+    Sport_and_leisure_facilities_value=11
+    Non_irrigated_arable_land_value=12
+    Permanently_irrigated_land_value=13
+    Rice_fields_value=14
+    Vineyards_value=15
+    Fruit_trees_and_berry_plantations_value=16
+    Olive_groves_value=17
+    Pastures_value=18
+    Annual_crops_associated_with_permanent_crops_value=19
+    Complex_cultivation_patterns_value=20
+    Land_principally_occupied_by_agriculture_value=21
+    Agro_forestry_areas_value=22
+    Broad_leaved_forest_value=23
+    Coniferous_forest_value=24
+    Mixed_forest_value=25
+    Natural_grasslands_value=26
+    Moors_and_heathland_value=27
+    Sclerophyllous_vegetation_value=28
+    Transitional_woodland_shrub_value=29
+    Beaches_dunes_sands_value=30
+    Bare_rocks_value=31
+    Sparsely_vegetated_areas_value=32
+    Burnt_areas_value=33
+    Glaciers_and_perpetual_snow_value=34
+    Inland_marshes_value=35
+    Peat_bogs_value=36
+    Salt_marshes_value=37
+    Salines_value=38
+    Intertidal_flats_value=39
+    Water_courses_value=40
+    Water_bodies_value=41
+    Coastal_lagoons_value=42
+    Estuaries_value=43
+    Sea_and_ocean_value=44
+    NODATA_clc_value=48
+    
+    !test
+    !landuse_proxy_weighting(heating_index,Continuous_urban_fabric_value)=1.
+    !landuse_proxy_weighting(heating_index,Discontinuous_urban_fabric_value)=0.5
+    
+    
+    end subroutine uEMEP_set_landuse_classes

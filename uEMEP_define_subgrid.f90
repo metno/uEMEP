@@ -136,12 +136,18 @@
         enddo
 
         if (calculate_deposition_flag) then
-        deposition_buffer_index(x_dim_index)=floor(dx_temp/deposition_subgrid_delta(x_dim_index)*buffer_index_scale)
-        deposition_buffer_index(y_dim_index)=floor(dy_temp/deposition_subgrid_delta(y_dim_index)*buffer_index_scale)
+            deposition_buffer_index(x_dim_index)=floor(dx_temp/deposition_subgrid_delta(x_dim_index)*buffer_index_scale)
+            deposition_buffer_index(y_dim_index)=floor(dy_temp/deposition_subgrid_delta(y_dim_index)*buffer_index_scale)
         endif
+        !Make sure the landuse bufferzone is the same as the emissions in case it is used as a proxy
         if (read_landuse_flag) then
-        landuse_buffer_index(x_dim_index)=floor(dx_temp/landuse_subgrid_delta(x_dim_index)*buffer_index_scale)
-        landuse_buffer_index(y_dim_index)=floor(dy_temp/landuse_subgrid_delta(y_dim_index)*buffer_index_scale)
+            landuse_buffer_index(x_dim_index)=floor(dx_temp/landuse_subgrid_delta(x_dim_index)*(buffer_index_scale+0.5))
+            landuse_buffer_index(y_dim_index)=floor(dy_temp/landuse_subgrid_delta(y_dim_index)*(buffer_index_scale+0.5))
+            if (local_subgrid_method_flag.eq.3) then
+            landuse_buffer_index(x_dim_index)=floor(dx_temp/landuse_subgrid_delta(x_dim_index)*(buffer_index_scale+1.0))
+            landuse_buffer_index(y_dim_index)=floor(dy_temp/landuse_subgrid_delta(y_dim_index)*(buffer_index_scale+1.0))
+            endif
+            
         endif
     else
         buffer_index=0

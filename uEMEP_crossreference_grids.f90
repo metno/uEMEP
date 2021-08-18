@@ -52,7 +52,7 @@
     allocate (crossreference_deposition_to_emep_subgrid(deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index),2))
     endif
     if (read_landuse_flag) then
-    allocate (crossreference_emission_to_landuse_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),2))
+    allocate (crossreference_emission_to_landuse_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),2,n_source_index))
     endif
     
     write(unit_logfile,'(A)')'Allocating EMEP grid index to subgrid index'
@@ -261,11 +261,11 @@
     if (read_landuse_flag) then
     do j=1,emission_subgrid_dim(y_dim_index,i_source)
     do i=1,emission_subgrid_dim(x_dim_index,i_source)
-        crossreference_emission_to_landuse_subgrid(i,j,x_dim_index)=1+floor((x_emission_subgrid(i,j,i_source)-landuse_subgrid_min(x_dim_index))/landuse_subgrid_delta(x_dim_index))
-        crossreference_emission_to_landuse_subgrid(i,j,y_dim_index)=1+floor((y_emission_subgrid(i,j,i_source)-landuse_subgrid_min(y_dim_index))/landuse_subgrid_delta(y_dim_index))       
+        crossreference_emission_to_landuse_subgrid(i,j,x_dim_index,i_source)=1+floor((x_emission_subgrid(i,j,i_source)-landuse_subgrid_min(x_dim_index))/landuse_subgrid_delta(x_dim_index))
+        crossreference_emission_to_landuse_subgrid(i,j,y_dim_index,i_source)=1+floor((y_emission_subgrid(i,j,i_source)-landuse_subgrid_min(y_dim_index))/landuse_subgrid_delta(y_dim_index))       
         !At edge this can return negative distances due to the different sizes of emission and integral grids and buffer zones. Set the limits here. Should not be a problem 
-        crossreference_emission_to_landuse_subgrid(i,j,x_dim_index)=max(min(crossreference_emission_to_landuse_subgrid(i,j,x_dim_index),landuse_subgrid_dim(x_dim_index)),1)
-        crossreference_emission_to_landuse_subgrid(i,j,y_dim_index)=max(min(crossreference_emission_to_landuse_subgrid(i,j,y_dim_index),landuse_subgrid_dim(y_dim_index)),1)                    
+        crossreference_emission_to_landuse_subgrid(i,j,x_dim_index,i_source)=max(min(crossreference_emission_to_landuse_subgrid(i,j,x_dim_index,i_source),landuse_subgrid_dim(x_dim_index)),1)
+        crossreference_emission_to_landuse_subgrid(i,j,y_dim_index,i_source)=max(min(crossreference_emission_to_landuse_subgrid(i,j,y_dim_index,i_source),landuse_subgrid_dim(y_dim_index)),1)                    
     enddo
     enddo
     endif

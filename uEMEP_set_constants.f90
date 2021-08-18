@@ -509,6 +509,34 @@
     !projection_attributes(4) = 3210000.  !false_northing
     !projection_attributes(5) = 6370000.0  !earth_radius
 
+    convert_GNFR_to_uEMEP_sector_index(1)=publicpower_nc_index
+    convert_GNFR_to_uEMEP_sector_index(2)=industry_nc_index
+    convert_GNFR_to_uEMEP_sector_index(3)=heating_nc_index
+    convert_GNFR_to_uEMEP_sector_index(4)=fugitive_nc_index
+    convert_GNFR_to_uEMEP_sector_index(5)=solvents_nc_index
+    convert_GNFR_to_uEMEP_sector_index(6)=traffic_nc_index
+    convert_GNFR_to_uEMEP_sector_index(7)=shipping_nc_index
+    convert_GNFR_to_uEMEP_sector_index(8)=aviation_nc_index
+    convert_GNFR_to_uEMEP_sector_index(9)=offroad_nc_index
+    convert_GNFR_to_uEMEP_sector_index(10)=waste_nc_index
+    convert_GNFR_to_uEMEP_sector_index(11)=livestock_nc_index
+    convert_GNFR_to_uEMEP_sector_index(12)=agriculture_nc_index
+    convert_GNFR_to_uEMEP_sector_index(13)=other_nc_index
+
+    convert_uEMEP_to_GNFR_sector_index(publicpower_nc_index)=1
+    convert_uEMEP_to_GNFR_sector_index(industry_nc_index)=2
+    convert_uEMEP_to_GNFR_sector_index(heating_nc_index)=3
+    convert_uEMEP_to_GNFR_sector_index(fugitive_nc_index)=4
+    convert_uEMEP_to_GNFR_sector_index(solvents_nc_index)=5
+    convert_uEMEP_to_GNFR_sector_index(traffic_nc_index)=6
+    convert_uEMEP_to_GNFR_sector_index(shipping_nc_index)=7
+    convert_uEMEP_to_GNFR_sector_index(aviation_nc_index)=8
+    convert_uEMEP_to_GNFR_sector_index(offroad_nc_index)=9
+    convert_uEMEP_to_GNFR_sector_index(waste_nc_index)=10
+    convert_uEMEP_to_GNFR_sector_index(livestock_nc_index)=11
+    convert_uEMEP_to_GNFR_sector_index(agriculture_nc_index)=12
+    convert_uEMEP_to_GNFR_sector_index(other_nc_index)=13
+
 
     end subroutine uEMEP_set_constants
     

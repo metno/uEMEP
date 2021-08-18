@@ -16,9 +16,11 @@
     character(256) format_temp
     
     integer :: unit_in=30
-    integer i_config,i_source
+    integer i_config,i_source,i_landuse
     double precision datenum_temp
     character(256) yesterday_date_str
+    character(256) a_str,b_str
+    character(256) temp_str
     
     !Functions
     character(256) replace_string_char
@@ -784,6 +786,20 @@
         read_rivm_landuse_flag=read_name_logical('read_rivm_landuse_flag',read_rivm_landuse_flag,unit_in,unit_logfile)
         var_name_landuse_nc(num_var_landuse_nc)=read_name_char('var_name_landuse_nc',var_name_landuse_nc(num_var_landuse_nc),unit_in,unit_logfile)
        
+        !Read landuse weighting this may take some time
+        !Source input is numbered as GNFR13
+        do i_source=1,n_source_index
+        do i_landuse=1,n_clc_landuse_index
+            
+            write(UNIT=a_str,FMT=*) convert_uEMEP_to_GNFR_sector_index(i_source)
+            write(UNIT=b_str,FMT=*) i_landuse
+            temp_str='landuse_proxy_weighting('//trim(adjustl(a_str))//','//trim(adjustl(b_str))//')'
+            !write(*,*) trim(temp_str)
+            landuse_proxy_weighting(i_source,i_landuse)=read_name_real(trim(temp_str),landuse_proxy_weighting(i_source,i_landuse),unit_in,unit_logfile)
+
+        enddo
+        enddo
+
     close (unit_in)
     
     enddo !End configuration file number loop

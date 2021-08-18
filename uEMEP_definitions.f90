@@ -138,6 +138,9 @@
     parameter (publicpower_point_nc_index=20,publicpower_area_nc_index=21)
     parameter (n_source_nc_index=21)
     
+    integer convert_GNFR_to_uEMEP_sector_index(n_source_nc_index)
+    integer convert_uEMEP_to_GNFR_sector_index(n_source_nc_index)
+    
     !integer GNFR_index(n_source_nc_index)
     !A ‘PublicPower’ (1)
     !B ‘Industry’ (3)
@@ -568,7 +571,7 @@
     !integer, allocatable :: crossreference_agriculture_emission_subgrid(:,:,:)
     !integer, allocatable :: crossreference_heating_emission_subgrid(:,:,:)
     integer, allocatable :: crossreference_emission_to_deposition_subgrid(:,:,:,:) !(i,j,dim,n_source)
-    integer, allocatable :: crossreference_emission_to_landuse_subgrid(:,:,:) !(i,j,dim)
+    integer, allocatable :: crossreference_emission_to_landuse_subgrid(:,:,:,:) !(i,j,dim,n_source)
     integer, allocatable :: crossreference_target_to_deposition_subgrid(:,:,:)!(i,j,dim)
     integer, allocatable :: crossreference_deposition_to_emep_subgrid(:,:,:) !(i,j,dim)
     
@@ -1017,6 +1020,10 @@
     !Landuse proxy
     logical :: use_landuse_as_proxy=.false.
     logical :: read_rivm_landuse_flag=.false.
+    
+    integer n_clc_landuse_index
+    parameter (n_clc_landuse_index=44)   
+    real :: landuse_proxy_weighting(n_source_index,n_clc_landuse_index)=0.
     
     end module uEMEP_definitions
     

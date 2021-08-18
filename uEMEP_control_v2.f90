@@ -38,6 +38,7 @@
     !Set constants and variable names to be read from EMEP and meteo files
     call uEMEP_set_constants
     
+    
     !Read the configuration files. Hard coded to be up to 5 files. Log file opened in this routine
     call uEMEP_read_config
     
@@ -45,13 +46,19 @@
     if (select_latlon_centre_domain_position_flag) then
         call uEMEP_set_subgrid_select_latlon_centre
     endif
-        
+    
+    !Set the landuse if required
+    if (use_landuse_as_proxy.or.read_landuse_flag) then
+        call uEMEP_set_landuse_classes
+    endif
+    
     !Set the pollutant and compound loop definitions
     call uEMEP_set_pollutant_loop
     
     !Reset any constants needed based on the configuration input
     call uEMEP_reset_constants
     
+
     !Autoselect files and countries if required. Place here because it changes config data
     if (auto_select_OSM_country_flag.or.trim(select_country_by_name).ne.'') then
         call read_country_bounding_box_data
