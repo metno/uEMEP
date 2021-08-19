@@ -122,7 +122,7 @@
     parameter (n_compound_nc_index=16)
     !These are only used in names
     integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index,all_totals_nc_index,aaqd_totals_nc_index
-    parameter (pmco_nc_index=14,all_nc_index=15,pm_nc_index=16,all_sand_nc_index=17,all_salt_nc_index=18,all_sand_salt_nc_index=19,all_totals_nc_index=20,aaqd_totals_nc_index=21)
+    parameter (pmco_nc_index=17,all_nc_index=18,pm_nc_index=19,all_sand_nc_index=20,all_salt_nc_index=21,all_sand_salt_nc_index=22,all_totals_nc_index=23,aaqd_totals_nc_index=24)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
     integer allsource_nc_index,traffic_nc_index,shipping_nc_index,heating_nc_index,agriculture_nc_index,industry_nc_index
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
@@ -163,7 +163,7 @@
     !Loop for all pollutants to be calculated
     integer pollutant_index
     integer n_pollutant_nc_index
-    parameter (n_pollutant_nc_index=21) !Includes the addition naming indexes index
+    parameter (n_pollutant_nc_index=24) !Includes the addition naming indexes index
     integer :: n_pollutant_loop = 1
     integer :: n_emep_pollutant_loop = 1
     integer pollutant_loop_index(n_pollutant_nc_index)
@@ -1025,6 +1025,12 @@
     parameter (n_clc_landuse_index=44)   
     real :: landuse_proxy_weighting(n_source_index,n_clc_landuse_index)=0.
     
+    !Benzene split from VOC
+    logical :: extract_benzene_from_voc_emissions=.false.
+    real benzene_split_voc_in_GNFR_sectors(13)
+    data benzene_split_voc_in_GNFR_sectors /4.0899e-2, 1.5077e-2, 6.6153e-2, 0.975e-2, 0.0, 2.4058e-2, 2.0e-2, 2.1458e-2, 1.7078e-2, 3.6234e-2, 6.8e-2, 6.8e-2, 0.0/
+    !BENZENE emission is scaled from VOC: sec01 * 4.0899% + sec02 * 1.5077% + sec03 * 6.6153% + sec04 * 0.975% + sec05 * 0 + sec06 * 2.4058% + sec07 * 2% + sec08 * 2.1458% + sec09 * 1.7078% + sec10 * 3.6234% + sec11 * 6.8% + sec12 * 6.8%
+
     end module uEMEP_definitions
     
     

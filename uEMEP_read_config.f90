@@ -787,11 +787,11 @@
         var_name_landuse_nc(num_var_landuse_nc)=read_name_char('var_name_landuse_nc',var_name_landuse_nc(num_var_landuse_nc),unit_in,unit_logfile)
        
         !Read landuse weighting this may take some time
-        !Source input is numbered as GNFR13
+        !Source input is numbered as GNFR13 in input but is placed in the uEMEP source sectors
         do i_source=1,n_source_index
         do i_landuse=1,n_clc_landuse_index
             
-            write(UNIT=a_str,FMT=*) convert_uEMEP_to_GNFR_sector_index(i_source)
+            write(UNIT=a_str,FMT=*) uEMEP_to_EMEP_sector(i_source)
             write(UNIT=b_str,FMT=*) i_landuse
             temp_str='landuse_proxy_weighting('//trim(adjustl(a_str))//','//trim(adjustl(b_str))//')'
             !write(*,*) trim(temp_str)

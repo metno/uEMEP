@@ -97,7 +97,7 @@
 
         var_name_nc(conc_nc_index,bap_nc_index,allsource_nc_index)='bap'
         var_name_nc(conc_nc_index,co_nc_index,allsource_nc_index)='co'
-        var_name_nc(conc_nc_index,c6h6_nc_index,allsource_nc_index)='c6h6'
+        var_name_nc(conc_nc_index,c6h6_nc_index,allsource_nc_index)='benzene'
 
         !Local fractions
         var_name_nc(frac_nc_index,nox_nc_index,traffic_nc_index)='nox_sec07_local_fraction'
@@ -119,7 +119,7 @@
         var_name_nc(frac_nc_index,pm25_nc_index,industry_nc_index)='pm25_sec04_local_fraction'
         var_name_nc(frac_nc_index,pmco_nc_index,industry_nc_index)='pmco_sec04_local_fraction'
 
-        !Total emissions
+        !Total emissions. These arer reset later
         var_name_nc(emis_nc_index,nh3_nc_index,allsource_nc_index)='Emis_mgm2_nh3'
         var_name_nc(emis_nc_index,nox_nc_index,allsource_nc_index)='Emis_mgm2_nox'
         var_name_nc(emis_nc_index,pmco_nc_index,allsource_nc_index)='Emis_mgm2_pmco'
@@ -241,6 +241,9 @@
         comp_name_nc(pm25_nc_index)='D3_ug_PMFINE'
         comp_name_nc(pmex_nc_index)='Exhaust'
         !comp_name_nc(pm25_nc_index)='SURF_ug_PM25_rh50'
+        comp_name_nc(co_nc_index)='D3_ug_CO'
+        comp_name_nc(bap_nc_index)='D3_ug_BAP'
+        comp_name_nc(c6h6_nc_index)='D3_ug_BENZENE'
 
         comp_name_nc(pm25_sand_nc_index)='PM25_sand'
         comp_name_nc(pm10_sand_nc_index)='PM10_sand'
@@ -509,6 +512,7 @@
     !projection_attributes(4) = 3210000.  !false_northing
     !projection_attributes(5) = 6370000.0  !earth_radius
 
+    !These are not used because they are already specified in uEMEP_to_EMEP_sector
     convert_GNFR_to_uEMEP_sector_index(1)=publicpower_nc_index
     convert_GNFR_to_uEMEP_sector_index(2)=industry_nc_index
     convert_GNFR_to_uEMEP_sector_index(3)=heating_nc_index
@@ -624,7 +628,7 @@
             pollutant_loop_back_index(pm25_nc_index)=2
             pollutant_loop_back_index(pm10_nc_index)=3
         elseif (pollutant_index.eq.aaqd_totals_nc_index) then
-            n_emep_pollutant_loop=3
+            n_emep_pollutant_loop=6
             n_pollutant_loop=6
             pollutant_loop_index(1)=nox_nc_index
             pollutant_loop_index(2)=pm25_nc_index
@@ -638,6 +642,7 @@
             pollutant_loop_back_index(co_nc_index)=4
             pollutant_loop_back_index(bap_nc_index)=5
             pollutant_loop_back_index(c6h6_nc_index)=6
+            extract_benzene_from_voc_emissions=.true.
         elseif (pollutant_index.eq.pm_nc_index) then
             n_emep_pollutant_loop=2
             n_pollutant_loop=3
@@ -916,6 +921,10 @@
             var_name_nc(frac_nc_index,i_comp,i_source)=trim(var_name_nc(conc_nc_index,i_comp,allsource_nc_index))//'_local_fraction'
             var_name_nc(emis_nc_index,i_comp,i_source)='Emis_mgm2_'//var_name_nc(conc_nc_index,i_comp,allsource_nc_index)    
         endif
+        if (extract_benzene_from_voc_emissions.and.i_comp.eq.c6h6_nc_index) then
+            var_name_nc(emis_nc_index,i_comp,i_source)='Emis_mgm2_sec'//trim(uEMEP_to_EMEP_emis_sector_str(i_source))//'voc'         
+        endif
+        
         !write(*,*) i_comp,i_source,trim(var_name_nc(frac_nc_index,i_comp,i_source)),trim(var_name_nc(emis_nc_index,i_comp,i_source))
     enddo
     enddo
@@ -943,15 +952,28 @@
            do i=1,n_pollutant_nc_index
             do i_source=1,n_source_nc_index
                 var_name_nc(emis_nc_index,i,i_source)=trim(prefix_str)//trim(uEMEP_to_EMEP_emis_sector_str(i_source))//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                if (extract_benzene_from_voc_emissions.and.i.eq.c6h6_nc_index) then
+                    var_name_nc(emis_nc_index,i,i_source)=trim(prefix_str)//trim(uEMEP_to_EMEP_emis_sector_str(i_source))//trim(postfix_str)//'voc'
+                endif
+
                 if (i_source.eq.allsource_nc_index) then
                     var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                    if (extract_benzene_from_voc_emissions.and.i.eq.c6h6_nc_index) then
+                        var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//'voc'
+                    endif
                     if (use_alphabetic_GNFR_emissions_from_EMEP_flag) then
                         !Remove any leading '_' in the postfix_str
                         index_start=INDEX(postfix_str,'_')
                         if (index_start.eq.1) then
                         var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(postfix_str(2:))//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                        if (extract_benzene_from_voc_emissions.and.i.eq.c6h6_nc_index) then
+                            var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(postfix_str(2:))//'voc'
+                        endif
                         else
                         var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                        if (extract_benzene_from_voc_emissions.and.i.eq.c6h6_nc_index) then
+                            var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(postfix_str)//'voc'
+                        endif
                         endif
                     endif                    
                 endif
@@ -968,6 +990,9 @@
                 var_name_nc(emis_nc_index,i,i_source)=trim(prefix_str)//trim(uEMEP_to_EMEP_emis_sector_str(i_source))//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
                 if (i_source.eq.allsource_nc_index) then
                     var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//trim(var_name_nc(conc_nc_index,i,allsource_nc_index))
+                    if (extract_benzene_from_voc_emissions.and.i.eq.c6h6_nc_index) then
+                        var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//'voc'
+                    endif
                 endif
             enddo
             enddo
@@ -1118,6 +1143,9 @@
         !comp_name_nc(pmco_nc_index)='SURF_ug_PMCO'
         comp_name_nc(pm10_nc_index)='SURF_ug_PM10'
         comp_name_nc(pm25_nc_index)='SURF_ug_PMFINE'
+        comp_name_nc(co_nc_index)='SURF_ug_CO'
+        comp_name_nc(bap_nc_index)='SURF_ug_BAP'
+        comp_name_nc(c6h6_nc_index)='SURF_ug_BENZENE'
     endif
     
     if (use_water_in_EMEP_surface_pm_flag) then

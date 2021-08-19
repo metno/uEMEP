@@ -1169,6 +1169,17 @@
     !    enddo
     endif
 
+    !Scale the read in voc emissions so they are split into benzene
+    if (extract_benzene_from_voc_emissions) then
+        write(unit_logfile,'(A)') 'Converting VOC emissions to Benzene emissions: '
+        do i_source=1,n_source_index
+            if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source)) then
+            var3d_nc(:,:,:,emis_nc_index,i_source,pollutant_loop_back_index(c6h6_nc_index))=benzene_split_voc_in_GNFR_sectors(uEMEP_to_EMEP_sector(i_source))*var3d_nc(:,:,:,emis_nc_index,i_source,pollutant_loop_back_index(c6h6_nc_index))
+            write(unit_logfile,'(A,i4,a,a,a,f12.3)') 'GNFR Source=',uEMEP_to_EMEP_sector(i_source),' , uEMEP source= ',trim(source_file_str(i_source)), ' , split(%)= ',benzene_split_voc_in_GNFR_sectors(uEMEP_to_EMEP_sector(i_source))*100.
+            endif
+        enddo       
+    endif
+    
         !Check output
         do i_source=1,n_source_index
             if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source)) then

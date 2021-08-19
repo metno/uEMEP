@@ -409,7 +409,7 @@
             proxy_emission_subgrid(:,:,i_source,:)=0.
             do i_landuse=1,n_clc_landuse_index 
                 if (landuse_proxy_weighting(i_source,i_landuse).gt.0) then
-                    write(unit_logfile,'(A,i4,A,A,a,i4)') 'Distributing landuse index ',i_landuse,' to uEMEP sector "',trim(source_file_str(i_source)),'" and GNFR sector ',convert_uEMEP_to_GNFR_sector_index(i_source)
+                    write(unit_logfile,'(A,i4,A,A,a,i4)') 'Distributing landuse index ',i_landuse,' to uEMEP sector "',trim(source_file_str(i_source)),'" and GNFR sector ',uEMEP_to_EMEP_sector(i_source)
                     
                     do j=1,emission_subgrid_dim(y_dim_nc_index,i_source)
                     do i=1,emission_subgrid_dim(x_dim_nc_index,i_source)
@@ -421,7 +421,12 @@
                             proxy_emission_subgrid(i,j,i_source,:)=proxy_emission_subgrid(i,j,i_source,:)+landuse_proxy_weighting(i_source,i_landuse)
                             !write(*,'(6i,2f12.2)') i,j,i_landuse_index,j_landuse_index,i_source,i_landuse,landuse_proxy_weighting(i_source,i_landuse),proxy_emission_subgrid(i,j,i_source,1)
                         endif
-                
+
+                        !If there is no data (0 or greater than the maximum number of landuse categories) then distribute emissions evenly on the EMEP grid
+                        if (int(landuse_subgrid(i_landuse_index,j_landuse_index,clc_index)).gt.n_clc_landuse_index.or.int(landuse_subgrid(i_landuse_index,j_landuse_index,clc_index)).lt.1) then
+                            proxy_emission_subgrid(i,j,i_source,:)=1.
+                        endif
+                        
                     enddo
                     enddo
                 endif   
