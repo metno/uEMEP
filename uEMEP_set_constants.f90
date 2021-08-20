@@ -412,9 +412,9 @@
     
     
     !Set initial values  for the dispersion parameters
-    sig_y_00=0.
-    sig_z_00=0.
-    h_emis=0.
+    sig_y_00=10.
+    sig_z_00=10.
+    h_emis=15.
     z_rec=2.
     
     h_emis(traffic_index,:)=2.
