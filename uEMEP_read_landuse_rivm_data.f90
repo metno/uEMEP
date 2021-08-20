@@ -405,9 +405,11 @@
         !loop through all sources and landuses
         do i_source=1,n_source_index
         !If source is to be downscaled and at least one landuse is selected then calculate the proxy emission weighting
+            !write(*,*) i_source,calculate_source(i_source),sum(landuse_proxy_weighting(i_source,:))
         if (calculate_source(i_source).and.sum(landuse_proxy_weighting(i_source,:)).gt.0) then
             proxy_emission_subgrid(:,:,i_source,:)=0.
             do i_landuse=1,n_clc_landuse_index 
+                !write(*,*) i_source,i_landuse,landuse_proxy_weighting(i_source,i_landuse)
                 if (landuse_proxy_weighting(i_source,i_landuse).gt.0) then
                     write(unit_logfile,'(A,i4,A,A,a,i4)') 'Distributing landuse index ',i_landuse,' to uEMEP sector "',trim(source_file_str(i_source)),'" and GNFR sector ',uEMEP_to_EMEP_sector(i_source)
                     

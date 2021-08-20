@@ -791,10 +791,10 @@
         do i_source=1,n_source_index
         do i_landuse=1,n_clc_landuse_index
             
-            write(UNIT=a_str,FMT=*) uEMEP_to_EMEP_sector(i_source)
+            write(UNIT=a_str,FMT=*) convert_uEMEP_to_GNFR_sector_index(i_source)
             write(UNIT=b_str,FMT=*) i_landuse
             temp_str='landuse_proxy_weighting('//trim(adjustl(a_str))//','//trim(adjustl(b_str))//')'
-            !write(*,*) trim(temp_str)
+            !write(*,*) i_source,trim(temp_str)
             landuse_proxy_weighting(i_source,i_landuse)=read_name_real(trim(temp_str),landuse_proxy_weighting(i_source,i_landuse),unit_in,unit_logfile)
 
         enddo

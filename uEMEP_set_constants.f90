@@ -422,19 +422,24 @@
     h_emis(heating_index,:)=25.
     h_emis(agriculture_index,:)=1.
     h_emis(industry_index,:)=25.
+    h_emis(aviation_index,:)=10.
     sig_y_00(shipping_index,:)=5.
     sig_y_00(traffic_index,:)=1.
     sig_y_00(heating_index,:)=5.
     sig_y_00(agriculture_index,:)=5.
     sig_y_00(industry_index,:)=5.
+    sig_y_00(aviation_index,:)=25.
     sig_z_00(shipping_index,:)=5.
     sig_z_00(traffic_index,:)=1.
     sig_z_00(heating_index,:)=10.
     sig_z_00(agriculture_index,:)=10.
     sig_z_00(industry_index,:)=10.
+    sig_z_00(aviation_index,:)=10.
 
     !Set all emission factors to unity
     emission_factor=1.
+    !Set all no2, relative to nox, to 0.1.
+    emission_factor(no2_index,:,:)=0.1
     
     !Preset all initial emission factors 
     emission_factor(nox_index,traffic_index,:)=0.4 !(g/km/veh)
@@ -512,7 +517,7 @@
     !projection_attributes(4) = 3210000.  !false_northing
     !projection_attributes(5) = 6370000.0  !earth_radius
 
-    !These are not used because they are already specified in uEMEP_to_EMEP_sector
+    !These are used for landuse sector conversion only. They are already specified in uEMEP_to_EMEP_sector
     convert_GNFR_to_uEMEP_sector_index(1)=publicpower_nc_index
     convert_GNFR_to_uEMEP_sector_index(2)=industry_nc_index
     convert_GNFR_to_uEMEP_sector_index(3)=heating_nc_index
