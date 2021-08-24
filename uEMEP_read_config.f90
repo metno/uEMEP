@@ -319,6 +319,7 @@
         h_emis(livestock_index,1)=read_name_real('h_emis(livestock_index,1)',h_emis(livestock_index,1),unit_in,unit_logfile)
         h_emis(other_index,1)=read_name_real('h_emis(other_index,1)',h_emis(other_index,1),unit_in,unit_logfile)
 
+        !These second subsources do not exist but still possible to implement
         h_emis(traffic_index,2)=read_name_real('h_emis(traffic_index,2)',h_emis(traffic_index,2),unit_in,unit_logfile)
         h_emis(shipping_index,2)=read_name_real('h_emis(shipping_index,2)',h_emis(shipping_index,2),unit_in,unit_logfile)
         h_emis(heating_index,2)=read_name_real('h_emis(heating_index,2)',h_emis(heating_index,2),unit_in,unit_logfile)
@@ -340,12 +341,14 @@
         sig_y_00(livestock_index,1)=read_name_real('sig_y_00(livestock_index,1)',sig_y_00(livestock_index,1),unit_in,unit_logfile)
         sig_y_00(other_index,1)=read_name_real('sig_y_00(other_index,1)',sig_y_00(other_index,1),unit_in,unit_logfile)
 
+        !These second subsources do not exist but still possible to implement
         sig_y_00(traffic_index,2)=read_name_real('sig_y_00(traffic_index,2)',sig_y_00(traffic_index,2),unit_in,unit_logfile)
         sig_y_00(shipping_index,2)=read_name_real('sig_y_00(shipping_index,2)',sig_y_00(shipping_index,2),unit_in,unit_logfile)
         sig_y_00(heating_index,2)=read_name_real('sig_y_00(heating_index,2)',sig_y_00(heating_index,2),unit_in,unit_logfile)
         sig_y_00(agriculture_index,2)=read_name_real('sig_y_00(agriculture_index,2)',sig_y_00(agriculture_index,2),unit_in,unit_logfile)
         sig_y_00(industry_index,2)=read_name_real('sig_y_00(industry_index,2)',sig_y_00(industry_index,2),unit_in,unit_logfile)
 
+        !This scales the subgrid size to give to give sig_y_0. Optimal value is 0.8 so sig_y_0=0.8/2*delta_y
         sigy_0_subgid_width_scale=read_name_real('sigy_0_subgid_width_scale',sigy_0_subgid_width_scale,unit_in,unit_logfile)
         
         sig_z_00(traffic_index,1)=read_name_real('sig_z_00(traffic_index,1)',sig_z_00(traffic_index,1),unit_in,unit_logfile)
@@ -363,6 +366,7 @@
         sig_z_00(livestock_index,1)=read_name_real('sig_z_00(livestock_index,1)',sig_z_00(livestock_index,1),unit_in,unit_logfile)
         sig_z_00(other_index,1)=read_name_real('sig_z_00(other_index,1)',sig_z_00(other_index,1),unit_in,unit_logfile)
 
+        !These second subsources do not exist but still possible to implement
         sig_z_00(traffic_index,2)=read_name_real('sig_z_00(traffic_index,2)',sig_z_00(traffic_index,2),unit_in,unit_logfile)
         sig_z_00(shipping_index,2)=read_name_real('sig_z_00(shipping_index,2)',sig_z_00(shipping_index,2),unit_in,unit_logfile)
         sig_z_00(heating_index,2)=read_name_real('sig_z_00(heating_index,2)',sig_z_00(heating_index,2),unit_in,unit_logfile)
