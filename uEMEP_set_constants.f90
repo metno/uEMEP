@@ -418,11 +418,16 @@
     z_rec=2.
     
     h_emis(traffic_index,:)=2.
-    h_emis(shipping_index,:)=25.
-    h_emis(heating_index,:)=25.
+    h_emis(shipping_index,:)=70.
+    h_emis(heating_index,:)=15.
     h_emis(agriculture_index,:)=1.
-    h_emis(industry_index,:)=25.
+    h_emis(industry_index,:)=100.
     h_emis(aviation_index,:)=10.
+    h_emis(fugitive_index,:)=5.
+    h_emis(livestock_index,:)=5.
+    h_emis(solvents_index,:)=15.
+    h_emis(offroad_index,:)=5.
+    h_emis(waste_index,:)=15.
     sig_y_00(shipping_index,:)=5.
     sig_y_00(traffic_index,:)=1.
     sig_y_00(heating_index,:)=5.

@@ -1020,6 +1020,7 @@
     !Landuse proxy
     logical :: use_landuse_as_proxy=.false.
     logical :: read_rivm_landuse_flag=.false.
+    logical :: use_rivm_agricuture_emission_data=.false.
     
     integer n_clc_landuse_index
     parameter (n_clc_landuse_index=44)   

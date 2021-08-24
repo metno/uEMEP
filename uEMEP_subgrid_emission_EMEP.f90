@@ -179,7 +179,8 @@
             
             !Distribute EMEP emissions to existing proxy subgrid emissions
             if (subgrid_emission_distribution_flag.and.local_subgrid_method_flag.ne.4) then
-                write(unit_logfile,'(A)')'Distributing EMEP emissions to proxy subgrid emissions, no weighting used'
+                if (local_subgrid_method_flag.eq.2) write(unit_logfile,'(2A)')'Distributing local emission data to subgrid emissions for: ',trim(source_file_str(i_source))
+                if (local_subgrid_method_flag.eq.3) write(unit_logfile,'(2A)')'Distributing EMEP emissions to proxy subgrid emissions, no weighting used, for: ',trim(source_file_str(i_source))
                 
                 do t=t_start,t_end
                     emission_subgrid(:,:,t,i_source,:)=emission_subgrid(:,:,t,i_source,:)*subgrid_count_subgrid(:,:,:)*proxy_emission_subgrid(:,:,i_source,:)/total_proxy_emission_subgrid(:,:,i_source,:)              

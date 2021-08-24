@@ -234,7 +234,7 @@
                 endif
 
                 !Read and subgrid agriculture data
-                if (calculate_source(agriculture_index)) then
+                if (calculate_source(agriculture_index).and.use_rivm_agricuture_emission_data) then
                     !Currently only data from RIVM here
                     call uEMEP_read_agriculture_rivm_data
                 endif
@@ -402,7 +402,7 @@
     if (unit_logfile.ne.0) then 
     write(unit_logfile,*) ''
     write(unit_logfile,*) '------------------------------------------------------------------------'
-    write(unit_logfile,*) 'Ending program uEMEP'
+    write(unit_logfile,*) 'Ending program '//trim(model_version_str)
     write(unit_logfile,'(a,i5,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
     write(unit_logfile,*) '------------------------------------------------------------------------'
     endif
@@ -427,7 +427,7 @@
 
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
-    write(*,*) 'Ending program uEMEP'
+    write(*,*) 'Ending program '//trim(model_version_str)
     write(*,'(a,i5,a,i2)') ' CPU time taken (MM:SS): ',floor((end_time_cpu-start_time_cpu)/60.),':',floor(mod(end_time_cpu-start_time_cpu,60.))
     write(*,*) '------------------------------------------------------------------------'
 
