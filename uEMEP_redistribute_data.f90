@@ -316,7 +316,8 @@
              species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp) &
                 *(comp_EMEP_subgrid(:,:,:,pm25_nc_index)) &
                 /sum_temp
-            where (sum_temp.eq.0) species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=0
+            where (sum_temp.le.0) species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=0
+            where (isnan(species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)).or.species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp).le.0) species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=0
          enddo
          if (use_single_time_loop_flag) then
              sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
@@ -327,7 +328,8 @@
             species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp) &
                 *(comp_EMEP_subgrid(:,:,:,pm10_nc_index)) &
                 /sum_temp
-            where (sum_temp.eq.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
+            where (sum_temp.le.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
+            where (isnan(species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)).or.species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp).le.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
          enddo
          
          write(unit_logfile,'(A)') 'sum_sp should be the same as comp'
@@ -350,7 +352,8 @@
              species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp) &
                 *(comp_EMEP_subgrid(:,:,:,pm25_nc_index)-species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)) &
                 /sum_temp
-            where (sum_temp.eq.0) species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=0
+            where (sum_temp.le.0) species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=0
+            where (isnan(species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)).or.species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp).le.0) species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=0
          enddo
          if (use_single_time_loop_flag) then
             sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index-1),4)
@@ -361,12 +364,15 @@
             species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp) &
                 *(comp_EMEP_subgrid(:,:,:,pm10_nc_index)-species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)) &
                 /sum_temp
-            where (sum_temp.eq.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
+            where (sum_temp.le.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
+            where (isnan(species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)).or.species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp).le.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
          enddo
          endif
          !Remove the primary based on the local contribution.
          species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)=species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index))
          species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)=species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index))
+         where (species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index).lt.0.or.isnan(species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index))) species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)=0
+         where (species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index).lt.0.or.isnan(species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index))) species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)=0
          
          write(unit_logfile,'(A)') 'sum_sp should be the same as nonlocal, comp should be larger'
          write(unit_logfile,'(A,4f12.2)') 'PM25 (tot_sp,sum_sp,comp,nonlocal)',sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_pm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
