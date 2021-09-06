@@ -35,6 +35,7 @@
     integer n_multi_roadlinks_new,n_multi_roadlinks
     integer m
     integer n_road_link_file_loop
+    logical :: first_road_link_file_read=.false. 
 
     
     write(unit_logfile,'(A)') ''
@@ -56,6 +57,7 @@
     !---------------------------
     n_multi_roadlinks_new=0
     n_multi_roadlinks=0
+    first_road_link_file_read=.false.
     
     do m=1,n_road_link_file_loop
     
@@ -408,56 +410,74 @@
         
     endif
 
-    if (num_multiple_roadlink_files.gt.0) then
+    if (num_multiple_roadlink_files.gt.1) then
+        
+        if (n_roadlinks.gt.0) then
         
         n_multi_roadlinks_new=n_multi_roadlinks+n_roadlinks
-    
-        !Allocate the new multi array with all roads so far
-        allocate (inputdata_rl_multi_new(n_multi_roadlinks_new,num_var_rl))
-        allocate (inputdata_int_rl_multi_new(n_multi_roadlinks_new,num_int_rl))
-
-        !Place the current multi roads in the new multiroads
-        inputdata_rl_multi_new(1:n_multi_roadlinks,:)=inputdata_rl_multi(1:n_multi_roadlinks,:)
-        inputdata_int_rl_multi_new(1:n_multi_roadlinks,:)=inputdata_int_rl_multi(1:n_roadlinks,:)
         
-        !Place the last read road links in the new multiroads
-        inputdata_rl_multi_new(n_multi_roadlinks+1:n_multi_roadlinks_new,:)=inputdata_rl(1:n_roadlinks,:)
-        inputdata_int_rl_multi_new(n_multi_roadlinks+1:n_multi_roadlinks_new,:)=inputdata_int_rl(1:n_roadlinks,:)
+        !For the first roadloop 
+        if (.not.first_road_link_file_read) then
+            !Allocate the multi road array for the first time
+            n_multi_roadlinks_new=n_roadlinks
+            n_multi_roadlinks=n_multi_roadlinks_new
+            if (.not.allocated(inputdata_rl_multi)) allocate (inputdata_rl_multi(n_multi_roadlinks,num_var_rl))
+            if (.not.allocated(inputdata_int_rl_multi)) allocate (inputdata_int_rl_multi(n_multi_roadlinks,num_int_rl))
+            inputdata_rl_multi(1:n_multi_roadlinks,:)=inputdata_rl(1:n_multi_roadlinks,:)
+            inputdata_int_rl_multi(1:n_multi_roadlinks,:)=inputdata_int_rl(1:n_roadlinks,:)          
+            first_road_link_file_read=.true.
+       else
+            
+            !Allocate the new multi array with all roads so far
+            allocate (inputdata_rl_multi_new(n_multi_roadlinks_new,num_var_rl))
+            allocate (inputdata_int_rl_multi_new(n_multi_roadlinks_new,num_int_rl))
 
-        !Deallocate the old multi road arrays
-        if (allocated(inputdata_rl_multi)) deallocate(inputdata_rl_multi)
-        if (allocated(inputdata_int_rl_multi)) deallocate(inputdata_int_rl_multi)
+            !Place the current multi roads in the new multiroads
+            !NOTE: inputdata_rl_multi is not allocated until later, debugging error but do not use this anyway!
+            inputdata_rl_multi_new(1:n_multi_roadlinks,:)=inputdata_rl_multi(1:n_multi_roadlinks,:)
+            inputdata_int_rl_multi_new(1:n_multi_roadlinks,:)=inputdata_int_rl_multi(1:n_roadlinks,:)
+        
+            !Place the last read road links in the new multiroads
+            inputdata_rl_multi_new(n_multi_roadlinks+1:n_multi_roadlinks_new,:)=inputdata_rl(1:n_roadlinks,:)
+            inputdata_int_rl_multi_new(n_multi_roadlinks+1:n_multi_roadlinks_new,:)=inputdata_int_rl(1:n_roadlinks,:)
+
+            !Deallocate the old multi road arrays
+            if (allocated(inputdata_rl_multi)) deallocate(inputdata_rl_multi)
+            if (allocated(inputdata_int_rl_multi)) deallocate(inputdata_int_rl_multi)
+
+            n_multi_roadlinks=n_multi_roadlinks_new
+        
+            !Allocate the multi road array
+            allocate (inputdata_rl_multi(n_multi_roadlinks,num_var_rl))
+            allocate (inputdata_int_rl_multi(n_multi_roadlinks,num_int_rl))
+   
+            !Put the new data in the old one
+            inputdata_rl_multi=inputdata_rl_multi_new
+            inputdata_int_rl_multi=inputdata_int_rl_multi_new
+
+            !Deallocate the new multi road arrays
+            if (allocated(inputdata_rl_multi_new)) deallocate(inputdata_rl_multi_new)
+            if (allocated(inputdata_int_rl_multi_new)) deallocate(inputdata_int_rl_multi_new)
+
+        endif
+        
+        endif
 
         !Deallocate the other arrays as well
         if (allocated(inputdata_rl)) deallocate(inputdata_rl)
-        if (allocated(inputdata_int_rl)) deallocate(inputdata_int_rl)
+        if (allocated(inputdata_int_rl)) deallocate(inputdata_int_rl)   
         if (allocated(inputdata_rl_temp)) deallocate (inputdata_rl_temp)
         if (allocated(inputdata_int_rl_temp)) deallocate (inputdata_int_rl_temp)
-        
-        n_multi_roadlinks=n_multi_roadlinks_new
-        
-        !Allocate the multi road array
-        allocate (inputdata_rl_multi(n_multi_roadlinks,num_var_rl))
-        allocate (inputdata_int_rl_multi(n_multi_roadlinks,num_int_rl))
-   
-        !Put the new data in the old one
-        inputdata_rl_multi=inputdata_rl_multi_new
-        inputdata_int_rl_multi=inputdata_int_rl_multi_new
-
-        !Deallocate the new multi road arrays
-        if (allocated(inputdata_rl_multi_new)) deallocate(inputdata_rl_multi_new)
-        if (allocated(inputdata_int_rl_multi_new)) deallocate(inputdata_int_rl_multi_new)
-
         if (allocated(valid_link_flag)) deallocate (valid_link_flag)
 
         write(unit_logfile,'(a,i)') ' Number of accumulated multi-road links used = ', n_multi_roadlinks_new
-
+        
     endif
     
     !End the multiloop here
     enddo
     
-    if (num_multiple_roadlink_files.gt.0) then
+    if (num_multiple_roadlink_files.gt.1) then
         allocate (inputdata_rl(n_multi_roadlinks,num_var_rl))
         allocate (inputdata_int_rl(n_multi_roadlinks,num_int_rl))
         inputdata_rl=inputdata_rl_multi
@@ -465,6 +485,7 @@
         if (allocated(inputdata_rl_multi)) deallocate(inputdata_rl_multi)
         if (allocated(inputdata_int_rl_multi)) deallocate(inputdata_int_rl_multi)
         n_roadlinks=n_multi_roadlinks_new
+        write(unit_logfile,'(a,i)') ' Number of accumulated multi-road links used = ', n_multi_roadlinks
     endif
     
     
