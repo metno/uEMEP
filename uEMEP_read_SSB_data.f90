@@ -575,7 +575,7 @@
     integer :: name_index=0
     
     !Temporary reading rvariables
-    real, allocatable :: population_nc_dp(:,:,:)
+    double precision, allocatable :: population_nc_dp(:,:,:)
     double precision, allocatable :: var2d_nc_dp(:,:)
     double precision, allocatable :: temp_var2d_nc_dp(:,:)
     
@@ -756,8 +756,8 @@
         !Loop through the population data and put it in the population grid
         !Converting from lat lon to the subgrid coordinates and then finding the nearest neighbour
         !Interpolate to the population grid in lat lon coordinates
-        population_subgrid(:,:,SSB_data_type)=0
-        where (population_nc_dp.lt.0) population_nc_dp=0.
+        population_subgrid(:,:,SSB_data_type)=0.
+        where (population_nc_dp.lt.0.) population_nc_dp=0.
         write(unit_logfile,'(2a,2f12.2)') 'Population min and max: ',trim(var_name_nc_temp),minval(population_nc_dp(:,:,population_nc_index)),maxval(population_nc_dp(:,:,population_nc_index))
         !stop
         
@@ -794,7 +794,7 @@
             !Do the interpolation on the same grid then scale afterwards. Equivalent to interpolating density then rescaling with grid size
             population_subgrid(i,j,SSB_data_type)=area_weighted_extended_vectorgrid_interpolation_function( &
                 real(var2d_nc_dp(1:dim_length_population_nc(x_dim_nc_index),x_dim_nc_index))*correct_lon(1),real(var2d_nc_dp(1:dim_length_population_nc(y_dim_nc_index),y_dim_nc_index)) &
-                ,population_nc_dp(:,:,population_nc_index),dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index) &
+                ,real(population_nc_dp(:,:,population_nc_index)),dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index) &
                 ,delta_pop_nc*correct_lon,temp_lon(1)*correct_lon(1),temp_lat(1),delta_pop_nc*correct_lon) 
             
             temp_scale=(temp_delta(1)*correct_lon(1)*temp_delta(2)*correct_lon(2))/(delta_pop_nc(1)*correct_lon(1)*delta_pop_nc(2)*correct_lon(2))
@@ -841,7 +841,7 @@
             !Interpolate on same grid then scale, equivalent to interpolating density and then recalculating
             proxy_emission_subgrid(i,j,source_index,:)=area_weighted_extended_vectorgrid_interpolation_function( &
                 real(var2d_nc_dp(1:dim_length_population_nc(x_dim_nc_index),x_dim_nc_index))*correct_lon(1),real(var2d_nc_dp(1:dim_length_population_nc(y_dim_nc_index),y_dim_nc_index)) &
-                ,population_nc_dp(:,:,population_nc_index),dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index) &
+                ,real(population_nc_dp(:,:,population_nc_index)),dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index) &
                 ,delta_pop_nc*correct_lon,temp_lon(1)*correct_lon(1),temp_lat(1),delta_pop_nc*correct_lon)
             
             temp_scale=(temp_delta(1)*correct_lon(1)*temp_delta(2)*correct_lon(2))/(delta_pop_nc(1)*correct_lon(1)*delta_pop_nc(2)*correct_lon(2))
