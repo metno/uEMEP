@@ -757,7 +757,7 @@
         !Converting from lat lon to the subgrid coordinates and then finding the nearest neighbour
         !Interpolate to the population grid in lat lon coordinates
         population_subgrid(:,:,SSB_data_type)=0.
-        where (population_nc_dp.lt.0.) population_nc_dp=0.
+        where (population_nc_dp.lt.0.0D00) population_nc_dp=0.0D00
         write(unit_logfile,'(2a,2f12.2)') 'Population min and max: ',trim(var_name_nc_temp),minval(population_nc_dp(:,:,population_nc_index)),maxval(population_nc_dp(:,:,population_nc_index))
         !stop
         
