@@ -1032,6 +1032,8 @@
     data benzene_split_voc_in_GNFR_sectors /4.0899e-2, 1.5077e-2, 6.6153e-2, 0.975e-2, 0.0, 2.4058e-2, 2.0e-2, 2.1458e-2, 1.7078e-2, 3.6234e-2, 6.8e-2, 6.8e-2, 0.0/
     !BENZENE emission is scaled from VOC: sec01 * 4.0899% + sec02 * 1.5077% + sec03 * 6.6153% + sec04 * 0.975% + sec05 * 0 + sec06 * 2.4058% + sec07 * 2% + sec08 * 2.1458% + sec09 * 1.7078% + sec10 * 3.6234% + sec11 * 6.8% + sec12 * 6.8%
 
+    real :: scale_GNFR_emission_source(n_source_index)=1.
+    
     end module uEMEP_definitions
     
     

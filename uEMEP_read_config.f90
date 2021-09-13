@@ -807,6 +807,17 @@
         enddo
         enddo
 
+        !Scale EMEP emission by sector
+        !Source input is numbered as GNFR13 in input but is placed in the uEMEP source sectors
+        do i_source=1,n_source_index
+            
+            write(UNIT=a_str,FMT=*) convert_uEMEP_to_GNFR_sector_index(i_source)
+            temp_str='scale_GNFR_emission_source('//trim(adjustl(a_str))//')'
+            !write(*,*) i_source,trim(temp_str)
+            scale_GNFR_emission_source(i_source)=read_name_real(trim(temp_str),scale_GNFR_emission_source(i_source),unit_in,unit_logfile)
+
+        enddo
+
     close (unit_in)
     
     enddo !End configuration file number loop

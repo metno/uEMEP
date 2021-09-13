@@ -526,11 +526,23 @@
                 where (total_proxy_emission_subgrid(:,:,i_source,:).eq.0.) emission_subgrid(:,:,t,i_source,:)=0.
             enddo
         endif    
-
+        
         endif !End if calculate_source
         enddo !End source loop
 
     endif
+
+        !Scale the subgrid emissions if GNFR is used
+    do i_source=1,n_source_index
+    if (calculate_source(i_source)) then
+        if (scale_GNFR_emission_source(i_source).ne.1.) then
+            write(unit_logfile,'(2A,f12.2)')'Scaling EMEP emissions for uEMEP source: ',trim(source_file_str(i_source)),scale_GNFR_emission_source(i_source)   
+            do t=t_start,t_end
+                emission_subgrid(:,:,t,i_source,:)=emission_subgrid(:,:,t,i_source,:)*scale_GNFR_emission_source(i_source)
+            enddo
+        endif
+    endif
+    enddo
     
     !if (subgrid_emission_distribution_flag) then
     do i_source=1,n_source_index
