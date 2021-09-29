@@ -150,7 +150,7 @@
                     temp_end_time_meteo_nc_index=temp_start_time_meteo_nc_index+search_hour_step*(i)    
                 endif
                 !Create new date_str
-                format_temp='yyyymmdd'
+                format_temp='yyyymmddHH'
                 call datestr_to_date(config_date_str,format_temp,new_start_date_input)
                 date_num_temp=date_to_number(new_start_date_input,ref_year_meteo)
                 call number_to_date(date_num_temp-dble(search_hour_step*i)/dble(24.),new_start_date_input,ref_year_meteo)
