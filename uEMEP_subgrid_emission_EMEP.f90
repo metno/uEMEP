@@ -532,7 +532,7 @@
 
     endif
 
-        !Scale the subgrid emissions if GNFR is used
+    !Scale the subgrid emissions if GNFR is used
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
         if (scale_GNFR_emission_source(i_source).ne.1.) then

@@ -892,7 +892,10 @@
         call date_to_datestr_bracket(a,filename_EMEP(3),filename_EMEP(3))
         call date_to_datestr_bracket(a,filename_EMEP(4),filename_EMEP(4))
         call date_to_datestr_bracket(a,filename_rl(1),filename_rl(1))
-        call date_to_datestr_bracket(a,filename_rl(2),filename_rl(2))  
+        call date_to_datestr_bracket(a,filename_rl(2),filename_rl(2))
+        
+        call date_to_datestr_bracket(a,pathname_emissions_for_EMEP,pathname_emissions_for_EMEP)
+        
     enddo
     !write (unit_logfile,'(2A)') ' Updating output path to:   ',trim(pathname_output_grid)
     !write (unit_logfile,'(2A)') ' Updating output file to:   ',trim(pathname_EMEP(1))
