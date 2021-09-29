@@ -153,7 +153,7 @@
                 format_temp='yyyymmddHH'
                 call datestr_to_date(config_date_str,format_temp,new_start_date_input)
                 date_num_temp=date_to_number(new_start_date_input,ref_year_meteo)
-                call number_to_date(date_num_temp-dble(search_hour_step*i)/dble(24.),new_start_date_input,ref_year_meteo)
+                call number_to_date(date_num_temp-dble(search_hour_step*i+0.5)/dble(24.),new_start_date_input,ref_year_meteo)
                 !Replace replacement_date_str with <yyyyhhmm> so the new_start_date_input can be inserted
                 format_temp='<yyyymmdd>'
                 filename_EMEP(i_file)=replace_string_char(format_temp,replacement_date_str,original_filename_EMEP(i_file))
