@@ -468,7 +468,7 @@
     
     if (save_no2_source_contributions) then
         
-        valid_min=-1000.
+        valid_min=0.
         
         if (save_netcdf_fraction_as_contribution_flag) then
             variable_type='float'
@@ -580,7 +580,7 @@
             unit_str="%"
         endif
     
-        valid_min=-1000.
+        valid_min=-100.
 
         do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then

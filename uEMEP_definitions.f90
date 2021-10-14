@@ -33,7 +33,9 @@
     !Nodata value
     !Changed to -99 so it can be used with int1 variables
     real NODATA_value
-    parameter (NODATA_value=-99.)
+    !parameter (NODATA_value=-99.)
+    !Change to allow the int1 value to be -100
+    parameter (NODATA_value=-128.)
     
     !often used
     !integer i,j,k
