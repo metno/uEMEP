@@ -575,12 +575,13 @@
         if (save_netcdf_fraction_as_contribution_flag) then
             variable_type='float'
             unit_str="ug/m3"
+            valid_min=-1000.
         else           
             variable_type='byte'
             unit_str="%"
+            valid_min=-100.
         endif
     
-        valid_min=-100.
 
         do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
