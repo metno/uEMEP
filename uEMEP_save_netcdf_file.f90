@@ -510,7 +510,8 @@
             if (save_netcdf_fraction_as_contribution_flag) then
                 temp_subgrid=comp_source_EMEP_subgrid(:,:,:,no2_index,i_source)
             else
-                temp_subgrid=comp_source_EMEP_subgrid(:,:,:,no2_index,i_source)/comp_EMEP_subgrid(:,:,:,no2_index)*100.
+                !temp_subgrid=comp_source_EMEP_subgrid(:,:,:,no2_index,i_source)/comp_EMEP_subgrid(:,:,:,no2_index)*100.
+                temp_subgrid=comp_source_EMEP_subgrid(:,:,:,no2_index,i_source)/comp_subgrid(:,:,:,no2_index)*100.
             endif
             endif
             
@@ -616,7 +617,8 @@
             if (save_netcdf_fraction_as_contribution_flag) then
                 temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)
             else
-                temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_EMEP_subgrid(:,:,:,o3_index)*100.
+                !temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_EMEP_subgrid(:,:,:,o3_index)*100.
+                temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_subgrid(:,:,:,o3_index)*100.
             endif
             endif
             
