@@ -578,7 +578,7 @@
             unit_str="ug/m3"
             valid_min=-1000.
         else           
-            variable_type='byte'
+            variable_type='short'
             unit_str="%"
             valid_min=-100.
         endif
@@ -588,8 +588,8 @@
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
         if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
         !if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
-        !Only save the nonlocal part as 100%
-        !if (i_source.eq.allsource_index) then
+        !Only save the nonlocal part as 100% save_netcdf_fraction_as_contribution_flag=.false.
+        if ((i_source.eq.allsource_index.and..not.save_netcdf_fraction_as_contribution_flag).or.save_netcdf_fraction_as_contribution_flag) then
         if (i_source.eq.traffic_nonexhaust_nc_index) then
             !Do not save nonexhaust for exhaust gas emissions
         else
@@ -610,6 +610,10 @@
                 !temp_subgrid=subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,pollutant_loop_back_index(o3_nc_index))
             else
                 temp_subgrid=comp_source_subgrid(:,:,:,o3_index,i_source)/comp_subgrid(:,:,:,o3_index)*100.
+                !Put some limits on the ozone because it can be very large if o3 is small
+                temp_subgrid=min(temp_subgrid,1000.)
+                temp_subgrid=max(temp_subgrid,-100.)
+                
                 !temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_EMEP_subgrid(:,:,:,o3_index)*100.
                 !temp_subgrid=100.*subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,pollutant_loop_back_index(o3_nc_index))/subgrid(:,:,:,emep_subgrid_index,i_source,pollutant_loop_back_index(o3_nc_index))
             endif
@@ -619,6 +623,8 @@
             else
                 !temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_EMEP_subgrid(:,:,:,o3_index)*100.
                 temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_subgrid(:,:,:,o3_index)*100.
+                temp_subgrid=min(temp_subgrid,1000.)
+                temp_subgrid=max(temp_subgrid,-100.)
             endif
             endif
             
@@ -650,6 +656,8 @@
             else
                 temp_subgrid=comp_source_EMEP_additional_subgrid(:,:,:,o3_index,i_source)/comp_EMEP_subgrid(:,:,:,o3_index)*100.
                 !temp_subgrid=100.*subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,pollutant_loop_back_index(o3_nc_index))/subgrid(:,:,:,emep_subgrid_index,i_source,pollutant_loop_back_index(o3_nc_index))
+                temp_subgrid=min(temp_subgrid,1000.)
+                temp_subgrid=max(temp_subgrid,-100.)
             endif
             
             if (save_netcdf_file_flag) then
@@ -672,6 +680,7 @@
             endif
             endif
             
+        endif
         endif
         endif
         enddo
@@ -840,6 +849,8 @@
                     temp_subgrid=subgrid(:,:,:,emep_local_subgrid_index,i_source,i_pollutant)
                 else
                     temp_subgrid=subgrid(:,:,:,emep_local_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)*100.
+                    temp_subgrid=min(temp_subgrid,1000.)
+                    temp_subgrid=max(temp_subgrid,-1000.)
                 endif
                 if (save_netcdf_file_flag) then
                     write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
@@ -867,6 +878,8 @@
                     temp_subgrid=subgrid(:,:,:,emep_additional_local_subgrid_index,i_source,i_pollutant)
                 else
                     temp_subgrid=subgrid(:,:,:,emep_additional_local_subgrid_index,i_source,i_pollutant)/subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)*100.
+                    temp_subgrid=min(temp_subgrid,1000.)
+                    temp_subgrid=max(temp_subgrid,-1000.)
                 endif
                 if (save_netcdf_file_flag) then
                     write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)

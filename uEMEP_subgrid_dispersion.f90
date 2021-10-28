@@ -590,16 +590,7 @@
                                     
                                         call uEMEP_set_dispersion_sigma_Kz(x_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,sig_z_loc,h_emis_loc,h_mix_loc,invL_loc,FF10_loc,10.,logz0_loc,emission_subgrid_delta(:,source_index),u_star0_loc,average_zc_h_in_Kz_flag,n_kz_iterations,sig_y_scaling_factor,sig_z_loc,sig_y_loc,FF_zc_loc)
                                         !write(*,*) 'H1: ',sig_z_loc
-                                        
-                                        !Diagnostic
-                                        if (2.eq.1.and.x_loc.lt.10.) then
-                                        write(*,'(a,5f12.2,f12.4)') 'OUT KZ FULL: ',x_loc,sig_z_loc,sig_y_loc,h_mix_loc,exp(logz0_loc),invL_loc
-                                        !call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
-                                        call uEMEP_set_dispersion_sigma_Kz_emulator(h_emis_loc,invL_loc,logz0_loc,h_mix_loc,sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),0.,x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)
-                                        write(*,'(A,5f12.2,f12.4)') 'OUT KZ EMUL: ',x_loc,sig_z_loc,sig_y_loc,h_mix_loc,exp(logz0_loc),invL_loc
-                                        write(*,*)
-                                        endif
-                                        
+                                                                                
                                         !Add the meandering and change in wind angle to the plume since not included in Kz calculation
                                         sig_y_loc=sig_y_loc+x_loc*angle_diff(i_cross_integral,j_cross_integral)
                                         
