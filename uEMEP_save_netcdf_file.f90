@@ -621,8 +621,9 @@
             if (save_netcdf_fraction_as_contribution_flag) then
                 temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)
             else
-                !temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_EMEP_subgrid(:,:,:,o3_index)*100.
-                temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_subgrid(:,:,:,o3_index)*100.
+                !Note this divides by the EMEP value not the subgrid value because it has to be 100%. Do not use fractions for O3, asking for trouble
+                temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_EMEP_subgrid(:,:,:,o3_index)*100.
+                !temp_subgrid=comp_source_EMEP_subgrid(:,:,:,o3_index,i_source)/comp_subgrid(:,:,:,o3_index)*100.
                 temp_subgrid=min(temp_subgrid,1000.)
                 temp_subgrid=max(temp_subgrid,-100.)
             endif
