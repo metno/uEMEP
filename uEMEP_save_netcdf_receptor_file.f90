@@ -59,6 +59,7 @@
     endif
     
     if (trim(variable_type).eq.'byte') nf90_type=NF90_BYTE
+    if (trim(variable_type).eq.'short') nf90_type=NF90_SHORT
     if (trim(variable_type).eq.'float') nf90_type=NF90_FLOAT
     if (trim(variable_type).eq.'double') nf90_type=NF90_DOUBLE
     
@@ -350,6 +351,9 @@
         if (nf90_type.eq.NF90_byte) then
             call check(  nf90_put_att(ncid, val_varid, "missing_value", int1(NODATA_value) ) ) !New
             call check(  nf90_put_att(ncid, val_varid, "valid_min", int1(valid_min)) )
+        elseif (nf90_type.eq.NF90_short) then
+            call check(  nf90_put_att(ncid, val_varid, "missing_value", int2(NODATA_value) ) ) !New
+            call check(  nf90_put_att(ncid, val_varid, "valid_min", int2(valid_min)) )
         else
             call check(  nf90_put_att(ncid, val_varid, "missing_value", NODATA_value ) ) !New
             call check(  nf90_put_att(ncid, val_varid, "valid_min", valid_min) )
@@ -438,6 +442,8 @@
         !Write the variable to file
         if (nf90_type.eq.NF90_byte) then
             call check( nf90_put_var(ncid, val_varid, int1(val_rec(:,1:nt)), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
+        elseif (nf90_type.eq.NF90_short) then
+            call check( nf90_put_var(ncid, val_varid, int2(val_rec(:,1:nt)), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
         else
             call check( nf90_put_var(ncid, val_varid, val_rec(:,1:nt), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) ) 
         endif
