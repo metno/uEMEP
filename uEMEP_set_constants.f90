@@ -98,6 +98,8 @@
         var_name_nc(conc_nc_index,bap_nc_index,allsource_nc_index)='bap'
         var_name_nc(conc_nc_index,co_nc_index,allsource_nc_index)='co'
         var_name_nc(conc_nc_index,c6h6_nc_index,allsource_nc_index)='benzene'
+        var_name_nc(conc_nc_index,somo35_nc_index,allsource_nc_index)='somo35'
+        var_name_nc(conc_nc_index,comax_nc_index,allsource_nc_index)='maxco'
 
         !Local fractions
         var_name_nc(frac_nc_index,nox_nc_index,traffic_nc_index)='nox_sec07_local_fraction'
@@ -244,6 +246,8 @@
         comp_name_nc(co_nc_index)='D3_ug_CO'
         comp_name_nc(bap_nc_index)='D3_ug_BAP'
         comp_name_nc(c6h6_nc_index)='D3_ug_BENZENE'
+        comp_name_nc(somo35_nc_index)='SOMO35'
+        comp_name_nc(comax_nc_index)='SURF_MAXCO'
 
         comp_name_nc(pm25_sand_nc_index)='PM25_sand'
         comp_name_nc(pm10_sand_nc_index)='PM10_sand'
@@ -685,15 +689,29 @@
             pollutant_compound_loop_index(p_loop,1)=nox_nc_index
             pollutant_compound_loop_index(p_loop,2)=no2_nc_index
             pollutant_compound_loop_index(p_loop,3)=o3_nc_index
+            !Add addition values to be read and saved
+            if (save_EMEP_somo35) then
+                n_pollutant_compound_loop(p_loop)=n_pollutant_compound_loop(p_loop)+1
+                pollutant_compound_loop_index(p_loop,n_pollutant_compound_loop(p_loop))=somo35_nc_index            
+            endif
         elseif (pollutant_loop_index(p_loop).eq.nh3_nc_index) then
             n_pollutant_compound_loop(p_loop)=2
             pollutant_compound_loop_index(p_loop,1)=nh3_nc_index
             pollutant_compound_loop_index(p_loop,2)=nh4_nc_index
+        elseif (pollutant_loop_index(p_loop).eq.co_nc_index) then
+            n_pollutant_compound_loop(p_loop)=1
+            pollutant_compound_loop_index(p_loop,1)=co_nc_index
+            if (save_EMEP_comax) then
+                n_pollutant_compound_loop(p_loop)=n_pollutant_compound_loop(p_loop)+1
+                pollutant_compound_loop_index(p_loop,n_pollutant_compound_loop(p_loop))=comax_nc_index            
+            endif
         else
             n_pollutant_compound_loop(p_loop)=1
             pollutant_compound_loop_index(p_loop,1)=pollutant_loop_index(p_loop)
         endif       
         enddo
+        
+        
         
         write(unit_logfile,'(a,i)') 'Number of pollutants=',n_pollutant_loop
         write(unit_logfile,'(a,i)') 'Number of EMEP pollutants=',n_emep_pollutant_loop

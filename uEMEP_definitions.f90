@@ -118,13 +118,13 @@
     integer pm25_sand_nc_index,pm10_sand_nc_index,pm25_salt_nc_index,pm10_salt_nc_index
     parameter (pm25_sand_nc_index=10,pm10_sand_nc_index=11,pm25_salt_nc_index=12,pm10_salt_nc_index=13)
     !Additional compounds
-    integer c6h6_nc_index,bap_nc_index,co_nc_index
-    parameter (c6h6_nc_index=14,bap_nc_index=15,co_nc_index=16)    
+    integer c6h6_nc_index,bap_nc_index,co_nc_index,somo35_nc_index,comax_nc_index
+    parameter (c6h6_nc_index=14,bap_nc_index=15,co_nc_index=16,somo35_nc_index=17,comax_nc_index=18)    
     integer n_compound_nc_index
-    parameter (n_compound_nc_index=16)
-    !These are only used in names
+    parameter (n_compound_nc_index=18)
+    !These are only used in names but need to change n_pollutant_nc_index to fit these!
     integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index,all_totals_nc_index,aaqd_totals_nc_index
-    parameter (pmco_nc_index=17,all_nc_index=18,pm_nc_index=19,all_sand_nc_index=20,all_salt_nc_index=21,all_sand_salt_nc_index=22,all_totals_nc_index=23,aaqd_totals_nc_index=24)
+    parameter (pmco_nc_index=19,all_nc_index=20,pm_nc_index=21,all_sand_nc_index=22,all_salt_nc_index=23,all_sand_salt_nc_index=24,all_totals_nc_index=25,aaqd_totals_nc_index=26)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
     integer allsource_nc_index,traffic_nc_index,shipping_nc_index,heating_nc_index,agriculture_nc_index,industry_nc_index
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
@@ -165,7 +165,7 @@
     !Loop for all pollutants to be calculated
     integer pollutant_index
     integer n_pollutant_nc_index
-    parameter (n_pollutant_nc_index=24) !Includes the addition naming indexes index
+    parameter (n_pollutant_nc_index=26) !Includes the addition naming indexes index
     integer :: n_pollutant_loop = 1
     integer :: n_emep_pollutant_loop = 1
     integer pollutant_loop_index(n_pollutant_nc_index)
@@ -402,10 +402,10 @@
     integer pm25_sand_index,pm10_sand_index,pm25_salt_index,pm10_salt_index
     parameter (pm25_sand_index=10,pm10_sand_index=11,pm25_salt_index=12,pm10_salt_index=13)
     !Additional compounds
-    integer c6h6_index,bap_index,co_index
-    parameter (c6h6_index=14,bap_index=15,co_index=16)
+    integer c6h6_index,bap_index,co_index,somo35_index,comax_index
+    parameter (c6h6_index=14,bap_index=15,co_index=16,somo35_index=17,comax_index=18)
     integer n_compound_index
-    parameter (n_compound_index=16)
+    parameter (n_compound_index=18)
     
     !Declare source indexes (type_source) must be the same as source_nc_index
     integer allsource_index,traffic_index,shipping_index,heating_index,agriculture_index,industry_index
@@ -1031,10 +1031,36 @@
     !Benzene split from VOC
     logical :: extract_benzene_from_voc_emissions=.false.
     real benzene_split_voc_in_GNFR_sectors(13)
-    data benzene_split_voc_in_GNFR_sectors /4.0899e-2, 1.5077e-2, 6.6153e-2, 0.975e-2, 0.0, 2.4058e-2, 2.0e-2, 2.1458e-2, 1.7078e-2, 3.6234e-2, 6.8e-2, 6.8e-2, 0.0/
+    !Default
     !BENZENE emission is scaled from VOC: sec01 * 4.0899% + sec02 * 1.5077% + sec03 * 6.6153% + sec04 * 0.975% + sec05 * 0 + sec06 * 2.4058% + sec07 * 2% + sec08 * 2.1458% + sec09 * 1.7078% + sec10 * 3.6234% + sec11 * 6.8% + sec12 * 6.8%
+    !data benzene_split_voc_in_GNFR_sectors /4.0899e-2, 1.5077e-2, 6.6153e-2, 0.975e-2, 0.0, 2.4058e-2, 2.0e-2, 2.1458e-2, 1.7078e-2, 3.6234e-2, 6.8e-2, 6.8e-2, 0.0/
+    !Average of countries
+    data benzene_split_voc_in_GNFR_sectors /0.0449, 0.0212, 0.0668, 0.0084, 0.0, 0.0266, 0.0226, 0.0214, 0.0223, 0.0362, 0.068, 0.0601, 0.068/
+
+!1	0.0449
+!2	0.0212
+!3	0.0668
+!4	0.0084
+!5	0
+!6	0.0266
+!7	0.0226
+!8	0.0214
+!9	0.0223
+!10	0.0362
+!11	0.068
+!12	0.0601
+!13	0.068
+!14	0.0449
+!15	0.0449
+!16	0.0372
+!17	0.02
+!18	0
+!19	0.01
 
     real :: scale_GNFR_emission_source(n_source_index)=1.
+    
+    logical :: save_EMEP_somo35=.false.
+    logical :: save_EMEP_comax=.false.
     
     end module uEMEP_definitions
     

@@ -817,6 +817,11 @@
             scale_GNFR_emission_source(i_source)=read_name_real(trim(temp_str),scale_GNFR_emission_source(i_source),unit_in,unit_logfile)
 
         enddo
+        
+        !Save original EMEP values for 
+        save_EMEP_somo35=read_name_logical('save_EMEP_somo35',save_EMEP_somo35,unit_in,unit_logfile)
+        save_EMEP_comax=read_name_logical('save_EMEP_comax',save_EMEP_comax,unit_in,unit_logfile)
+
 
     close (unit_in)
     

@@ -918,11 +918,14 @@
             
         i_comp=pollutant_compound_loop_index(i_pollutant,i_loop)
         
+        !Somo35 may be included here. Do not include it if it is.
+        if (i_comp.ne.somo35_nc_index) then
+        
         i_file=emep_subgrid_file_index(allsource_index)
         var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_forchemistry'//'_'//trim(filename_grid(i_file))
         temp_subgrid=comp_EMEP_subgrid(:,:,:,i_comp)
         unit_str="ug/m3"
-       if (save_netcdf_file_flag) then
+        if (save_netcdf_file_flag) then
             write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
@@ -937,6 +940,8 @@
                 ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
                 ,z_rec(allsource_index,1) &
                 ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+        endif
+        
         endif
     enddo
     endif
@@ -1044,7 +1049,8 @@
         i_file=emep_subgrid_file_index(allsource_index)
         var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_original_EMEP_concentration'
         unit_str="ug/m3"
-        if (save_netcdf_file_flag) then
+        if (i_comp.eq.somo35_index) unit_str="ppb·d"
+        if (save_netcdf_file_flag) then 
             write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(orig_EMEP_subgrid(:,:,:,i_comp))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,orig_EMEP_subgrid(:,:,:,i_comp),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
@@ -2301,7 +2307,7 @@
     
     if(status /= nf90_noerr) then 
       write(*,*) 'Stopping due to netcdf error: '//trim(nf90_strerror(status))
-      stop 
+      error stop 
     end if
     
     end subroutine check
