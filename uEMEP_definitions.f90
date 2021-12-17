@@ -122,7 +122,7 @@
     parameter (c6h6_nc_index=14,bap_nc_index=15,co_nc_index=16,somo35_nc_index=17,comax_nc_index=18)    
     integer n_compound_nc_index
     parameter (n_compound_nc_index=18)
-    !These are only used in names but need to change n_pollutant_nc_index to fit these!
+    !These are only used in names but need to change the variable n_pollutant_nc_index to fit these!
     integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index,all_totals_nc_index,aaqd_totals_nc_index
     parameter (pmco_nc_index=19,all_nc_index=20,pm_nc_index=21,all_sand_nc_index=22,all_salt_nc_index=23,all_sand_salt_nc_index=24,all_totals_nc_index=25,aaqd_totals_nc_index=26)
     !THese must be the same as the subgrid source indexes. Should probably just use the one

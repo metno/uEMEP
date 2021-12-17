@@ -18,7 +18,7 @@
     integer i,j,k
     character(256) temp_name
     logical exists
-    integer ii,jj,tt
+    integer ii,jj,tt,iii,jjj
     integer i_temp,j_temp,i_source,i_file
     integer i_nc_temp,j_nc_temp
     real, allocatable :: weighting_nc(:,:)
@@ -140,9 +140,12 @@
             ypos_area_max=ypos_integral_subgrid+ypos_limit
             ypos_area_min=ypos_integral_subgrid-ypos_limit
                   
-            do jj=j_nc-1,j_nc+1
-            do ii=i_nc-1,i_nc+1             
+            do jjj=j_nc-1,j_nc+1
+            do iii=i_nc-1,i_nc+1             
             
+                ii=max(1,iii);ii=min(dim_length_nc(x_dim_nc_index),iii)
+                jj=max(1,jjj);jj=min(dim_length_nc(y_dim_nc_index),jjj)
+                !write(*,*) ii,jj,iii,jjj
                 xpos_min=max(xpos_area_min,var1d_nc(ii,lon_nc_index)-dgrid_nc(lon_nc_index)/2.)
                 xpos_max=min(xpos_area_max,var1d_nc(ii,lon_nc_index)+dgrid_nc(lon_nc_index)/2.)
                 ypos_min=max(ypos_area_min,var1d_nc(jj,lat_nc_index)-dgrid_nc(lat_nc_index)/2.)

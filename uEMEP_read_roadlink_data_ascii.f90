@@ -36,7 +36,8 @@
     integer m
     integer n_road_link_file_loop
     logical :: first_road_link_file_read=.false. 
-
+    real temp_val
+    integer temp_int
     
     write(unit_logfile,'(A)') ''
 	write(unit_logfile,'(A)') '================================================================'
@@ -126,7 +127,7 @@
             read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
             i=0
             do while(.not.eof(unit_in))
-                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes
+                if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes up to n_subnodes
                 if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_x(1) !Read x nodes
                 if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_y(1) !Read y nodes
                 !write(*,*) temp_id
@@ -139,6 +140,7 @@
             !n_roadlinks_major=i
             rewind(unit_in)
             call NXTDAT(unit_in,nxtdat_flag)
+            read(unit_in,*,ERR=20) temp_int,temp_int
         endif
 
         write(unit_logfile,'(a,i)') ' Number of major road links in header = ', n_roadlinks_major
@@ -148,7 +150,7 @@
         !Allocate the arrays after reading in the number of roads
         !allocate (inputdata_rl_temp(n_roadlinks,num_var_rl))
         !allocate (inputdata_int_rl_temp(n_roadlinks,num_int_rl))
-        !if (allocated(valid_link_flag)) deallocate (valid_link_flag)
+        if (allocated(valid_link_flag)) deallocate (valid_link_flag)
         allocate (valid_link_flag(n_roadlinks_major))
         valid_link_flag=.false.
    
@@ -177,6 +179,10 @@
         !init_subgrid_max(x_dim_index)=subgrid_max(x_dim_index)
         !init_subgrid_max(y_dim_index)=subgrid_max(y_dim_index)
         !endif
+        
+        !rewind(unit_in)
+        !call NXTDAT(unit_in,nxtdat_flag)
+        !read(unit_in,*,ERR=20) temp_int,temp_int
     
         do i=1,n_roadlinks_major
             !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
@@ -228,6 +234,8 @@
                 counter_major=counter_major+1
                 counter_sub=counter_sub+n_subnodes-1
                 valid_link_flag(i)=.true.
+            else
+                valid_link_flag(i)=.false.
             endif
                 
         enddo
@@ -296,11 +304,14 @@
         n_roadlinks=counter_sub
         n_roadlinks_major_selected=counter_major
     else
-        !Set all road links to valid when not regionally selecting
+        !Set all road links to valid when not regionally selecting. THis will fail because already allocated
+        if (allocated(valid_link_flag)) deallocate (valid_link_flag)
         allocate (valid_link_flag(n_roadlinks_major))
         valid_link_flag=.true.
     endif
     
+    if (allocated(inputdata_rl_temp)) deallocate (inputdata_rl_temp)
+    if (allocated(inputdata_int_rl_temp)) deallocate (inputdata_int_rl_temp)
     allocate (inputdata_rl_temp(n_roadlinks,num_var_rl))
     allocate (inputdata_int_rl_temp(n_roadlinks,num_int_rl))
     
@@ -311,14 +322,24 @@
     counter=0
     counter_major=0
 
+    !rewind(unit_in)
+    !call NXTDAT(unit_in,nxtdat_flag)
+    !read(unit_in,*,ERR=20) temp_int,temp_int
     !Read the data
     do i=1,n_roadlinks_major
-    if (.not.valid_link_flag(i)) then
-        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) 
+!    if (.not.valid_link_flag(i)) then
+!        if (read_OSM_roadlink_data_flag) then
+            !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
+!            if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+!        else
+            !ID ADT HDV ROAD_ACTIVITY_TYPE SPEED ROAD_WIDTH N_LANES N_SUBNODES ROAD_CATEGORY ROAD_LENGTH ROAD_STRUCTURE_TYPE REGION_ID ROAD_SURFACE_ID TUNNEL_LENGTH ROUTE_ID
+!            if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes &
+!            ,temp_category,temp_length,temp_structure_type,temp_region_id,temp_surface_id,temp_tunnel_length,temp_route_id
+!        endif
         !write(*,*) temp_id,temp_adt,n_subnodes
-        if (.not.eof(unit_in)) read(unit_in,*) 
-        if (.not.eof(unit_in)) read(unit_in,*) 
-    else
+!        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_val
+!        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_val
+!    else
         if (read_OSM_roadlink_data_flag) then
             !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
             if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
@@ -335,30 +356,37 @@
         !put in the road link data
         
         !Test size of major link. If less than min_link_size then treat it as a single link from the start sub_node to the end sub_node
+    if (valid_link_flag(i)) then
         
-        size_major(1)=maxval(sub_nodes_x(1:n_subnodes))-minval(sub_nodes_x(1:n_subnodes))
-        size_major(2)=maxval(sub_nodes_y(1:n_subnodes))-minval(sub_nodes_y(1:n_subnodes))
-        size_major(3)=sqrt(size_major(1)**2+size_major(2)**2)
-
-        if (size_major(3).gt.min_link_size) then
-            n_loop=n_subnodes-1
-            loop_step=1
-        else
-            n_loop=1
-            loop_step=n_subnodes-1
-            !write(*,*) size_major(3)
-        endif
         !Do not do this with latlon input data as it does not work
-        if (road_data_in_latlon) then
+        if (.not.road_data_in_latlon) then
+            size_major(1)=maxval(sub_nodes_x(1:n_subnodes))-minval(sub_nodes_x(1:n_subnodes))
+            size_major(2)=maxval(sub_nodes_y(1:n_subnodes))-minval(sub_nodes_y(1:n_subnodes))
+            size_major(3)=sqrt(size_major(1)**2+size_major(2)**2)
+
+            if (size_major(3).gt.min_link_size) then
+                n_loop=n_subnodes-1
+                loop_step=1
+            else
+                n_loop=1
+                loop_step=n_subnodes-1
+                !write(*,*) size_major(3)
+            endif
+        else
             n_loop=n_subnodes-1
             loop_step=1
         endif
         
         counter_major=counter_major+1
-
+        !if (n_subnodes.gt.5000) then
+        !    write(*,*) 'Greater than 5000 ',i
+        !endif
+        
+        !Place the data in the road links
         if (temp_adt.ge.min_adt) then
         do j=1,n_loop
-            counter=counter+1          
+            counter=counter+1
+            if (counter.le.n_roadlinks) then
             inputdata_int_rl_temp(counter,major_index_rl_index)=counter_major
             inputdata_int_rl_temp(counter,id_rl_index)=temp_id
             inputdata_rl_temp(counter,adt_rl_index)=temp_adt**osm_adt_power_scale
@@ -373,17 +401,21 @@
             inputdata_rl_temp(counter,y2_rl_index)=sub_nodes_y(j+loop_step)
             !write(*,*) inputdata_int_rl(counter,id_rl_index),inputdata_rl(counter,x1_rl_index),inputdata_rl(counter,y2_rl_index)
             inputdata_rl_temp(counter,tunnel_length_rl_index)=temp_tunnel_length
+            endif
         enddo
+            !write(*,*) counter, inputdata_int_rl_temp(counter,major_index_rl_index)
         endif
     
     endif    
     enddo
-    n_roadlinks=counter
-    write(unit_logfile,'(a,i)') ' Number of road links used = ', n_roadlinks
- 
+    write(unit_logfile,'(a,i)') ' Number of counted road links= ', counter
+    write(unit_logfile,'(a,i)') ' Number of road links allocated = ', n_roadlinks
+    n_roadlinks=min(counter,n_roadlinks)
     close(unit_in,status='keep')
  
     !Allocate the arrays after reading in the number of roads
+    if (allocated(inputdata_rl)) deallocate (inputdata_rl)
+    if (allocated(inputdata_int_rl)) deallocate (inputdata_int_rl)
     allocate (inputdata_rl(n_roadlinks,num_var_rl))
     allocate (inputdata_int_rl(n_roadlinks,num_int_rl))
 
