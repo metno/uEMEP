@@ -905,6 +905,7 @@
     character(256) OSM_country,Long_name
     real min_lat,min_lon,max_lat,max_lon,min_y_3035,min_x_3035,max_y_3035,max_x_3035
     real lon_grid_min,lat_grid_min,lon_grid_max,lat_grid_max
+    real lon_grid_min2,lat_grid_min2,lon_grid_max2,lat_grid_max2
     real lon_new_min,lat_new_min,lon_new_max,lat_new_max
     integer unit_in
     character(256) temp_str
@@ -1006,6 +1007,13 @@
         
     call PROJ2LL(subgrid_min(x_dim_index),subgrid_min(y_dim_index),lon_grid_min,lat_grid_min,projection_attributes,projection_type)
     call PROJ2LL(subgrid_max(x_dim_index),subgrid_max(y_dim_index),lon_grid_max,lat_grid_max,projection_attributes,projection_type)
+    call PROJ2LL(subgrid_min(x_dim_index),subgrid_max(y_dim_index),lon_grid_min2,lat_grid_max2,projection_attributes,projection_type)
+    call PROJ2LL(subgrid_max(x_dim_index),subgrid_min(y_dim_index),lon_grid_max2,lat_grid_min2,projection_attributes,projection_type)
+    lon_grid_max=max(lon_grid_max,lon_grid_max2)
+    lon_grid_min=min(lon_grid_min,lon_grid_min2)
+    lat_grid_max=max(lat_grid_max,lat_grid_max2)
+    lat_grid_min=min(lat_grid_min,lat_grid_min2)
+    
     !write(*,*) projection_attributes
     !write(*,*) projection_type
     
