@@ -1065,8 +1065,10 @@
     enddo
     
     if (count.eq.0) then
-        write(unit_logfile,'(a)') ' No countries overlap this area. Setting OSM to default file. No traffic will be calculated'
-        !stop
+        write(unit_logfile,'(a)') ' No countries overlap this area. Setting OSM to default file andorra'
+        OSM_country='andorra';count=1
+        filename_mrl(count)='Road_data_OSM_'//trim(OSM_country)//'_latlon.txt'
+        num_multiple_roadlink_files=count
     else
         write(unit_logfile,'(a,i)') ' Specifying this many OSM road link files to be read',count        
         num_multiple_roadlink_files=count
