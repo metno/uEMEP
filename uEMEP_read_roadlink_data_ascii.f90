@@ -1065,8 +1065,8 @@
     enddo
     
     if (count.eq.0) then
-        write(unit_logfile,'(a)') ' No countries overlap this area. Stopping'
-        stop
+        write(unit_logfile,'(a)') ' No countries overlap this area. Setting OSM to default file. No traffic will be calculated'
+        !stop
     else
         write(unit_logfile,'(a,i)') ' Specifying this many OSM road link files to be read',count        
         num_multiple_roadlink_files=count
