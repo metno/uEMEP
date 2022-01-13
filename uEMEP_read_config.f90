@@ -739,6 +739,11 @@
         comp_name_nc(co_nc_index)=read_name_char('comp_name_nc(co_nc_index)',comp_name_nc(co_nc_index),unit_in,unit_logfile)
         comp_name_nc(bap_nc_index)=read_name_char('comp_name_nc(bap_nc_index)',comp_name_nc(bap_nc_index),unit_in,unit_logfile)
         comp_name_nc(c6h6_nc_index)=read_name_char('comp_name_nc(c6h6_nc_index)',comp_name_nc(c6h6_nc_index),unit_in,unit_logfile)
+
+        comp_name_nc(somo35_nc_index)=read_name_char('comp_name_nc(somo35_nc_index)',comp_name_nc(somo35_nc_index),unit_in,unit_logfile)
+        comp_name_nc(comax_nc_index)=read_name_char('comp_name_nc(comax_nc_index)',comp_name_nc(comax_nc_index),unit_in,unit_logfile)
+        comp_name_nc(o3max_nc_index)=read_name_char('comp_name_nc(o3max_nc_index)',comp_name_nc(o3max_nc_index),unit_in,unit_logfile)
+        comp_name_nc(o3_26th_nc_index)=read_name_char('comp_name_nc(o3_26th_nc_index)',comp_name_nc(o3_26th_nc_index),unit_in,unit_logfile)
         
         read_RWC_file_with_extra_HDD=read_name_logical('read_RWC_file_with_extra_HDD',read_RWC_file_with_extra_HDD,unit_in,unit_logfile)
         read_RWC_file_with_extra_HDD_and_height=read_name_logical('read_RWC_file_with_extra_HDD_and_height',read_RWC_file_with_extra_HDD_and_height,unit_in,unit_logfile)
