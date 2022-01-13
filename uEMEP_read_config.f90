@@ -821,6 +821,8 @@
         !Save original EMEP values for 
         save_EMEP_somo35=read_name_logical('save_EMEP_somo35',save_EMEP_somo35,unit_in,unit_logfile)
         save_EMEP_comax=read_name_logical('save_EMEP_comax',save_EMEP_comax,unit_in,unit_logfile)
+        save_EMEP_o3max=read_name_logical('save_EMEP_o3max',save_EMEP_o3max,unit_in,unit_logfile)
+        save_EMEP_o3_26th=read_name_logical('save_EMEP_o3_26th',save_EMEP_o3_26th,unit_in,unit_logfile)
 
 
     close (unit_in)

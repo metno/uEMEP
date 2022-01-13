@@ -117,14 +117,14 @@
     !Additional NORTRIP specific compounds
     integer pm25_sand_nc_index,pm10_sand_nc_index,pm25_salt_nc_index,pm10_salt_nc_index
     parameter (pm25_sand_nc_index=10,pm10_sand_nc_index=11,pm25_salt_nc_index=12,pm10_salt_nc_index=13)
-    !Additional compounds
-    integer c6h6_nc_index,bap_nc_index,co_nc_index,somo35_nc_index,comax_nc_index
-    parameter (c6h6_nc_index=14,bap_nc_index=15,co_nc_index=16,somo35_nc_index=17,comax_nc_index=18)    
+    !Additional compounds. Need to change n_compound_index as well
+    integer c6h6_nc_index,bap_nc_index,co_nc_index,somo35_nc_index,comax_nc_index,o3max_nc_index,o3_26th_nc_index
+    parameter (c6h6_nc_index=14,bap_nc_index=15,co_nc_index=16,somo35_nc_index=17,comax_nc_index=18,o3max_nc_index=19,o3_26th_nc_index=20)    
     integer n_compound_nc_index
-    parameter (n_compound_nc_index=18)
+    parameter (n_compound_nc_index=20)
     !These are only used in names but need to change the variable n_pollutant_nc_index to fit these!
     integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index,all_totals_nc_index,aaqd_totals_nc_index
-    parameter (pmco_nc_index=19,all_nc_index=20,pm_nc_index=21,all_sand_nc_index=22,all_salt_nc_index=23,all_sand_salt_nc_index=24,all_totals_nc_index=25,aaqd_totals_nc_index=26)
+    parameter (pmco_nc_index=21,all_nc_index=22,pm_nc_index=23,all_sand_nc_index=24,all_salt_nc_index=25,all_sand_salt_nc_index=26,all_totals_nc_index=27,aaqd_totals_nc_index=28)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
     integer allsource_nc_index,traffic_nc_index,shipping_nc_index,heating_nc_index,agriculture_nc_index,industry_nc_index
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
@@ -165,7 +165,7 @@
     !Loop for all pollutants to be calculated
     integer pollutant_index
     integer n_pollutant_nc_index
-    parameter (n_pollutant_nc_index=26) !Includes the addition naming indexes index
+    parameter (n_pollutant_nc_index=28) !Includes the addition naming indexes index
     integer :: n_pollutant_loop = 1
     integer :: n_emep_pollutant_loop = 1
     integer pollutant_loop_index(n_pollutant_nc_index)
@@ -402,10 +402,10 @@
     integer pm25_sand_index,pm10_sand_index,pm25_salt_index,pm10_salt_index
     parameter (pm25_sand_index=10,pm10_sand_index=11,pm25_salt_index=12,pm10_salt_index=13)
     !Additional compounds
-    integer c6h6_index,bap_index,co_index,somo35_index,comax_index
-    parameter (c6h6_index=14,bap_index=15,co_index=16,somo35_index=17,comax_index=18)
+    integer c6h6_index,bap_index,co_index,somo35_index,comax_index,o3max_index,o3_26th_index
+    parameter (c6h6_index=14,bap_index=15,co_index=16,somo35_index=17,comax_index=18,o3max_index=19,o3_26th_index=20)
     integer n_compound_index
-    parameter (n_compound_index=18)
+    parameter (n_compound_index=20)
     
     !Declare source indexes (type_source) must be the same as source_nc_index
     integer allsource_index,traffic_index,shipping_index,heating_index,agriculture_index,industry_index
@@ -1061,6 +1061,8 @@
     
     logical :: save_EMEP_somo35=.false.
     logical :: save_EMEP_comax=.false.
+    logical :: save_EMEP_o3max=.false.
+    logical :: save_EMEP_o3_26th=.false.
     
     end module uEMEP_definitions
     
