@@ -739,6 +739,7 @@
         comp_name_nc(co_nc_index)=read_name_char('comp_name_nc(co_nc_index)',comp_name_nc(co_nc_index),unit_in,unit_logfile)
         comp_name_nc(bap_nc_index)=read_name_char('comp_name_nc(bap_nc_index)',comp_name_nc(bap_nc_index),unit_in,unit_logfile)
         comp_name_nc(c6h6_nc_index)=read_name_char('comp_name_nc(c6h6_nc_index)',comp_name_nc(c6h6_nc_index),unit_in,unit_logfile)
+        comp_name_nc(so2_nc_index)=read_name_char('comp_name_nc(so2_nc_index)',comp_name_nc(so2_nc_index),unit_in,unit_logfile)
 
         comp_name_nc(somo35_nc_index)=read_name_char('comp_name_nc(somo35_nc_index)',comp_name_nc(somo35_nc_index),unit_in,unit_logfile)
         comp_name_nc(comax_nc_index)=read_name_char('comp_name_nc(comax_nc_index)',comp_name_nc(comax_nc_index),unit_in,unit_logfile)
@@ -828,6 +829,7 @@
         save_EMEP_comax=read_name_logical('save_EMEP_comax',save_EMEP_comax,unit_in,unit_logfile)
         save_EMEP_o3max=read_name_logical('save_EMEP_o3max',save_EMEP_o3max,unit_in,unit_logfile)
         save_EMEP_o3_26th=read_name_logical('save_EMEP_o3_26th',save_EMEP_o3_26th,unit_in,unit_logfile)
+        save_EMEP_so2=read_name_logical('save_EMEP_so2',save_EMEP_so2,unit_in,unit_logfile)
 
 
     close (unit_in)

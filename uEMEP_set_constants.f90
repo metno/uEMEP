@@ -252,6 +252,7 @@
         comp_name_nc(comax_nc_index)='MaxD8M_CO'
         comp_name_nc(o3max_nc_index)='MaxD8M_O3'
         comp_name_nc(o3_26th_nc_index)='MaxD8M_O3_26th'
+        comp_name_nc(so2_nc_index)='D3_ug_SO2'
 
         comp_name_nc(pm25_sand_nc_index)='PM25_sand'
         comp_name_nc(pm10_sand_nc_index)='PM10_sand'
@@ -705,6 +706,10 @@
             if (save_EMEP_o3_26th) then
                 n_pollutant_compound_loop(p_loop)=n_pollutant_compound_loop(p_loop)+1
                 pollutant_compound_loop_index(p_loop,n_pollutant_compound_loop(p_loop))=o3_26th_nc_index            
+            endif
+            if (save_EMEP_so2) then
+                n_pollutant_compound_loop(p_loop)=n_pollutant_compound_loop(p_loop)+1
+                pollutant_compound_loop_index(p_loop,n_pollutant_compound_loop(p_loop))=so2_nc_index            
             endif
         elseif (pollutant_loop_index(p_loop).eq.nh3_nc_index) then
             n_pollutant_compound_loop(p_loop)=2
@@ -1186,6 +1191,7 @@
         comp_name_nc(co_nc_index)='SURF_ug_CO'
         comp_name_nc(bap_nc_index)='SURF_ug_BAP'
         comp_name_nc(c6h6_nc_index)='SURF_ug_BENZENE'
+        comp_name_nc(so2_nc_index)='SURF_ug_SO2'
     endif
     
     if (use_water_in_EMEP_surface_pm_flag) then

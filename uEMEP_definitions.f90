@@ -1063,6 +1063,7 @@
     logical :: save_EMEP_comax=.false.
     logical :: save_EMEP_o3max=.false.
     logical :: save_EMEP_o3_26th=.false.
+    logical :: save_EMEP_so2=.false.
     
     end module uEMEP_definitions
     
