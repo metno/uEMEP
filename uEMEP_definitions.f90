@@ -1065,6 +1065,8 @@
     logical :: save_EMEP_o3_26th=.false.
     logical :: save_EMEP_so2=.false.
     
+    real :: subgrid_receptor_offset(2)=0.
+    
     end module uEMEP_definitions
     
     

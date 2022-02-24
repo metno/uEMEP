@@ -830,6 +830,11 @@
         save_EMEP_o3max=read_name_logical('save_EMEP_o3max',save_EMEP_o3max,unit_in,unit_logfile)
         save_EMEP_o3_26th=read_name_logical('save_EMEP_o3_26th',save_EMEP_o3_26th,unit_in,unit_logfile)
         save_EMEP_so2=read_name_logical('save_EMEP_so2',save_EMEP_so2,unit_in,unit_logfile)
+        
+        !Read subgrid receptor offset. This is for testing purposes only and applies only to the receptor subgrids
+        subgrid_receptor_offset(x_dim_index)=read_name_real('subgrid_receptor_offset(x_dim_index)',subgrid_receptor_offset(x_dim_index),unit_in,unit_logfile)
+        subgrid_receptor_offset(y_dim_index)=read_name_real('subgrid_receptor_offset(y_dim_index)',subgrid_receptor_offset(y_dim_index),unit_in,unit_logfile)
+        
 
 
     close (unit_in)
