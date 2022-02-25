@@ -232,8 +232,8 @@
     endif
     
     !Set lowest left edge of subgrid receptor position would be in
-    x_ref=(floor((x_receptor(k))/subgrid_delta(x_dim_index)+0.0))*subgrid_delta(x_dim_index)+subgrid_receptor_offset(x_dim_index)
-    y_ref=(floor((y_receptor(k))/subgrid_delta(y_dim_index)+0.0))*subgrid_delta(y_dim_index)+subgrid_receptor_offset(y_dim_index)
+    x_ref=(floor((x_receptor(k)-subgrid_receptor_offset(x_dim_index))/subgrid_delta(x_dim_index)+0.0))*subgrid_delta(x_dim_index)+subgrid_receptor_offset(x_dim_index)
+    y_ref=(floor((y_receptor(k)-subgrid_receptor_offset(y_dim_index))/subgrid_delta(y_dim_index)+0.0))*subgrid_delta(y_dim_index)+subgrid_receptor_offset(y_dim_index)
     !Set limits
     subgrid_min(x_dim_index)=x_ref-subgrid_delta(x_dim_index)*(use_receptor_region)*1.0
 	subgrid_min(y_dim_index)=y_ref-subgrid_delta(y_dim_index)*(use_receptor_region)*1.0
