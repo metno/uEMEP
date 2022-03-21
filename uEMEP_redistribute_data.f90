@@ -304,7 +304,7 @@
              ,sum(comp_EMEP_subgrid(:,:,:,pm10_nc_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
          !The remaining species will not, most likely, be normalised with the total. This is done here but the total ppm is kept
          !Something weird is going on here. Need to check
-         if (1.eq.1) then
+         
          !Normalise the species surface values with the total grid values
          !Because t can have dimension 1 and 'sum' function does not think it is a dimension anymore then need to do the sum over the time loop. This turned out to not be the case so they are the same           
          if (use_single_time_loop_flag) then
@@ -340,9 +340,12 @@
              ,sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
              ,sum(comp_EMEP_subgrid(:,:,:,pm10_nc_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
          !Replace the ppm values in the species with the emep read version
-         species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)=subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index))
-         species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)=subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index))
+         !This is not correct. emep_subgrid_index,allsource_index is the sum of all local and nonlocal sources, so a larger number than the primary.
+         !This will lead to negative values set to 0. So comment out this line (21.03.2022)
+         !species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)=subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index))
+         !species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)=subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index))
          !Normalise the species other than ppm again after subtracting the ppm
+         !This should not change anything
          if (use_single_time_loop_flag) then
             sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index-1),4)
          else
@@ -367,12 +370,36 @@
             where (sum_temp.le.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
             where (isnan(species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)).or.species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp).le.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
          enddo
-         endif
+         
+         
          !Remove the primary based on the local contribution.
          species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)=species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index))
          species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)=species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index))
          where (species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index).lt.0.or.isnan(species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index))) species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)=0
          where (species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index).lt.0.or.isnan(species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index))) species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)=0
+         
+         !Normalise again after the subtraction to the nonlocal contribution (21.03.2022)
+         sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,1:sp_ppm_index),4)
+         do i_sp=1,sp_ppm_index
+             species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp) &
+                *(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index))) &
+                /sum_temp
+            where (sum_temp.le.0) species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=0
+            where (isnan(species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)).or.species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp).le.0) species_EMEP_subgrid(:,:,:,pm25_sp_index,i_sp)=0
+         enddo
+         if (use_single_time_loop_flag) then
+             sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
+         else
+             sum_temp(:,:,:)=sum(species_EMEP_subgrid(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
+         endif
+         do i_sp=1,sp_ppm_index
+            species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp) &
+                *(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index))) &
+                /sum_temp
+            where (sum_temp.le.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
+            where (isnan(species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)).or.species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp).le.0) species_EMEP_subgrid(:,:,:,pm10_sp_index,i_sp)=0
+         enddo
+         
          
          write(unit_logfile,'(A)') 'sum_sp should be the same as nonlocal, comp should be larger'
          write(unit_logfile,'(A,4f12.2)') 'PM25 (tot_sp,sum_sp,comp,nonlocal)',sum(species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_pm_index))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index) &
