@@ -1067,6 +1067,8 @@
     
     real :: subgrid_receptor_offset(2)=0.
     
+    logical :: derive_SOA_from_other_species=.false.
+    
     end module uEMEP_definitions
     
     

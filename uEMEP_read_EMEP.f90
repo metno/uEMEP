@@ -949,6 +949,30 @@
             
             enddo !sp_index
             
+            !Derive SOA from the other species. Based on using PMFINE as the pm25 total 
+            if (save_emep_species.and.derive_SOA_from_other_species) then
+                species_var3d_nc(:,:,:,pm25_sp_index,sp_soa_index)= &
+                     species_var3d_nc(:,:,:,pm25_sp_index,sp_pm_index) &
+                    -species_var3d_nc(:,:,:,pm25_sp_index,sp_sia_index) &
+                    -species_var3d_nc(:,:,:,pm25_sp_index,sp_seasalt_index) &
+                    -species_var3d_nc(:,:,:,pm25_sp_index,sp_dust_index) &
+                    -species_var3d_nc(:,:,:,pm25_sp_index,sp_ffire_index) &
+                    -species_var3d_nc(:,:,:,pm25_sp_index,sp_ppm_index)
+                
+                species_var3d_nc(:,:,:,pm10_sp_index,sp_soa_index)=species_var3d_nc(:,:,:,pm25_sp_index,sp_soa_index)
+                
+                var_name_nc_temp=species_name_nc(pm25_sp_index,sp_soa_index)
+
+                write(unit_logfile,'(A,2A,2f16.4)') ' Calculating species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_var3d_nc(:,:,:,pm25_sp_index,sp_soa_index)),maxval(species_var3d_nc(:,:,:,pm25_sp_index,sp_soa_index))
+                
+                where (species_EMEP_subgrid(:,:,:,:,sp_soa_index).le.0) species_EMEP_subgrid(:,:,:,:,sp_soa_index)=0
+                
+                write(unit_logfile,'(A,2A,2f16.4)') ' Limitting species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_var3d_nc(:,:,:,pm25_sp_index,sp_soa_index)),maxval(species_var3d_nc(:,:,:,pm25_sp_index,sp_soa_index))
+               
+                
+                !SURF_ug_SOA=SURF_ug_PMFINE- SURF_ug_SO4- SURF_ug_NO3_F- SURF_ug_NH4_F- SURF_ug_SEASALT_F- SURF_ug_DUST_SAH_F- SURF_ug_DUST_WB_F- SURF_ug_FFIRE_REMPPM25- SURF_ug_FFIRE_BC- SURF_ug_PPM2.5                
+            endif
+            
             !Calculate the total of the parts by adding all and subtracting the total
             !Do not so this when only using sea salt
             if (save_emep_species) then
@@ -964,22 +988,15 @@
                     endif            
                 enddo
             
-                 if (use_single_time_loop_flag) then
-                    species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm25_sp_index,1:sp_ppm_index),4)
-                 else
-                    species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm25_sp_index,1:sp_ppm_index),4)
-                 endif
+                 species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm25_sp_index,1:sp_ppm_index),4)
                 
                  write(unit_logfile,'(A,2A,3f16.4)') ' Average of: ','pm25',' (sum species, total pm, D3): ', &
                     sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
                     sum(species_var3d_nc(:,:,:,pm25_sp_index,sp_pm_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
                     sum(comp_var4d_nc(:,:,1,:,pm25_nc_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                  
-                 if (use_single_time_loop_flag) then
-                    species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
-                 else
-                    species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
-                 endif
+                 species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
+                 
                  write(unit_logfile,'(A,2A,3f16.4)') ' Average of: ','pm10',' (sum species, total pm, D3): ', &
                     sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
                     sum(species_var3d_nc(:,:,:,pm10_sp_index,sp_pm_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &

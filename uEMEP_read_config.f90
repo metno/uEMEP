@@ -835,6 +835,7 @@
         subgrid_receptor_offset(x_dim_index)=read_name_real('subgrid_receptor_offset(x_dim_index)',subgrid_receptor_offset(x_dim_index),unit_in,unit_logfile)
         subgrid_receptor_offset(y_dim_index)=read_name_real('subgrid_receptor_offset(y_dim_index)',subgrid_receptor_offset(y_dim_index),unit_in,unit_logfile)
         
+        derive_SOA_from_other_species=read_name_logical('derive_SOA_from_other_species',derive_SOA_from_other_species,unit_in,unit_logfile)
 
 
     close (unit_in)
