@@ -300,7 +300,7 @@
         species_name_nc(pm10_sp_index,sp_pm_index)='pm10_EMEP_total'
         species_name_nc(pm25_sp_index,sp_pm_index)='pm25_EMEP_total'
         species_name_nc(pm10_sp_index,sp_pm_in_index)='SURF_ug_PM10'
-        species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PMFINE'
+        species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PMFINE' !This must be set to FINE if SOA is to be derived by subtracting the other species
         !species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PM25'
         species_name_nc(pmco_sp_index,sp_pm_in_index)='SURF_ug_PMCO'
 

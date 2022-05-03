@@ -723,6 +723,7 @@
 	real :: FF_scale=NODATA_value
 	real :: FF10_offset=NODATA_value
 	real :: DD_offset=NODATA_value
+	real :: J_scale=NODATA_value
     
     real :: hmix_max=2000.
     real :: hmix_min=25.

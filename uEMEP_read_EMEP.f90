@@ -927,6 +927,7 @@
                     species_var3d_nc(:,:,:,pm10_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)
                endif
 
+               !Should there be 0.27*NO3 here for PM2.5? Check naming!!
                if (ii_sp.eq.sp_pm_index) then
                     !Read total pm
                     do pmxx_sp_index=1,n_pmxx_sp_index
@@ -1310,6 +1311,10 @@
         if (replace_hmix.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Replacing HMIX everywhere with: ',replace_hmix
             var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=replace_hmix
+        endif
+        if (J_scale.ne.NODATA_value) then
+            write(unit_logfile,'(A,f8.4)') ' Scaling J(NO2) everywhere with: ',J_scale
+            var3d_nc(:,:,:,J_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,J_nc_index,:,meteo_p_loop_index)*J_scale
         endif
         
         where (var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index).lt.hmix_min) var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=hmix_min

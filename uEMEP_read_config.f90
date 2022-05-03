@@ -510,6 +510,7 @@
         FF_scale=read_name_real('FF_scale',FF_scale,unit_in,unit_logfile)
         FF10_offset=read_name_real('FF10_offset',FF10_offset,unit_in,unit_logfile)
         DD_offset=read_name_real('DD_offset',DD_offset,unit_in,unit_logfile)
+        J_scale=read_name_real('J_scale',J_scale,unit_in,unit_logfile)
         
         save_netcdf_file_flag=read_name_logical('save_netcdf_file_flag',save_netcdf_file_flag,unit_in,unit_logfile)
         save_netcdf_receptor_flag=read_name_logical('save_netcdf_receptor_flag',save_netcdf_receptor_flag,unit_in,unit_logfile)
@@ -632,6 +633,7 @@
         var_name_nc(ZTOP_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(ZTOP_nc_index)',var_name_nc(ZTOP_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
         var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(t2m_nc_index)',var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
         var_name_nc(precip_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(precip_nc_index)',var_name_nc(precip_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)    
+        var_name_nc(J_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(J_nc_index)',var_name_nc(J_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)    
         
         save_netcdf_average_flag=read_name_logical('save_netcdf_average_flag',save_netcdf_average_flag,unit_in,unit_logfile)
         
