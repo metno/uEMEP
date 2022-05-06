@@ -1070,6 +1070,9 @@
     
     logical :: derive_SOA_from_other_species=.false.
     
+    !1 is O'Brian, 2 is Troen
+    integer :: Kz_scheme=2
+    
     end module uEMEP_definitions
     
     

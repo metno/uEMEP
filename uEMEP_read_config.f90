@@ -839,6 +839,8 @@
         
         derive_SOA_from_other_species=read_name_logical('derive_SOA_from_other_species',derive_SOA_from_other_species,unit_in,unit_logfile)
 
+        Kz_scheme=read_name_integer('Kz_scheme',Kz_scheme,unit_in,unit_logfile)
+        
 
     close (unit_in)
     

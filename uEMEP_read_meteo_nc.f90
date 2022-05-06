@@ -714,7 +714,6 @@
             meteo_var3d_nc(:,:,:,inv_FFgrid_nc_index)=meteo_var3d_nc(:,:,:,inv_FFgrid_nc_index)/FF_scale
             meteo_var3d_nc(:,:,:,ugrid_nc_index)=meteo_var3d_nc(:,:,:,ugrid_nc_index)*FF_scale
             meteo_var3d_nc(:,:,:,vgrid_nc_index)=meteo_var3d_nc(:,:,:,vgrid_nc_index)*FF_scale
-            meteo_var3d_nc(:,:,:,inv_FFgrid_nc_index)=meteo_var3d_nc(:,:,:,inv_FFgrid_nc_index)/FF_scale
         endif
         if (FF10_offset.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Offsetting 10 m wind fields everywhere with a value: ',FF10_offset

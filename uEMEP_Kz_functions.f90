@@ -10,12 +10,12 @@
 !   Calculates dispersion based on Kz and wind profiles
 !==========================================================================
 
-    subroutine uEMEP_set_dispersion_sigma_Kz(x_in,sig_z00,sig_y00,sigy_0_subgid_width_scale,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta,u_star0_in,average_zc_h_in_Kz_flag,n_kz_iterations,sig_y_scaling_factor,sig_z,sig_y,u_zc)
+    subroutine uEMEP_set_dispersion_sigma_Kz(Kz_scheme_in,x_in,sig_z00,sig_y00,sigy_0_subgid_width_scale,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta,u_star0_in,average_zc_h_in_Kz_flag,n_kz_iterations,sig_y_scaling_factor,sig_z,sig_y,u_zc)
 
     implicit none
     
     real, intent(in) :: x_in,sig_z00,sig_y00,sigy_0_subgid_width_scale,sig_z_in,z_emis_loc,h_mix_loc,invL,u_val,z_val,logz0,subgrid_delta(2),u_star0_in,sig_y_scaling_factor
-    integer, intent(in) :: n_kz_iterations
+    integer, intent(in) :: Kz_scheme_in,n_kz_iterations
     logical, intent(in) :: average_zc_h_in_Kz_flag
     real, intent(out) :: sig_z,sig_y,u_zc
     
@@ -101,7 +101,11 @@
         !u_star0=u_star0_val
         
         !Calculate K_z at the centre of mass
-        call Kz_func(h_mix_loc,L,u_star0,zc,K_min,K_z) !5.5 secs
+        if (Kz_scheme_in.eq.2) then
+            call TROENKz(zc,h_mix_loc,u_star0,invL,K_min,K_z)
+        else
+            call Kz_func(h_mix_loc,L,u_star0,zc,K_min,K_z) !5.5 secs
+        endIf
         
         !write(*,'(i,1f)') j,K_z
         !Take average of K_z_start(x=0) and K_z(x)
@@ -174,6 +178,43 @@
     K_z=max(K_z,K_min)
 
     end subroutine Kz_func
+
+    subroutine TROENKz(z,h,ustar,invL,Kdef,Kz)
+    !Vertical dispersion routine as described in:
+    !Troen, I., & Mahrt, L. (1986). A Simple Model of the Atmospheric Boundary
+    !Layer:
+    !Sensitivity to Surface Evaporation. Boundary-Layer Meteorology, 37, 129-148.
+    !https://doi.org/10.1007/BF00122760
+
+      real, intent(in) :: z    ! height
+      real, intent(in) :: h    ! Boundary layer depth 
+      real, intent(in) :: ustar, invL, Kdef !  u*, 1/L, default Kz
+      real, intent(out) :: Kz
+      real :: ws
+      real :: phih
+      real :: kappa=0.4
+      real :: zsurf
+
+     !Height of the surface layer. Stability function for unstable calculated
+     !here for z>zsurf
+         zsurf=0.1*h
+
+     if ( z < h ) then
+          if ( invL < 0 ) then 
+              !phih=(1-7.*min(z,zsurf)*invL)**(-1./3.) !Original in
+              !Troen and Mahrt for phim, so no Prandtl number
+              phih=(1-16.*min(z,zsurf)*invL)**(-1./2.) !As in Garratt and Obrien for phih, so with Prandtl number
+          else
+              phih=1+5.*z*invL !As in Garratt, Prandtl number is 1 in stable boundary layer
+          endif
+          ws=ustar/phih
+          Kz=kappa*ws*z*(1.-z/h)**2
+
+     else 
+          Kz =  Kdef
+     endif
+
+    end subroutine TROENKz
 
     subroutine z_centremass_gauss_func(sigma,h,z_pbl,z_c)
 

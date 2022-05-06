@@ -1312,16 +1312,17 @@
             write(unit_logfile,'(A,f8.4)') ' Replacing HMIX everywhere with: ',replace_hmix
             var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=replace_hmix
         endif
-        if (J_scale.ne.NODATA_value) then
-            write(unit_logfile,'(A,f8.4)') ' Scaling J(NO2) everywhere with: ',J_scale
-            var3d_nc(:,:,:,J_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,J_nc_index,:,meteo_p_loop_index)*J_scale
-        endif
         
         where (var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index).lt.hmix_min) var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=hmix_min
 
         !Limit Jd as well in case there is something wrong
         where (var4d_nc(:,:,:,:,J_nc_index,:,:).lt.0) var4d_nc(:,:,:,:,J_nc_index,:,:)=0.
         
+        if (J_scale.ne.NODATA_value) then
+            write(unit_logfile,'(A,f8.4)') ' Scaling J(NO2) everywhere with: ',J_scale
+            var4d_nc(:,:,:,:,J_nc_index,:,:)=var4d_nc(:,:,:,:,J_nc_index,:,:)*J_scale
+        endif
+
         !Correct the inverse of the wind speed for the factor 0.2 used to create it in EMEP
         write(unit_logfile,'(A)') ' Correcting inverse wind speed to account for the 0.2 m/s offset: '
         var3d_nc(:,:,:,inv_FF10_nc_index,:,:)=var3d_nc(:,:,:,inv_FF10_nc_index,:,:)/(1.-0.2*var3d_nc(:,:,:,inv_FF10_nc_index,:,:))
