@@ -634,6 +634,7 @@
         var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(t2m_nc_index)',var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
         var_name_nc(precip_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(precip_nc_index)',var_name_nc(precip_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)    
         var_name_nc(J_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(J_nc_index)',var_name_nc(J_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)    
+        var_name_nc(phi_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(phi_nc_index)',var_name_nc(phi_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
         
         save_netcdf_average_flag=read_name_logical('save_netcdf_average_flag',save_netcdf_average_flag,unit_in,unit_logfile)
         
@@ -840,7 +841,9 @@
         derive_SOA_from_other_species=read_name_logical('derive_SOA_from_other_species',derive_SOA_from_other_species,unit_in,unit_logfile)
 
         Kz_scheme=read_name_integer('Kz_scheme',Kz_scheme,unit_in,unit_logfile)
-        
+        use_phi_for_invL=read_name_logical('use_phi_for_invL',use_phi_for_invL,unit_in,unit_logfile)
+        z_invL=read_name_real('z_invL',z_invL,unit_in,unit_logfile)
+    
 
     close (unit_in)
     

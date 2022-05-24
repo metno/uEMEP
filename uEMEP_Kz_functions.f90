@@ -28,6 +28,7 @@
     real l_t,f_t
     real u_star0,u_star0_val,tau,zc_start,K_z_start,u_zc_start
     real min_xy,x,h_y
+    real phih_temp
     
     n_loop=n_kz_iterations
     
@@ -102,7 +103,7 @@
         
         !Calculate K_z at the centre of mass
         if (Kz_scheme_in.eq.2) then
-            call TROENKz(zc,h_mix_loc,u_star0,invL,K_min,K_z)
+            call TROENKz(zc,h_mix_loc,u_star0,invL,K_min,K_z,phih_temp)
         else
             call Kz_func(h_mix_loc,L,u_star0,zc,K_min,K_z) !5.5 secs
         endIf
@@ -179,19 +180,20 @@
 
     end subroutine Kz_func
 
-    subroutine TROENKz(z,h,ustar,invL,Kdef,Kz)
+    subroutine TROENKz(z,h,ustar,invL,Kdef,Kz,phih)
     !Vertical dispersion routine as described in:
     !Troen, I., & Mahrt, L. (1986). A Simple Model of the Atmospheric Boundary
     !Layer:
     !Sensitivity to Surface Evaporation. Boundary-Layer Meteorology, 37, 129-148.
     !https://doi.org/10.1007/BF00122760
 
+    implicit none
+    
       real, intent(in) :: z    ! height
       real, intent(in) :: h    ! Boundary layer depth 
       real, intent(in) :: ustar, invL, Kdef !  u*, 1/L, default Kz
-      real, intent(out) :: Kz
+      real, intent(out) :: Kz,phih
       real :: ws
-      real :: phih
       real :: kappa=0.4
       real :: zsurf
 
@@ -216,6 +218,25 @@
 
     end subroutine TROENKz
 
+    subroutine TROENKz_invL_from_phi(z,phih,invL)
+
+    implicit none
+    
+      real, intent(in) :: z    ! height
+      real, intent(in) :: phih
+      real, intent(out) :: invL !1/L
+
+          if ( phih < 1 ) then 
+              !phih=(1-16.*min(z,zsurf)*invL)**(-1./2.) !As in Garratt and Obrien for phih, so with Prandtl number
+              invL=(phih**-2.-1)/(-16.*z)
+          else
+              !phih=1+5.*z*invL !As in Garratt, Prandtl number is 1 in stable boundary layer
+              invL=(phih-1)/5./z
+          endif
+
+
+    end subroutine TROENKz_invL_from_phi
+    
     subroutine z_centremass_gauss_func(sigma,h,z_pbl,z_c)
 
     implicit none

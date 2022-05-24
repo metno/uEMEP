@@ -73,6 +73,9 @@
     
     real EMEP_grid_interpolation_size_temp
     
+    real mean_phi_temp,mean_invL_temp
+    integer phi_count
+
     !Functions
     double precision date_to_number
     
@@ -1311,6 +1314,29 @@
         if (replace_hmix.ne.NODATA_value) then
             write(unit_logfile,'(A,f8.4)') ' Replacing HMIX everywhere with: ',replace_hmix
             var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=replace_hmix
+        endif
+        
+        if (use_phi_for_invL) then
+            phi_count=0
+            mean_phi_temp=0
+            mean_invL_temp=0
+            do j=1,dim_length_nc(y_dim_nc_index)
+            do i=1,dim_length_nc(x_dim_nc_index)
+            do t=1,dim_length_nc(time_dim_nc_index)
+                call TROENKz_invL_from_phi(z_invL,var3d_nc(i,j,t,phi_nc_index,allsource_nc_index,meteo_p_loop_index),var3d_nc(i,j,t,invL_nc_index,allsource_nc_index,meteo_p_loop_index))
+                phi_count=phi_count+1
+                mean_phi_temp=mean_phi_temp+var3d_nc(i,j,t,phi_nc_index,allsource_nc_index,meteo_p_loop_index)
+                mean_invL_temp=mean_invL_temp+var3d_nc(i,j,t,invL_nc_index,allsource_nc_index,meteo_p_loop_index)
+
+            enddo
+            enddo
+            enddo
+            
+            mean_phi_temp=mean_phi_temp/phi_count
+            mean_invL_temp=mean_invL_temp/phi_count
+
+            write(unit_logfile,'(A,2f8.4)') ' Using phi instead of invL. Mean phi and invL: ',mean_phi_temp,mean_invL_temp
+            
         endif
         
         where (var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index).lt.hmix_min) var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=hmix_min

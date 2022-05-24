@@ -84,6 +84,7 @@
     integer conc_nc_index,emis_nc_index
     integer x_nc_index,y_nc_index,ZTOP_nc_index
     integer u10_nc_index,v10_nc_index,uw_nc_index,vw_nc_index,Hflux_nc_index,t2m_nc_index,precip_nc_index,wetdepo_nc_index,drydepo_nc_index
+    integer phi_nc_index
     parameter (lon_nc_index=1,lat_nc_index=2)
     parameter (ugrid_nc_index=3,vgrid_nc_index=4,FF10_nc_index=5,FFgrid_nc_index=6,inv_FFgrid_nc_index=7,inv_FF10_nc_index=8)
     parameter (hmix_nc_index=9,kz_nc_index=10,invL_nc_index=11,ustar_nc_index=12,logz0_nc_index=13,J_nc_index=14)
@@ -91,11 +92,12 @@
     parameter (conc_nc_index=15,emis_nc_index=18) !frac_nc_index,local_nc_index have now become variables to be set with the loop_index (multiple EMEP lf grids)
     parameter (x_nc_index=19,y_nc_index=20,ZTOP_nc_index=21)
     parameter (u10_nc_index=22,v10_nc_index=23,uw_nc_index=24,vw_nc_index=25,Hflux_nc_index=26,t2m_nc_index=27,precip_nc_index=28,wetdepo_nc_index=29,drydepo_nc_index=30)
+    parameter (phi_nc_index=31)
     integer num_var_nc  !This will be set later when the number local fraction grids is known
     integer num_var_nc_start    
     integer num_var_nc_name
-    parameter (num_var_nc_start=30)                  ! number of readable variables
-    parameter (num_var_nc_name=50)                  ! number of possible variable names, add 20 to include any extra local fraction grids
+    parameter (num_var_nc_start=31)                  ! number of readable variables
+    parameter (num_var_nc_name=51)                  ! number of possible variable names, add 20 to include any extra local fraction grids
     integer num_var_meteo_nc
     parameter (num_var_meteo_nc=num_var_nc_start)
     
@@ -123,8 +125,8 @@
     integer n_compound_nc_index
     parameter (n_compound_nc_index=20)
     !These are only used in names but need to change the variable n_pollutant_nc_index to fit these!
-    integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index,all_totals_nc_index,aaqd_totals_nc_index
-    parameter (pmco_nc_index=21,all_nc_index=22,pm_nc_index=23,all_sand_nc_index=24,all_salt_nc_index=25,all_sand_salt_nc_index=26,all_totals_nc_index=27,aaqd_totals_nc_index=28)
+    integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index,all_totals_nc_index,aaqd_totals_nc_index,gp_totals_nc_index
+    parameter (pmco_nc_index=21,all_nc_index=22,pm_nc_index=23,all_sand_nc_index=24,all_salt_nc_index=25,all_sand_salt_nc_index=26,all_totals_nc_index=27,aaqd_totals_nc_index=28,gp_totals_nc_index=29)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
     integer allsource_nc_index,traffic_nc_index,shipping_nc_index,heating_nc_index,agriculture_nc_index,industry_nc_index
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
@@ -165,7 +167,7 @@
     !Loop for all pollutants to be calculated
     integer pollutant_index
     integer n_pollutant_nc_index
-    parameter (n_pollutant_nc_index=28) !Includes the addition naming indexes index
+    parameter (n_pollutant_nc_index=29) !Includes the addition naming indexes index
     integer :: n_pollutant_loop = 1
     integer :: n_emep_pollutant_loop = 1
     integer pollutant_loop_index(n_pollutant_nc_index)
@@ -388,10 +390,12 @@
     !Declare meteo subgrid variables. Does nothave to be the same as the nc version
     integer ugrid_subgrid_index,vgrid_subgrid_index,FF10_subgrid_index,FFgrid_subgrid_index,inv_FFgrid_subgrid_index,inv_FF10_subgrid_index
     integer hmix_subgrid_index,kz_subgrid_index,invL_subgrid_index,ustar_subgrid_index,logz0_subgrid_index,J_subgrid_index,t2m_subgrid_index,cos_subgrid_index,sin_subgrid_index,precip_subgrid_index
+    integer phi_index
     parameter (ugrid_subgrid_index=1,vgrid_subgrid_index=2,FF10_subgrid_index=3,FFgrid_subgrid_index=4,inv_FFgrid_subgrid_index=5,inv_FF10_subgrid_index=6)
     parameter (hmix_subgrid_index=7,kz_subgrid_index=8,invL_subgrid_index=9,ustar_subgrid_index=10,logz0_subgrid_index=11,J_subgrid_index=12,t2m_subgrid_index=13,cos_subgrid_index=14,sin_subgrid_index=15,precip_subgrid_index=16)
+    parameter (phi_index=17)
     integer n_meteo_subgrid_index
-    parameter (n_meteo_subgrid_index=16)
+    parameter (n_meteo_subgrid_index=17)
 
     !Declare compound indexes for the subgrid. Same as nc_index values for compounds. Must be converted when necessary
     integer no2_index,nox_index,pm25_index,pm10_index,nh3_index,o3_index,so2_index,pmex_index,no_index
@@ -1038,6 +1042,9 @@
     !Average of countries
     data benzene_split_voc_in_GNFR_sectors /0.0449, 0.0212, 0.0668, 0.0084, 0.0, 0.0266, 0.0226, 0.0214, 0.0223, 0.0362, 0.068, 0.0601, 0.068/
 
+    logical :: use_phi_for_invL=.false.
+    real :: z_invL=10.
+    
 !1	0.0449
 !2	0.0212
 !3	0.0668

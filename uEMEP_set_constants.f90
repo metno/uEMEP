@@ -89,6 +89,7 @@
         var_name_nc(conc_nc_index,all_salt_nc_index,allsource_nc_index)='all_salt'
         var_name_nc(conc_nc_index,all_totals_nc_index,allsource_nc_index)='all_totals'
         var_name_nc(conc_nc_index,aaqd_totals_nc_index,allsource_nc_index)='aaqd_totals'
+        var_name_nc(conc_nc_index,gp_totals_nc_index,allsource_nc_index)='gp_totals'
        
         var_name_nc(conc_nc_index,pm25_sand_nc_index,allsource_nc_index)='pm25_sand'
         var_name_nc(conc_nc_index,pm10_sand_nc_index,allsource_nc_index)='pm10_sand'
@@ -164,6 +165,7 @@
         var_name_nc(ZTOP_nc_index,all_nc_index,allsource_nc_index)='Z_TOP'
         var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index)='met2d_t2m'
         var_name_nc(precip_nc_index,all_nc_index,allsource_nc_index)='WDEP_PREC'!'precipitations'
+        var_name_nc(phi_nc_index,all_nc_index,allsource_nc_index)='phi_nwp'
         surface_level_nc=7 !Will be reset as length of 'lev' dimension
 
         !Alternative meteorology.
@@ -199,6 +201,7 @@
         var_name_meteo_nc(ZTOP_nc_index)=''
         var_name_meteo_nc(t2m_nc_index)='air_temperature_2m'
         var_name_meteo_nc(precip_nc_index)='precipitation_amount_acc'
+        var_name_meteo_nc(phi_nc_index)='phi_nwp' 
         
         !Additional     parameter (u10_nc_subgrid_index=22,v10_nc_subgrid_index=23,uw_nc_subgrid_index=24,vw_nc_subgrid_index=25,Hflux_nc_subgrid_index=26)
         var_name_meteo_nc(u10_nc_index)='x_wind_10m' !10 m wind not grid. Replaces ugrid. Used for direction
@@ -662,6 +665,17 @@
             pollutant_loop_back_index(bap_nc_index)=5
             pollutant_loop_back_index(c6h6_nc_index)=6
             extract_benzene_from_voc_emissions=.true.
+        elseif (pollutant_index.eq.gp_totals_nc_index) then
+            n_emep_pollutant_loop=4
+            n_pollutant_loop=4
+            pollutant_loop_index(1)=nox_nc_index
+            pollutant_loop_index(2)=pm25_nc_index
+            pollutant_loop_index(3)=pm10_nc_index
+            pollutant_loop_index(4)=co_nc_index
+            pollutant_loop_back_index(nox_nc_index)=1
+            pollutant_loop_back_index(pm25_nc_index)=2
+            pollutant_loop_back_index(pm10_nc_index)=3
+            pollutant_loop_back_index(co_nc_index)=4
         elseif (pollutant_index.eq.pm_nc_index) then
             n_emep_pollutant_loop=2
             n_pollutant_loop=3

@@ -270,7 +270,7 @@
             !if ((pollutant_loop_index(i_pollutant).ne.nox_index.or.i_source.ne.traffic_index)) then
             else
                 if (i_source.eq.traffic_index.and.(pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index)) then
-                    if (pollutant_index.eq.all_totals_nc_index.or.pollutant_index.eq.aaqd_totals_nc_index) then
+                    if (pollutant_index.eq.all_totals_nc_index.or.pollutant_index.eq.aaqd_totals_nc_index.or.pollutant_index.eq.gp_totals_nc_index) then
                     var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
                     if (save_netcdf_fraction_as_contribution_flag) then
                         temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)
@@ -318,7 +318,7 @@
             !Special case for exhaust as this must be given as a fraction for both PM2.5 and PM10.
             !if ((pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index).and.i_source.eq.traffic_index) then
             !Write all exhaust pollutants except the pmex
-            if (i_source.eq.traffic_index.and.(.not.pollutant_index.eq.all_totals_nc_index.and..not.pollutant_index.eq.aaqd_totals_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_index)) then
+            if (i_source.eq.traffic_index.and.(.not.pollutant_index.eq.all_totals_nc_index.and..not.pollutant_index.eq.aaqd_totals_nc_index.and..not.pollutant_index.eq.gp_totals_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_index)) then
             
                 !If PM then exhaust output is exhaust
                 if (pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index) then
