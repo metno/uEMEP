@@ -55,6 +55,11 @@
     !Converts tonne per year to ug/s/subgrid
     emission_factor_conversion(:,industry_index,:)=1.e12/(3600.*24*365.)
     
+    !In the case of RIVM data then emissions are already given in ug/s/subgrid
+    if (read_subgrid_emission_data) then
+        emission_factor_conversion(:,:,:)=1.0
+    endif
+    
     
     end subroutine uEMEP_set_emission_factors
 
@@ -86,7 +91,7 @@
         i_subsource=1
         do i_pollutant=1,n_pollutant_loop
             !Do not calculate for traffic if use_NORTRIP_emission_data=.true. and  use_NORTRIP_emission_pollutant=.false.). This is done in uEMEP_grid_roads
-            if (i_source.ne.traffic_index &
+            if (i_source.ne.traffic_index.or.read_subgrid_emission_data &
                 .or.(i_source.eq.traffic_index.and..not.use_NORTRIP_emission_data) &
                 .or.(i_source.eq.traffic_index.and.use_NORTRIP_emission_data.and..not.use_NORTRIP_emission_pollutant(pollutant_loop_index(i_pollutant)))) then               
                 

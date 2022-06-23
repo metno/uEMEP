@@ -205,7 +205,8 @@
           if ( invL < 0 ) then 
               !phih=(1-7.*min(z,zsurf)*invL)**(-1./3.) !Original in
               !Troen and Mahrt for phim, so no Prandtl number
-              phih=(1-16.*min(z,zsurf)*invL)**(-1./2.) !As in Garratt and Obrien for phih, so with Prandtl number
+              !phih=(1-16.*min(z,zsurf)*invL)**(-1./2.) !As in Garratt and Obrien for phih, so with Prandtl number
+              phih=(1-16.*z*invL)**(-1./2.) !As in Garratt and Obrien for phih, so with Prandtl number
           else
               phih=1+5.*z*invL !As in Garratt, Prandtl number is 1 in stable boundary layer
           endif

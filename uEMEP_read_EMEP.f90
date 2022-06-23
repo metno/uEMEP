@@ -1242,10 +1242,6 @@
         !write(*,*) minval(var3d_nc(:,:,:,FF10_nc_index,allsource_index)),maxval(var3d_nc(:,:,:,FF10_nc_index,allsource_index))
         
         
-        !Limit stable L to lowest_stable_L and to lowest_unstable_L (negative number) for unstable.
-        where (var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index).lt.1.0/lowest_unstable_L) var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index)=1.0/lowest_unstable_L
-        where (var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index).gt.1.0/lowest_stable_L) var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index)=1.0/lowest_stable_L
-
         where (var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index).lt.ustar_min) var3d_nc(:,:,:,ustar_nc_index,:,meteo_p_loop_index)=ustar_min
 
         !Test for 0 wind speed components if valid
@@ -1339,6 +1335,10 @@
             
         endif
         
+        !Limit stable L to lowest_stable_L and to lowest_unstable_L (negative number) for unstable.
+        where (var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index).lt.1.0/lowest_unstable_L) var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index)=1.0/lowest_unstable_L
+        where (var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index).gt.1.0/lowest_stable_L) var3d_nc(:,:,:,invL_nc_index,:,meteo_p_loop_index)=1.0/lowest_stable_L
+
         where (var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index).lt.hmix_min) var3d_nc(:,:,:,hmix_nc_index,:,meteo_p_loop_index)=hmix_min
 
         !Limit Jd as well in case there is something wrong

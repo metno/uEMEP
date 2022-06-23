@@ -176,6 +176,7 @@
     real temp_scale
     integer :: name_index=0
     integer i_source,i_landuse
+    real buffer_delta
     
     !Temporary reading variables
     real, allocatable :: landuse_nc_dp(:,:)
@@ -229,10 +230,11 @@
             !Determine the LL cordinates of the target grid
             !if (EMEP_projection_type.eq.LCC_projection_index) then
                 !Retrieve the four corners of the target grid in lat and lon
-            call PROJ2LL(landuse_subgrid_min(x_dim_index),landuse_subgrid_min(y_dim_index),temp_lon(1),temp_lat(1),projection_attributes,projection_type)
-            call PROJ2LL(landuse_subgrid_max(x_dim_index),landuse_subgrid_max(y_dim_index),temp_lon(2),temp_lat(2),projection_attributes,projection_type)
-            call PROJ2LL(landuse_subgrid_min(x_dim_index),landuse_subgrid_max(y_dim_index),temp_lon(3),temp_lat(3),projection_attributes,projection_type)
-            call PROJ2LL(landuse_subgrid_max(x_dim_index),landuse_subgrid_min(y_dim_index),temp_lon(4),temp_lat(4),projection_attributes,projection_type)
+            buffer_delta=10
+            call PROJ2LL(landuse_subgrid_min(x_dim_index)-buffer_delta*landuse_subgrid_delta(x_dim_index),landuse_subgrid_min(y_dim_index)-buffer_delta*landuse_subgrid_delta(y_dim_index),temp_lon(1),temp_lat(1),projection_attributes,projection_type)
+            call PROJ2LL(landuse_subgrid_max(x_dim_index)+buffer_delta*landuse_subgrid_delta(x_dim_index),landuse_subgrid_max(y_dim_index)+buffer_delta*landuse_subgrid_delta(y_dim_index),temp_lon(2),temp_lat(2),projection_attributes,projection_type)
+            call PROJ2LL(landuse_subgrid_min(x_dim_index)-buffer_delta*landuse_subgrid_delta(x_dim_index),landuse_subgrid_max(y_dim_index)+buffer_delta*landuse_subgrid_delta(y_dim_index),temp_lon(3),temp_lat(3),projection_attributes,projection_type)
+            call PROJ2LL(landuse_subgrid_max(x_dim_index)+buffer_delta*landuse_subgrid_delta(x_dim_index),landuse_subgrid_min(y_dim_index)-buffer_delta*landuse_subgrid_delta(y_dim_index),temp_lon(4),temp_lat(4),projection_attributes,projection_type)
             
                             
                 temp_x_min=1.e32;temp_y_min=1.e32
@@ -284,10 +286,10 @@
                 !write(unit_logfile,'(A,2I)') ' Reading EMEP i grids: ',i_temp_min,i_temp_max
                 !write(unit_logfile,'(A,2I)') ' Reading EMEP j grids: ',j_temp_min,j_temp_max
                 !Increase the region by 5 grids to be certain
-                i_temp_min=max(1,i_temp_min-5)
-                i_temp_max=min(dim_length_landuse_nc(x_dim_nc_index),i_temp_max+5)
-                j_temp_min=max(1,j_temp_min-5)
-                j_temp_max=min(dim_length_landuse_nc(y_dim_nc_index),j_temp_max+5)
+                i_temp_min=max(1,i_temp_min-10)
+                i_temp_max=min(dim_length_landuse_nc(x_dim_nc_index),i_temp_max+10)
+                j_temp_min=max(1,j_temp_min-10)
+                j_temp_max=min(dim_length_landuse_nc(y_dim_nc_index),j_temp_max+10)
                 dim_length_landuse_nc(x_dim_nc_index)=i_temp_max-i_temp_min+1
                 dim_length_landuse_nc(y_dim_nc_index)=j_temp_max-j_temp_min+1
                 dim_start_landuse_nc(x_dim_nc_index)=i_temp_min
@@ -371,6 +373,9 @@
             !Take the nearest instead 
             i_landuse_index=1+floor((temp_lon(1)-var2d_nc_dp(1,x_dim_nc_index))/delta_landuse_nc(1)+0.5)
             j_landuse_index=1+floor((temp_lat(1)-var2d_nc_dp(1,y_dim_nc_index))/delta_landuse_nc(2)+0.5)
+            !write(*,*) i,j,temp_lon(1),temp_lat(1)
+            
+            
             landuse_subgrid(i,j,clc_index)=landuse_nc_dp(i_landuse_index,j_landuse_index)
             
             !Do the interpolation on the same grid then scale afterwards. Equivalent to interpolating density then rescaling with grid size

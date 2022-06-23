@@ -265,3 +265,179 @@
     
     end subroutine uEMEP_read_agriculture_rivm_data
     
+
+    subroutine uEMEP_read_emission_rivm_data
+ 
+    use uEMEP_definitions
+    
+    implicit none
+    
+    integer i,j,k
+    character(256) temp_str
+    integer unit_in
+    integer exists
+    integer count
+    real ddlatitude,ddlongitude,totalemission
+    real y_emission,x_emission
+    integer i_emission_index,j_emission_index
+    real emission_scale
+    integer i_file
+    integer source_index,subsource_index
+    
+    character(256) component_str
+    integer i_source
+    real height
+    integer snap, compound_nc_index
+    integer i_pollutant
+    integer, allocatable :: count_subgrid(:,:,:)
+    real :: height_mean(n_source_index)=0
+    integer :: count_mean(n_source_index)=0
+   
+    write(unit_logfile,'(A)') ''
+	write(unit_logfile,'(A)') '================================================================'
+	write(unit_logfile,'(A)') 'Reading emission rivm data  (uEMEP_read_emission_rivm_data)'
+	write(unit_logfile,'(A)') '================================================================'
+    
+    !Set the projection to the dutch one
+    projection_type=RDM_projection_index
+        
+    !Set the sources to be downscaled to 0
+    do i_source=1,n_source_index
+    if (calculate_source(i_source)) then
+        proxy_emission_subgrid(:,:,i_source,:)=0.
+        emission_properties_subgrid(:,:,emission_h_index,i_source)=0.
+    endif
+    enddo
+        
+    allocate (count_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
+    count_subgrid=0
+    
+    !Read in as g/s and convert to ug/s which is used in the model
+    emission_scale=1.0e6
+
+    !Set filename, only 1 file used    
+    pathfilename_emission_rivm(1)=trim(pathname_emission_rivm(1))//trim(filename_emission_rivm(1))
+    !pathfilename_emission_rivm(2)=trim(pathname_emission_rivm(2))//trim(filename_emission_rivm(2))
+    
+    !Test existence of the emission files. Only one file used. If does not exist then stop
+    inquire(file=trim(pathfilename_emission_rivm(1)),exist=exists)
+    if (.not.exists) then
+        write(unit_logfile,'(A,A)') ' ERROR: emission RIVM file does not exist: ', trim(pathfilename_emission_rivm(1))
+        stop
+    endif
+    !inquire(file=trim(pathfilename_emission_rivm(2)),exist=exists)
+    !if (.not.exists) then
+    !    write(unit_logfile,'(A,A)') ' ERROR: emission RIVM file does not exist: ', trim(pathfilename_emission_rivm(2))
+    !    stop
+    !endif
+    
+    
+    !Open the files for reading
+    i_file=1
+    unit_in=20
+    open(unit_in,file=pathfilename_emission_rivm(i_file),access='sequential',status='old',readonly)  
+    write(unit_logfile,'(a)') ' Opening emmision RIVM file '//trim(pathfilename_emission_rivm(i_file))
+    
+    rewind(unit_in)
+
+    !Read header x,y,emission
+    read(unit_in,'(A)') temp_str
+    write(unit_logfile,'(A)') trim(temp_str)
+    count=0
+    do while(.not.eof(unit_in))
+        !read(unit_in,'(A)') temp_str
+        
+        ddlatitude=0.;ddlongitude=0.;totalemission=0.;height=0;snap=0;component_str='';
+        !read(unit_in,'(2f,e,f,i,a)') x_emission,y_emission,totalemission,height,snap,component_str
+        read(unit_in,*) x_emission,y_emission,totalemission,height,snap,component_str
+        !write(*,'(2f,e,f,i,a)') x_emission,y_emission,totalemission,height,snap,trim(component_str)
+        
+        compound_nc_index=0
+        if (index(component_str,'NOx').ne.0) compound_nc_index=nox_nc_index
+        if (index(component_str,'PM10').ne.0) compound_nc_index=pm10_nc_index
+        if (index(component_str,'NH3').ne.0) compound_nc_index=nh3_nc_index
+        if (index(component_str,'PM25').ne.0) compound_nc_index=pm25_nc_index
+        
+        !write(*,'(i,a)') compound_nc_index,trim(component_str)
+        
+        
+        !Find the source sector in SNAP
+        source_index=0
+        do i_source=1,n_source_index
+            
+            if (calculate_source(i_source).and.uEMEP_to_EMEP_sector(i_source).eq.snap) then
+                source_index=i_source
+            endif
+        enddo
+        
+        
+        !write(*,*) count
+        count=count+1
+        !Convert lat lon to utm coords
+ 
+        !call RDM2LL(y_emission,x_emission,ddlatitude,ddlongitude)
+
+        if (mod(count,10000).eq.0) write(unit_logfile,'(i,2f,e,f,i,2a)') count,x_emission,y_emission,totalemission,height,snap,'  ',trim(component_str)
+        !write(*,*) source_index,compound_nc_index
+        !Assumes the projection for the subgrid and the emissions are the same
+        if (source_index.gt.0.and.compound_nc_index.gt.0) then
+            !Find the subgrid index it belongs to
+            i_emission_index=1+floor((x_emission-emission_subgrid_min(x_dim_index,source_index))/emission_subgrid_delta(x_dim_index,source_index))
+            j_emission_index=1+floor((y_emission-emission_subgrid_min(y_dim_index,source_index))/emission_subgrid_delta(y_dim_index,source_index))
+            !write(*,*) i_emission_index,j_emission_index,emission_subgrid_min(x_dim_index,source_index),emission_subgrid_min(y_dim_index,source_index)
+            !Check that it is valid and add it to the subgrid
+            if (i_emission_index.ge.1.and.i_emission_index.le.emission_subgrid_dim(x_dim_index,source_index).and.j_emission_index.ge.1.and.j_emission_index.le.emission_subgrid_dim(y_dim_index,source_index)) then
+                !Add to subgrid
+                proxy_emission_subgrid(i_emission_index,j_emission_index,source_index,pollutant_loop_back_index(compound_nc_index))= &
+                        proxy_emission_subgrid(i_emission_index,j_emission_index,source_index,pollutant_loop_back_index(compound_nc_index)) &
+                        +totalemission*emission_scale
+            
+                emission_properties_subgrid(i_emission_index,j_emission_index,emission_h_index,source_index)= &
+                    emission_properties_subgrid(i_emission_index,j_emission_index,emission_h_index,source_index)+height
+                !emission_properties_subgrid(i_emission_index,j_emission_index,emission_h_index,source_index)= height
+                
+                count_subgrid(i_emission_index,j_emission_index,source_index)=count_subgrid(i_emission_index,j_emission_index,source_index)+1
+                !write(*,*) count_subgrid(i_emission_index,j_emission_index,source_index)
+
+            endif
+            
+        endif
+
+    enddo
+    write(unit_logfile,'(A,I)') ' Emission counts = ',count
+      
+    close(unit_in)
+    !enddo !file loop
+    
+    !Check output by looking at means
+    do i_source=1,n_source_index
+    if (calculate_source(i_source)) then
+        do j=1,emission_subgrid_dim(y_dim_index,i_source)
+        do i=1,emission_subgrid_dim(x_dim_index,i_source)
+            if (count_subgrid(i,j,i_source).gt.0) then
+                emission_properties_subgrid(i,j,emission_h_index,i_source)=emission_properties_subgrid(i,j,emission_h_index,i_source)/count_subgrid(i,j,i_source)
+                height_mean(i_source)=emission_properties_subgrid(i,j,emission_h_index,i_source)+height_mean(i_source)
+                count_mean(i_source)=count_mean(i_source)+1
+            endif
+        enddo
+        enddo
+            
+    endif
+    enddo
+
+    where (count_mean.gt.0) height_mean=height_mean/count_mean
+    
+    !Show results
+    do i_source=1,n_source_index
+    if (calculate_source(i_source)) then
+        do i_pollutant=1,n_pollutant_loop
+            write(unit_logfile,'(A,A,A,ES10.2,A,f6.2)') 'Emission source ',trim(source_file_str(i_source))//' '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant))),': Total RIVM emissions (ug/s)=', &
+                sum(proxy_emission_subgrid(1:emission_subgrid_dim(x_dim_index,i_source),1:emission_subgrid_dim(y_dim_index,i_source),i_source,i_pollutant)),'  Mean emission height (m)=',height_mean(i_source)
+        enddo
+    endif
+    enddo
+
+    deallocate (count_subgrid)
+
+        
+    end subroutine uEMEP_read_emission_rivm_data

@@ -427,6 +427,11 @@
         filename_agriculture(1)=read_name_char('filename_agriculture(1)',filename_agriculture(1),unit_in,unit_logfile)
         filename_agriculture(2)=read_name_char('filename_agriculture(2)',filename_agriculture(2),unit_in,unit_logfile)
         
+        pathname_emission_rivm(1)=read_name_char('pathname_emission_rivm(1)',pathname_emission_rivm(1),unit_in,unit_logfile)
+        pathname_emission_rivm(2)=read_name_char('pathname_emission_rivm(2)',pathname_emission_rivm(2),unit_in,unit_logfile)
+        filename_emission_rivm(1)=read_name_char('filename_emission_rivm(1)',filename_emission_rivm(1),unit_in,unit_logfile)
+        filename_emission_rivm(2)=read_name_char('filename_emission_rivm(2)',filename_emission_rivm(2),unit_in,unit_logfile)
+
         pathname_industry(1)=read_name_char('pathname_industry(1)',pathname_industry(1),unit_in,unit_logfile)
         pathname_industry(2)=read_name_char('pathname_industry(2)',pathname_industry(2),unit_in,unit_logfile)
         filename_industry(1)=read_name_char('filename_industry(1)',filename_industry(1),unit_in,unit_logfile)
@@ -801,6 +806,8 @@
         read_rivm_landuse_flag=read_name_logical('read_rivm_landuse_flag',read_rivm_landuse_flag,unit_in,unit_logfile)
         var_name_landuse_nc(num_var_landuse_nc)=read_name_char('var_name_landuse_nc',var_name_landuse_nc(num_var_landuse_nc),unit_in,unit_logfile)
         use_rivm_agricuture_emission_data=read_name_logical('use_rivm_agricuture_emission_data',use_rivm_agricuture_emission_data,unit_in,unit_logfile)
+        read_subgrid_emission_data=read_name_logical('read_subgrid_emission_data',read_subgrid_emission_data,unit_in,unit_logfile)
+        use_rivm_subgrid_emission_format=read_name_logical('use_rivm_subgrid_emission_format',use_rivm_subgrid_emission_format,unit_in,unit_logfile)
        
         !Read landuse weighting this may take some time
         !Source input is numbered as GNFR13 in input but is placed in the uEMEP source sectors

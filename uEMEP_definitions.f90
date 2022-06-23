@@ -313,6 +313,11 @@
     character(256) pathname_agriculture(2)
     character(256) pathfilename_agriculture(2)
 
+    !Declare file and path names for input emission rivm files
+    character(256) filename_emission_rivm(2)
+    character(256) pathname_emission_rivm(2)
+    character(256) pathfilename_emission_rivm(2)
+
     !Declare file and path names for SSB building and population files
     !Check this, should be limitted by n_population_index=8 but really not necessary
     character(256) filename_heating(10)
@@ -1028,6 +1033,8 @@
     logical :: use_landuse_as_proxy=.false.
     logical :: read_rivm_landuse_flag=.false.
     logical :: use_rivm_agricuture_emission_data=.false.
+    logical :: read_subgrid_emission_data=.false.
+    logical :: use_rivm_subgrid_emission_format=.false.
     
     integer n_clc_landuse_index
     parameter (n_clc_landuse_index=44)   
