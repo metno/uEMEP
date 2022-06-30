@@ -377,7 +377,7 @@
  
         !call RDM2LL(y_emission,x_emission,ddlatitude,ddlongitude)
 
-        if (mod(count,10000).eq.0) write(unit_logfile,'(i,2f,e,f,i,2a)') count,x_emission,y_emission,totalemission,height,snap,'  ',trim(component_str)
+        !if (mod(count,100000).eq.0) write(unit_logfile,'(i,2f12.2,e12.2,f12.2,i,2a)') count,x_emission,y_emission,totalemission,height,snap,'  ',trim(component_str)
         !write(*,*) source_index,compound_nc_index
         !Assumes the projection for the subgrid and the emissions are the same
         if (source_index.gt.0.and.compound_nc_index.gt.0) then
@@ -409,7 +409,7 @@
     close(unit_in)
     !enddo !file loop
     
-    !Check output by looking at means
+    !Average the emission height sum and check output by looking at means
     do i_source=1,n_source_index
     if (calculate_source(i_source)) then
         do j=1,emission_subgrid_dim(y_dim_index,i_source)

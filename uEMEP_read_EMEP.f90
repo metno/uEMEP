@@ -1201,16 +1201,16 @@
         enddo       
     endif
     
-        !Check output
-        do i_source=1,n_source_index
-            if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source)) then
-            do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
-                p_loop=pollutant_loop_back_index(pm10_nc_index)
-                write(unit_logfile,'(3A,f16.4)') ' Average local contribution of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)),' '//trim(source_file_str(i_source)), &
-                sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,i_source,p_loop))/(size(lc_var3d_nc,3)*size(lc_var3d_nc,4)*size(lc_var3d_nc,5))
-            enddo
-            endif
-        enddo
+        !Check output for PM10. Not needed anymore
+        !do i_source=1,n_source_index
+        !    if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source)) then
+        !    do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
+        !        p_loop=pollutant_loop_back_index(pm10_nc_index)
+        !        write(unit_logfile,'(3A,f16.4)') ' Average local contribution of: ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_index)),' '//trim(source_file_str(i_source)), &
+        !        sum(lc_var3d_nc(xdist_centre_nc,ydist_centre_nc,:,:,:,lc_local_nc_index,i_source,p_loop))/(size(lc_var3d_nc,3)*size(lc_var3d_nc,4)*size(lc_var3d_nc,5))
+        !    enddo
+        !    endif
+        !enddo
 
         if (allocated(pm_lc_var4d_nc)) deallocate(pm_lc_var4d_nc)
         if (allocated(pm_var4d_nc)) deallocate(pm_var4d_nc)
