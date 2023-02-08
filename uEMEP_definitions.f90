@@ -1087,6 +1087,13 @@
     !1 is O'Brian, 2 is Troen
     integer :: Kz_scheme=2
     
+    !Not used
+    logical :: EMEP_grid_interpolation_simple_flag=.false.
+    
+    !Definitions of the grid when saving emissions
+    integer save_emission_subgrid_dim(n_dim_index)
+    real save_emission_subgrid_delta(2),save_emission_subgrid_min(2)  !Only x and y
+
     end module uEMEP_definitions
     
     

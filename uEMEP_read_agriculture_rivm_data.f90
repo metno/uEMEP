@@ -299,7 +299,8 @@
 	write(unit_logfile,'(A)') '================================================================'
     
     !Set the projection to the dutch one
-    projection_type=RDM_projection_index
+    !Should already have been specified. Not generic enough
+    !projection_type=RDM_projection_index
         
     !Set the sources to be downscaled to 0
     do i_source=1,n_source_index

@@ -217,7 +217,9 @@
         EMEP_meteo_grid_interpolation_flag=read_name_integer('EMEP_meteo_grid_interpolation_flag',EMEP_meteo_grid_interpolation_flag,unit_in,unit_logfile)
         EMEP_emission_grid_interpolation_flag=read_name_integer('EMEP_emission_grid_interpolation_flag',EMEP_emission_grid_interpolation_flag,unit_in,unit_logfile)
         subgrid_emission_distribution_flag=read_name_logical('subgrid_emission_distribution_flag',subgrid_emission_distribution_flag,unit_in,unit_logfile)
-   
+        !Not used
+        EMEP_grid_interpolation_simple_flag=read_name_logical('EMEP_grid_interpolation_simple_flag',EMEP_grid_interpolation_simple_flag,unit_in,unit_logfile)
+    
         EMEP_grid_interpolation_size=read_name_real('EMEP_grid_interpolation_size',EMEP_grid_interpolation_size,unit_in,unit_logfile)
         EMEP_additional_grid_interpolation_size=read_name_real('EMEP_additional_grid_interpolation_size',EMEP_additional_grid_interpolation_size,unit_in,unit_logfile)
         use_downwind_position_flag=read_name_logical('use_downwind_position_flag',use_downwind_position_flag,unit_in,unit_logfile)
@@ -851,6 +853,13 @@
         use_phi_for_invL=read_name_logical('use_phi_for_invL',use_phi_for_invL,unit_in,unit_logfile)
         z_invL=read_name_real('z_invL',z_invL,unit_in,unit_logfile)
     
+        save_emission_subgrid_min(x_dim_index)=read_name_real('save_emission_subgrid_min(x_dim_index)',save_emission_subgrid_min(x_dim_index),unit_in,unit_logfile)
+        save_emission_subgrid_min(y_dim_index)=read_name_real('save_emission_subgrid_min(y_dim_index)',save_emission_subgrid_min(y_dim_index),unit_in,unit_logfile)
+        save_emission_subgrid_delta(x_dim_index)=read_name_real('save_emission_subgrid_delta(x_dim_index)',save_emission_subgrid_delta(x_dim_index),unit_in,unit_logfile)
+        save_emission_subgrid_delta(y_dim_index)=read_name_real('save_emission_subgrid_delta(y_dim_index)',save_emission_subgrid_delta(y_dim_index),unit_in,unit_logfile)
+        save_emission_subgrid_dim(x_dim_index)=read_name_integer('save_emission_subgrid_dim(x_dim_index)',save_emission_subgrid_dim(x_dim_index),unit_in,unit_logfile)
+        save_emission_subgrid_dim(y_dim_index)=read_name_integer('save_emission_subgrid_dim(y_dim_index)',save_emission_subgrid_dim(y_dim_index),unit_in,unit_logfile)
+
 
     close (unit_in)
     

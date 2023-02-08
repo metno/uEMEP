@@ -152,10 +152,29 @@
     end subroutine uEMEP_read_landuse_rivm_data
     
     
+    module uEMEP_landuse_definitions
+        
+    implicit none
+    
+    integer Continuous_urban_fabric_value,Discontinuous_urban_fabric_value,Industrial_or_commercial_units_value,Road_and_rail_networks_and_associated_land_value,Port_areas_value
+    integer Airports_value,Mineral_extraction_sites_value,Dump_sites_value,Construction_sites_value,Green_urban_areas_value
+    integer Sport_and_leisure_facilities_value,Non_irrigated_arable_land_value,Permanently_irrigated_land_value,Rice_fields_value,Vineyards_value
+    integer Fruit_trees_and_berry_plantations_value,Olive_groves_value,Pastures_value,Annual_crops_associated_with_permanent_crops_value,Complex_cultivation_patterns_value
+    integer Land_principally_occupied_by_agriculture_value,Agro_forestry_areas_value,Broad_leaved_forest_value,Coniferous_forest_value,Mixed_forest_value
+    integer Natural_grasslands_value,Moors_and_heathland_value,Sclerophyllous_vegetation_value,Transitional_woodland_shrub_value,Beaches_dunes_sands_value
+    integer Bare_rocks_value,Sparsely_vegetated_areas_value,Burnt_areas_value,Glaciers_and_perpetual_snow_value,Inland_marshes_value
+    integer Peat_bogs_value,Salt_marshes_value,Salines_value,Intertidal_flats_value,Water_courses_value,Water_bodies_value,Coastal_lagoons_value,Estuaries_value,Sea_and_ocean_value
+    integer NODATA_clc_value
+    integer n_corine_landuse_index
+    parameter (n_corine_landuse_index=48)
+    integer Corine_to_EMEP_landuse(n_corine_landuse_index)
+    
+    end module uEMEP_landuse_definitions
+
     subroutine uEMEP_read_netcdf_landuse_latlon
  
     use uEMEP_definitions
-    !use uEMEP_landuse_definitions
+    use uEMEP_landuse_definitions
     use netcdf
     
     implicit none
@@ -378,6 +397,9 @@
             
             landuse_subgrid(i,j,clc_index)=landuse_nc_dp(i_landuse_index,j_landuse_index)
             
+            !Place the clc landuse in the EMEP landuse
+            landuse_subgrid(i,j,Corine_to_EMEP_landuse(landuse_subgrid(i,j,clc_index)))=1
+            
             !Do the interpolation on the same grid then scale afterwards. Equivalent to interpolating density then rescaling with grid size
             !landuse_subgrid(i,j,clc_index)=area_weighted_extended_vectorgrid_interpolation_function( &
             !    real(var2d_nc_dp(1:dim_length_landuse_nc(x_dim_nc_index),x_dim_nc_index))*correct_lon(1),real(var2d_nc_dp(1:dim_length_landuse_nc(y_dim_nc_index),y_dim_nc_index)) &
@@ -450,28 +472,17 @@
     
     end subroutine uEMEP_read_netcdf_landuse_latlon
 
-    module uEMEP_landuse_definitions
-        
-    implicit none
-    
-    integer Continuous_urban_fabric_value,Discontinuous_urban_fabric_value,Industrial_or_commercial_units_value,Road_and_rail_networks_and_associated_land_value,Port_areas_value
-    integer Airports_value,Mineral_extraction_sites_value,Dump_sites_value,Construction_sites_value,Green_urban_areas_value
-    integer Sport_and_leisure_facilities_value,Non_irrigated_arable_land_value,Permanently_irrigated_land_value,Rice_fields_value,Vineyards_value
-    integer Fruit_trees_and_berry_plantations_value,Olive_groves_value,Pastures_value,Annual_crops_associated_with_permanent_crops_value,Complex_cultivation_patterns_value
-    integer Land_principally_occupied_by_agriculture_value,Agro_forestry_areas_value,Broad_leaved_forest_value,Coniferous_forest_value,Mixed_forest_value
-    integer Natural_grasslands_value,Moors_and_heathland_value,Sclerophyllous_vegetation_value,Transitional_woodland_shrub_value,Beaches_dunes_sands_value
-    integer Bare_rocks_value,Sparsely_vegetated_areas_value,Burnt_areas_value,Glaciers_and_perpetual_snow_value,Inland_marshes_value
-    integer Peat_bogs_value,Salt_marshes_value,Salines_value,Intertidal_flats_value,Water_courses_value,Water_bodies_value,Coastal_lagoons_value,Estuaries_value,Sea_and_ocean_value
-    integer NODATA_clc_value
-    
-    end module uEMEP_landuse_definitions
-
     subroutine uEMEP_set_landuse_classes
     
     use uEMEP_definitions
     use uEMEP_landuse_definitions
     
     implicit none
+    
+
+    !test
+    !landuse_proxy_weighting(heating_index,Continuous_urban_fabric_value)=1.
+    !landuse_proxy_weighting(heating_index,Discontinuous_urban_fabric_value)=0.5
     
     Continuous_urban_fabric_value=1
     Discontinuous_urban_fabric_value=2
@@ -519,9 +530,51 @@
     Sea_and_ocean_value=44
     NODATA_clc_value=48
     
-    !test
-    !landuse_proxy_weighting(heating_index,Continuous_urban_fabric_value)=1.
-    !landuse_proxy_weighting(heating_index,Discontinuous_urban_fabric_value)=0.5
+    Corine_to_EMEP_landuse(Continuous_urban_fabric_value)=urban_index
+    Corine_to_EMEP_landuse(Discontinuous_urban_fabric_value)=urban_index
+    Corine_to_EMEP_landuse(Industrial_or_commercial_units_value)=urban_index
+    Corine_to_EMEP_landuse(Road_and_rail_networks_and_associated_land_value)=urban_index
+    Corine_to_EMEP_landuse(Port_areas_value)=urban_index
+    Corine_to_EMEP_landuse(Airports_value)=urban_index
+    Corine_to_EMEP_landuse(Mineral_extraction_sites_value)=urban_index
+    Corine_to_EMEP_landuse(Dump_sites_value)=urban_index
+    Corine_to_EMEP_landuse(Construction_sites_value)=urban_index
+    Corine_to_EMEP_landuse(Green_urban_areas_value)=grass_index
+    Corine_to_EMEP_landuse(Sport_and_leisure_facilities_value)=urban_index
+    Corine_to_EMEP_landuse(Non_irrigated_arable_land_value)=grass_index
+    Corine_to_EMEP_landuse(Permanently_irrigated_land_value)=grass_index
+    Corine_to_EMEP_landuse(Rice_fields_value)=wetlands_index
+    Corine_to_EMEP_landuse(Vineyards_value)=med_crop_index
+    Corine_to_EMEP_landuse(Fruit_trees_and_berry_plantations_value)=med_crop_index
+    Corine_to_EMEP_landuse(Olive_groves_value)=med_crop_index
+    Corine_to_EMEP_landuse(Pastures_value)=grass_index
+    Corine_to_EMEP_landuse(Annual_crops_associated_with_permanent_crops_value)=temp_crop_index
+    Corine_to_EMEP_landuse(Complex_cultivation_patterns_value)=temp_crop_index
+    Corine_to_EMEP_landuse(Land_principally_occupied_by_agriculture_value)=temp_crop_index
+    Corine_to_EMEP_landuse(Agro_forestry_areas_value)=temp_decid_index
+    Corine_to_EMEP_landuse(Broad_leaved_forest_value)=temp_decid_index
+    Corine_to_EMEP_landuse(Coniferous_forest_value)=med_needle_index
+    Corine_to_EMEP_landuse(Mixed_forest_value)=med_broadleaf_index
+    Corine_to_EMEP_landuse(Natural_grasslands_value)=grass_index
+    Corine_to_EMEP_landuse(Moors_and_heathland_value)=moorland_index
+    Corine_to_EMEP_landuse(Sclerophyllous_vegetation_value)=medscrub_index
+    Corine_to_EMEP_landuse(Transitional_woodland_shrub_value)=moorland_index
+    Corine_to_EMEP_landuse(Beaches_dunes_sands_value)=desert_index
+    Corine_to_EMEP_landuse(Bare_rocks_value)=urban_index
+    Corine_to_EMEP_landuse(Sparsely_vegetated_areas_value)=medscrub_index
+    Corine_to_EMEP_landuse(Burnt_areas_value)=medscrub_index
+    Corine_to_EMEP_landuse(Glaciers_and_perpetual_snow_value)=ice_index
+    Corine_to_EMEP_landuse(Inland_marshes_value)=wetlands_index
+    Corine_to_EMEP_landuse(Peat_bogs_value)=wetlands_index
+    Corine_to_EMEP_landuse(Salt_marshes_value)=wetlands_index
+    Corine_to_EMEP_landuse(Salines_value)=wetlands_index
+    Corine_to_EMEP_landuse(Intertidal_flats_value)=wetlands_index
+    Corine_to_EMEP_landuse(Water_courses_value)=wetlands_index
+    Corine_to_EMEP_landuse(Water_bodies_value)=water_index
+    Corine_to_EMEP_landuse(Coastal_lagoons_value)=water_index
+    Corine_to_EMEP_landuse(Estuaries_value)=water_index
+    Corine_to_EMEP_landuse(Sea_and_ocean_value)=water_index
+    Corine_to_EMEP_landuse(NODATA_clc_value)=grid_index
     
-    
+         
     end subroutine uEMEP_set_landuse_classes

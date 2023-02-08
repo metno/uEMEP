@@ -513,13 +513,14 @@
     traffic_nox_emission_temperature_ref_scaling(2)=1.
     
     !EMEP projection default (LCC)
+    !Pre feb 2020 values
     EMEP_projection_type=LCC_projection_index
     EMEP_projection_attributes(1) = 63.0 !Standard parallel 1
     EMEP_projection_attributes(2) = 63.0 !Standard parallel 2
     EMEP_projection_attributes(3) = 15.0 !lon0
     EMEP_projection_attributes(4) = 63.0 !lat0
-    EMEP_projection_attributes(5) = 6370000.0 !earth_radius
-    EMEP_projection_attributes(6) = 1.e12 !flattening spherical earth
+    EMEP_projection_attributes(5) = 6371000.0 !earth_radius
+    EMEP_projection_attributes(6) = 1.e12 !flattening spherical earth. Never used?
 
     !uEMEP projection default (UTM)
     projection_type=UTM_projection_index
@@ -1239,5 +1240,12 @@
     EMEP_additional_grid_interpolation_size_original=EMEP_additional_grid_interpolation_size
     !EMEP_additional_grid_interpolation_size=EMEP_additional_grid_interpolation_size_original*local_fraction_additional_grid_size_scaling
 
-    
+    !Definitions of the emission saving grid. These are the pre February 2020 values
+    save_emission_subgrid_min(x_dim_index)=-6.498834E+05
+    save_emission_subgrid_delta(x_dim_index)=2500.
+    save_emission_subgrid_dim(x_dim_index)=531
+    save_emission_subgrid_min(y_dim_index)=-6.567275E+05
+    save_emission_subgrid_delta(y_dim_index)=2500.
+    save_emission_subgrid_dim(y_dim_index)=671
+
     end subroutine uEMEP_reset_constants

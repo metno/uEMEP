@@ -166,6 +166,7 @@
         jj_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
         ii_end=1+floor(0.5*(EMEP_grid_interpolation_size-1.))
         
+        !Window does not extend outside the grid, since it is centred on the EMEP grid
         if (EMEP_grid_interpolation_size.le.1) then
             jj_start=0
             ii_start=0
@@ -222,6 +223,11 @@
             if (amod_temp.eq.0) amod_temp=local_fraction_grid_size_scaling_temp
             dgrid_lf_offset_y=0.5-(amod_temp-0.5)/local_fraction_grid_size_scaling_temp
 
+            if (set_lf_offset_to_0) then
+                dgrid_lf_offset_x=0
+                dgrid_lf_offset_y=0
+            endif
+
             !dgrid_lf_offset_x=0
             !dgrid_lf_offset_y=0
             
@@ -272,7 +278,7 @@
                     
                     !write(*,'(2i,5f12.2,f12.4)') ii,jj,weighting_val,xpos_lf_area_min-xpos_subgrid,xpos_lf_area_max-xpos_subgrid &
                     !    ,xpos_area_min-xpos_subgrid,xpos_area_max-xpos_subgrid,dgrid_lf_offset_x
-                    
+                                        
                     subgrid(i,j,:,emep_local_subgrid_index,:,:)=subgrid(i,j,:,emep_local_subgrid_index,:,:) &
                                     +lc_var3d_nc(ii_nc_w,jj_nc_w,i_nc,j_nc,:,lc_local_nc_index,:,:)*weighting_val
                 

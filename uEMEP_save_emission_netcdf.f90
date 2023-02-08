@@ -38,10 +38,10 @@
         !units = "m";
         !axis = "X";
         if (trim(save_emissions_for_EMEP_region).eq.'NO') then
-            emission_subgrid_min(x_dim_index,:)=-6.498834E+05 ! 6.751166E+05
-            emission_subgrid_delta(x_dim_index,:)=2500.
-            emission_subgrid_dim(x_dim_index,:)=531
-            emission_max_subgrid_dim(x_dim_index)=531
+            emission_subgrid_min(x_dim_index,:)=save_emission_subgrid_min(x_dim_index)
+            emission_subgrid_delta(x_dim_index,:)=save_emission_subgrid_delta(x_dim_index)
+            emission_subgrid_dim(x_dim_index,:)=save_emission_subgrid_dim(x_dim_index)
+            emission_max_subgrid_dim(x_dim_index)=save_emission_subgrid_dim(x_dim_index)
             !Move minium to edge, for consistency with normal subgrid definition
             emission_subgrid_min(x_dim_index,:)=emission_subgrid_min(x_dim_index,:)-emission_subgrid_delta(x_dim_index,:)/2.
 
@@ -50,12 +50,25 @@
             !long_name = "y-coordinate in Cartesian system";
             !units = "m";
             !axis = "Y";
-            emission_subgrid_min(y_dim_index,:)=-6.567275E+05 ! 1.018272E+06
-            emission_subgrid_delta(y_dim_index,:)=2500.
-            emission_subgrid_dim(y_dim_index,:)=671
-            emission_max_subgrid_dim(y_dim_index)=671
+            emission_subgrid_min(y_dim_index,:)=save_emission_subgrid_min(y_dim_index)
+            emission_subgrid_delta(y_dim_index,:)=save_emission_subgrid_delta(y_dim_index)
+            emission_subgrid_dim(y_dim_index,:)=save_emission_subgrid_dim(y_dim_index)
+            emission_max_subgrid_dim(y_dim_index)=save_emission_subgrid_dim(y_dim_index)
             !Move minium to edge, for consistency with normal subgrid definition
             emission_subgrid_min(y_dim_index,:)=emission_subgrid_min(y_dim_index,:)-emission_subgrid_delta(y_dim_index,:)/2.
+            
+            !if(use_meteo_file_for_emission_gridding_flag) then
+                
+             !   call uEMEP_read_meteo_nc
+            !    emission_subgrid_min(x_dim_index,:)=-6.498834E+05 ! 6.751166E+05
+             !   emission_subgrid_delta(x_dim_index,:)=2500.
+             !   emission_subgrid_dim(x_dim_index,:)=531
+            !    emission_max_subgrid_dim(x_dim_index)=531
+                !Move minium to edge, for consistency with normal subgrid definition
+            !    emission_subgrid_min(x_dim_index,:)=emission_subgrid_min(x_dim_index,:)-emission_subgrid_delta(x_dim_index,:)/2.    
+                
+            !endif
+            
         else
             write(unit_logfile,'(A)') 'ERROR: Emission region '//trim(save_emissions_for_EMEP_region)//' not currently defined for lambert coordinates'
             stop      

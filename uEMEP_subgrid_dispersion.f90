@@ -129,6 +129,8 @@
     xpos_limit2=dgrid_nc(lon_nc_index)/2.
     ypos_limit2=dgrid_nc(lat_nc_index)/2.
 
+    !write(unit_logfile,'(A,2f12.2)') 'xpos_limit and ypos_limit: ',xpos_limit,ypos_limit
+
     !Minimum distance for travel time calculation set to  half of a grid diagonal weighted so the circle has the same area as the square with that diagonal
     distance_subgrid_min=sqrt(subgrid_delta(x_dim_index)*subgrid_delta(x_dim_index)+subgrid_delta(y_dim_index)*subgrid_delta(y_dim_index))/2./sqrt(2.)*4./3.14159
     !Minimum distance for dispersion set to  half of an emission grid diagonal weighted so the circle has the same area as the square with that diagonal
