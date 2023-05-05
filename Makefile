@@ -12,7 +12,7 @@ DEBUG_FLAGS = -init=snan,arrays -check all -check noarg_temp_created -debug-para
 #Release flags
 ###F90FLAGS = -O3 -g -ftz  -march=core-avx2 -ipo $(shell nf-config --cflags)
 #Debug flags
-F90FLAGS = -O3 -g -march=core-avx2 $(shell nf-config --cflags)
+F90FLAGS = -O3 -g -march=core-avx2 $(shell nf-config --fflags)
 
 LLIB = $(shell nf-config --flibs) 
 LDFLAGS =  $(F90FLAGS) $(LLIB)
