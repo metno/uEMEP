@@ -675,7 +675,7 @@
                 
                 !write(*,*) weighting_val3
                 
-                EMEP_local_contribution(:,:,:,:)=EMEP_local_contribution(:,:,:,:)+lc_var3d_nc(:,:,ii_nc,jj_nc,tt,lc_local_nc_index,:,:)*weighting_val3
+                EMEP_local_contribution(:,:,:,:)=EMEP_local_contribution(:,:,:,:)+lc_var3d_nc(:,:,ii_nc,jj_nc,tt,lc_local_nc_index,1:n_source_index,:)*weighting_val3
 
                 endif
             enddo
