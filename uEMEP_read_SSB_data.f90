@@ -339,6 +339,7 @@
     !Read in the population data in netcdf format
     !This is particularly used for reading in the global population dataset
     !This is not used any longer, replaced by uEMEP_read_netcdf_population_latlon
+    !Attempt to read in local but still not working
     subroutine uEMEP_read_netcdf_population
  
     use uEMEP_definitions
@@ -350,7 +351,7 @@
     integer i,j
     integer i_dim,id_nc
     character(256) var_name_nc_temp,dimname_temp
-    integer var_id_nc
+    integer var_id_nc,var_id_nc_temp
     real x_ssb,y_ssb
     integer i_ssb_index,j_ssb_index
     real delta_pop_nc(num_dims_population_nc)
@@ -358,6 +359,7 @@
     integer dim_length_population_nc(num_dims_population_nc)
     real y_pop,x_pop
     integer source_index
+
     
     !Temporary reading rvariables
     real, allocatable :: population_nc_dp(:,:,:)
@@ -387,9 +389,33 @@
         
         !Find the projection. If no projection then in lat lon coordinates
         !status_nc = NF90_INQ_VARID (id_nc,'projection_lambert',var_id_nc)
-        status_nc = NF90_INQ_VARID (id_nc,'mollweide',var_id_nc)
-        
+        !status_nc = NF90_INQ_VARID (id_nc,'mollweide',var_id_nc_temp)
+        !if (status_nc.eq.NF90_NOERR) then
+        !    population_nc_projection_type=mollweide_projection_index
+        !    var_id_nc=var_id_nc_temp
+        !endif
+        status_nc = NF90_INQ_VARID (id_nc,'transverse_mercator',var_id_nc_temp)
         if (status_nc.eq.NF90_NOERR) then
+            population_nc_projection_type=UTM_projection_index
+            var_id_nc=var_id_nc_temp
+        endif
+        status_nc = NF90_INQ_VARID (id_nc,'projection_utm',var_id_nc_temp)
+        if (status_nc.eq.NF90_NOERR) then
+            population_nc_projection_type=UTM_projection_index
+             var_id_nc=var_id_nc_temp
+        endif
+       status_nc = NF90_INQ_VARID (id_nc,'projection_lambert',var_id_nc_temp)
+        if (status_nc.eq.NF90_NOERR) then
+            population_nc_projection_type=LCC_projection_index
+             var_id_nc=var_id_nc_temp
+        endif
+       status_nc = NF90_INQ_VARID (id_nc,'projection_ETRS89_LAEA',var_id_nc_temp)
+        if (status_nc.eq.NF90_NOERR) then
+            population_nc_projection_type=LAEA_projection_index
+             var_id_nc=var_id_nc_temp
+        endif
+       
+        if (population_nc_projection_type.ne.LL_projection_index) then
             !If there is a projection then read in the attributes. All these are doubles
             !status_nc = nf90_inquire_variable(id_nc, var_id_nc, natts = numAtts_projection)
                 status_nc = nf90_get_att(id_nc, var_id_nc, 'Central_Meridian', population_nc_projection_attributes(1))
@@ -398,9 +424,8 @@
                 status_nc = nf90_get_att(id_nc, var_id_nc, 'longitude_of_prime_meridian', population_nc_projection_attributes(4))
                 status_nc = nf90_get_att(id_nc, var_id_nc, 'semi_major_axis', population_nc_projection_attributes(5))
                 status_nc = nf90_get_att(id_nc, var_id_nc, 'inverse_flattening', population_nc_projection_attributes(6))
-                !population_nc_projection_type=mollweide_projection_index
                         
-                write(unit_logfile,'(A,6f12.2)') 'Reading Mollweide projection. ',population_nc_projection_attributes(1:6)
+                write(unit_logfile,'(A,4i,6f12.2)') 'Reading projection (index, params) ',population_nc_projection_type,population_nc_projection_attributes(1:6)
 
         endif
  

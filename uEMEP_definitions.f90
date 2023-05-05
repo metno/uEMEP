@@ -951,6 +951,8 @@
     real :: EMEP_emission_aggregation_period=1.
 
     logical :: read_population_from_netcdf_flag=.false.
+    logical :: read_population_from_netcdf_local_flag=.false.
+    integer :: population_nc_projection_type=LL_projection_index
     
     logical :: auto_select_OSM_country_flag=.false.
     character(256) :: pathfilename_boundingbox=''

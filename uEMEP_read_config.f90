@@ -707,6 +707,7 @@
         
         EMEP_emission_aggregation_period=read_name_real('EMEP_emission_aggregation_period',EMEP_emission_aggregation_period,unit_in,unit_logfile)
         read_population_from_netcdf_flag=read_name_logical('read_population_from_netcdf_flag',read_population_from_netcdf_flag,unit_in,unit_logfile)
+        read_population_from_netcdf_local_flag=read_name_logical('read_population_from_netcdf_local_flag',read_population_from_netcdf_flag,unit_in,unit_logfile)
         
         auto_select_OSM_country_flag=read_name_logical('auto_select_OSM_country_flag',auto_select_OSM_country_flag,unit_in,unit_logfile)
         pathname_boundingbox=read_name_char('pathname_boundingbox',pathname_boundingbox,unit_in,unit_logfile)

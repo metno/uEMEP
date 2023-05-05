@@ -224,9 +224,10 @@
                         !Read and subgrid SSB dwelling data
                         SSB_data_type=dwelling_index
                         if (read_population_from_netcdf_flag) then
-                            !call uEMEP_read_netcdf_population
                             call uEMEP_read_netcdf_population_latlon
-                        else
+                        elseif (read_population_from_netcdf_local_flag) then
+                            call uEMEP_read_netcdf_population
+                        else           
                             call uEMEP_read_SSB_data
                         endif
                     endif
@@ -256,12 +257,13 @@
                 if (calculate_population_exposure_flag.or.use_population_positions_for_auto_subgrid_flag.or.save_population) then
                     !Read and subgrid SSB population data
                     SSB_data_type=population_data_type
-                    if (read_population_from_netcdf_flag) then
-                        !call uEMEP_read_netcdf_population
-                        call uEMEP_read_netcdf_population_latlon
-                    else
-                        call uEMEP_read_SSB_data
-                    endif
+                        if (read_population_from_netcdf_flag) then
+                            call uEMEP_read_netcdf_population_latlon
+                        elseif (read_population_from_netcdf_local_flag) then
+                            call uEMEP_read_netcdf_population
+                        else           
+                            call uEMEP_read_SSB_data
+                        endif
                 endif
 
                 if (use_landuse_as_proxy.or.read_landuse_flag) then

@@ -201,7 +201,7 @@
             if (i_nc.ge.1.and.i_nc.le.dim_length_nc(x_dim_nc_index).and.j_nc.ge.1.and.j_nc.le.dim_length_nc(y_dim_nc_index)) then
             
             !Read from the local fraction file
-            subgrid(i,j,:,emep_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,conc_nc_index,:,:)
+            subgrid(i,j,:,emep_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,conc_nc_index,1:n_source_index,:)
             !subgrid(i,j,:,emep_local_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,local_nc_index,:,:)
             
             !Centre of grid
@@ -280,7 +280,7 @@
                     !    ,xpos_area_min-xpos_subgrid,xpos_area_max-xpos_subgrid,dgrid_lf_offset_x
                                         
                     subgrid(i,j,:,emep_local_subgrid_index,:,:)=subgrid(i,j,:,emep_local_subgrid_index,:,:) &
-                                    +lc_var3d_nc(ii_nc_w,jj_nc_w,i_nc,j_nc,:,lc_local_nc_index,:,:)*weighting_val
+                                    +lc_var3d_nc(ii_nc_w,jj_nc_w,i_nc,j_nc,:,lc_local_nc_index,1:n_source_index,:)*weighting_val
                 
                 endif
 
@@ -409,9 +409,9 @@
                     do i_pollutant=1,n_emep_pollutant_loop
                         
                         subgrid(i,j,tt,emep_local_subgrid_index,:,i_pollutant)=subgrid(i,j,tt,emep_local_subgrid_index,:,i_pollutant) &
-                            +var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,:)
+                            +var3d_nc(ii_nc,jj_nc,tt,local_nc_index,1:n_source_index,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,:)
                         subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,i_pollutant)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,i_pollutant) &
-                            +(var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,:,i_pollutant)-var3d_nc(ii_nc,jj_nc,tt,local_nc_index,:,i_pollutant))*weighting_nc(ii_w,jj_w,tt_dim,:)
+                            +(var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,1:n_source_index,i_pollutant)-var3d_nc(ii_nc,jj_nc,tt,local_nc_index,1:n_source_index,i_pollutant))*weighting_nc(ii_w,jj_w,tt_dim,:)
 
                     enddo
                     
@@ -459,8 +459,8 @@
                     !First weight is emission, the second is area
                     do i_pollutant=1,n_emep_pollutant_loop
                     nonlocal_correction(tt_dim,:,i_pollutant)=nonlocal_correction(tt_dim,:,i_pollutant) &
-                        -lc_var3d_nc(ii_w0,jj_w0,ii_nc,jj_nc,tt,lc_local_nc_index,:,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,:)*weighting_nc(ii_w0,jj_w0,tt_dim,:) &
-                        -lc_var3d_nc(ii_w,jj_w,i_nc,j_nc,tt,lc_local_nc_index,:,i_pollutant)*weighting_nc(ii_w0,jj_w0,tt_dim,:)*weighting_nc(ii_w,jj_w,tt_dim,:)
+                        -lc_var3d_nc(ii_w0,jj_w0,ii_nc,jj_nc,tt,lc_local_nc_index,1:n_source_index,i_pollutant)*weighting_nc(ii_w,jj_w,tt_dim,:)*weighting_nc(ii_w0,jj_w0,tt_dim,:) &
+                        -lc_var3d_nc(ii_w,jj_w,i_nc,j_nc,tt,lc_local_nc_index,1:n_source_index,i_pollutant)*weighting_nc(ii_w0,jj_w0,tt_dim,:)*weighting_nc(ii_w,jj_w,tt_dim,:)
                     enddo                 
                 endif
                 
@@ -631,7 +631,7 @@
                     weighting_val=0.
                 endif            
                     
-                subgrid(i,j,:,emep_subgrid_index,:,:)=subgrid(i,j,:,emep_subgrid_index,:,:)+var3d_nc(ii_nc,jj_nc,:,conc_nc_index,:,:)*weighting_val
+                subgrid(i,j,:,emep_subgrid_index,:,:)=subgrid(i,j,:,emep_subgrid_index,1:n_source_index,:)+var3d_nc(ii_nc,jj_nc,:,conc_nc_index,1:n_source_index,:)*weighting_val
 
                 do i_pollutant=1,n_emep_pollutant_loop
                 do i_loop=1,n_pollutant_compound_loop(i_pollutant)
