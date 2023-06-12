@@ -446,11 +446,14 @@
             if (remove_source.ne.allsource_index) then
                 !nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
                 !no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))       
-                no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*nox_bg/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))       
+                no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*nox_bg/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
+                o3_bg=max(0.0,comp_EMEP_subgrid(i,j,t,o3_index)+48./46.*(comp_EMEP_subgrid(i,j,t,no2_index)-no2_bg)) !Conserve Ox when removing NO2 in the background. Cannot be less than 0
+
             else
                 !nox_bg=subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
                 !no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))       
-                no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*nox_bg/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))       
+                no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*nox_bg/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
+                o3_bg=max(0.0,comp_EMEP_subgrid(i,j,t,o3_index)+48./46.*(comp_EMEP_subgrid(i,j,t,no2_index)-no2_bg)) !Conserve Ox when removing NO2 in the background. Cannot be less than 0
                 nox_loc=0.
                 f_no2_loc=0.
             endif
