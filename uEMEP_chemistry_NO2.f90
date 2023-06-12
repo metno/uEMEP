@@ -184,6 +184,7 @@
         !no2_bg=max(0.,comp_subgrid(i,j,t,no2_index)-f_no2_loc*subgrid(i,j,t,emep_local_subgrid_index,allsource_index,emep_subsource))
         !no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
         no2_bg=comp_EMEP_subgrid(i,j,t,no2_index)*nox_bg/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
+        o3_bg=comp_EMEP_subgrid(i,j,t,o3_index)+48./46.*(comp_EMEP_subgrid(i,j,t,no2_index)-no2_bg) !Conserve Ox when removing NO2 in the background
         !no2_bg=comp_subgrid(i,j,t,no2_index)
 
         !Assume stationary state to derive no2 and o3 background
@@ -196,7 +197,8 @@
             if (no2_background_chemistry_scheme_flag.eq.1) then             
                 call uEMEP_nonlocal_NO2_O3(nox_bg_additional,comp_EMEP_subgrid(i,j,t,nox_index),comp_EMEP_subgrid(i,j,t,no2_index),comp_EMEP_subgrid(i,j,t,o3_index),J_photo,temperature,f_no2_emep,no2_bg_additional,o3_bg_additional)
             else
-                o3_bg_additional=comp_EMEP_subgrid(i,j,t,o3_index)
+                !o3_bg_additional=comp_EMEP_subgrid(i,j,t,o3_index)
+                o3_bg_additional=comp_EMEP_subgrid(i,j,t,o3_index)+48./46.*(comp_EMEP_subgrid(i,j,t,no2_index)-no2_bg_additional) !Conserve Ox when removing NO2 in the background
             endif
             comp_source_EMEP_additional_subgrid(i,j,t,o3_index,allsource_index)=o3_bg_additional
             comp_source_EMEP_additional_subgrid(i,j,t,no2_index,allsource_index)=no2_bg_additional
