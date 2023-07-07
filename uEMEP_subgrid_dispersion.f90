@@ -97,6 +97,9 @@
     real gauss_plume_second_order_rotated_reflected_func
     real gauss_plume_second_order_rotated_reflected_integral_func
     
+    real, allocatable :: temp_subgrid_from_in_region(:,:,:)
+    real, allocatable :: temp_target_subgrid_from_in_region(:,:,:)
+
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -115,13 +118,17 @@
     allocate (temp_FF_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
     allocate (temp_FF_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
     allocate (angle_diff(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
-    
+    if (trace_emissions_from_in_region) then
+        allocate (temp_subgrid_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_pollutant_loop)) 
+        temp_subgrid_from_in_region=0.
+    endif
+
     temp_subgrid=0.
     temp_emission_subgrid=0.
     temp_FF_subgrid=0.
     temp_FF_emission_subgrid=0.
     angle_diff=0.
-        
+    
 
     !Set the x and y position limits to coincide to half the EMEP grid (refered here as lon and lat but can be also LCC projection) times the number of grids
     xpos_limit=dgrid_nc(lon_nc_index)/2.*EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
@@ -201,9 +208,14 @@
         if (.not.allocated(x_target_subgrid)) allocate (x_target_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
         if (.not.allocated(y_target_subgrid)) allocate (y_target_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
         
-        
         x_target_subgrid(:,:)=x_emission_subgrid(:,:,source_index)
         y_target_subgrid(:,:)=y_emission_subgrid(:,:,source_index)
+        
+        if (trace_emissions_from_in_region) then
+            if (allocated(temp_target_subgrid_from_in_region)) deallocate (temp_target_subgrid_from_in_region)
+            if (.not.allocated(temp_target_subgrid_from_in_region)) allocate (temp_target_subgrid_from_in_region(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_pollutant_loop)) 
+        endif
+
 
         endif
         
@@ -217,7 +229,10 @@
         subgrid(:,:,tt,proxy_subgrid_index,source_index,:)=0.
         temp_target_subgrid=0.
         traveltime_temp_target_subgrid=0.
-    
+        if (trace_emissions_from_in_region) then
+            temp_target_subgrid_from_in_region=0.
+        endif
+        
         !Set a temporary emission array
         temp_emission_subgrid=emission_subgrid(:,:,tt,source_index,:)
         temp_subgrid=0.
@@ -647,6 +662,17 @@
                                     endif
                                     enddo
                                     
+                                    if (trace_emissions_from_in_region) then
+                                    if (use_subgrid_val(ii,jj,allsource_index).eq.inside_region_index) then
+                                        if (use_target_subgrid) then
+                                            temp_target_subgrid_from_in_region(i,j,i_pollutant)=temp_target_subgrid_from_in_region(i,j,i_pollutant)+temp_subgrid_internal_pollutant(i_pollutant)
+                                        else
+                                            temp_subgrid_from_in_region(i,j,i_pollutant)=temp_subgrid_from_in_region(i,j,i_pollutant)+temp_subgrid_internal_pollutant(i_pollutant)
+                                        endif
+                                        
+                                    endif
+                                    endif
+                                
                                     !Determine the distance for the travel time calculation
                                     if (use_straightline_traveltime_distance) then
                                         distance_subgrid=x_loc
@@ -790,8 +816,11 @@
                                 !if (source_index.eq.industry_index) write(*,'(6ES12.2)') sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc
                                 !if (source_index.eq.traffic_index.and.distance_subgrid.eq.0) write(*,'(16es12.2)') sigy_0_subgid_width_scale,distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,sig_y_0_loc,sig_z_0_loc,sig_y_loc,sig_z_loc,h_emis_loc,FF_loc,1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
                                 !Divide by wind speed at receptor position
-                                temp_subgrid_rotated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc)
-                                
+                                if (calc_grid_vertical_average_concentration_annual_flag) then
+                                    temp_subgrid_rotated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0.,H_emep)
+                                else
+                                    temp_subgrid_rotated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc)
+                                endif
                                 !If wind level flag is 6 in annual means then the average height is not calculated because a fit is used so valid for all stability types now
                                 !Needs to be calculated after sig_z_loc is calculated
                                 if (wind_level_flag.eq.6) then
@@ -819,6 +848,17 @@
                                 else
                                     temp_subgrid(i,j,:)=temp_subgrid(i,j,:) + temp_subgrid_rotated
                                 endif
+                                
+                                if (trace_emissions_from_in_region) then
+                                if (use_subgrid_val(ii,jj,allsource_index).eq.inside_region_index) then
+                                    if (use_target_subgrid) then
+                                        temp_target_subgrid_from_in_region(i,j,:)=temp_target_subgrid_from_in_region(i,j,:) + temp_subgrid_rotated
+                                    else
+                                        temp_subgrid_from_in_region(i,j,:)=temp_subgrid_from_in_region(i,j,:) + temp_subgrid_rotated
+                                    endif
+                                    endif
+                                endif
+
                                 !write(*,'(4i5,2es12.2,4f12.3)') i,j,ii,jj,temp_subgrid(i,j,:), &
                                 !    gauss_plume_second_order_rotated_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc)/FF_loc &
                                 !    ,distance_subgrid,az_loc,bz_loc,sig_z_00_loc
@@ -940,10 +980,16 @@
                     +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,traveltime_temp_target_subgrid(:,:,2,i_pollutant) &
                     ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
                 !write(*,*) tt,i,j,temp_subgrid(i,j)
+                if (trace_emissions_from_in_region) then
+                    temp_subgrid_from_in_region(i,j,i_pollutant)=area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,temp_target_subgrid_from_in_region(:,:,i_pollutant) &
+                        ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
+                endif
+
                 enddo
             else
                 temp_subgrid(i,j,:)=NODATA_value
                 traveltime_subgrid(i,j,tt,:,:)=NODATA_value
+                temp_subgrid_from_in_region(i,j,:)=NODATA_value
             endif
             enddo
             enddo
@@ -972,6 +1018,13 @@
             write(unit_logfile,'(a,3f12.3)') 'Mean concentration '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//': ',temp_sum_subgrid(i_pollutant)
         enddo
         subgrid(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid
+        
+        if (trace_emissions_from_in_region) then
+            subgrid_fraction_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid_from_in_region/temp_subgrid
+            where (temp_subgrid.eq.0) subgrid_fraction_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=0.
+            where (temp_subgrid.eq.NODATA_value) subgrid_fraction_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=NODATA_value
+        endif
+        
 
         
         enddo !time loop

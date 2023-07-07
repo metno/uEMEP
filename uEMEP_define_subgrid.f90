@@ -270,6 +270,9 @@
     if (allocated(xproj_subgrid)) deallocate (xproj_subgrid)
     if (allocated(yproj_subgrid)) deallocate (yproj_subgrid)
     if (allocated(traveltime_subgrid)) deallocate (traveltime_subgrid)
+    if (trace_emissions_from_in_region) then
+        if (allocated(subgrid_fraction_from_in_region)) deallocate (subgrid_fraction_from_in_region)
+    endif
     
     !Define target grid
     if (.not.allocated(subgrid)) allocate (subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_pollutant_loop))
@@ -281,6 +284,11 @@
     if (.not.allocated(yproj_subgrid)) allocate (yproj_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
     if (.not.allocated(traveltime_subgrid)) allocate (traveltime_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),2,n_pollutant_loop)) !Last index 1 for weighted time, 2 for sum of weights
     traveltime_subgrid=0.
+
+    if (trace_emissions_from_in_region) then
+        if (.not.allocated(subgrid_fraction_from_in_region)) allocate (subgrid_fraction_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_pollutant_loop))
+    endif
+    
 
     !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
     if (allocated(comp_subgrid)) deallocate (comp_subgrid)

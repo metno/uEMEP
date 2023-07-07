@@ -1096,6 +1096,12 @@
     integer save_emission_subgrid_dim(n_dim_index)
     real save_emission_subgrid_delta(2),save_emission_subgrid_min(2)  !Only x and y
 
+    logical :: trace_emissions_from_in_region=.false.
+    real, allocatable :: subgrid_fraction_from_in_region(:,:,:,:,:,:)
+
+    !Setting this to true is for diagnostic puroses. Gived the integrated lowest grid average concentration instead of the receptor
+    logical :: calc_grid_vertical_average_concentration_annual_flag=.false.
+    
     end module uEMEP_definitions
     
     

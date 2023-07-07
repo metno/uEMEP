@@ -861,6 +861,10 @@
         save_emission_subgrid_dim(x_dim_index)=read_name_integer('save_emission_subgrid_dim(x_dim_index)',save_emission_subgrid_dim(x_dim_index),unit_in,unit_logfile)
         save_emission_subgrid_dim(y_dim_index)=read_name_integer('save_emission_subgrid_dim(y_dim_index)',save_emission_subgrid_dim(y_dim_index),unit_in,unit_logfile)
 
+        trace_emissions_from_in_region=read_name_logical('trace_emissions_from_in_region',trace_emissions_from_in_region,unit_in,unit_logfile)
+
+        calc_grid_vertical_average_concentration_annual_flag=read_name_logical('calc_grid_vertical_average_concentration_annual_flag',calc_grid_vertical_average_concentration_annual_flag,unit_in,unit_logfile)
+        
 
     close (unit_in)
     
