@@ -826,7 +826,7 @@
     !write(*,'(A,9ES12.1)') 'MOL:  ',mol(nox_i),mol(no2_i),mol(o3_i),mol(ox_i),f_no2,f_ox,Jd,f_no2,p_bg_out
 
     !Convert back to mass
-    mol(no2_i)=f_no2*mol(nox_i);
+    mol(no2_i)=max(0.,f_no2*mol(nox_i))
     mol(o3_i)=max(0.,mol(ox_i)-mol(no2_i))  !Rounding errors possible
     mol(no_i)=max(0.,mol(nox_i)-mol(no2_i)) !Rounding errors possible
     mass=mol*mmass/Na_fac !(ug/m3)
@@ -1080,8 +1080,8 @@
         mol_no2_out=(b-d)/2.
         mol_o3_out=mol_ox_emep-mol_no2_out
     
-        no2_out=mol_no2_out*mmass(no2_i)/Na_fac
-        o3_out=mol_o3_out*mmass(o3_i)/Na_fac
+        no2_out=max(0.0,mol_no2_out*mmass(no2_i)/Na_fac)
+        o3_out=max(0.0,mol_o3_out*mmass(o3_i)/Na_fac)
     else
         no2_out=0.
         o3_out=o3_emep       
