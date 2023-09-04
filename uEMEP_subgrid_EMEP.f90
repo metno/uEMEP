@@ -1160,6 +1160,9 @@
         !Set the allsource nonlocal value to the average of the remainder. This can be negative
         if (count.gt.0) then
         subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid(:,:,:,emep_subgrid_index,allsource_index,:)/real(count)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))
+        if (trace_emissions_from_in_region) then
+        subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid_from_in_region(:,:,:,emep_subgrid_index,allsource_index,:)/real(count)-subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:))
+            endif
         !write(*,*) calculate_EMEP_additional_grid_flag,sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))
         !stop
         endif
