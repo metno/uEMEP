@@ -174,6 +174,7 @@
                 !Define and allocate cross reference subgrids used to transfer data between different subgrids
                 call uEMEP_crossreference_grids
         
+                
                 !Read all road link data from ascii files
                 if (calculate_source(traffic_index).and..not.read_subgrid_emission_data) then
                     !Do this only for the first receptor grid loop
@@ -281,6 +282,11 @@
                     call uEMEP_region_mask
                 endif
                 
+                !Determine the fraction of an EMEP grid within the one defined region
+                if (trace_emissions_from_in_region) then
+                    call uEMEP_assign_region_coverage_to_EMEP
+                endif
+                
                 !Specify the subgrids sizes to be calculated using use_receptor_region
                 call uEMEP_grid_receptor_data
                 
@@ -289,6 +295,7 @@
                     call uEMEP_grid_roads
                     call uEMEP_set_tile_grids
                 endif
+                
                 !Carry out regional tiling. Programme will stop here
                 if (calculate_region_tiling_flag) then
                     call uEMEP_set_region_tile_grids

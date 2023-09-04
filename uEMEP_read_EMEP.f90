@@ -8,7 +8,7 @@
     implicit none
     
     integer i,j,k,t
-    integer ii,jj,iii,jjj
+    integer ii,jj,iii,jjj,iiii,jjjj
     logical exists
     character(256) pathfilename_nc
     integer status_nc     !Error message
@@ -66,6 +66,7 @@
     real, allocatable :: pm_lc_var4d_nc(:,:,:,:,:,:,:,:,:)
     
     real, allocatable :: species_temp_var3d_nc(:,:,:)
+    
     
     !NOTE: temporary for nh3 false is not on
     logical :: use_comp_temporary=.false.
@@ -1437,6 +1438,7 @@
  
         !Shift the EMEP grid to the west by 0.1 degrees. Portugal test
         !var1d_nc(:,x_dim_nc_index)=var1d_nc(:,x_dim_nc_index)-0.1
+        
 
     end subroutine uEMEP_read_EMEP
     

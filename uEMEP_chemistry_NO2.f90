@@ -312,6 +312,7 @@
     if (.not.nox_available) return  
 
     if (.not.allocated(comp_source_subgrid)) allocate(comp_source_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+    !This actually never used as calculate_EMEP_additional_grid_flag is never set to true
     if (calculate_EMEP_additional_grid_flag) then
         if (.not.allocated(comp_source_additional_subgrid)) allocate(comp_source_additional_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
         !Temporary array for storing the comp_source_subgrid to avoid rewriting large parts of the routine when running the additional version

@@ -660,10 +660,9 @@
                                     else
                                     temp_subgrid(i,j,i_pollutant)=temp_subgrid(i,j,i_pollutant)+temp_subgrid_internal_pollutant(i_pollutant)
                                     endif
-                                    enddo
-                                    
+                                                                        
                                     if (trace_emissions_from_in_region) then
-                                    if (use_subgrid_val(ii,jj,allsource_index).eq.inside_region_index) then
+                                    if (use_subgrid_region(ii,jj,source_index)) then
                                         if (use_target_subgrid) then
                                             temp_target_subgrid_from_in_region(i,j,i_pollutant)=temp_target_subgrid_from_in_region(i,j,i_pollutant)+temp_subgrid_internal_pollutant(i_pollutant)
                                         else
@@ -672,7 +671,8 @@
                                         
                                     endif
                                     endif
-                                
+                                    enddo
+                               
                                     !Determine the distance for the travel time calculation
                                     if (use_straightline_traveltime_distance) then
                                         distance_subgrid=x_loc
@@ -850,13 +850,13 @@
                                 endif
                                 
                                 if (trace_emissions_from_in_region) then
-                                if (use_subgrid_val(ii,jj,allsource_index).eq.inside_region_index) then
+                                if (use_subgrid_region(ii,jj,source_index)) then
                                     if (use_target_subgrid) then
                                         temp_target_subgrid_from_in_region(i,j,:)=temp_target_subgrid_from_in_region(i,j,:) + temp_subgrid_rotated
                                     else
                                         temp_subgrid_from_in_region(i,j,:)=temp_subgrid_from_in_region(i,j,:) + temp_subgrid_rotated
                                     endif
-                                    endif
+                                endif
                                 endif
 
                                 !write(*,'(4i5,2es12.2,4f12.3)') i,j,ii,jj,temp_subgrid(i,j,:), &
@@ -949,6 +949,8 @@
             else
                 !Set to nodata value for grids that should not be used for all pollutants
                 temp_subgrid(i,j,:)=NODATA_value
+                if (trace_emissions_from_in_region) temp_subgrid_from_in_region(i,j,:)=NODATA_value
+                 
             endif
             if (.not.use_target_subgrid) then             
                 !write(*,'(3i,3es12.2)') tt,i,j,temp_subgrid(i,j,pollutant_loop_index(nox_index)),diagnostic_subgrid(i,j,1),diagnostic_subgrid(i,j,2)
@@ -1020,9 +1022,7 @@
         subgrid(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid
         
         if (trace_emissions_from_in_region) then
-            subgrid_fraction_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid_from_in_region/temp_subgrid
-            where (temp_subgrid.eq.0) subgrid_fraction_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=0.
-            where (temp_subgrid.eq.NODATA_value) subgrid_fraction_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=NODATA_value
+            subgrid_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid_from_in_region
         endif
         
 
@@ -1046,6 +1046,11 @@
     if (allocated(temp_FF_emission_subgrid)) deallocate(temp_FF_emission_subgrid)
     if (allocated(temp_subgrid)) deallocate(temp_subgrid)
     if (allocated(traveltime_temp_target_subgrid)) deallocate(traveltime_temp_target_subgrid)
+    if (allocated(temp_target_subgrid)) deallocate(temp_target_subgrid)
+    if (allocated(temp_target_subgrid_from_in_region)) deallocate(temp_target_subgrid_from_in_region)
+    if (allocated(temp_subgrid_from_in_region)) deallocate(temp_subgrid_from_in_region)
+    
+    
 
     end subroutine uEMEP_subgrid_dispersion
     

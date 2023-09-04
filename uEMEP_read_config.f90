@@ -522,6 +522,7 @@
         save_netcdf_file_flag=read_name_logical('save_netcdf_file_flag',save_netcdf_file_flag,unit_in,unit_logfile)
         save_netcdf_receptor_flag=read_name_logical('save_netcdf_receptor_flag',save_netcdf_receptor_flag,unit_in,unit_logfile)
         save_netcdf_fraction_as_contribution_flag=read_name_logical('save_netcdf_fraction_as_contribution_flag',save_netcdf_fraction_as_contribution_flag,unit_in,unit_logfile)
+        save_netcdf_fraction_as_contribution_from_in_region_flag=read_name_logical('save_netcdf_fraction_as_contribution_from_in_region_flag',save_netcdf_fraction_as_contribution_flag,unit_in,unit_logfile)
                 
         calculate_tiling_flag=read_name_logical('calculate_tiling_flag',calculate_tiling_flag,unit_in,unit_logfile)
         calculate_region_tiling_flag=read_name_logical('calculate_region_tiling_flag',calculate_region_tiling_flag,unit_in,unit_logfile)

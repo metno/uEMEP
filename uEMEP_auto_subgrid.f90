@@ -420,8 +420,12 @@
     character(16) search_str(n_search)
     real search_delta(n_search)
     integer temp_search
+    integer i_tile_region,j_tile_region
+    integer i_range_region,j_range_region
+    integer :: total_grids=0
+    integer :: source_count=0
     
-    data search_str /'1000m','500m','250m','100m','50m'/
+    data search_str /'_1000m','_500m','_250m','_100m','_50m'/
     data search_delta /1000.,500.,250.,100.,50./
     
     write(unit_logfile,'(A)') ''
@@ -495,19 +499,25 @@
             i_tile=1+floor((x_ssb-subgrid_min(x_dim_index))/subgrid_delta(x_dim_index)) !New definition
             j_tile=1+floor((y_ssb-subgrid_min(y_dim_index))/subgrid_delta(y_dim_index)) !New definition
             
+            !write(*,*) i_tile,j_tile,i_range,j_range,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)
+            
             do j=j_tile-j_range,j_tile+j_range
             do i=i_tile-i_range,i_tile+i_range
                 !Make sure i and j are inside a valid range
                 if (i.ge.1.and.i.le.subgrid_dim(x_dim_index).and.j.ge.1.and.j.le.subgrid_dim(y_dim_index)) then
                    !Find the target subgrid within the ssb grid and the region
+                    !write(*,*) ssb_dx,ssb_dy
+                    !write(*,*) i,j,x_subgrid(i,j)-(x_ssb-ssb_dx/2.0),x_subgrid(i,j)-(x_ssb+ssb_dx/2.0),y_subgrid(i,j)-(y_ssb-ssb_dy/2.0),y_subgrid(i,j)-(y_ssb+ssb_dy/2.0)
                     if (x_subgrid(i,j).ge.x_ssb-ssb_dx/2.0.and.x_subgrid(i,j).lt.x_ssb+ssb_dx/2.0.and. &
                         y_subgrid(i,j).ge.y_ssb-ssb_dy/2.0.and.y_subgrid(i,j).lt.y_ssb+ssb_dy/2.0) then
                         !If there is a target subgrid within this range then allocate the mask value if it is not the correct region_id
                         tile_municipality_subgrid(i,j,1)=1
                     endif
+                        !write(*,*) tile_municipality_subgrid(i,j,1)
                 endif
             enddo
             enddo
+            
             do j=j_tile-j_range_interp,j_tile+j_range_interp
             do i=i_tile-i_range_interp,i_tile+i_range_interp
                 !Make sure i and j are inside a valid range
@@ -522,9 +532,43 @@
             enddo
             enddo
 
+            !Specify the emissions grids that will be used for regional calculations
+            if (trace_emissions_from_in_region) then
+                source_count=0
+            do i_source=1,n_source_index
+            if (calculate_source(i_source)) then
+                i_tile_region=1+floor((x_ssb-emission_subgrid_min(x_dim_index,i_source))/emission_subgrid_delta(x_dim_index,i_source)) !New definition
+                j_tile_region=1+floor((y_ssb-emission_subgrid_min(y_dim_index,i_source))/emission_subgrid_delta(y_dim_index,i_source)) !New definition
+                i_range_region=ceiling(ssb_dx/emission_subgrid_delta(x_dim_index,i_source)/2.)+1
+                j_range_region=ceiling(ssb_dy/emission_subgrid_delta(y_dim_index,i_source)/2.)+1
+            
+                !write(*,*) i_tile_region,j_tile_region,i_source,emission_subgrid_dim(x_dim_index,i_source),emission_subgrid_dim(y_dim_index,i_source)
+                do j=j_tile_region-j_range_region,j_tile_region+j_range_region
+                do i=i_tile_region-i_range_region,i_tile_region+i_range_region
+                    !Make sure i and j are inside a valid range
+                    if (i.ge.1.and.i.le.emission_subgrid_dim(x_dim_index,i_source).and.j.ge.1.and.j.le.emission_subgrid_dim(y_dim_index,i_source)) then
+                       !Find the target subgrid within the ssb grid and the region
+                        if (x_emission_subgrid(i,j,i_source).ge.x_ssb-ssb_dx/2.0.and.x_emission_subgrid(i,j,i_source).lt.x_ssb+ssb_dx/2.0.and. &
+                            y_emission_subgrid(i,j,i_source).ge.y_ssb-ssb_dy/2.0.and.y_emission_subgrid(i,j,i_source).lt.y_ssb+ssb_dy/2.0) then
+                            !Default is false
+                            use_subgrid_region(i,j,i_source)=.true.
+                            total_grids=total_grids+1
+                        endif
+                            !write(*,*) use_subgrid_region(i,j,i_source)
+                    endif
+                enddo
+                enddo
+                source_count=source_count+1
+            endif
+            enddo
+            write(unit_logfile,'(A,i,i)')'Number of grids found (municipality, region) = ',sum(tile_municipality_subgrid(:,:,1)),total_grids/source_count
+  
+            endif
+
         endif
     enddo
     close(unit_in)
+
 
     do j=1,subgrid_dim(y_dim_index)
     do i=1,subgrid_dim(x_dim_index)

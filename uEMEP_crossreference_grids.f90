@@ -309,8 +309,110 @@
     enddo
     endif
     
-
-    
     end subroutine uEMEP_crossreference_grids
-   
     
+    subroutine uEMEP_assign_region_coverage_to_EMEP
+   
+    use uEMEP_definitions
+    
+    implicit none
+
+    integer i,j
+    integer ii,jj,iii,jjj,iiii,jjjj
+    real, allocatable :: count_EMEP_grid_fraction_in_region(:,:,:)
+    integer i_source, chosen_source
+
+    write(unit_logfile,'(A)') ''
+    write(unit_logfile,'(A)') '================================================================'
+	write(unit_logfile,'(A)') 'Assigning regional coverage to EMEP grids (uEMEP_assign_region_coverage_to_EMEP)'
+	write(unit_logfile,'(A)') '================================================================'
+
+        !allocate the fraction of each EMEP grid that is within a region, if required
+        if (trace_emissions_from_in_region) then
+            if (allocated(EMEP_grid_fraction_in_region)) deallocate (EMEP_grid_fraction_in_region)
+            if (.not.allocated(EMEP_grid_fraction_in_region)) allocate (EMEP_grid_fraction_in_region(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),n_source_index,2))
+            EMEP_grid_fraction_in_region=0
+            if (allocated(count_EMEP_grid_fraction_in_region)) deallocate (count_EMEP_grid_fraction_in_region)
+            if (.not.allocated(count_EMEP_grid_fraction_in_region)) allocate (count_EMEP_grid_fraction_in_region(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),n_source_index))
+            count_EMEP_grid_fraction_in_region=0
+            
+            do i_source=1,n_source_index
+            if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
+
+            !Loop through the subgrid and find the EMEP grid it is in
+            do j=1,emission_subgrid_dim(y_dim_index,i_source)
+            do i=1,emission_subgrid_dim(x_dim_index,i_source)
+            
+                ii=crossreference_emission_to_emep_subgrid(i,j,x_dim_index,i_source)
+                jj=crossreference_emission_to_emep_subgrid(i,j,y_dim_index,i_source)
+         
+                !Nearest neighbour interpolate the EMEP compounds to subgrid
+                if (ii.ge.1.and.ii.le.dim_length_nc(x_dim_nc_index).and.jj.ge.1.and.jj.le.dim_length_nc(y_dim_nc_index)) then
+                    if (use_subgrid_region(i,j,i_source)) then
+                        EMEP_grid_fraction_in_region(ii,jj,i_source,1)=EMEP_grid_fraction_in_region(ii,jj,i_source,1)+1.
+                    endif
+                !write(*,*) ii,jj,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),i_source
+                
+                    count_EMEP_grid_fraction_in_region(ii,jj,i_source)=count_EMEP_grid_fraction_in_region(ii,jj,i_source)+1.
+                    !write(*,*) EMEP_grid_fraction_in_region(ii,jj,i_source,1),count_EMEP_grid_fraction_in_region(ii,jj,i_source)
+                
+                
+                endif
+            enddo
+            enddo
+            
+            where (count_EMEP_grid_fraction_in_region(:,:,:).gt.0) EMEP_grid_fraction_in_region(:,:,:,1)=EMEP_grid_fraction_in_region(:,:,:,1)/count_EMEP_grid_fraction_in_region
+        
+            !Allocate the additional subgrid fraction based on the EMEP fraction
+            if (EMEP_additional_grid_interpolation_size.gt.0) then
+
+                do ii=1,dim_length_nc(x_dim_nc_index)
+                do jj=1,dim_length_nc(y_dim_nc_index)
+                
+                    
+                    !Bottom left corner of the additional grid
+                    iii=int((ii-1)/local_fraction_grid_size(2))*local_fraction_grid_size(2)+1
+                    jjj=int((jj-1)/local_fraction_grid_size(2))*local_fraction_grid_size(2)+1
+                    if (iii.ge.1.and.iii.le.dim_length_nc(x_dim_nc_index).and.jjj.ge.1.and.jjj.le.dim_length_nc(y_dim_nc_index)) then
+                        !Add the region fractions from EMEP to the additional
+                        do iiii=iii,iii-1+local_fraction_grid_size(2)
+                        do jjjj=jjj,jjj-1+local_fraction_grid_size(2)
+                        if (iiii.ge.1.and.iiii.le.dim_length_nc(x_dim_nc_index).and.jjjj.ge.1.and.jjjj.le.dim_length_nc(y_dim_nc_index)) then
+                                EMEP_grid_fraction_in_region(ii,jj,i_source,2)=EMEP_grid_fraction_in_region(ii,jj,i_source,2)+EMEP_grid_fraction_in_region(iiii,jjjj,i_source,1)
+                        endif
+                        enddo
+                        enddo
+                    endif
+                    !Normalize. Does not account for edges but should not be a problem. For safety limit it to 1.
+                    EMEP_grid_fraction_in_region(ii,jj,i_source,2)=min(1.,EMEP_grid_fraction_in_region(ii,jj,i_source,2)*local_fraction_grid_size(1)**2/local_fraction_grid_size(2)**2)
+                    !write(*,*) ii,jj,iii,jjj,EMEP_grid_fraction_in_region(ii,jj,i_source,2)
+                enddo
+                enddo
+                
+            endif
+
+            endif
+            enddo
+            
+            if (allocated(count_EMEP_grid_fraction_in_region)) deallocate (count_EMEP_grid_fraction_in_region)
+            
+          
+            !Fill in missing sources for EMEP
+            !Choose a source, the last one in this case as they all should be the same
+            chosen_source=0
+            do i_source=1,n_source_index
+            if (calculate_source(i_source)) then
+                chosen_source=i_source
+            endif
+            enddo
+            
+            do i_source=1,n_source_index
+            if (.not.calculate_source(i_source).and.calculate_EMEP_source(i_source)) then
+                EMEP_grid_fraction_in_region(:,:,i_source,:)=EMEP_grid_fraction_in_region(:,:,chosen_source,:)
+            endif
+            enddo
+
+        endif
+            
+
+    end subroutine uEMEP_assign_region_coverage_to_EMEP
