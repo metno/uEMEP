@@ -77,8 +77,8 @@
     integer i_pollutant,i_loop
     integer i_sp,ii_sp
     real, allocatable :: EMEP_local_contribution(:,:,:,:)
-    real, allocatable :: EMEP_local_contribution_from_in_region(:,:,:)
-    real, allocatable :: temp_EMEP_grid_fraction_in_region(:,:,:)
+    real, allocatable :: EMEP_local_contribution_from_in_region(:,:,:,:)
+    real, allocatable :: temp_EMEP_grid_fraction_in_region(:,:,:,:)
     
     integer n_weight_nc_x,n_weight_nc_y
     real dgrid_lf_offset_x,dgrid_lf_offset_y
@@ -297,7 +297,7 @@
                         do i_source=1,n_source_index
                         if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
     
-                            subgrid_from_in_region(i,j,:,emep_local_subgrid_index,i_source,:)=subgrid(i,j,:,emep_local_subgrid_index,i_source,:) &
+                            subgrid_from_in_region(i,j,:,emep_local_subgrid_index,i_source,:)=subgrid_from_in_region(i,j,:,emep_local_subgrid_index,i_source,:) &
                                     +lc_var3d_nc(ii_nc_w,jj_nc_w,i_nc,j_nc,:,lc_local_nc_index,i_source,:)*weighting_val*EMEP_grid_fraction_in_region(ii_nc,jj_nc,i_source,fraction_in_region_index)
                         endif
                         enddo
@@ -555,9 +555,10 @@
         !if (.not.allocated(EMEP_local_contribution)) allocate (EMEP_local_contribution(n_weight_nc_x,n_weight_nc_y,n_source_index,n_emep_pollutant_loop))
         if (.not.allocated(EMEP_local_contribution)) allocate (EMEP_local_contribution(n_weight_nc_x,n_weight_nc_y,n_source_index,n_pollutant_loop))
         if (trace_emissions_from_in_region) then               
-            if (.not.allocated(EMEP_local_contribution_from_in_region)) allocate (EMEP_local_contribution_from_in_region(n_weight_nc_x,n_weight_nc_y,n_source_index))
-            if (.not.allocated(temp_EMEP_grid_fraction_in_region)) allocate (temp_EMEP_grid_fraction_in_region(n_weight_nc_x,n_weight_nc_y,n_source_index))
+            if (.not.allocated(EMEP_local_contribution_from_in_region)) allocate (EMEP_local_contribution_from_in_region(n_weight_nc_x,n_weight_nc_y,n_source_index,n_pollutant_loop))
+            if (.not.allocated(temp_EMEP_grid_fraction_in_region)) allocate (temp_EMEP_grid_fraction_in_region(n_weight_nc_x,n_weight_nc_y,n_source_index,n_pollutant_loop))
             EMEP_local_contribution_from_in_region=0
+            temp_EMEP_grid_fraction_in_region=0
         endif
         
         !Initialise arrays
@@ -568,6 +569,14 @@
         comp_EMEP_subgrid(:,:,tt,:)=0
         species_EMEP_subgrid(:,:,tt,:,:)=0
         EMEP_local_contribution=0
+        
+        if (trace_emissions_from_in_region) then
+        subgrid_from_in_region(:,:,tt,emep_subgrid_index,:,:)=0
+        subgrid_from_in_region(:,:,tt,emep_frac_subgrid_index,:,:)=0
+        subgrid_from_in_region(:,:,tt,emep_local_subgrid_index,:,:)=0
+        subgrid_from_in_region(:,:,tt,emep_nonlocal_subgrid_index,:,:)=0
+        EMEP_local_contribution_from_in_region=0            
+        endif
         
         !Cover the search area necessary for the surounding EMEP grids
         jj_start=-1-floor(0.5*(EMEP_grid_interpolation_size-1.))
@@ -647,9 +656,9 @@
                     ii_nc=ii+i_nc
                     jj_nc=jj+j_nc
                     if (ii_nc.ge.1.and.ii_nc.le.dim_length_nc(x_dim_nc_index).and.jj_nc.ge.1.and.jj_nc.le.dim_length_nc(y_dim_nc_index)) then
-                    temp_EMEP_grid_fraction_in_region(ii,jj,i_source)=EMEP_grid_fraction_in_region(ii_nc,jj_nc,i_source,fraction_in_region_index)    
+                    temp_EMEP_grid_fraction_in_region(ii,jj,i_source,:)=EMEP_grid_fraction_in_region(ii_nc,jj_nc,i_source,fraction_in_region_index)    
                     else
-                    temp_EMEP_grid_fraction_in_region(ii,jj,i_source)=0
+                    temp_EMEP_grid_fraction_in_region(ii,jj,i_source,:)=0
                     endif                   
                 enddo
                 enddo
@@ -684,8 +693,13 @@
                     weighting_val=0.
                 endif            
                     
-                subgrid(i,j,:,emep_subgrid_index,:,:)=subgrid(i,j,:,emep_subgrid_index,1:n_source_index,:)+var3d_nc(ii_nc,jj_nc,:,conc_nc_index,1:n_source_index,:)*weighting_val
+                subgrid(i,j,tt,emep_subgrid_index,:,:)=subgrid(i,j,tt,emep_subgrid_index,1:n_source_index,:)+var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,1:n_source_index,:)*weighting_val
+                if (trace_emissions_from_in_region) then  
+                subgrid_from_in_region(i,j,tt,emep_subgrid_index,:,:)=subgrid_from_in_region(i,j,tt,emep_subgrid_index,:,:) &
+                    +var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,:,:)*weighting_val!*temp_EMEP_grid_fraction_in_region(ii_nc,jj_nc,:,:)
 
+                endif
+                
                 do i_pollutant=1,n_emep_pollutant_loop
                 do i_loop=1,n_pollutant_compound_loop(i_pollutant)
                     comp_EMEP_subgrid(i,j,tt,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_EMEP_subgrid(i,j,tt,pollutant_compound_loop_index(i_pollutant,i_loop)) &
@@ -732,15 +746,8 @@
 
                 if (trace_emissions_from_in_region) then  
                     !interpolate the region fraction
-                    do i_source=1,n_source_index
-                    if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
-                    
-                    EMEP_local_contribution_from_in_region(:,:,i_source)=EMEP_local_contribution_from_in_region(:,:,i_source) &
-                        +weighting_val3*temp_EMEP_grid_fraction_in_region(:,:,i_source)
-
-                    endif
-                    enddo
-                    
+                    EMEP_local_contribution_from_in_region(:,:,:,:)=EMEP_local_contribution_from_in_region(:,:,:,:) &
+                        +lc_var3d_nc(:,:,ii_nc,jj_nc,tt,lc_local_nc_index,:,:)*weighting_val3*temp_EMEP_grid_fraction_in_region(:,:,:,:)                    
                 endif
 
                 endif
@@ -803,13 +810,13 @@
 
                 !write(*,*) iii,jjj,weighting_val,EMEP_local_contribution(iii_nc_w,jjj_nc_w,traffic_nc_index,allsource_index)
                 if (trace_emissions_from_in_region) then
-                    do i_source=1,n_source_index
-                    if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
+                    !do i_source=1,n_source_index
+                    !if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
                     
-                    subgrid_from_in_region(i,j,tt,emep_local_subgrid_index,i_source,:)=subgrid(i,j,tt,emep_local_subgrid_index,i_source,:) &
-                        +EMEP_local_contribution(iii_nc_w,jjj_nc_w,i_source,:)*weighting_val*EMEP_local_contribution_from_in_region(iii_nc_w,jjj_nc_w,i_source)
-                    endif
-                    enddo
+                    subgrid_from_in_region(i,j,tt,emep_local_subgrid_index,:,:)=subgrid_from_in_region(i,j,tt,emep_local_subgrid_index,:,:) &
+                        +EMEP_local_contribution_from_in_region(iii_nc_w,jjj_nc_w,:,:)*weighting_val
+                    !endif
+                    !enddo
                     
                 endif
 
@@ -821,6 +828,9 @@
             !Place the EMEP values in the target subgrid
             !subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)+nonlocal_correction(tt_dim,:,:)
             subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)=subgrid(i,j,tt,emep_subgrid_index,:,:)-subgrid(i,j,tt,emep_local_subgrid_index,:,:)
+            if (trace_emissions_from_in_region) then
+                subgrid_from_in_region(i,j,tt,emep_nonlocal_subgrid_index,:,:)=subgrid_from_in_region(i,j,tt,emep_subgrid_index,:,:)-subgrid_from_in_region(i,j,tt,emep_local_subgrid_index,:,:)
+            endif
             !subgrid(i,j,tt,emep_subgrid_index,:,:)=subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:)+subgrid(i,j,tt,emep_local_subgrid_index,:,:)
             !write(*,*) i,j,sum(subgrid(i,j,tt,emep_nonlocal_subgrid_index,:,:))
             !Take the already calculated nonlocal depositions to be the fraction of the nonlocal/total EMEP values
@@ -1110,6 +1120,12 @@
         subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)=0.
         subgrid(:,:,:,emep_subgrid_index,allsource_index,:)=0.
         subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=0. !-subgrid(:,:,:,emep_subgrid_index,allsource_index,:)
+        if (trace_emissions_from_in_region) then
+        subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:)=0.
+        subgrid_from_in_region(:,:,:,emep_subgrid_index,allsource_index,:)=0.
+        subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=0. !-subgrid(:,:,:,emep_subgrid_index,allsource_index,:)
+        endif
+        
         count=0
         do i_source=1,n_source_index
         !do i_source=1,n_source_calculate_index
@@ -1130,15 +1146,21 @@
                         subgrid(i,j,:,emep_local_subgrid_index,i_source,:)=subgrid(i,j,:,emep_local_subgrid_index,i_source,:)-subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,:)
                         subgrid(i,j,:,emep_nonlocal_subgrid_index,i_source,:)=0.
                     endwhere
+                    if (trace_emissions_from_in_region) then
+                    where (subgrid_from_in_region(i,j,:,emep_nonlocal_subgrid_index,i_source,:).lt.0.) 
+                        subgrid_from_in_region(i,j,:,emep_local_subgrid_index,i_source,:)=subgrid(i,j,:,emep_local_subgrid_index,i_source,:)-subgrid_from_in_region(i,j,:,emep_nonlocal_subgrid_index,i_source,:)
+                        subgrid_from_in_region(i,j,:,emep_nonlocal_subgrid_index,i_source,:)=0.
+                    endwhere
+                    endif
                 enddo
                 enddo
                 
                 !Add the local subgrid sources together to get an allsource local contribution
                 subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)=subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)+subgrid(:,:,:,emep_local_subgrid_index,i_source,:)
                 subgrid(:,:,:,emep_subgrid_index,i_source,:)=subgrid(:,:,:,emep_nonlocal_subgrid_index,i_source,:)+subgrid(:,:,:,emep_local_subgrid_index,i_source,:)
-                count=count+1
                 !Add up the total EMEP for all source (will be averaged with count)
                 subgrid(:,:,:,emep_subgrid_index,allsource_index,:)=subgrid(:,:,:,emep_subgrid_index,allsource_index,:)+subgrid(:,:,:,emep_subgrid_index,i_source,:)
+                count=count+1
                 do i_pollutant=1,n_emep_pollutant_loop
                 if (minval(subgrid(:,:,:,emep_subgrid_index,i_source,i_pollutant)).lt.0.0) then
                     write(unit_logfile,'(A,A,f12.4)') 'ERROR: Min total source less than 0 for ',trim(source_file_str(i_source))//' '//trim(pollutant_file_str(pollutant_loop_index(pollutant_loop_index(i_pollutant)))),minval(subgrid(:,:,:,emep_subgrid_index,i_source,i_pollutant))
@@ -1159,9 +1181,9 @@
                 
         !Set the allsource nonlocal value to the average of the remainder. This can be negative
         if (count.gt.0) then
-        subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid(:,:,:,emep_subgrid_index,allsource_index,:)/real(count)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))
-        if (trace_emissions_from_in_region) then
-        subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid_from_in_region(:,:,:,emep_subgrid_index,allsource_index,:)/real(count)-subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:))
+            subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid(:,:,:,emep_subgrid_index,allsource_index,:)/real(count)-subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))
+            if (trace_emissions_from_in_region) then
+            subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=(subgrid_from_in_region(:,:,:,emep_subgrid_index,allsource_index,:)/real(count)-subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:))
             endif
         !write(*,*) calculate_EMEP_additional_grid_flag,sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))
         !stop
@@ -1179,6 +1201,13 @@
             where (subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,:).lt.0.) 
                 subgrid(i,j,:,emep_nonlocal_subgrid_index,allsource_index,:)=0.
             endwhere
+            if (trace_emissions_from_in_region) then
+            where (subgrid_from_in_region(i,j,:,emep_nonlocal_subgrid_index,allsource_index,:).lt.0.) 
+                subgrid_from_in_region(i,j,:,emep_nonlocal_subgrid_index,allsource_index,:)=0.
+            endwhere
+            endif
+            
+     
         enddo
         enddo
 
@@ -1192,12 +1221,13 @@
         endif
         enddo
 
-        !Find the fraction for the in region values. Fraction between in and total local
+        !Find the fraction for the in region values.
         if (trace_emissions_from_in_region) then
-            subgrid_from_in_region(:,:,:,emep_frac_subgrid_index,:,:)=subgrid_from_in_region(:,:,:,emep_local_subgrid_index,:,:)/subgrid(:,:,:,emep_local_subgrid_index,:,:)
-            where(subgrid(:,:,:,emep_local_subgrid_index,:,:).eq.0)  subgrid_from_in_region(:,:,:,emep_frac_subgrid_index,:,:)=0
+            subgrid_from_in_region(:,:,:,emep_subgrid_index,:,:)=subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,:,:)+subgrid_from_in_region(:,:,:,emep_local_subgrid_index,:,:)
+            subgrid_from_in_region(:,:,:,emep_frac_subgrid_index,:,:)=subgrid_from_in_region(:,:,:,emep_local_subgrid_index,:,:)/subgrid_from_in_region(:,:,:,emep_subgrid_index,:,:)
+            !where(subgrid(:,:,:,emep_local_subgrid_index,:,:).eq.0)  subgrid_from_in_region(:,:,:,emep_frac_subgrid_index,:,:)=0
             !allocate the nonlocal for use later in chemistry
-            subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,:,:)=subgrid(:,:,:,emep_subgrid_index,:,:)-subgrid_from_in_region(:,:,:,emep_local_subgrid_index,:,:)    
+            !subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,:,:)=subgrid(:,:,:,emep_subgrid_index,:,:)-subgrid_from_in_region(:,:,:,emep_local_subgrid_index,:,:)    
         endif
 
     !Check if the additional EMEP calculation is to be carried out and set parameters

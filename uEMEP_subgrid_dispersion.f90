@@ -38,6 +38,7 @@
     real            temp_subgrid_internal
     real            distance_emission_subgrid_min
     real            temp_sum_subgrid(n_pollutant_loop)
+    real            temp_sum_subgrid_from_in_region(n_pollutant_loop) !This declaration happens whether or not trace_emissions_from_in_region is specified. It is diagnostic
     integer         count
     
     real, allocatable :: temp_emission_subgrid(:,:,:)
@@ -230,6 +231,7 @@
         temp_target_subgrid=0.
         traveltime_temp_target_subgrid=0.
         if (trace_emissions_from_in_region) then
+            subgrid_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=0.
             temp_target_subgrid_from_in_region=0.
         endif
         
@@ -238,6 +240,9 @@
         temp_subgrid=0.
         temp_FF_subgrid=0.
         !diagnostic_subgrid=0.
+        if (trace_emissions_from_in_region) then
+            temp_subgrid_from_in_region=0.
+        endif
         
         
         if (calculate_deposition_flag) then
@@ -991,7 +996,10 @@
             else
                 temp_subgrid(i,j,:)=NODATA_value
                 traveltime_subgrid(i,j,tt,:,:)=NODATA_value
+                if (trace_emissions_from_in_region) then
                 temp_subgrid_from_in_region(i,j,:)=NODATA_value
+                endif
+                
             endif
             enddo
             enddo
@@ -1003,11 +1011,15 @@
         !write(unit_logfile,'(a,3f12.3)') 'Mean, min and max grid concentration: ',sum(temp_subgrid)/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index),minval(temp_subgrid),maxval(temp_subgrid)
         do i_pollutant=1,n_pollutant_loop
             temp_sum_subgrid(i_pollutant)=0.
+            if (trace_emissions_from_in_region) temp_sum_subgrid_from_in_region=0.
             count=0
             do j=1,subgrid_dim(y_dim_index)
             do i=1,subgrid_dim(x_dim_index)
             if (use_subgrid(i,j,source_index)) then
                 temp_sum_subgrid(i_pollutant)=temp_sum_subgrid(i_pollutant)+temp_subgrid(i,j,i_pollutant)
+                if (trace_emissions_from_in_region) then
+                temp_sum_subgrid_from_in_region(i_pollutant)=temp_sum_subgrid_from_in_region(i_pollutant)+temp_subgrid_from_in_region(i,j,i_pollutant)                
+                endif     
                 count=count+1
             endif
             enddo
@@ -1017,7 +1029,16 @@
             else
                 temp_sum_subgrid(i_pollutant)=0
             endif            
+            if (trace_emissions_from_in_region) then
+                if (count.gt.0) then
+                    temp_sum_subgrid_from_in_region(i_pollutant)=temp_sum_subgrid_from_in_region(i_pollutant)/count
+                else
+                    temp_sum_subgrid_from_in_region(i_pollutant)=0
+                endif            
+                write(unit_logfile,'(a,3f12.3)') 'Mean concentration '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//': ',temp_sum_subgrid(i_pollutant),temp_sum_subgrid_from_in_region(i_pollutant)
+            else         
             write(unit_logfile,'(a,3f12.3)') 'Mean concentration '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//': ',temp_sum_subgrid(i_pollutant)
+            endif
         enddo
         subgrid(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid
         

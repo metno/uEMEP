@@ -274,12 +274,16 @@
         endif
     enddo
 
+    if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+        comp_subgrid_from_in_region=comp_subgrid
+        comp_subgrid=comp_subgrid_dummy
+    endif
+
     enddo !in region loop
     endif
     
     
     if (trace_emissions_from_in_region) then
-        comp_subgrid=comp_subgrid_dummy
         if (allocated(comp_subgrid_dummy)) deallocate (comp_subgrid_dummy)
     endif
     
@@ -767,12 +771,16 @@
     
     endif
     
+    if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+        subgrid=subgrid_dummy
+        subgrid_from_in_region=subgrid
+        save_netcdf_fraction_as_contribution_flag=save_netcdf_fraction_as_contribution_flag_dummy
+    endif
+    
     enddo !in_region_loop
     
     if (trace_emissions_from_in_region) then
-        subgrid=subgrid_dummy
         if (allocated(subgrid_dummy)) deallocate (subgrid_dummy)
-        save_netcdf_fraction_as_contribution_flag=save_netcdf_fraction_as_contribution_flag_dummy
     endif
     
     
@@ -1022,11 +1030,15 @@
     enddo
     enddo
     
+    if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+        subgrid=subgrid_dummy
+        subgrid_from_in_region=subgrid
+        save_netcdf_fraction_as_contribution_flag=save_netcdf_fraction_as_contribution_flag_dummy
+    endif
+
     enddo !from_in_region loop
     if (trace_emissions_from_in_region) then
-        subgrid=subgrid_dummy
         if (allocated(subgrid_dummy)) deallocate (subgrid_dummy)
-        save_netcdf_fraction_as_contribution_flag=save_netcdf_fraction_as_contribution_flag_dummy
     endif
     endif
     
@@ -2512,13 +2524,16 @@
     
     !use uEMEP_definitions
     implicit none
-    real :: array(n1,n2,n3)
-    logical :: mask(n1,n2)
-    integer :: n1,n2,n3
+    real, intent (in) :: array(n1,n2,n3)
+    logical, intent (in) :: mask(n1,n2)
+    integer, intent (in) :: n1,n2,n3
     real :: mean_mask
     integer i,j,t
     real :: count=0
     real :: sum_array=0
+    
+    sum_array=0
+    count=0
     
     do t=1,n3
     do j=1,n2
