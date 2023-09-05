@@ -648,23 +648,26 @@
             if (trace_emissions_from_in_region) then               
                 EMEP_local_contribution_from_in_region=0
                 !Create a temporary local region fraction array
-                do i_source=1,n_source_index
-                if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
+                i_source=allsource_index
+                !do i_source=1,n_source_index
+                !if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
 
                 do jj=jjj_start,jjj_end
                 do ii=iii_start,iii_end         
                     ii_nc=ii+i_nc
                     jj_nc=jj+j_nc
+                    ii_w=ii+ii_w0
+                    jj_w=jj+jj_w0
                     if (ii_nc.ge.1.and.ii_nc.le.dim_length_nc(x_dim_nc_index).and.jj_nc.ge.1.and.jj_nc.le.dim_length_nc(y_dim_nc_index)) then
-                    temp_EMEP_grid_fraction_in_region(ii,jj,i_source,:)=EMEP_grid_fraction_in_region(ii_nc,jj_nc,i_source,fraction_in_region_index)    
+                    temp_EMEP_grid_fraction_in_region(ii_w,jj_w,i_source,:)=EMEP_grid_fraction_in_region(ii_nc,jj_nc,i_source,fraction_in_region_index)    
                     else
-                    temp_EMEP_grid_fraction_in_region(ii,jj,i_source,:)=0
+                    temp_EMEP_grid_fraction_in_region(ii_w,jj_w,i_source,:)=0
                     endif                   
                 enddo
                 enddo
                 
-                endif
-                enddo
+                !endif
+                !enddo
             endif
             
             do jj=jjj_start,jjj_end
@@ -693,10 +696,11 @@
                     weighting_val=0.
                 endif            
                     
+                !Area weighting (interpolated) EMEP concentrations, independent of where it comes from
                 subgrid(i,j,tt,emep_subgrid_index,:,:)=subgrid(i,j,tt,emep_subgrid_index,1:n_source_index,:)+var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,1:n_source_index,:)*weighting_val
                 if (trace_emissions_from_in_region) then  
                 subgrid_from_in_region(i,j,tt,emep_subgrid_index,:,:)=subgrid_from_in_region(i,j,tt,emep_subgrid_index,:,:) &
-                    +var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,:,:)*weighting_val!*temp_EMEP_grid_fraction_in_region(ii_nc,jj_nc,:,:)
+                    +var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,:,:)*weighting_val
 
                 endif
                 
@@ -750,11 +754,14 @@
                         +lc_var3d_nc(:,:,ii_nc,jj_nc,tt,lc_local_nc_index,:,:)*weighting_val3*temp_EMEP_grid_fraction_in_region(:,:,:,:)                    
                 endif
 
+                 write(*,*) ii,jj,ii_nc,jj_nc,sum(EMEP_local_contribution(:,:,allsource_index,1)),sum(EMEP_local_contribution_from_in_region(:,:,allsource_index,1)),sum(temp_EMEP_grid_fraction_in_region(:,:,allsource_index,1))
+                !write(*,*) ii,jj,ii_nc,jj_nc,EMEP_local_contribution(:,:,i_source,1),EMEP_local_contribution_from_in_region:,:,i_source,1)
                 endif
             enddo
             enddo
 
-            !Set the offset to the centre of the local fraction grid when using larger local fraction grids
+            
+           !Set the offset to the centre of the local fraction grid when using larger local fraction grids
             !Requires knowledge of the total EMEP grid index so uses dim_start_nc
             amod_temp=amod(real(dim_start_nc(x_dim_nc_index)-1+i_nc),local_fraction_grid_size_scaling_temp)
             if (amod_temp.eq.0) amod_temp=local_fraction_grid_size_scaling_temp
@@ -1115,8 +1122,8 @@
    
     enddo   !End time loop
 
-        !Create the all source version of the local and nonlocal contribution after calculating all the source contributions
-        !The nonlocal contribution uses the difference between the local and total, here the total is based on the area interpolation. Is this correct?
+    !Create the all source version of the local and nonlocal contribution after calculating all the source contributions
+    !The nonlocal contribution uses the difference between the local and total, here the total is based on the area interpolation. Is this correct?
         subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)=0.
         subgrid(:,:,:,emep_subgrid_index,allsource_index,:)=0.
         subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)=0. !-subgrid(:,:,:,emep_subgrid_index,allsource_index,:)
@@ -1211,6 +1218,12 @@
         enddo
         enddo
 
+        write(*,*)sum(subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)),sum(subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:)),&
+        sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)),sum(subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))
+            !sum(subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))-sum(subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:)),&
+               ! sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))-sum(subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)), &
+                !sum(subgrid(:,:,:,emep_subgrid_index,allsource_index,:))-sum(subgrid_from_in_region(:,:,:,emep_subgrid_index,allsource_index,:))
+
         !Add up the sources and calculate fractions
         subgrid(:,:,:,emep_subgrid_index,:,:)=subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)+subgrid(:,:,:,emep_local_subgrid_index,:,:)
         subgrid(:,:,:,emep_frac_subgrid_index,:,:)=subgrid(:,:,:,emep_local_subgrid_index,:,:)/subgrid(:,:,:,emep_subgrid_index,:,:)
@@ -1227,7 +1240,8 @@
             subgrid_from_in_region(:,:,:,emep_frac_subgrid_index,:,:)=subgrid_from_in_region(:,:,:,emep_local_subgrid_index,:,:)/subgrid_from_in_region(:,:,:,emep_subgrid_index,:,:)
             !where(subgrid(:,:,:,emep_local_subgrid_index,:,:).eq.0)  subgrid_from_in_region(:,:,:,emep_frac_subgrid_index,:,:)=0
             !allocate the nonlocal for use later in chemistry
-            !subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,:,:)=subgrid(:,:,:,emep_subgrid_index,:,:)-subgrid_from_in_region(:,:,:,emep_local_subgrid_index,:,:)    
+            !Add the difference between the total emep nonlocal and the regional nonlocal
+            !subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,:,:)=subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,:,:)+subgrid(:,:,:,emep_subgrid_index,:,:)-subgrid_from_in_region(:,:,:,emep_local_subgrid_index,:,:)    
         endif
 
     !Check if the additional EMEP calculation is to be carried out and set parameters

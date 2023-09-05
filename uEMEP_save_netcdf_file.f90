@@ -43,6 +43,8 @@
     integer in_region_loop, n_in_region_loop
     logical save_netcdf_fraction_as_contribution_flag_dummy
     
+
+    
     !Functions
     real DIRECTION
     real mean_nodata
@@ -772,8 +774,8 @@
     endif
     
     if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
-        subgrid=subgrid_dummy
         subgrid_from_in_region=subgrid
+        subgrid=subgrid_dummy
         save_netcdf_fraction_as_contribution_flag=save_netcdf_fraction_as_contribution_flag_dummy
     endif
     
@@ -783,7 +785,7 @@
         if (allocated(subgrid_dummy)) deallocate (subgrid_dummy)
     endif
     
-    
+
     !Save the emissions interpolated to the target grid
     if (save_emissions) then
         write(unit_logfile,'(a)')'--------------------------'
@@ -890,13 +892,65 @@
     
     endif
 
+    !Save EMEP from in region distribution to the target grid
+    if (trace_emissions_from_in_region) save_emep_region_mask=.true.
+    if (save_emep_region_mask) then
+    variable_type='float'
+    unit_str=""
+    
+    
+        do k=1,2
+                if (k.eq.1) then
+                    var_name_temp=trim('EMEP_regional_fraction_mask')
+                else
+                    var_name_temp=trim('EMEP_additional_regional_fraction_mask')                    
+                endif
+                
+                !Calculate the population in the target grid
+                temp_subgrid=0.
+                do j=1,subgrid_dim(y_dim_index)
+                do i=1,subgrid_dim(x_dim_index)
+                                   
+                    ii=crossreference_target_to_emep_subgrid(i,j,x_dim_index)
+                    jj=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
+            
+                    temp_subgrid(i,j,:)=EMEP_grid_fraction_in_region(ii,jj,allsource_index,k)
+                    !temp_subgrid(i,j,:)=EMEP_grid_fraction_in_region(ii,jj,traffic_index,k)
+ 
+                enddo
+                enddo
+                
+                unit_str='fraction'
+                if (save_netcdf_file_flag) then
+                    write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), mean_mask(temp_subgrid,use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
+                    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                        ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                        ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+                endif
+                if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+                    call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                        ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                        ,unit_str,title_str_rec,create_file_rec,valid_min &
+                        ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,z_rec(allsource_index,1) &
+                        ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
+                endif
+        enddo
+   
+    
+    
+    endif
+
 !Save the EMEP data interpolated to the subgrid. These are based on the gridded concentrations
     if (save_emep_source_contributions) then
 
     if (trace_emissions_from_in_region) then
         n_in_region_loop=2
         if (.not.allocated(subgrid_dummy)) allocate (subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_pollutant_loop))
-     else
+        subgrid_dummy=0 
+    else
         n_in_region_loop=1        
     endif
     
@@ -909,6 +963,7 @@
         
    !Loop over the normal subgrid and the in region subgrid by saving  to a dummy variable and pputting back when finished
     if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+        
         filename_append='_from_in_region'
         subgrid_dummy=subgrid
         subgrid=subgrid_from_in_region
@@ -1031,8 +1086,8 @@
     enddo
     
     if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
-        subgrid=subgrid_dummy
         subgrid_from_in_region=subgrid
+        subgrid=subgrid_dummy
         save_netcdf_fraction_as_contribution_flag=save_netcdf_fraction_as_contribution_flag_dummy
     endif
 

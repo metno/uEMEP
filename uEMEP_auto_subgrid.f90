@@ -561,7 +561,7 @@
                 source_count=source_count+1
             endif
             enddo
-            write(unit_logfile,'(A,i,i)')'Number of grids found (municipality, region) = ',sum(tile_municipality_subgrid(:,:,1)),total_grids/source_count
+            !write(unit_logfile,'(A,i,i)')'Number of grids found (municipality, region) = ',sum(tile_municipality_subgrid(:,:,1)),total_grids/source_count
   
             endif
 

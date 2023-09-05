@@ -361,7 +361,8 @@
             enddo
             enddo
             
-            where (count_EMEP_grid_fraction_in_region(:,:,:).gt.0) EMEP_grid_fraction_in_region(:,:,:,1)=EMEP_grid_fraction_in_region(:,:,:,1)/count_EMEP_grid_fraction_in_region
+            !write(*,*) i_source,sum(count_EMEP_grid_fraction_in_region(:,:,i_source)),sum(EMEP_grid_fraction_in_region(:,:,i_source,1))
+            where (count_EMEP_grid_fraction_in_region(:,:,i_source).gt.0) EMEP_grid_fraction_in_region(:,:,i_source,1)=EMEP_grid_fraction_in_region(:,:,i_source,1)/count_EMEP_grid_fraction_in_region(:,:,i_source)
         
             !Allocate the additional subgrid fraction based on the EMEP fraction
             if (EMEP_additional_grid_interpolation_size.gt.0) then
@@ -385,7 +386,7 @@
                     endif
                     !Normalize. Does not account for edges but should not be a problem. For safety limit it to 1.
                     EMEP_grid_fraction_in_region(ii,jj,i_source,2)=min(1.,EMEP_grid_fraction_in_region(ii,jj,i_source,2)*local_fraction_grid_size(1)**2/local_fraction_grid_size(2)**2)
-                    !write(*,*) ii,jj,iii,jjj,EMEP_grid_fraction_in_region(ii,jj,i_source,2)
+                    !write(*,*) ii,jj,iii,jjj,EMEP_grid_fraction_in_region(ii,jj,i_source,1),EMEP_grid_fraction_in_region(ii,jj,i_source,2)
                 enddo
                 enddo
                 
@@ -398,19 +399,20 @@
             
           
             !Fill in missing sources for EMEP
-            !Choose a source, the last one in this case as they all should be the same
+            !Choose a source with highest resolution, the last one in this case as they all should be the same
             chosen_source=0
             do i_source=1,n_source_index
             if (calculate_source(i_source)) then
                 chosen_source=i_source
             endif
             enddo
-            
+            !write(*,*) 'Chosen source: ',chosen_source
             do i_source=1,n_source_index
             if (.not.calculate_source(i_source).and.calculate_EMEP_source(i_source)) then
                 EMEP_grid_fraction_in_region(:,:,i_source,:)=EMEP_grid_fraction_in_region(:,:,chosen_source,:)
             endif
             enddo
+            EMEP_grid_fraction_in_region(:,:,allsource_index,:)=EMEP_grid_fraction_in_region(:,:,chosen_source,:)
 
         endif
             

@@ -1106,6 +1106,8 @@
     !Setting this to true is for diagnostic puroses. Gived the integrated lowest grid average concentration instead of the receptor
     logical :: calc_grid_vertical_average_concentration_annual_flag=.false.
     
+    logical :: save_emep_region_mask=.false.
+    
     end module uEMEP_definitions
     
     
