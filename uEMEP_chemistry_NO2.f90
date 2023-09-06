@@ -1,4 +1,60 @@
 
+    subroutine uEMEP_chemistry_control
+    
+    use uEMEP_definitions
+
+    implicit none
+    
+    real, allocatable :: subgrid_dummy(:,:,:,:,:,:)
+    real, allocatable :: comp_subgrid_dummy(:,:,:,:)
+    integer in_region_loop, n_in_region_loop
+
+    if (trace_emissions_from_in_region) then
+        n_in_region_loop=2
+        if (.not.allocated(subgrid_dummy)) allocate (subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_pollutant_loop))
+        if (.not.allocated(comp_subgrid_dummy))allocate (comp_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
+        subgrid_dummy=0 
+        comp_subgrid_dummy=0 
+    else
+        n_in_region_loop=1        
+    endif
+    
+    do in_region_loop=1,n_in_region_loop
+
+        write(unit_logfile,'(a)')''
+        write(unit_logfile,'(a)')'--------------------------'
+        if (in_region_loop.eq.1) write(unit_logfile,'(a)')'Chemistry for all contributions'
+        if (in_region_loop.eq.2) write(unit_logfile,'(a)')'Chemistry only for inside regional contributions'
+        write(unit_logfile,'(a)')'--------------------------'
+        
+       !Loop over the normal subgrid and the in region subgrid by saving  to a dummy variable and pputting back when finished
+        if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then        
+            subgrid_dummy=subgrid
+            subgrid=subgrid_from_in_region
+            comp_subgrid_dummy=comp_subgrid
+            comp_subgrid=comp_subgrid_from_in_region
+        endif
+
+        call uEMEP_chemistry
+        
+        if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+            subgrid_from_in_region=subgrid
+            subgrid=subgrid_dummy
+            comp_subgrid_from_in_region=comp_subgrid
+            comp_subgrid=comp_subgrid_dummy
+        endif
+
+    enddo !from_in_region loop
+    
+    if (trace_emissions_from_in_region) then
+        if (allocated(subgrid_dummy)) deallocate (subgrid_dummy)
+        if (allocated(comp_subgrid_dummy)) deallocate (comp_subgrid_dummy)
+    endif
+    
+    end subroutine uEMEP_chemistry_control
+    
+    
+    
     subroutine uEMEP_chemistry
     !Routine for doing the chemistry calculations in uEMEP
     
@@ -91,9 +147,9 @@
 
         do i_source=1,n_source_index
         if (calculate_emep_source(i_source).and..not.calculate_source(i_source)) then
-            traveltime_subgrid(i,j,t,1,:)=traveltime_subgrid(i,j,t,1,:) &
-                +distance_grid/FF_loc*subgrid(i,j,t,emep_local_subgrid_index,i_source,:)**traveltime_power
-            traveltime_subgrid(i,j,t,2,:)=traveltime_subgrid(i,j,t,2,:)+subgrid(i,j,t,emep_local_subgrid_index,i_source,:)**traveltime_power
+            !traveltime_subgrid(i,j,t,1,:)=traveltime_subgrid(i,j,t,1,:) &
+            !    +distance_grid/FF_loc*subgrid(i,j,t,emep_local_subgrid_index,i_source,:)**traveltime_power
+            !traveltime_subgrid(i,j,t,2,:)=traveltime_subgrid(i,j,t,2,:)+subgrid(i,j,t,emep_local_subgrid_index,i_source,:)**traveltime_power
         !write(*,'(3i,4f12.2)') i,j,i_source,distance_grid,FF_loc,distance_grid/FF_loc,subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
         endif
         enddo
@@ -102,15 +158,15 @@
     enddo    
     
     !Calculate the weighted travel time from the totals calculated in uEMEP_subgrid_dispersion
-    do t=t_start,t_end
-        traveltime_subgrid(:,:,t,1,:)=traveltime_subgrid(:,:,t,1,:)/traveltime_subgrid(:,:,t,2,:)
+    !do t=t_start,t_end
+        !traveltime_subgrid(:,:,t,3,:)=traveltime_subgrid(:,:,t,1,:)/traveltime_subgrid(:,:,t,2,:)
         !Invert it to get the time scale
         !traveltime_subgrid(:,:,t,1)=1./traveltime_subgrid(:,:,t,1)
         !Set none valid to 12 hours (long time)
-        where (traveltime_subgrid(:,:,t,2,:).eq.0) traveltime_subgrid(:,:,t,1,:)=3600.*12.
+        !where (traveltime_subgrid(:,:,t,2,:).eq.0) traveltime_subgrid(:,:,t,3,:)=3600.*12.
         !write(*,*) t
         !write(*,*) traveltime_subgrid(:,:,t,1)
-    enddo
+    !enddo
     
     do j=1,subgrid_dim(y_dim_index)
     do i=1,subgrid_dim(x_dim_index)
@@ -225,7 +281,7 @@
             call uEMEP_photostationary_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
         elseif (no2_chemistry_scheme_flag.eq.2) then
             !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_index))
-            call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index))*traveltime_scaling,nox_out,no2_out,o3_out,p_bg_out,p_out)
+            call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,3,pollutant_loop_back_index(nox_nc_index))*traveltime_scaling,nox_out,no2_out,o3_out,p_bg_out,p_out)
             !write(*,'(7f8.2,f12.2,2f8.2)') nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1),no2_out/nox_out,o3_out/o3_bg
         elseif (no2_chemistry_scheme_flag.eq.3) then
             call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out,romberg_parameters)
@@ -472,7 +528,7 @@
                 call uEMEP_photostationary_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,nox_out,no2_out,o3_out,p_bg_out,p_out)
             elseif (no2_chemistry_scheme_flag.eq.2) then
                 !write(*,'(i,7f8.2,f12.2,2f8.2)') remove_source,nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index))
-                call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index))*traveltime_scaling,nox_out,no2_out,o3_out,p_bg_out,p_out)
+                call uEMEP_phototimescale_NO2(nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,3,pollutant_loop_back_index(nox_nc_index))*traveltime_scaling,nox_out,no2_out,o3_out,p_bg_out,p_out)
                 !write(*,'(i,7f8.2,f12.2,3f8.4)') remove_source,nox_bg,no2_bg,o3_bg,nox_loc,f_no2_loc,J_photo,temperature,traveltime_subgrid(i,j,t,1,pollutant_loop_back_index(nox_nc_index)),nox_out,no2_out,o3_out
             elseif (no2_chemistry_scheme_flag.eq.3) then
                 call uEMEP_Romberg_NO2(nox_bg,no2_bg,nox_loc,o3_bg,f_no2_loc,nox_out,no2_out,o3_out,romberg_parameters)   
@@ -580,6 +636,7 @@
         if (allocated(comp_source_EMEP_temp_subgrid)) deallocate(comp_source_EMEP_temp_subgrid)        
     endif
 
+    
     end subroutine uEMEP_source_fraction_chemistry
     
     

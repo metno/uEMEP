@@ -627,6 +627,10 @@
         enddo
         enddo
 
+        !Determine the final travel time
+        traveltime_subgrid(:,:,tt,3,:)=traveltime_subgrid(:,:,tt,1,:)/traveltime_subgrid(:,:,tt,2,:)
+        where (traveltime_subgrid(:,:,tt,2,:).eq.0) traveltime_subgrid(:,:,tt,3,:)=3600.*12.
+
         !Place the vertically integrated values in the integral subgrid from the target grid, that is the same as the emission grid
         !write(*,*) 'Interpolating vertically integrated values to the integral grid'
         if ((calculate_deposition_flag.and.adjust_wetdepo_integral_to_lowest_layer_flag).or.local_subgrid_method_flag.eq.1) then

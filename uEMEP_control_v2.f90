@@ -391,7 +391,7 @@
             endif
             
             !Calculate chemistry for NO2 and O3
-            call uEMEP_chemistry
+            call uEMEP_chemistry_control
             
             !Correct annual mean chemistry for pdf
             if (use_annual_mean_pdf_chemistry_correction) then

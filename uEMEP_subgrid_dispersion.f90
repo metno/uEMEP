@@ -1046,6 +1046,10 @@
             subgrid_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid_from_in_region
         endif
         
+        !Determine the final travel time
+        traveltime_subgrid(:,:,tt,3,:)=traveltime_subgrid(:,:,tt,1,:)/traveltime_subgrid(:,:,tt,2,:)
+        where (traveltime_subgrid(:,:,tt,2,:).eq.0) traveltime_subgrid(:,:,tt,3,:)=3600.*12.
+
 
         
         enddo !time loop

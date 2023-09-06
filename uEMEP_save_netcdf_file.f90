@@ -187,7 +187,7 @@
     if (save_compounds) then
         
         
-    !Loop over the normal subgrid and the in region subgrid by saving  to a dummy variable and pputting back when finished
+    !Loop over the normal subgrid and the in region subgrid by saving  to a dummy variable and putting back when finished
     if (trace_emissions_from_in_region) then
         n_in_region_loop=2
         if (.not.allocated(comp_subgrid_dummy))allocate (comp_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
@@ -223,7 +223,7 @@
         i_comp=pollutant_compound_loop_index(i_pollutant,i_loop)
         !write(*,*) i_comp
         
-        if (i_pollutant.eq.1.and.i_loop.eq.1.and.t_loop.eq.start_time_loop_index.and.save_netcdf_file_flag) then
+        if (i_pollutant.eq.1.and.i_loop.eq.1.and.t_loop.eq.start_time_loop_index.and.save_netcdf_file_flag.and.in_region_loop.eq.1) then
             create_file=.true.
             title_str='uEMEP_concentration_'//trim(file_tag)//temp_date_str
             write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
@@ -231,7 +231,7 @@
             create_file=.false.
         endif
 
-        if (i_pollutant.eq.1.and.i_loop.eq.1.and.t_loop.eq.start_time_loop_index.and.first_g_loop.and.save_netcdf_receptor_flag) then
+        if (i_pollutant.eq.1.and.i_loop.eq.1.and.t_loop.eq.start_time_loop_index.and.first_g_loop.and.save_netcdf_receptor_flag.and.in_region_loop.eq.1) then
             create_file_rec=.true.
             title_str_rec='uEMEP_receptor_'//trim(file_tag)//temp_date_str
             if (receptor_available) write(unit_logfile,'(a)')'Writing to: '//trim(temp_name_rec)
@@ -289,10 +289,8 @@
         if (allocated(comp_subgrid_dummy)) deallocate (comp_subgrid_dummy)
     endif
     
-    
     create_file=.false.
     create_file_rec=.false.
-    
     
     !Loop over the normal subgrid and the in region subgrid by saving  to a dummy variable and pputting back when finished
     if (trace_emissions_from_in_region) then
@@ -1149,7 +1147,7 @@
         var_name_temp='Weighted_travel_time'
         unit_str='seconds'
         i_pollutant=pollutant_loop_back_index(nox_nc_index) !Only save the travel time for nox. Though this may be expanded for other compounds if necessary, like ammonia
-        temp_subgrid=traveltime_subgrid(:,:,:,1,i_pollutant)
+        temp_subgrid=traveltime_subgrid(:,:,:,3,i_pollutant)
         if (save_netcdf_file_flag) then
             write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
             !write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)

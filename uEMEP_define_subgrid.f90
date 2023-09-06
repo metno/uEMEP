@@ -282,7 +282,7 @@
     if (.not.allocated(lat_subgrid)) allocate (lat_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
     if (.not.allocated(xproj_subgrid)) allocate (xproj_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
     if (.not.allocated(yproj_subgrid)) allocate (yproj_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
-    if (.not.allocated(traveltime_subgrid)) allocate (traveltime_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),2,n_pollutant_loop)) !Last index 1 for weighted time, 2 for sum of weights
+    if (.not.allocated(traveltime_subgrid)) allocate (traveltime_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),3,n_pollutant_loop)) !Last index 1 for weighted time, 2 for sum of weights, 3 for final time
     traveltime_subgrid=0.
 
     if (trace_emissions_from_in_region) then

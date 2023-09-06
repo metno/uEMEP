@@ -218,7 +218,10 @@
             !Read from the local fraction file
             subgrid(i,j,:,emep_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,conc_nc_index,1:n_source_index,:)
             !subgrid(i,j,:,emep_local_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,local_nc_index,:,:)
-            
+            if (trace_emissions_from_in_region) then
+                subgrid_from_in_region(i,j,:,emep_subgrid_index,:,:)=subgrid(i,j,:,emep_subgrid_index,:,:)
+            endif
+                     
             !Centre of grid
             xpos_subgrid=var1d_nc(i_nc,lon_nc_index)
             ypos_subgrid=var1d_nc(j_nc,lat_nc_index)
@@ -339,6 +342,11 @@
        
         !Set the non-local for each source individually
         subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)=subgrid(:,:,:,emep_subgrid_index,:,:)-subgrid(:,:,:,emep_local_subgrid_index,:,:)
+       
+        if (trace_emissions_from_in_region) then
+            subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,:,:)=subgrid_from_in_region(:,:,:,emep_subgrid_index,:,:)-subgrid_from_in_region(:,:,:,emep_local_subgrid_index,:,:)
+        endif
+        
    endif
 
     
@@ -649,11 +657,11 @@
                 EMEP_local_contribution_from_in_region=0
                 !Create a temporary local region fraction array
                 i_source=allsource_index
-                !do i_source=1,n_source_index
-                !if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
+                do i_source=1,n_source_index
+                if (calculate_source(i_source).or.calculate_EMEP_source(i_source)) then
 
-                do jj=jjj_start,jjj_end
-                do ii=iii_start,iii_end         
+                do jj=jj_start,jj_end
+                do ii=ii_start,ii_end         
                     ii_nc=ii+i_nc
                     jj_nc=jj+j_nc
                     ii_w=ii+ii_w0
@@ -666,8 +674,11 @@
                 enddo
                 enddo
                 
-                !endif
-                !enddo
+                !temp_EMEP_grid_fraction_in_region(:,:,i_source,:)=EMEP_grid_fraction_in_region(ii_nc-n_weight_nc_x:ii_nc+n_weight_nc_x,jj_nc-n_weight_nc_y:jj_nc+n_weight_nc_y,i_source,:)    
+                !temp_EMEP_grid_fraction_in_region(:,:,i_source,:)=EMEP_grid_fraction_in_region(:,:,i_source,:)    
+                
+                endif
+                enddo
             endif
             
             do jj=jjj_start,jjj_end
@@ -754,7 +765,7 @@
                         +lc_var3d_nc(:,:,ii_nc,jj_nc,tt,lc_local_nc_index,:,:)*weighting_val3*temp_EMEP_grid_fraction_in_region(:,:,:,:)                    
                 endif
 
-                 write(*,*) ii,jj,ii_nc,jj_nc,sum(EMEP_local_contribution(:,:,allsource_index,1)),sum(EMEP_local_contribution_from_in_region(:,:,allsource_index,1)),sum(temp_EMEP_grid_fraction_in_region(:,:,allsource_index,1))
+                ! write(*,*) ii,jj,ii_nc,jj_nc,sum(EMEP_local_contribution(:,:,allsource_index,1)),sum(EMEP_local_contribution_from_in_region(:,:,allsource_index,1)),sum(temp_EMEP_grid_fraction_in_region(:,:,allsource_index,1))
                 !write(*,*) ii,jj,ii_nc,jj_nc,EMEP_local_contribution(:,:,i_source,1),EMEP_local_contribution_from_in_region:,:,i_source,1)
                 endif
             enddo
@@ -1218,7 +1229,7 @@
         enddo
         enddo
 
-        write(*,*)sum(subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)),sum(subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:)),&
+        write(*,'(a,4f12.1)')'Sum (local,local_region,nonlocal,nonlocal_regio: ',sum(subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)),sum(subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:)),&
         sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)),sum(subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))
             !sum(subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))-sum(subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:)),&
                ! sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))-sum(subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)), &
