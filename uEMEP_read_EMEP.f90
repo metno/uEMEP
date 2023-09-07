@@ -225,6 +225,7 @@
         endif 
               
         write(unit_logfile,'(A,6I)') ' Size of dimensions (x,y,z,t,xdist,ydist): ',dim_length_nc
+        dim_length_EMEP_nc=dim_length_nc
         
         dim_start_nc(time_dim_nc_index)=temp_start_time_nc_index
         dim_length_nc(time_dim_nc_index)=min(dim_length_nc(time_dim_nc_index),subgrid_dim(t_dim_index))
@@ -244,7 +245,7 @@
         
         !Calculate the necessary extent of the EMEP grid region and only read these grids
         if (reduce_EMEP_region_flag) then
-            EMEP_grid_interpolation_size_temp=max(EMEP_grid_interpolation_size*local_fraction_grid_size_scaling,EMEP_additional_grid_interpolation_size_original)
+            EMEP_grid_interpolation_size_temp=max(EMEP_grid_interpolation_size*local_fraction_grid_size_scaling,EMEP_additional_grid_interpolation_size_original*local_fraction_additional_grid_size_scaling)
             
             write(unit_logfile,'(A,f12.2)') 'Reducing EMEP domain. EMEP grid interpolation size is now = ',EMEP_grid_interpolation_size_temp
             
@@ -364,6 +365,7 @@
                 dim_start_nc(y_dim_nc_index)=j_temp_min
                 write(unit_logfile,'(A,3I)') ' Reading EMEP i grids: ',i_temp_min,i_temp_max,dim_length_nc(x_dim_nc_index)
                 write(unit_logfile,'(A,3I)') ' Reading EMEP j grids: ',j_temp_min,j_temp_max,dim_length_nc(y_dim_nc_index)
+                dim_start_EMEP_nc=dim_start_nc
             !endif
 
         endif

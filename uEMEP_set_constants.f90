@@ -1241,11 +1241,11 @@
     !EMEP_additional_grid_interpolation_size=EMEP_additional_grid_interpolation_size_original*local_fraction_additional_grid_size_scaling
 
     !Definitions of the emission saving grid. These are the pre February 2020 values
-    save_emission_subgrid_min(x_dim_index)=-6.498834E+05
-    save_emission_subgrid_delta(x_dim_index)=2500.
-    save_emission_subgrid_dim(x_dim_index)=531
-    save_emission_subgrid_min(y_dim_index)=-6.567275E+05
-    save_emission_subgrid_delta(y_dim_index)=2500.
-    save_emission_subgrid_dim(y_dim_index)=671
+    !save_emission_subgrid_min(x_dim_index)=-6.498834E+05
+    !save_emission_subgrid_delta(x_dim_index)=2500.
+    !save_emission_subgrid_dim(x_dim_index)=531
+    !save_emission_subgrid_min(y_dim_index)=-6.567275E+05
+    !save_emission_subgrid_delta(y_dim_index)=2500.
+    !save_emission_subgrid_dim(y_dim_index)=671
 
     end subroutine uEMEP_reset_constants

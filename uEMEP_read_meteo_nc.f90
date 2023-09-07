@@ -288,7 +288,7 @@
         !Calculate the necessary extent of the meteo_nc grid region and only read these grids
         if (reduce_EMEP_region_flag) then
             !Determine the LL cordinates of the target grid
-            EMEP_grid_interpolation_size_temp=max(EMEP_grid_interpolation_size*local_fraction_grid_size_scaling,EMEP_additional_grid_interpolation_size_original)
+            EMEP_grid_interpolation_size_temp=max(EMEP_grid_interpolation_size*local_fraction_grid_size_scaling,EMEP_additional_grid_interpolation_size_original*local_fraction_grid_size_scaling)
 
             !Retrieve the four corners of the target grid in lat and lon
             call PROJ2LL(init_subgrid_min(x_dim_index),init_subgrid_min(y_dim_index),temp_lon(1),temp_lat(1),projection_attributes,projection_type)

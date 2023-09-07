@@ -46,6 +46,7 @@
 
     !Allocate buffers and adjust the dimensions appropriately
     !Calculate the max loop size to cover the nearest EMEP grids. This avoids looping through all the grids
+    !loop_index_scale=1.2*EMEP_grid_interpolation_size/2.*local_fraction_grid_size_scaling !Was 1.5
     loop_index_scale=1.2*EMEP_grid_interpolation_size/2.*local_fraction_grid_size_scaling !Was 1.5
     
     !Define the centre of the subgrid

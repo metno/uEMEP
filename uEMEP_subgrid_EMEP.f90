@@ -119,6 +119,7 @@
     EMEP_grid_interpolation_size_saved=EMEP_grid_interpolation_size
     lc_local_nc_index=lc_local_nc_loop_index(local_fraction_grid_for_EMEP_grid_interpolation)
     local_fraction_grid_size_scaling_temp=local_fraction_grid_size_scaling
+    fraction_in_region_index=1
     if (calculate_EMEP_additional_grid_flag) then
         EMEP_grid_interpolation_size=EMEP_additional_grid_interpolation_size
         local_fraction_grid_size_scaling_temp=local_fraction_additional_grid_size_scaling
@@ -126,7 +127,6 @@
         fraction_in_region_index=2
 	    write(unit_logfile,'(A,i)') 'Calculating additional EMEP concentrations to subgrids, index:',lc_local_nc_index
     else
-	    fraction_in_region_index=1
         write(unit_logfile,'(A,i)') 'Calculating EMEP concentrations to subgrids, index:',lc_local_nc_index
     endif
     
@@ -1229,7 +1229,7 @@
         enddo
         enddo
 
-        write(*,'(a,4f12.1)')'Sum (local,local_region,nonlocal,nonlocal_regio: ',sum(subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)),sum(subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:)),&
+        write(*,'(a,4f12.1)')'Sum (local,local_region,nonlocal,nonlocal_region): ',sum(subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:)),sum(subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:)),&
         sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)),sum(subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))
             !sum(subgrid(:,:,:,emep_local_subgrid_index,allsource_index,:))-sum(subgrid_from_in_region(:,:,:,emep_local_subgrid_index,allsource_index,:)),&
                ! sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))-sum(subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:)), &
@@ -1270,7 +1270,10 @@
     if (allocated(weighting_nc)) deallocate(weighting_nc)
     if (allocated(area_weighting_nc)) deallocate(area_weighting_nc)
     if (allocated(total_weighting_nc)) deallocate(total_weighting_nc)
+    if (allocated(proxy_weighting_nc)) deallocate(proxy_weighting_nc)
     if (allocated(weighting_subgrid)) deallocate(weighting_subgrid)
+    if (allocated(crossreference_weighting_to_emep_subgrid)) deallocate(crossreference_weighting_to_emep_subgrid)
+    if (allocated(nonlocal_correction)) deallocate(nonlocal_correction)
     if (allocated(nonlocal_correction_average)) deallocate(nonlocal_correction_average)
     if (allocated(EMEP_local_contribution)) deallocate (EMEP_local_contribution)
     if (allocated(EMEP_local_contribution_from_in_region)) deallocate (EMEP_local_contribution_from_in_region)

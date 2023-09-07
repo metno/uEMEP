@@ -321,6 +321,7 @@
     integer ii,jj,iii,jjj,iiii,jjjj
     real, allocatable :: count_EMEP_grid_fraction_in_region(:,:,:)
     integer i_source, chosen_source
+    integer ii_start,jj_start
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -367,26 +368,29 @@
             !Allocate the additional subgrid fraction based on the EMEP fraction
             if (EMEP_additional_grid_interpolation_size.gt.0) then
 
+                !Use the starting position of the read in EMEP file to initialise the starting point
+                ii_start=mod(dim_start_EMEP_nc(x_dim_nc_index)-1,local_fraction_grid_size(2))
+                jj_start=mod(dim_start_EMEP_nc(y_dim_nc_index)-1,local_fraction_grid_size(2))
+
                 do ii=1,dim_length_nc(x_dim_nc_index)
                 do jj=1,dim_length_nc(y_dim_nc_index)
                 
-                    
                     !Bottom left corner of the additional grid
-                    iii=int((ii-1)/local_fraction_grid_size(2))*local_fraction_grid_size(2)+1
-                    jjj=int((jj-1)/local_fraction_grid_size(2))*local_fraction_grid_size(2)+1
+                    iii=int((ii-1)/local_fraction_grid_size(2))*local_fraction_grid_size(2)+1-ii_start
+                    jjj=int((jj-1)/local_fraction_grid_size(2))*local_fraction_grid_size(2)+1-jj_start
                     if (iii.ge.1.and.iii.le.dim_length_nc(x_dim_nc_index).and.jjj.ge.1.and.jjj.le.dim_length_nc(y_dim_nc_index)) then
                         !Add the region fractions from EMEP to the additional
                         do iiii=iii,iii-1+local_fraction_grid_size(2)
                         do jjjj=jjj,jjj-1+local_fraction_grid_size(2)
                         if (iiii.ge.1.and.iiii.le.dim_length_nc(x_dim_nc_index).and.jjjj.ge.1.and.jjjj.le.dim_length_nc(y_dim_nc_index)) then
-                                EMEP_grid_fraction_in_region(ii,jj,i_source,2)=EMEP_grid_fraction_in_region(ii,jj,i_source,2)+EMEP_grid_fraction_in_region(iiii,jjjj,i_source,1)
+                            EMEP_grid_fraction_in_region(ii,jj,i_source,2)=EMEP_grid_fraction_in_region(ii,jj,i_source,2)+EMEP_grid_fraction_in_region(iiii,jjjj,i_source,1)                       
                         endif
                         enddo
                         enddo
                     endif
                     !Normalize. Does not account for edges but should not be a problem. For safety limit it to 1.
                     EMEP_grid_fraction_in_region(ii,jj,i_source,2)=min(1.,EMEP_grid_fraction_in_region(ii,jj,i_source,2)*local_fraction_grid_size(1)**2/local_fraction_grid_size(2)**2)
-                    !write(*,*) ii,jj,iii,jjj,EMEP_grid_fraction_in_region(ii,jj,i_source,1),EMEP_grid_fraction_in_region(ii,jj,i_source,2)
+                    !write(*,'(8i,2f8.2)') ii,jj,iii,jjj,iii-1+local_fraction_grid_size(2),jjj-1+local_fraction_grid_size(2),ii_start,jj_start,EMEP_grid_fraction_in_region(ii,jj,i_source,1),EMEP_grid_fraction_in_region(ii,jj,i_source,2)
                 enddo
                 enddo
                 

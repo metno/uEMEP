@@ -72,7 +72,9 @@
     integer dim_length_meteo_nc(num_dims_meteo_nc)
     integer dim_start_meteo_nc(num_dims_meteo_nc)
     data dim_start_meteo_nc /1, 1, 1, 1/                 ! start at first value
-
+    integer dim_length_EMEP_nc(num_dims_nc)
+    integer dim_start_EMEP_nc(num_dims_nc)
+    
     !Dimensions of the netcdf files that are used
     integer end_dim_nc(num_dims_nc)
     integer start_dim_nc(num_dims_nc)
