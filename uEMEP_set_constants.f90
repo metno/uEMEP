@@ -898,6 +898,7 @@
         calculate_EMEP_source(publicpower_area_nc_index)=.true.
         calculate_EMEP_source(traffic_exhaust_nc_index)=.true.
         calculate_EMEP_source(traffic_nonexhaust_nc_index)=.true.
+        !We do not want to add these since they are already in traffic but we do want to save them
         calculate_EMEP_source(traffic_exhaust_nc_index)=.false.
         calculate_EMEP_source(traffic_nonexhaust_nc_index)=.false.
         save_EMEP_source(traffic_exhaust_nc_index)=.true.

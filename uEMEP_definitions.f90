@@ -1101,6 +1101,7 @@
     logical :: trace_emissions_from_in_region=.false.
     real, allocatable :: subgrid_from_in_region(:,:,:,:,:,:)
     real, allocatable :: EMEP_grid_fraction_in_region(:,:,:,:)
+    real, allocatable :: lf_EMEP_grid_fraction_in_region(:,:,:,:,:,:)
     logical :: save_netcdf_fraction_as_contribution_from_in_region_flag=.false.
     logical, allocatable :: use_subgrid_region(:,:,:)    !Specifies the region emissions will be carried from for subgrid_from_in_region
     real, allocatable :: comp_subgrid_from_in_region(:,:,:,:)

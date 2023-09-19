@@ -245,7 +245,8 @@
         
         !Calculate the necessary extent of the EMEP grid region and only read these grids
         if (reduce_EMEP_region_flag) then
-            EMEP_grid_interpolation_size_temp=max(EMEP_grid_interpolation_size*local_fraction_grid_size_scaling,EMEP_additional_grid_interpolation_size_original*local_fraction_additional_grid_size_scaling)
+            !EMEP_grid_interpolation_size_temp=max(EMEP_grid_interpolation_size*local_fraction_grid_size_scaling,EMEP_additional_grid_interpolation_size_original*local_fraction_additional_grid_size_scaling)
+            EMEP_grid_interpolation_size_temp=EMEP_grid_interpolation_size*local_fraction_grid_size_scaling
             
             write(unit_logfile,'(A,f12.2)') 'Reducing EMEP domain. EMEP grid interpolation size is now = ',EMEP_grid_interpolation_size_temp
             
