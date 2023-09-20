@@ -446,7 +446,7 @@
                                         
                         !Use the average of the emision height and zc to determine wind speed. Is set to true if wind_level_flag=6
                         !CHECK THIS
-                        if (wind_level_flag.eq.6) then
+                        if (wind_level_flag.eq.6.or.wind_level_zc_flag) then
                             !Set the minimum wind speed 
                             FF_loc=sqrt(FF_zc_loc*FF_zc_loc+FF_min_dispersion*FF_min_dispersion)
                         endif

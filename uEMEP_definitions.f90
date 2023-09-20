@@ -681,6 +681,7 @@
     logical :: use_aggregated_shipping_emissions_flag=.true.
     logical :: calculate_aggregated_shipping_emissions_flag=.false.
     logical :: average_zc_h_in_Kz_flag=.true.
+    logical :: wind_level_zc_flag=.false. !This will use the centre of mass wind no matter what type of wind_level_flag is used
 
     
     integer n_receptor,n_receptor_in,n_receptor_max,n_valid_receptor,n_valid_receptor_in

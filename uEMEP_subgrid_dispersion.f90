@@ -616,8 +616,8 @@
                                         !Add the meandering and change in wind angle to the plume since not included in Kz calculation
                                         sig_y_loc=sig_y_loc+x_loc*angle_diff(i_cross_integral,j_cross_integral)
                                         
-                                        !Use the average of the emision height and zc to determine wind speed. Is set to true if wind_level_flag=6
-                                        if (wind_level_flag.eq.6) then
+                                        !Use the average of the emision height and zc to determine wind speed. Is true if wind_level_flag=6 or if wind_level_zc_flag is true then it will do this for all other types of wind flags as well
+                                        if (wind_level_flag.eq.6.or.wind_level_zc_flag) then
                                             !FF_loc=FF_zc_loc
                                             !Set the minimum wind speed 
                                             FF_loc=sqrt(FF_zc_loc*FF_zc_loc+FF_min_dispersion*FF_min_dispersion)

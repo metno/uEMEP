@@ -866,6 +866,8 @@
 
         calc_grid_vertical_average_concentration_annual_flag=read_name_logical('calc_grid_vertical_average_concentration_annual_flag',calc_grid_vertical_average_concentration_annual_flag,unit_in,unit_logfile)
         
+        wind_level_zc_flag=read_name_logical('wind_level_zc_flag',wind_level_zc_flag,unit_in,unit_logfile)
+
 
     close (unit_in)
     
