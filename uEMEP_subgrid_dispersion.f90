@@ -600,8 +600,8 @@
                                     endif
                                     
                                     if (stability_scheme_flag.eq.3) then
-                                        !Need to make 10 m winds if they are not selected by the wind_level_flag and do not exist
-                                        if (hourly_calculations.and.(wind_level_flag.eq.1.or.wind_level_flag.eq.2).and.FF10_loc.eq.0) then
+                                        !Need to make 10 m winds if they are not selected by the wind_level_flag.  and do not exist is not included any more
+                                        if (hourly_calculations.and.(wind_level_flag.eq.1.or.wind_level_flag.eq.2)) then
                                             call u_profile_neutral_val_func(10.,meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index),H_meteo,h_mix_loc,exp(logz0_loc),FF10_loc,u_star0_loc)
                                         endif
 
@@ -789,6 +789,12 @@
                                             !Set the minimum wind speed 
                                             FF_loc=sqrt(FF_zc_loc*FF_zc_loc+FF_min_dispersion*FF_min_dispersion)
                                         endif
+                                        
+                                        !If this flag set then use the centre of mass wind speed no matter which wind flag is called
+                                        !This is actually overwritten to be the wind speed at the emission height in the next commands
+                                        if (wind_level_zc_flag) then
+                                            FF_loc=sqrt(FF_zc_loc*FF_zc_loc+FF_min_dispersion*FF_min_dispersion)
+                                        endif  
  
 
                                     endif
@@ -796,7 +802,7 @@
                                 
                                 h_temp=h_emis_loc
             
-                                if (wind_level_flag.eq.5.or.wind_level_flag.eq.6) then
+                                if (wind_level_flag.eq.5.or.wind_level_zc_flag.eq.6) then
                                     FF_loc=temp_FF_emission_subgrid(ii,jj)
                                 else
                                     FF_loc=temp_FF_subgrid(i_cross_integral,j_cross_integral)
@@ -828,7 +834,7 @@
                                 endif
                                 !If wind level flag is 6 in annual means then the average height is not calculated because a fit is used so valid for all stability types now
                                 !Needs to be calculated after sig_z_loc is calculated
-                                if (wind_level_flag.eq.6) then
+                                if (wind_level_flag.eq.6.or.wind_level_zc_flag) then
                                 !if (wind_level_flag.eq.6.and.stability_scheme_flag.ne.3) then
                                         FF10_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
                                         call z_centremass_gauss_func(sig_z_loc,h_emis_loc,h_mix_loc,zc_loc)
