@@ -1709,9 +1709,18 @@
     valid_min=-1.e24   
     
     if (save_wind_vectors) then
-        variable_type='float'
-        i_file=subgrid_ugrid_file_index
-        i_meteo=ugrid_subgrid_index
+        write(unit_logfile,'(a)')'--------------------------'
+        write(unit_logfile,'(a)')'Saving wind vectors'
+        write(unit_logfile,'(a)')'--------------------------'
+       variable_type='float'
+        if (wind_vectors_10m_available) then
+            i_file=subgrid_u10_file_index
+            i_meteo=u10_subgrid_index
+        else
+            i_file=subgrid_ugrid_file_index
+            i_meteo=ugrid_subgrid_index
+        endif
+        
         unit_str="m/s"
         !The same for all--------------------
         var_name_temp=trim(filename_grid(i_file))
@@ -1722,7 +1731,7 @@
         enddo
         enddo
         if (save_netcdf_file_flag) then
-            write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),mean_mask(temp_subgrid,use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
         endif
@@ -1737,8 +1746,13 @@
         endif
         !The same for all--------------------
 
-        i_file=subgrid_vgrid_file_index
-        i_meteo=vgrid_subgrid_index
+        if (wind_vectors_10m_available) then
+            i_file=subgrid_v10_file_index
+            i_meteo=v10_subgrid_index
+        else
+            i_file=subgrid_vgrid_file_index
+            i_meteo=vgrid_subgrid_index
+        endif
         unit_str="m/s"
         !The same for all--------------------
         var_name_temp=trim(filename_grid(i_file))
@@ -1749,7 +1763,7 @@
         enddo
         enddo
         if (save_netcdf_file_flag) then
-            write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),mean_mask(temp_subgrid,use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
         endif
@@ -1768,7 +1782,7 @@
 
     if (save_other_meteo) then
         write(unit_logfile,'(a)')'--------------------------'
-        write(unit_logfile,'(a)')'Saving meteo data'
+        write(unit_logfile,'(a)')'Saving other meteo data'
         write(unit_logfile,'(a)')'--------------------------'
         variable_type='float'
         i_file=subgrid_hmix_file_index
@@ -1811,12 +1825,12 @@
         enddo
         enddo
         if (save_netcdf_file_flag) then
-            write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            write(unit_logfile,'(a,f12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
         endif
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            write(unit_logfile,'(a,f12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
@@ -1884,8 +1898,13 @@
  
         if (hourly_calculations) then
         
-        i_file=subgrid_FFgrid_file_index
-        i_meteo=FFgrid_subgrid_index
+        if (wind_vectors_10m_available) then
+            i_file=subgrid_FF10_file_index
+            i_meteo=FF10_subgrid_index
+        else
+            i_file=subgrid_FFgrid_file_index
+            i_meteo=FFgrid_subgrid_index
+        endif
         unit_str="m/s"
         !The same for all--------------------
         var_name_temp=trim(filename_grid(i_file))
@@ -1911,13 +1930,22 @@
         endif
         !The same for all--------------------
 
-        i_file=subgrid_DDgrid_file_index
+        if (wind_vectors_10m_available) then
+            i_file=subgrid_DD10_file_index
+        else
+            i_file=subgrid_DDgrid_file_index
+        endif
         !i_meteo=DDgrid_subgrid_index !i_meteo not used in this conversion to wind direction
         unit_str="degrees"
         do tt=1,subgrid_dim(t_dim_index)
         do jj=1,integral_subgrid_dim(y_dim_index)
         do ii=1,integral_subgrid_dim(x_dim_index)
-            temp_integral_subgrid(ii,jj,tt)=DIRECTION(meteo_subgrid(ii,jj,tt,ugrid_subgrid_index),meteo_subgrid(ii,jj,tt,vgrid_subgrid_index))        
+            if (wind_vectors_10m_available) then
+                temp_integral_subgrid(ii,jj,tt)=DIRECTION(meteo_subgrid(ii,jj,tt,u10_subgrid_index),meteo_subgrid(ii,jj,tt,v10_subgrid_index))
+            else
+                temp_integral_subgrid(ii,jj,tt)=DIRECTION(meteo_subgrid(ii,jj,tt,ugrid_subgrid_index),meteo_subgrid(ii,jj,tt,vgrid_subgrid_index))
+            endif
+            
         enddo
         enddo
         enddo
@@ -1931,33 +1959,6 @@
             ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);
             !In this case this is not the same for all
             temp_subgrid(i,j,:)=temp_integral_subgrid(ii,jj,:)
-        enddo
-        enddo
-        if (save_netcdf_file_flag) then
-            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), mean_mask(temp_subgrid,use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
-            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
-        endif
-        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-                write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
-            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
-                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
-                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
-                ,z_rec(allsource_index,1) &
-                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)          
-        endif
-        !The same for all--------------------
-
-        i_file=subgrid_FF10_file_index
-        i_meteo=FF10_subgrid_index
-        unit_str="m/s"
-        !The same for all--------------------
-        var_name_temp=trim(filename_grid(i_file))
-        temp_subgrid=0.
-        do j=1,subgrid_dim(y_dim_index)
-        do i=1,subgrid_dim(x_dim_index)
-            ii=crossreference_target_to_integral_subgrid(i,j,x_dim_index);jj=crossreference_target_to_integral_subgrid(i,j,y_dim_index);temp_subgrid(i,j,:)=meteo_subgrid(ii,jj,:,i_meteo)
         enddo
         enddo
         if (save_netcdf_file_flag) then

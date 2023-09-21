@@ -66,6 +66,8 @@
     !Meteo file names
     filename_grid(subgrid_ugrid_file_index)='xgrid_wind'
     filename_grid(subgrid_vgrid_file_index)='ygrid_wind'
+    filename_grid(subgrid_u10_file_index)='x10_wind'
+    filename_grid(subgrid_v10_file_index)='y10_wind'
     filename_grid(subgrid_hmix_file_index)='hmix'
     filename_grid(subgrid_kz_file_index)='kz'
     filename_grid(subgrid_logz0_file_index)='logz0'

@@ -409,6 +409,8 @@
     enddo
     j=j+1;subgrid_ugrid_file_index=j
     j=j+1;subgrid_vgrid_file_index=j
+    j=j+1;subgrid_u10_file_index=j
+    j=j+1;subgrid_v10_file_index=j
     j=j+1;subgrid_hmix_file_index=j
     j=j+1;subgrid_kz_file_index=j
     j=j+1;subgrid_logz0_file_index=j

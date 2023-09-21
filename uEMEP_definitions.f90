@@ -639,7 +639,7 @@
     integer subgrid_local_file_index(n_source_index),subgrid_total_file_index(n_source_index)
     integer emep_additional_subgrid_nonlocal_file_index(n_source_index),emep_additional_subgrid_local_file_index(n_source_index)
     !Filename index for meteorological parameters
-    integer subgrid_ugrid_file_index,subgrid_vgrid_file_index,subgrid_hmix_file_index,subgrid_kz_file_index,subgrid_logz0_file_index,subgrid_invL_file_index,subgrid_FF10_file_index,subgrid_FFgrid_file_index
+    integer subgrid_ugrid_file_index,subgrid_vgrid_file_index,subgrid_u10_file_index,subgrid_v10_file_index,subgrid_hmix_file_index,subgrid_kz_file_index,subgrid_logz0_file_index,subgrid_invL_file_index,subgrid_FF10_file_index,subgrid_FFgrid_file_index
     integer subgrid_invFF10_file_index,subgrid_invFFgrid_file_index,subgrid_ustar_file_index,subgrid_J_file_index,subgrid_meteo_file_index
     integer subgrid_DD10_file_index,subgrid_DDgrid_file_index,subgrid_t2m_file_index
     !Filename index for grid auto grid parameters
