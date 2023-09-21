@@ -1369,6 +1369,8 @@
             var3d_nc(:,:,:,inv_FF10_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,inv_FF10_nc_index,:,meteo_p_loop_index)/FF_scale
             var3d_nc(:,:,:,ugrid_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,ugrid_nc_index,:,meteo_p_loop_index)*FF_scale
             var3d_nc(:,:,:,vgrid_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,vgrid_nc_index,:,meteo_p_loop_index)*FF_scale
+            var3d_nc(:,:,:,u10_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,u10_nc_index,:,meteo_p_loop_index)*FF_scale
+            var3d_nc(:,:,:,v10_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,v10_nc_index,:,meteo_p_loop_index)*FF_scale
             var3d_nc(:,:,:,inv_FFgrid_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,inv_FFgrid_nc_index,:,meteo_p_loop_index)/FF_scale
             var4d_nc(:,:,:,:,ugrid_nc_index,:,meteo_p_loop_index)=var4d_nc(:,:,:,:,ugrid_nc_index,:,meteo_p_loop_index)*FF_scale
             var4d_nc(:,:,:,:,vgrid_nc_index,:,meteo_p_loop_index)=var4d_nc(:,:,:,:,vgrid_nc_index,:,meteo_p_loop_index)*FF_scale
@@ -1382,14 +1384,27 @@
             write(unit_logfile,'(A,f8.4)') ' Rotating wind fields everywhere with a value: ',DD_offset
 
             !Make use of the spare source index parts of the array for the conversion
+            temp_var4d_nc=0
             temp_var4d_nc(:,:,:,:,1) = var4d_nc(:,:,:,:,ugrid_nc_index,allsource_index,meteo_p_loop_index)*cos(DD_offset/180.*3.14159)+var4d_nc(:,:,:,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)*sin(DD_offset/180.*3.14159)                                       
             temp_var4d_nc(:,:,:,:,2) =-var4d_nc(:,:,:,:,ugrid_nc_index,allsource_index,meteo_p_loop_index)*sin(DD_offset/180.*3.14159)+var4d_nc(:,:,:,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)*cos(DD_offset/180.*3.14159)                                       
             var4d_nc(:,:,:,:,ugrid_nc_index,allsource_nc_index,meteo_p_loop_index) = temp_var4d_nc(:,:,:,:,1)
             var4d_nc(:,:,:,:,vgrid_nc_index,allsource_nc_index,meteo_p_loop_index) = temp_var4d_nc(:,:,:,:,2)
+            temp_var4d_nc=0
+            temp_var4d_nc(:,:,:,1,1) = var3d_nc(:,:,:,u10_nc_index,allsource_index,meteo_p_loop_index)*cos(DD_offset/180.*3.14159)+var3d_nc(:,:,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)*sin(DD_offset/180.*3.14159)                                       
+            temp_var4d_nc(:,:,:,1,2) =-var3d_nc(:,:,:,u10_nc_index,allsource_index,meteo_p_loop_index)*sin(DD_offset/180.*3.14159)+var3d_nc(:,:,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)*cos(DD_offset/180.*3.14159)                                       
+            var3d_nc(:,:,:,u10_nc_index,allsource_nc_index,meteo_p_loop_index) = temp_var4d_nc(:,:,:,1,1)
+            var3d_nc(:,:,:,v10_nc_index,allsource_nc_index,meteo_p_loop_index) = temp_var4d_nc(:,:,:,1,2)
         endif
        
         !Set the magnitude of the gridded wind fields. Should probably be done after subgridding?
         var4d_nc(:,:,:,:,FFgrid_nc_index,allsource_index,meteo_p_loop_index)=sqrt(var4d_nc(:,:,:,:,ugrid_nc_index,allsource_index,meteo_p_loop_index)**2+var4d_nc(:,:,:,:,vgrid_nc_index,allsource_index,meteo_p_loop_index)**2)
+        !Will override the read in FF10 if it is available
+        if (sum(abs(var3d_nc(:,:,:,u10_nc_index,allsource_index,meteo_p_loop_index))).ne.0.and.sum(abs(var3d_nc(:,:,:,v10_nc_index,allsource_index,meteo_p_loop_index))).ne.0) then
+            wind_vectors_10m_available=.true.
+            var3d_nc(:,:,:,FF10_nc_index,allsource_index,meteo_p_loop_index)=sqrt(var3d_nc(:,:,:,u10_nc_index,allsource_index,meteo_p_loop_index)**2+var3d_nc(:,:,:,v10_nc_index,allsource_index,meteo_p_loop_index)**2)
+        endif
+        write(unit_logfile,'(A,L)') ' 10 m wind vectors available: ',wind_vectors_10m_available           
+            
   
         !Check EMEP time
         date_num_temp=dble(ceiling(val_dim_nc(1,time_dim_nc_index)*24.))/24.

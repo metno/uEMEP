@@ -579,7 +579,7 @@
                                         call uEMEP_set_dispersion_sigma_simple(sig_z_00_loc,sig_y_00_loc,sigy_0_subgid_width_scale,emission_subgrid_delta(:,source_index),angle_diff(i_cross_integral,j_cross_integral),x_loc,sig_z_loc,sig_y_loc,sig_z_0_loc,sig_y_0_loc)                                        
                                     endif
                                     
-                                !In the annual case then make the wind level to be at emission height for emissions greater than 10 m, if meteoflag 1 or 3 is called                                
+                                !Make the wind level to be at emission height for emissions greater than 10 m, if meteoflag 1 or 3 is called                                
                                 h_temp=h_emis_loc
                                 if (wind_level_flag.eq.2.or.(h_temp.gt.H_meteo.and.wind_level_flag.eq.1)) then
                                     FFgrid_loc=meteo_subgrid(i_cross_integral,j_cross_integral,tt,FFgrid_subgrid_index)

@@ -152,6 +152,8 @@
         !Meteorology
         var_name_nc(ugrid_nc_index,all_nc_index,allsource_nc_index)='u_wind'
         var_name_nc(vgrid_nc_index,all_nc_index,allsource_nc_index)='v_wind'
+        var_name_nc(u10_nc_index,all_nc_index,allsource_nc_index)='met2d_u10'
+        var_name_nc(v10_nc_index,all_nc_index,allsource_nc_index)='met2d_v10'
         var_name_nc(FFgrid_nc_index,all_nc_index,allsource_nc_index)='wind_speed'
         var_name_nc(FF10_nc_index,all_nc_index,allsource_nc_index)='ws10m'
         var_name_nc(inv_FFgrid_nc_index,all_nc_index,allsource_nc_index)='inv_wind_speed'

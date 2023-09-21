@@ -655,6 +655,8 @@
             if (sum(abs(meteo_var3d_nc(:,:,:,FF10_nc_index))).eq.0) then
                 !Calculate wind speed if it can't read it
                 meteo_var3d_nc(:,:,:,FF10_nc_index)=sqrt(meteo_var3d_nc(:,:,:,ugrid_nc_index)**2+meteo_var3d_nc(:,:,:,vgrid_nc_index)**2)
+            else
+                meteo_var3d_nc(:,:,:,FF10_nc_index)=sqrt(meteo_var3d_nc(:,:,:,u10_nc_index)**2+meteo_var3d_nc(:,:,:,v10_nc_index)**2)
             endif
             
             !Smooth the boundary layer height (running mean) and set minimum 

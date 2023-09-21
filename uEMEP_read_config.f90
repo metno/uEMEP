@@ -628,6 +628,8 @@
 
         !Input variable names for meteo data read from EMEP
         var_name_nc(hmix_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(hmix_nc_index)',var_name_nc(hmix_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(u10_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(u10_nc_index)',var_name_nc(u10_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
+        var_name_nc(v10_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(v10_nc_index)',var_name_nc(v10_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
         var_name_nc(FF10_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(FF10_nc_index)',var_name_nc(FF10_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
         var_name_nc(ugrid_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(ugrid_nc_index)',var_name_nc(ugrid_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
         var_name_nc(vgrid_nc_index,all_nc_index,allsource_nc_index)=read_name_char('var_name_nc(vgrid_nc_index)',var_name_nc(vgrid_nc_index,all_nc_index,allsource_nc_index),unit_in,unit_logfile)
