@@ -1768,7 +1768,7 @@
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
         endif
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-            write(unit_logfile,'(a,es12.2)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+            write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp,unit_str,title_str_rec,create_file_rec,valid_min &
                 ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
@@ -2295,7 +2295,11 @@
         call check(  nf90_put_att(ncid, proj_varid, "scale_factor_at_central_meridian", 0.9996 ) )
         call check(  nf90_put_att(ncid, proj_varid, "latitude_of_projection_origin", 0 ) )
         call check(  nf90_put_att(ncid, proj_varid, "false_easting", 500000. ) )
+        if (utm_zone.ge.0) then
         call check(  nf90_put_att(ncid, proj_varid, "false_northing", 0. ) )
+        else
+        call check(  nf90_put_att(ncid, proj_varid, "false_northing", 10000000. ) )
+        endif
         call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", utm_lon0 ) )
         endif
         
@@ -2308,7 +2312,11 @@
         call check(  nf90_put_att(ncid, proj_varid, "scale_factor_at_central_meridian", 0.9996 ) )
         call check(  nf90_put_att(ncid, proj_varid, "latitude_of_projection_origin", 0 ) )
         call check(  nf90_put_att(ncid, proj_varid, "false_easting", 500000. ) )
+        if (utm_zone.ge.0) then
         call check(  nf90_put_att(ncid, proj_varid, "false_northing", 0. ) )
+        else
+        call check(  nf90_put_att(ncid, proj_varid, "false_northing", 10000000. ) )
+        endif
         call check(  nf90_put_att(ncid, proj_varid, "longitude_of_central_meridian", ltm_lon0 ) )        
 
         endif
