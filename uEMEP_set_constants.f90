@@ -106,6 +106,7 @@
         
         !Special extrasource file. Will be used if called with. use_alternative_ppm_variable_for_lf       
         var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index)='D3_ug_PPM25'
+        var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index)='D3_ug_PPM_C'
 
         !Local fractions
         var_name_nc(frac_nc_index,nox_nc_index,traffic_nc_index)='nox_sec07_local_fraction'

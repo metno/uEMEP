@@ -1070,7 +1070,13 @@
     !endif
     if (use_alternative_ppm_variable_for_lf) then
         write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm25_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index))
-        var4d_nc(:,:,:,:,pm25_nc_index,allsource_nc_index,:)=var4d_nc(:,:,:,:,pm25_nc_index,extrasource_nc_index,:)
+        var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm25_nc_index))
+        pm_var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,2)=var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))
+        write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index))
+        pm_var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,1)=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pmco_nc_index))
+        !var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pmco_nc_index)=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pmco_nc_index)
+       ! write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm10_nc_index,extrasource_nc_index))
+        var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))+var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pmco_nc_index))
     endif
     
     !Transfer all source values to all the sources for use in source looping later
