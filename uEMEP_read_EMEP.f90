@@ -546,7 +546,7 @@
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, var2d_nc_dp);var2d_nc(:,:,i)=real(var2d_nc_dp)
                     write(unit_logfile,'(A,i3,A,2A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var2d_nc(:,:,i)),maxval(var2d_nc(:,:,i))
                     endif
-                elseif (temp_num_dims.eq.3.and.i_file.eq.1.and.i.eq.emis_nc_index.and.i_pollutant.eq.pm10_nc_index) then
+                elseif (temp_num_dims.eq.3.and.i_file.eq.1.and.i.eq.emis_nc_index.and.i_pollutant.eq.pm10_nc_index.and.i_source.ne.extrasource_nc_index) then
                         var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var3d_nc(:,:,:,i,i_source,1),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
@@ -563,21 +563,21 @@
                     !write(*,'(6i)') dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, var3d_nc(:,:,:,i,i_source,p_loop_index),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !write(*,*) status_nc
-                    write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var3d_nc(:,:,:,i,i_source,p_loop_index)),maxval(var3d_nc(:,:,:,i,i_source,p_loop_index))
+                    write(unit_logfile,'(A,I,A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp),' (min, max): ',minval(var3d_nc(:,:,:,i,i_source,p_loop_index)),maxval(var3d_nc(:,:,:,i,i_source,p_loop_index))
                     !if (i.eq.emis_nc_index) write(*,*) 'HERE',sum(var3d_nc(:,:,:,i,i_source,p_loop_index)),i_source,p_loop_index
                 elseif (temp_num_dims.eq.4) then
                     if (i_file.eq.2.and.i.eq.ZTOP_nc_index) then
                         !Don't try to read
-                    elseif (i.eq.conc_nc_index.and.i_pollutant.eq.pm10_nc_index) then
+                    elseif (i.eq.conc_nc_index.and.i_pollutant.eq.pm10_nc_index.and.i_source.ne.extrasource_nc_index) then
                         var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,1),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,1)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,1))
+                        write(unit_logfile,'(A,I,A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,1)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,1))
                         write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var4d_nc(:,:,1,:,i,i_source,1))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4))
                         var_name_nc_temp2=var_name_nc(i,pm25_nc_index,i_source)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,2),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,2)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,2))
+                        write(unit_logfile,'(A,I,A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,2)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,2))
                         write(unit_logfile,'(2A,f16.4,3i)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var4d_nc(:,:,1,:,i,i_source,2))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4)),size(pm_var4d_nc,1),size(pm_var4d_nc,2),size(pm_var4d_nc,4)
                         var4d_nc(:,:,:,:,i,i_source,p_loop_index)=pm_var4d_nc(:,:,:,:,i,i_source,1)+pm_var4d_nc(:,:,:,:,i,i_source,2)
                         write(unit_logfile,'(2A,f16.4,3i)') ' Average of: ',trim(var_name_nc(i,pm10_nc_index,i_source)),sum(var4d_nc(:,:,:,:,i,i_source,p_loop_index))/(size(var4d_nc,1)*size(var4d_nc,2)*size(var4d_nc,4)),size(var4d_nc,1),size(var4d_nc,2),size(var4d_nc,4)
@@ -585,7 +585,7 @@
                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,p_loop_index),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
                     !var4d_nc(:,:,:,:,i,i_source)=real(temp_var4d_nc(:,:,:,:))
-                    write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var4d_nc(:,:,:,:,i,i_source,p_loop_index)),maxval(var4d_nc(:,:,:,:,i,i_source,p_loop_index))
+                    write(unit_logfile,'(A,I,A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp),' (min, max): ',minval(var4d_nc(:,:,:,:,i,i_source,p_loop_index)),maxval(var4d_nc(:,:,:,:,i,i_source,p_loop_index))
                     !if (i.eq.precip_nc_index) then 
                     !    write(*,*) maxval(var4d_nc(:,:,:,:,i,i_source,p_loop_index))
                     !    stop
@@ -1069,14 +1069,29 @@
         !write(unit_logfile,'(A,2es12.2)') ' 4D Filling the EMEP exhaust emissions with PM25 emissions ',sum(var4d_nc(:,:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var4d_nc(:,:,:,:,,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
     !endif
     if (use_alternative_ppm_variable_for_lf) then
-        write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm25_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index))
-        var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm25_nc_index))
-        pm_var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,2)=var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))
-        write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index))
-        pm_var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,1)=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pmco_nc_index))
-        !var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pmco_nc_index)=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pmco_nc_index)
-       ! write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm10_nc_index,extrasource_nc_index))
-        var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))+var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pmco_nc_index))
+        if (alternative_ppm_variable_for_lf_dim.eq.4) then
+            write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm25_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index))
+            var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm25_nc_index))
+            pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,2)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))
+            write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index))
+            pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,1)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))
+            !var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pmco_nc_index)=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pmco_nc_index)
+           ! write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm10_nc_index,extrasource_nc_index))
+            var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))+var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))
+        elseif (alternative_ppm_variable_for_lf_dim.eq.3) then
+            write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm25_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index))
+            var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))=var3d_nc(:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm25_nc_index))
+            pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,2)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))
+            write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index))
+            pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,1)=var3d_nc(:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))
+            !var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pmco_nc_index)=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pmco_nc_index)
+           ! write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm10_nc_index,extrasource_nc_index))
+            !var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=var3d_nc(:,:,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))+var3d_nc(:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))            
+            var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,2)+pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,1)           
+        else
+            write(unit_logfile,'(4A)')' Not replacing variable ',trim(var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index))            
+        endif
+        
     endif
     
     !Transfer all source values to all the sources for use in source looping later
@@ -1123,7 +1138,7 @@
         !For nh3 only use the comp value not the value in the local fraction file
         !NOTE: TEMPORARY
         if (use_comp_temporary) then
-            write(*,*) 'WARNING: TEMPORARILLY USING COMP FOR LF SOURCE SCALING FOR NH3',pollutant_loop_back_index(nh3_nc_index),nh3_nc_index
+            write(*,*) 'WARNING: TEMPORARALLY USING COMP FOR LF SOURCE SCALING FOR NH3',pollutant_loop_back_index(nh3_nc_index),nh3_nc_index
             do i_source=1,n_source_index
             if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.i_source.eq.allsource_index) then
             var3d_nc(:,:,:,conc_nc_index,i_source,pollutant_loop_back_index(nh3_nc_index))=comp_var3d_nc(:,:,:,nh3_nc_index)               

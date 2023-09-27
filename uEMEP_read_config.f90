@@ -871,6 +871,7 @@
         wind_level_zc_flag=read_name_logical('wind_level_zc_flag',wind_level_zc_flag,unit_in,unit_logfile)
 
         use_alternative_ppm_variable_for_lf=read_name_logical('use_alternative_ppm_variable_for_lf',use_alternative_ppm_variable_for_lf,unit_in,unit_logfile)
+        alternative_ppm_variable_for_lf_dim=read_name_integer('alternative_ppm_variable_for_lf_dim',alternative_ppm_variable_for_lf_dim,unit_in,unit_logfile)
         
         var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index)=read_name_char('var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index)',var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index),unit_in,unit_logfile)
         var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index)=read_name_char('var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index)',var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index),unit_in,unit_logfile)

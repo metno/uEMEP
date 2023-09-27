@@ -1114,6 +1114,7 @@
     logical :: wind_vectors_10m_available=.false.
     
     logical :: use_alternative_ppm_variable_for_lf=.false.
+    integer :: alternative_ppm_variable_for_lf_dim=4
     
     end module uEMEP_definitions
     

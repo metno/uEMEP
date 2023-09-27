@@ -452,9 +452,9 @@
             !if (i_nc.ge.1.and.i_nc.le.dim_length_nc(x_dim_nc_index).and.j_nc.ge.1.and.j_nc.le.dim_length_nc(y_dim_nc_index)) then
             
             !Read from the local fraction file
-            temp_EMEP(i_nc,j_nc,:,emep_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,conc_nc_index,1:n_source_index,:)
+            temp_EMEP(i_nc,j_nc,:,emep_subgrid_index,1:n_source_index,:)=var3d_nc(i_nc,j_nc,:,conc_nc_index,1:n_source_index,:)
             if (trace_emissions_from_in_region) then
-                temp_EMEP_from_in_region(i_nc,j_nc,:,emep_subgrid_index,:,:)=var3d_nc(i_nc,j_nc,:,conc_nc_index,1:n_source_index,:)
+                temp_EMEP_from_in_region(i_nc,j_nc,:,emep_subgrid_index,1:n_source_index,:)=var3d_nc(i_nc,j_nc,:,conc_nc_index,1:n_source_index,:)
             endif
                      
             !Centre of EMEP grid in lat lon or local coordinates
@@ -541,7 +541,7 @@
                         
                     endif
                     
-                    temp_EMEP(i_nc,j_nc,:,emep_local_subgrid_index,:,:)=temp_EMEP(i_nc,j_nc,:,emep_local_subgrid_index,:,:) &
+                    temp_EMEP(i_nc,j_nc,:,emep_local_subgrid_index,1:n_source_index,:)=temp_EMEP(i_nc,j_nc,:,emep_local_subgrid_index,1:n_source_index,:) &
                                     +lc_var3d_nc(ii_nc_w,jj_nc_w,i_nc,j_nc,:,lc_local_nc_index,1:n_source_index,:)*weighting_val
     
                     
