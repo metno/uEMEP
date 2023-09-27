@@ -2208,7 +2208,7 @@
             !write(unit_logfile_in,'(a,3i)') 'Saving as average multiple time loop (nt,counter_av):',nt,counter_av,time_seconds_output_nc(nt)
             
         endif
-        
+    
     endif
     
     !Mask the regions if required

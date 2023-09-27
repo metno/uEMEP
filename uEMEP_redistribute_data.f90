@@ -261,11 +261,11 @@
     !Calculate redistributed subgrid allsource concentrations
     subgrid(:,:,:,local_subgrid_index,allsource_index,:)=0.
     do source_index=1,n_source_index
-        if (calculate_source(source_index)) then
+        if (calculate_source(source_index).and.source_index.ne.allsource_index) then
              subgrid(:,:,:,local_subgrid_index,allsource_index,:)=subgrid(:,:,:,local_subgrid_index,allsource_index,:)+subgrid(:,:,:,local_subgrid_index,source_index,:)
         endif
         !Add the selected EMEP local sources to this as well, if they are not already included in the subgrid downscaling
-        if (calculate_EMEP_source(source_index).and..not.calculate_source(source_index)) then
+        if (calculate_EMEP_source(source_index).and..not.calculate_source(source_index).and.source_index.ne.allsource_index) then
              subgrid(:,:,:,local_subgrid_index,allsource_index,:)=subgrid(:,:,:,local_subgrid_index,allsource_index,:)+subgrid(:,:,:,emep_local_subgrid_index,source_index,:)
             !write(*,*) source_index,sum(subgrid(:,:,:,emep_local_subgrid_index,source_index,:)),sum(subgrid(:,:,:,local_subgrid_index,allsource_index,:)),sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))
         endif
@@ -293,6 +293,7 @@
             subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant) &
             +(comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant))
             write(unit_logfile,'(A,f12.2)') 'MEAN ADD REST NONLOCAL: ',sum((comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            if (sum(comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)).lt.0) write(unit_logfile,'(A)') 'WARNING!!!: PPM EMEP is more than total EMEP PM. Negative non PPM contributions.'
         endif
     
         subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,local_subgrid_index,allsource_index,i_pollutant)+subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)

@@ -153,7 +153,7 @@
         var_name_nc(ugrid_nc_index,all_nc_index,allsource_nc_index)='u_wind'
         var_name_nc(vgrid_nc_index,all_nc_index,allsource_nc_index)='v_wind'
         var_name_nc(u10_nc_index,all_nc_index,allsource_nc_index)='met2d_u10'
-        var_name_nc(v10_nc_index,all_nc_index,allsource_nc_index)='met2d_v10'
+        var_name_nc(v10_nc_index,all_nc_index,allsource_nc_index)='met2d_u10'
         var_name_nc(FFgrid_nc_index,all_nc_index,allsource_nc_index)='wind_speed'
         var_name_nc(FF10_nc_index,all_nc_index,allsource_nc_index)='ws10m'
         var_name_nc(inv_FFgrid_nc_index,all_nc_index,allsource_nc_index)='inv_wind_speed'
@@ -247,7 +247,7 @@
         !comp_name_nc(pm25_nc_index)='pm25'
         !comp_name_nc(pmco_nc_index)='D3_ug_PMCO'
         comp_name_nc(pm10_nc_index)='D3_ug_PM10'
-        comp_name_nc(pm25_nc_index)='D3_ug_PMFINE'
+        comp_name_nc(pm25_nc_index)='D3_ug_PM25'
         comp_name_nc(pmex_nc_index)='Exhaust'
         !comp_name_nc(pm25_nc_index)='SURF_ug_PM25_rh50'
         comp_name_nc(co_nc_index)='D3_ug_CO'
@@ -409,8 +409,6 @@
     enddo
     j=j+1;subgrid_ugrid_file_index=j
     j=j+1;subgrid_vgrid_file_index=j
-    j=j+1;subgrid_u10_file_index=j
-    j=j+1;subgrid_v10_file_index=j
     j=j+1;subgrid_hmix_file_index=j
     j=j+1;subgrid_kz_file_index=j
     j=j+1;subgrid_logz0_file_index=j
