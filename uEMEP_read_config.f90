@@ -870,6 +870,8 @@
         
         wind_level_zc_flag=read_name_logical('wind_level_zc_flag',wind_level_zc_flag,unit_in,unit_logfile)
 
+        use_alternative_ppm_variable_for_lf=read_name_logical('use_alternative_ppm_variable_for_lf',use_alternative_ppm_variable_for_lf,unit_in,unit_logfile)
+        
 
     close (unit_in)
     

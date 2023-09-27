@@ -513,7 +513,7 @@
         !Loop through the sources
         do i_source=1,n_source_nc_index
         !write(*,*) i_source,trim(source_file_str(i_source)),uEMEP_to_EMEP_sector(i_source),calculate_source(i_source),calculate_EMEP_source(i_source)
-        if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source).or.i_source.eq.allsource_index) then
+        if (calculate_source(i_source).or.calculate_EMEP_source(i_source).or.save_EMEP_source(i_source).or.i_source.eq.allsource_index.or.i_source.eq.extrasource_nc_index) then
         !var_name_nc(num_var_nc,n_compound_nc_index,n_source_nc_index)
             
         !Loop through the variables
@@ -1068,6 +1068,10 @@
         !write(unit_logfile,'(A,2es12.2)') ' 3D Filling the EMEP exhaust concentrations with PM25 emissions ',sum(var3d_nc(:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var3d_nc(:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
         !write(unit_logfile,'(A,2es12.2)') ' 4D Filling the EMEP exhaust emissions with PM25 emissions ',sum(var4d_nc(:,:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var4d_nc(:,:,:,:,,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
     !endif
+    if (use_alternative_ppm_variable_for_lf) then
+        write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm25_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index))
+        var4d_nc(:,:,:,:,pm25_nc_index,allsource_nc_index,:)=var4d_nc(:,:,:,:,pm25_nc_index,extrasource_nc_index,:)
+    endif
     
     !Transfer all source values to all the sources for use in source looping later
     do i_source=1,n_source_nc_index

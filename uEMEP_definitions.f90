@@ -138,11 +138,11 @@
     !All the other GNFR emissions
     integer publicpower_nc_index,fugitive_nc_index,solvents_nc_index,aviation_nc_index,offroad_nc_index,waste_nc_index,livestock_nc_index,other_nc_index
     integer traffic_exhaust_nc_index,traffic_nonexhaust_nc_index,traffic_gasoline_nc_index,traffic_diesel_nc_index,traffic_gas_nc_index
-    integer publicpower_point_nc_index,publicpower_area_nc_index
+    integer publicpower_point_nc_index,publicpower_area_nc_index,extrasource_nc_index
     parameter (publicpower_nc_index=7,fugitive_nc_index=8,solvents_nc_index=9,aviation_nc_index=10,offroad_nc_index=11,waste_nc_index=12,livestock_nc_index=13,other_nc_index=14)
     parameter (traffic_exhaust_nc_index=15,traffic_nonexhaust_nc_index=16,traffic_gasoline_nc_index=17,traffic_diesel_nc_index=18,traffic_gas_nc_index=19)
-    parameter (publicpower_point_nc_index=20,publicpower_area_nc_index=21)
-    parameter (n_source_nc_index=21)
+    parameter (publicpower_point_nc_index=20,publicpower_area_nc_index=21,extrasource_nc_index=22)
+    parameter (n_source_nc_index=22)
     
     integer convert_GNFR_to_uEMEP_sector_index(n_source_nc_index)
     integer convert_uEMEP_to_GNFR_sector_index(n_source_nc_index)
@@ -1113,6 +1113,7 @@
     logical :: save_emep_region_mask=.false.
     logical :: wind_vectors_10m_available=.false.
     
+    logical :: use_alternative_ppm_variable_for_lf=.false.
     
     end module uEMEP_definitions
     
