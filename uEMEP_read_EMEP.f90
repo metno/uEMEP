@@ -1001,16 +1001,16 @@
                  write(unit_logfile,'(A,2A,4f16.4)') ' Average of: ','pm25',' (sum species, total pm, D3, SURF): ', &
                     sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
                     sum(species_var3d_nc(:,:,:,pm25_sp_index,sp_pm_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
-                    sum(comp_var4d_nc(:,:,surface_level_nc,:,pollutant_loop_back_index(pm25_nc_index)))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
-                    sum(comp_var3d_nc(:,:,:,pollutant_loop_back_index(pm25_nc_index)))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
+                    sum(comp_var4d_nc(:,:,surface_level_nc,:,pm25_nc_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
+                    sum(var3d_nc(:,:,:,conc_nc_index,allsource_index,pollutant_loop_back_index(pm25_nc_index)))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                  
                  species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
                  
                  write(unit_logfile,'(A,2A,4f16.4)') ' Average of: ','pm10',' (sum species, total pm, D3, SURF): ', &
                     sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
                     sum(species_var3d_nc(:,:,:,pm10_sp_index,sp_pm_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
-                    sum(comp_var4d_nc(:,:,surface_level_nc,:,pollutant_loop_back_index(pm10_nc_index)))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
-                    sum(comp_var3d_nc(:,:,:,pollutant_loop_back_index(pm10_nc_index)))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
+                    sum(comp_var4d_nc(:,:,surface_level_nc,:,pm10_nc_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
+                    sum(var3d_nc(:,:,:,conc_nc_index,allsource_index,pollutant_loop_back_index(pm10_nc_index)))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
             
             endif
             
@@ -1164,9 +1164,11 @@
             if (pollutant_loop_index(p_loop).eq.pm10_nc_index) then
                 lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,1)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,1) &
                     +pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,2)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,2)
+            elseif (pollutant_loop_index(p_loop).eq.pm25_nc_index) then
+                lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,2)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,2)
             else
-                !lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,:,p_loop)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop) !This was before, so it used the D3 value, but not the surface value. D3 is not always read
-                lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,2)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop)
+                lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,:,p_loop)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop) !This was before, so it used the D3 value, but not the surface value. D3 is not always read
+                !lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,2)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop)
                 !write(*,*) sum(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)),sum(var3d_nc(:,:,:,conc_nc_index,:,p_loop)),sum(lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop))          
             endif
             enddo
