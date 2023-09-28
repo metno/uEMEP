@@ -869,7 +869,9 @@
     f_no2=real(-BB/2.*((exp(AA+BB*td)-1.)/(exp(AA+BB*td)+1.))+b/2.)
     !if (BB*td.gt.50.) f_no2=-BB/2.+b/2.
     if (isnan(f_no2)) f_no2=-BB/2.+b/2.
-    
+
+    !write(*,*) f_no2,AA,nox_loc,f_no2_loc,AA,BB,Jd,mol(nox_i),k1
+
     fac_sqrt=max(0.0,(1+f_ox+Jd)**2-4.*f_ox)
     f_no2_ps=0.5*((1+f_ox+Jd)-sqrt(fac_sqrt))
     p_out=f_no2/f_no2_ps

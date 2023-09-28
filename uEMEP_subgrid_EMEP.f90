@@ -379,6 +379,13 @@
             !subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,:,:)=subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)
         endif
         
+        if (calculate_deposition_flag) then
+                subgrid(i,j,:,drydepo_nonlocal_subgrid_index,:,:)=subgrid(i,j,:,drydepo_nonlocal_subgrid_index,:,:) &
+                                                                    *subgrid(i,j,:,emep_nonlocal_subgrid_index,:,:)/subgrid(i,j,:,emep_subgrid_index,:,:)
+                subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,:,:)=subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,:,:) &
+                                                                    *subgrid(i,j,:,emep_nonlocal_subgrid_index,:,:)/subgrid(i,j,:,emep_subgrid_index,:,:)
+        endif
+
    endif
 
    !Loop through subgrid and find those subgrids within EMEP grids and allocate concentrations directly from EMEP grids.
@@ -700,7 +707,14 @@
             !subgrid_from_in_region(:,:,:,emep_nonlocal_subgrid_index,:,:)=subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)
         endif
         
-        if (allocated(temp_EMEP)) deallocate (temp_EMEP)
+            if (calculate_deposition_flag) then
+                subgrid(i,j,:,drydepo_nonlocal_subgrid_index,:,:)=subgrid(i,j,:,drydepo_nonlocal_subgrid_index,:,:) &
+                                                                    *subgrid(i,j,:,emep_nonlocal_subgrid_index,:,:)/subgrid(i,j,:,emep_subgrid_index,:,:)
+                subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,:,:)=subgrid(i,j,:,wetdepo_nonlocal_subgrid_index,:,:) &
+                                                                    *subgrid(i,j,:,emep_nonlocal_subgrid_index,:,:)/subgrid(i,j,:,emep_subgrid_index,:,:)
+            endif
+
+            if (allocated(temp_EMEP)) deallocate (temp_EMEP)
         if (allocated(temp_comp_EMEP)) deallocate (temp_comp_EMEP)
         if (allocated(temp_species_EMEP)) deallocate (temp_species_EMEP)
         if (allocated(temp_EMEP_from_in_region)) deallocate (temp_EMEP_from_in_region)
@@ -708,6 +722,7 @@
     endif
 
     !Areal interpolation of the subgrid nearest neighbour calculations EMEP_grid_interpolation_flag=0
+    !Do not use, very slow
     if (EMEP_grid_interpolation_flag.eq.5) then
         
         write(unit_logfile,'(A)')'Interpolating uEMEP local subgrid nearest neighbour contributions using area weighted interpolation'
@@ -1086,9 +1101,7 @@
 
             xpos_subgrid=xproj_subgrid(i,j)
             ypos_subgrid=yproj_subgrid(i,j)
-            xpos_subgrid=var1d_nc(i_nc,lon_nc_index)
-            ypos_subgrid=var1d_nc(j_nc,lat_nc_index)
-                       
+                    
             !Set the edges of the search area surounding the target grid
             xpos_area_min=-xpos_limit
             xpos_area_max=+xpos_limit
@@ -1163,7 +1176,9 @@
                 else
                     weighting_val=0.
                 endif            
-                    
+
+                !write(*,*) ii,jj,weighting_val,(ypos_max2-ypos_min2),(xpos_max2-xpos_min2)
+
                 !Area weighting (interpolated) EMEP concentrations, independent of where it comes from
                 subgrid(i,j,tt,emep_subgrid_index,:,:)=subgrid(i,j,tt,emep_subgrid_index,1:n_source_index,:)+var3d_nc(ii_nc,jj_nc,tt,conc_nc_index,1:n_source_index,:)*weighting_val
                 if (trace_emissions_from_in_region) then  
@@ -1190,29 +1205,29 @@
                 endif
 
                 if (first_interpolate_lf) then
-                !Set the area surrounding the multi LF grid, centred on 0
-                xpos_lf_area_min=(ii-1/2.+dgrid_lf_offset_x)*dgrid_nc(lon_nc_index)*local_fraction_grid_size_scaling_temp
-                xpos_lf_area_max=(ii+1/2.+dgrid_lf_offset_x)*dgrid_nc(lon_nc_index)*local_fraction_grid_size_scaling_temp
-                ypos_lf_area_min=(jj-1/2.+dgrid_lf_offset_y)*dgrid_nc(lat_nc_index)*local_fraction_grid_size_scaling_temp
-                ypos_lf_area_max=(jj+1/2.+dgrid_lf_offset_y)*dgrid_nc(lat_nc_index)*local_fraction_grid_size_scaling_temp
+                    !Set the area surrounding the multi LF grid, centred on 0
+                    xpos_lf_area_min=(ii-1/2.+dgrid_lf_offset_x)*dgrid_nc(lon_nc_index)*local_fraction_grid_size_scaling_temp
+                    xpos_lf_area_max=(ii+1/2.+dgrid_lf_offset_x)*dgrid_nc(lon_nc_index)*local_fraction_grid_size_scaling_temp
+                    ypos_lf_area_min=(jj-1/2.+dgrid_lf_offset_y)*dgrid_nc(lat_nc_index)*local_fraction_grid_size_scaling_temp
+                    ypos_lf_area_max=(jj+1/2.+dgrid_lf_offset_y)*dgrid_nc(lat_nc_index)*local_fraction_grid_size_scaling_temp
                 
-                xpos_min3=max(xpos_area_min,xpos_lf_area_min)
-                xpos_max3=min(xpos_area_max,xpos_lf_area_max)
-                ypos_min3=max(ypos_area_min,ypos_lf_area_min)
-                ypos_max3=min(ypos_area_max,ypos_lf_area_max)
+                    xpos_min3=max(xpos_area_min,xpos_lf_area_min)
+                    xpos_max3=min(xpos_area_max,xpos_lf_area_max)
+                    ypos_min3=max(ypos_area_min,ypos_lf_area_min)
+                    ypos_max3=min(ypos_area_max,ypos_lf_area_max)
                 
-                !Calculate area weighting LF grid
-                if (xpos_max3.gt.xpos_min3.and.ypos_max3.gt.ypos_min3) then
-                    weighting_val3=(ypos_max3-ypos_min3)*(xpos_max3-xpos_min3)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)/local_fraction_grid_size_scaling_temp/local_fraction_grid_size_scaling_temp
-                else
-                    weighting_val3=0.
-                endif            
+                    !Calculate area weighting LF grid
+                    if (xpos_max3.gt.xpos_min3.and.ypos_max3.gt.ypos_min3) then
+                        weighting_val3=(ypos_max3-ypos_min3)*(xpos_max3-xpos_min3)/dgrid_nc(lon_nc_index)/dgrid_nc(lat_nc_index)/local_fraction_grid_size_scaling_temp/local_fraction_grid_size_scaling_temp
+                    else
+                        weighting_val3=0.
+                    endif            
 
                 else
                     weighting_val3=weighting_val
                 endif
                 
-                !write(*,*) weighting_val3
+                !write(*,*) ii,jj,ii_nc,jj_nc,weighting_val3
                 
                 EMEP_local_contribution(:,:,:,:)=EMEP_local_contribution(:,:,:,:)+lc_var3d_nc(:,:,ii_nc,jj_nc,tt,lc_local_nc_index,1:n_source_index,:)*weighting_val3
 
@@ -1222,7 +1237,7 @@
                         +lc_var3d_nc(:,:,ii_nc,jj_nc,tt,lc_local_nc_index,1:n_source_index,:)*weighting_val3*temp_EMEP_grid_fraction_in_region(:,:,:,:)                    
                 endif
 
-                ! write(*,*) ii,jj,ii_nc,jj_nc,sum(EMEP_local_contribution(:,:,allsource_index,1)),sum(EMEP_local_contribution_from_in_region(:,:,allsource_index,1)),sum(temp_EMEP_grid_fraction_in_region(:,:,allsource_index,1))
+                 !write(*,*) ii,jj,ii_nc,jj_nc,sum(EMEP_local_contribution(:,:,allsource_index,1)),sum(EMEP_local_contribution_from_in_region(:,:,allsource_index,1)),sum(temp_EMEP_grid_fraction_in_region(:,:,allsource_index,1))
                 !write(*,*) ii,jj,ii_nc,jj_nc,EMEP_local_contribution(:,:,i_source,1),EMEP_local_contribution_from_in_region:,:,i_source,1)
                 endif
             enddo

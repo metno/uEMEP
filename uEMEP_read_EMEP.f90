@@ -1069,20 +1069,20 @@
         !write(unit_logfile,'(A,2es12.2)') ' 4D Filling the EMEP exhaust emissions with PM25 emissions ',sum(var4d_nc(:,:,:,:,conc_nc_index,traffic_index,pollutant_loop_back_index(pmex_nc_index))),sum(var4d_nc(:,:,:,:,,traffic_index,pollutant_loop_back_index(pm25_nc_index)))      
     !endif
     if (use_alternative_ppm_variable_for_lf) then
+        write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm25_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index))
+        write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index))
+        write(unit_logfile,'(A,f12.3)')' PPM2.5 before correction variables are used: ',sum(pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,2))/size(pm_var4d_nc,1)/size(pm_var4d_nc,2)/size(pm_var4d_nc,4)
+        write(unit_logfile,'(A,f12.3)')' PPMCO  before correction variables are used: ',sum(pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,1))/size(pm_var4d_nc,1)/size(pm_var4d_nc,2)/size(pm_var4d_nc,4)
         if (alternative_ppm_variable_for_lf_dim.eq.4) then
-            write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm25_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index))
             var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm25_nc_index))
             pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,2)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))
-            write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index))
             pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,1)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))
             !var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pmco_nc_index)=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pmco_nc_index)
            ! write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm10_nc_index,extrasource_nc_index))
             var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))+var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))
         elseif (alternative_ppm_variable_for_lf_dim.eq.3) then
-            write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm25_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index))
             var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))=var3d_nc(:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm25_nc_index))
             pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,2)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))
-            write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index))
             pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,1)=var3d_nc(:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))
             !var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pmco_nc_index)=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pmco_nc_index)
            ! write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm10_nc_index,extrasource_nc_index))
@@ -1091,7 +1091,8 @@
         else
             write(unit_logfile,'(4A)')' Not replacing variable ',trim(var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index))            
         endif
-        
+        write(unit_logfile,'(A,f12.3)')' PPM2.5 after correction variables are used: ',sum(pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,2))/size(pm_var4d_nc,1)/size(pm_var4d_nc,2)/size(pm_var4d_nc,4)
+        write(unit_logfile,'(A,f12.3)')' PPMCO  after correction variables are used: ',sum(pm_var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,1))/size(pm_var4d_nc,1)/size(pm_var4d_nc,2)/size(pm_var4d_nc,4)
     endif
     
     !Transfer all source values to all the sources for use in source looping later
@@ -1470,6 +1471,12 @@
         !stop
         endif
         
+        !Test for Ceclius or Kelvin
+        if (maxval(var3d_nc(:,:,:,t2m_nc_index,:,meteo_p_loop_index)).lt.150) then
+            write(unit_logfile,'(a,f12.2)')'WARNING: Temperature appears to be in Celcius. Converting to Kelvin. Max temperature is: ',maxval(var3d_nc(:,:,:,T2m_nc_index,:,meteo_p_loop_index))
+            var3d_nc(:,:,:,t2m_nc_index,:,meteo_p_loop_index)=var3d_nc(:,:,:,T2m_nc_index,:,meteo_p_loop_index)+273.13
+        endif
+    
         !Deallocate temporary arrays
         if (allocated(var1d_nc_dp)) deallocate (var1d_nc_dp)
         if (allocated(var2d_nc_dp)) deallocate (var2d_nc_dp)
