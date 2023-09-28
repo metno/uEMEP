@@ -998,17 +998,19 @@
             
                  species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm25_sp_index,1:sp_ppm_index),4)
                 
-                 write(unit_logfile,'(A,2A,3f16.4)') ' Average of: ','pm25',' (sum species, total pm, D3): ', &
+                 write(unit_logfile,'(A,2A,4f16.4)') ' Average of: ','pm25',' (sum species, total pm, D3, SURF): ', &
                     sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
                     sum(species_var3d_nc(:,:,:,pm25_sp_index,sp_pm_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
-                    sum(comp_var4d_nc(:,:,1,:,pm25_nc_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
+                    sum(comp_var4d_nc(:,:,1,:,pm25_nc_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
+                    sum(comp_var3d_nc(:,:,:,pm25_nc_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                  
                  species_temp_var3d_nc(:,:,:)=sum(species_var3d_nc(:,:,:,pm10_sp_index,1:sp_ppm_index),4)
                  
-                 write(unit_logfile,'(A,2A,3f16.4)') ' Average of: ','pm10',' (sum species, total pm, D3): ', &
+                 write(unit_logfile,'(A,2A,4f16.4)') ' Average of: ','pm10',' (sum species, total pm, D3, SURF): ', &
                     sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
                     sum(species_var3d_nc(:,:,:,pm10_sp_index,sp_pm_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
-                    sum(comp_var4d_nc(:,:,1,:,pm10_nc_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
+                    sum(comp_var4d_nc(:,:,1,:,pm10_nc_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3)), &
+                    sum(comp_var3d_nc(:,:,:,pm10_nc_index))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
             
             endif
             
