@@ -1076,20 +1076,20 @@
         write(unit_logfile,'(A,f12.3)')' PPM2.5 before correction variables are used: ',sum(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,2))/size(pm_var4d_nc,1)/size(pm_var4d_nc,2)/size(pm_var4d_nc,4)
         write(unit_logfile,'(A,f12.3)')' PPMCO  before correction variables are used: ',sum(pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,1))/size(pm_var4d_nc,1)/size(pm_var4d_nc,2)/size(pm_var4d_nc,4)
         if (alternative_ppm_variable_for_lf_dim.eq.4) then
-            var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm25_nc_index))
-            pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,2)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))
+            var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm25_nc_index))
+            pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,2)=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))
             pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,1)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))
             !var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pmco_nc_index)=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pmco_nc_index)
            ! write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm10_nc_index,extrasource_nc_index))
-            var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))+var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))
+            var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))+var4d_nc(:,:,surface_level_nc,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))
         elseif (alternative_ppm_variable_for_lf_dim.eq.3) then
-            var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))=var3d_nc(:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm25_nc_index))
-            pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,2)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))
+            var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))=var3d_nc(:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm25_nc_index))
+            pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,2)=var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))
             pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,1)=var3d_nc(:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))
             !var4d_nc(:,:,:,:,conc_nc_index,allsource_nc_index,pmco_nc_index)=var4d_nc(:,:,:,:,conc_nc_index,extrasource_nc_index,pmco_nc_index)
            ! write(unit_logfile,'(4A)')' Replacing variable ',trim(var_name_nc(conc_nc_index,pm10_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pm10_nc_index,extrasource_nc_index))
             !var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=var3d_nc(:,:,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm25_nc_index))+var3d_nc(:,:,:,conc_nc_index,extrasource_nc_index,pollutant_loop_back_index(pm10_nc_index))            
-            var4d_nc(:,:,surface_level_nc,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,2)+pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,1)           
+            var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,pollutant_loop_back_index(pm10_nc_index))=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,2)+pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,allsource_nc_index,1)           
         else
             write(unit_logfile,'(4A)')' Not replacing variable ',trim(var_name_nc(conc_nc_index,pmco_nc_index,allsource_nc_index)),' with ',trim(var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index))            
         endif
