@@ -1113,12 +1113,12 @@
         lc_var3d_nc=lc_var4d_nc(:,:,:,:,surface_level_nc_2,:,:,:,:)
         !var3d_nc(:,:,:,conc_nc_index,:)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,:)
         !Don't do this because if 3d is read then it is obliterated
-        if (sum(var3d_nc(:,:,:,conc_nc_index,:,:)).eq.0) then
+        !if (sum(var3d_nc(:,:,:,conc_nc_index,:,:)).eq.0) then
         var3d_nc(:,:,:,conc_nc_index,:,:)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,:,:) !Changed tis from surface_level_nc_2 to surface_level_nc under lf changes
-        endif
-        if (sum(comp_var3d_nc(:,:,:,:)).eq.0) then
+        !endif
+        !if (sum(comp_var3d_nc(:,:,:,:)).eq.0) then
         comp_var3d_nc(:,:,:,:)=comp_var4d_nc(:,:,surface_level_nc,:,:)
-        endif
+        !endif
         
         if (allocated(lc_var4d_nc)) deallocate(lc_var4d_nc)
         if (allocated(comp_var4d_nc)) deallocate(comp_var4d_nc)
@@ -1173,7 +1173,7 @@
                 lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,2)*pm_lc_var4d_nc(i,j,:,:,surface_level_nc_2,:,lc_frac_nc_index,:,2)
             else
                 lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=var4d_nc(:,:,surface_level_nc,:,conc_nc_index,:,p_loop)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop) !This was before, so it used the D3 value, but not the surface value. D3 is not always read
-                lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=max(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop),var3d_nc(:,:,:,conc_nc_index,:,p_loop)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop)) !Choose the max of the 3d and 4d values, so chooses one or the other
+                !lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=max(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop),var3d_nc(:,:,:,conc_nc_index,:,p_loop)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop)) !Choose the max of the 3d and 4d values, so chooses one or the other
                 !lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)=pm_var4d_nc(:,:,surface_level_nc_2,:,conc_nc_index,:,2)*lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop)
                 !write(*,*) sum(lc_var3d_nc(i,j,:,:,:,lc_local_nc_index,:,p_loop)),sum(var3d_nc(:,:,:,conc_nc_index,:,p_loop)),sum(lc_var3d_nc(i,j,:,:,:,lc_frac_nc_index,:,p_loop))          
             endif
