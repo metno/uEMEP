@@ -7,7 +7,16 @@
     
     real, allocatable :: subgrid_dummy(:,:,:,:,:,:)
     real, allocatable :: comp_subgrid_dummy(:,:,:,:)
+    real, allocatable :: comp_source_subgrid_dummy(:,:,:,:,:)
+    real, allocatable :: comp_source_EMEP_subgrid_dummy(:,:,:,:,:)
+    real, allocatable :: comp_source_EMEP_additional_subgrid_dummy(:,:,:,:,:)
+    
     integer in_region_loop, n_in_region_loop
+
+    !These are calculated in the Chemistry routine. Fist declared here. Are global variables
+    if (.not.allocated(comp_source_subgrid)) allocate(comp_source_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+    if (.not.allocated(comp_source_EMEP_subgrid)) allocate(comp_source_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+    if (.not.allocated(comp_source_EMEP_additional_subgrid)) allocate(comp_source_EMEP_additional_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
 
     if (trace_emissions_from_in_region) then
         n_in_region_loop=2
@@ -15,6 +24,13 @@
         if (.not.allocated(comp_subgrid_dummy))allocate (comp_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
         subgrid_dummy=0 
         comp_subgrid_dummy=0 
+        if (.not.allocated(comp_source_subgrid_dummy)) allocate(comp_source_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        if (.not.allocated(comp_source_EMEP_subgrid_dummy)) allocate(comp_source_EMEP_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        if (.not.allocated(comp_source_EMEP_additional_subgrid_dummy)) allocate(comp_source_EMEP_additional_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        comp_source_subgrid_dummy=0
+        comp_source_EMEP_subgrid_dummy=0
+        comp_source_EMEP_additional_subgrid_dummy=0
+
     else
         n_in_region_loop=1        
     endif
@@ -30,18 +46,35 @@
        !Loop over the normal subgrid and the in region subgrid by saving  to a dummy variable and pputting back when finished
         if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then        
             subgrid_dummy=subgrid
-            subgrid=subgrid_from_in_region
             comp_subgrid_dummy=comp_subgrid
+            
+            subgrid=subgrid_from_in_region
             comp_subgrid=comp_subgrid_from_in_region
+            !comp_source_subgrid=comp_source_subgrid_from_in_region
+            !comp_source_EMEP_subgrid=comp_source_EMEP_subgrid_from_in_region
+            !comp_source_EMEP_additional_subgrid=comp_source_EMEP_additional_subgrid_from_in_region
+            
+            !These are calculated in the chemistry routine
+            comp_source_subgrid_dummy=comp_source_subgrid
+            comp_source_EMEP_subgrid_dummy=comp_source_EMEP_subgrid
+            comp_source_EMEP_additional_subgrid_dummy=comp_source_EMEP_additional_subgrid
         endif
 
         call uEMEP_chemistry
         
         if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
             subgrid_from_in_region=subgrid
-            subgrid=subgrid_dummy
             comp_subgrid_from_in_region=comp_subgrid
+            comp_source_subgrid_from_in_region=comp_source_subgrid
+            comp_source_EMEP_subgrid_from_in_region=comp_source_EMEP_subgrid
+            comp_source_EMEP_additional_subgrid_from_in_region=comp_source_EMEP_additional_subgrid
+
+            subgrid=subgrid_dummy
             comp_subgrid=comp_subgrid_dummy
+            comp_source_subgrid=comp_source_subgrid_dummy
+            comp_source_EMEP_subgrid=comp_source_EMEP_subgrid_dummy
+            comp_source_EMEP_additional_subgrid=comp_source_EMEP_additional_subgrid_dummy
+            
         endif
 
     enddo !from_in_region loop
@@ -49,6 +82,9 @@
     if (trace_emissions_from_in_region) then
         if (allocated(subgrid_dummy)) deallocate (subgrid_dummy)
         if (allocated(comp_subgrid_dummy)) deallocate (comp_subgrid_dummy)
+        if (allocated(comp_source_subgrid_dummy)) deallocate(comp_source_subgrid_dummy)
+        if (allocated(comp_source_EMEP_subgrid_dummy)) deallocate(comp_source_EMEP_subgrid_dummy)
+        if (allocated(comp_source_EMEP_additional_subgrid_dummy)) deallocate(comp_source_EMEP_additional_subgrid_dummy)
     endif
     
     end subroutine uEMEP_chemistry_control
@@ -81,10 +117,6 @@
     !NB. Additional is calculated but not necessarily saved!
     real nox_bg_additional,no2_bg_additional,o3_bg_additional
     
-    if (.not.allocated(comp_source_subgrid)) allocate(comp_source_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-    if (.not.allocated(comp_source_EMEP_subgrid)) allocate(comp_source_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-    if (.not.allocated(comp_source_EMEP_additional_subgrid)) allocate(comp_source_EMEP_additional_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-
     !Search for nox in the pollutants
     do i_pollutant=1,n_pollutant_loop
         if (pollutant_loop_index(i_pollutant).eq.nox_nc_index) nox_available=.true.
@@ -368,7 +400,7 @@
     if (.not.nox_available) return  
 
     if (.not.allocated(comp_source_subgrid)) allocate(comp_source_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-    !This actually never used as calculate_EMEP_additional_grid_flag is never set to true
+    
     if (calculate_EMEP_additional_grid_flag) then
         if (.not.allocated(comp_source_additional_subgrid)) allocate(comp_source_additional_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
         !Temporary array for storing the comp_source_subgrid to avoid rewriting large parts of the routine when running the additional version
@@ -438,6 +470,7 @@
             
         do remove_source=1,n_source_index
         if (calculate_source(remove_source).or.remove_source.eq.allsource_index.or.(calculate_emep_source(remove_source).and..not.calculate_source(remove_source))) then
+        !if (calculate_source(remove_source).or.remove_source.eq.allsource_index.or.calculate_emep_source(remove_source)) then
         
             f_no2_loc=0.
             nox_loc=0.

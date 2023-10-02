@@ -43,6 +43,10 @@
     integer in_region_loop, n_in_region_loop
     logical save_netcdf_fraction_as_contribution_flag_dummy
     
+    real, allocatable :: comp_source_subgrid_dummy(:,:,:,:,:)
+    real, allocatable :: comp_source_EMEP_subgrid_dummy(:,:,:,:,:)
+    real, allocatable :: comp_source_EMEP_additional_subgrid_dummy(:,:,:,:,:)
+
 
     
     !Functions
@@ -296,10 +300,26 @@
     if (trace_emissions_from_in_region) then
         n_in_region_loop=2
         if (.not.allocated(subgrid_dummy)) allocate (subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_pollutant_loop))
+        subgrid_dummy=0
      else
         n_in_region_loop=1        
-    endif
+     endif
     
+    if (trace_emissions_from_in_region.and.(save_no2_source_contributions.or.save_o3_source_contributions)) then
+        if (.not.allocated(comp_subgrid_dummy))allocate (comp_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
+        subgrid_dummy=0 
+        comp_subgrid_dummy=0 
+        if (.not.allocated(comp_source_subgrid_dummy)) allocate(comp_source_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        if (.not.allocated(comp_source_EMEP_subgrid_dummy)) allocate(comp_source_EMEP_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        if (.not.allocated(comp_source_EMEP_additional_subgrid_dummy)) allocate(comp_source_EMEP_additional_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        comp_source_subgrid_dummy=0
+        comp_source_EMEP_subgrid_dummy=0
+        comp_source_EMEP_additional_subgrid_dummy=0
+
+    else
+        n_in_region_loop=1        
+    endif
+
     do in_region_loop=1,n_in_region_loop
         
         write(unit_logfile,'(a)')'--------------------------'
@@ -543,8 +563,26 @@
     endif
 
     if (save_no2_source_contributions.or.save_o3_source_contributions) then       
+            
+        if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+            !Save the normal variables in a dummy array
+            comp_source_subgrid_dummy=comp_source_subgrid
+            comp_source_EMEP_subgrid_dummy=comp_source_EMEP_subgrid
+            comp_source_EMEP_additional_subgrid_dummy=comp_source_EMEP_additional_subgrid
+            !Set in the in region variables
+            comp_source_subgrid=comp_source_subgrid_from_in_region
+            comp_source_EMEP_subgrid=comp_source_EMEP_subgrid_from_in_region
+            comp_source_EMEP_additional_subgrid=comp_source_EMEP_additional_subgrid_from_in_region
+        endif
+        
+        if (EMEP_additional_grid_interpolation_size.gt.0) then
+            calculate_EMEP_additional_grid_flag=.true.
+            call uEMEP_source_fraction_chemistry
+        endif
+
+        calculate_EMEP_additional_grid_flag=.false.
         call uEMEP_source_fraction_chemistry
-    endif
+       
     
     if (save_no2_source_contributions) then
         
@@ -562,6 +600,8 @@
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
         if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
+        !Save all EMEP NO2 contributions 
+        !if (calculate_source(i_source).or.i_source.eq.allsource_index.or.calculate_emep_source(i_source)) then
         if (i_source.eq.traffic_nonexhaust_index) then
             !Do not save nonexhaust for exhaust gas emissions
         else
@@ -667,6 +707,7 @@
         do i_source=1,n_source_index
         !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
         if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
+        !if (calculate_source(i_source).or.i_source.eq.allsource_index.or.calculate_emep_source(i_source)) then
         !if (calculate_source(i_source).or.i_source.eq.allsource_index.or.(calculate_emep_source(i_source).and..not.calculate_source(i_source))) then
         !Only save the nonlocal part as 100% save_netcdf_fraction_as_contribution_flag=.false.
         if ((i_source.eq.allsource_index.and..not.save_netcdf_fraction_as_contribution_flag).or.save_netcdf_fraction_as_contribution_flag) then
@@ -771,6 +812,19 @@
     
     endif
     
+         if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+            !Save the in region variables
+            comp_source_subgrid_from_in_region=comp_source_subgrid
+            comp_source_EMEP_subgrid_from_in_region=comp_source_EMEP_subgrid
+            comp_source_EMEP_additional_subgrid_from_in_region=comp_source_EMEP_additional_subgrid
+            !Restore the normal variables from the dummy array
+            comp_source_subgrid=comp_source_subgrid_dummy
+            comp_source_EMEP_subgrid=comp_source_EMEP_subgrid_dummy
+            comp_source_EMEP_additional_subgrid=comp_source_EMEP_additional_subgrid_dummy
+        endif
+   
+    endif
+    
     if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
         subgrid_from_in_region=subgrid
         subgrid=subgrid_dummy
@@ -781,6 +835,10 @@
     
     if (trace_emissions_from_in_region) then
         if (allocated(subgrid_dummy)) deallocate (subgrid_dummy)
+        if (allocated(comp_subgrid_dummy)) deallocate (comp_subgrid_dummy)
+        if (allocated(comp_source_subgrid_dummy)) deallocate(comp_source_subgrid_dummy)
+        if (allocated(comp_source_EMEP_subgrid_dummy)) deallocate(comp_source_EMEP_subgrid_dummy)
+        if (allocated(comp_source_EMEP_additional_subgrid_dummy)) deallocate(comp_source_EMEP_additional_subgrid_dummy)
     endif
     
 

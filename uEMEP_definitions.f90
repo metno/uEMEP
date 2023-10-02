@@ -1107,6 +1107,11 @@
     logical, allocatable :: use_subgrid_region(:,:,:)    !Specifies the region emissions will be carried from for subgrid_from_in_region
     real, allocatable :: comp_subgrid_from_in_region(:,:,:,:)
     
+    real, allocatable :: comp_source_subgrid_from_in_region(:,:,:,:,:)
+    real, allocatable :: comp_source_additional_subgrid_from_in_region(:,:,:,:,:)
+    real, allocatable :: comp_source_EMEP_subgrid_from_in_region(:,:,:,:,:)
+    real, allocatable :: comp_source_EMEP_additional_subgrid_from_in_region(:,:,:,:,:)
+
     !Setting this to true is for diagnostic puroses. Gived the integrated lowest grid average concentration instead of the receptor
     logical :: calc_grid_vertical_average_concentration_annual_flag=.false.
     
