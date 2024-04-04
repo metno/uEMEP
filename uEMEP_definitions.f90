@@ -127,8 +127,8 @@
     integer n_compound_nc_index
     parameter (n_compound_nc_index=20)
     !These are only used in names but need to change the variable n_pollutant_nc_index to fit these!
-    integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index,all_totals_nc_index,aaqd_totals_nc_index,gp_totals_nc_index
-    parameter (pmco_nc_index=21,all_nc_index=22,pm_nc_index=23,all_sand_nc_index=24,all_salt_nc_index=25,all_sand_salt_nc_index=26,all_totals_nc_index=27,aaqd_totals_nc_index=28,gp_totals_nc_index=29)
+    integer pmco_nc_index,all_nc_index,pm_nc_index,all_sand_nc_index,all_salt_nc_index,all_sand_salt_nc_index,all_totals_nc_index,aaqd_totals_nc_index,gp_totals_nc_index,op_totals_nc_index
+    parameter (pmco_nc_index=21,all_nc_index=22,pm_nc_index=23,all_sand_nc_index=24,all_salt_nc_index=25,all_sand_salt_nc_index=26,all_totals_nc_index=27,aaqd_totals_nc_index=28,gp_totals_nc_index=29,op_totals_nc_index=30)
     !THese must be the same as the subgrid source indexes. Should probably just use the one
     integer allsource_nc_index,traffic_nc_index,shipping_nc_index,heating_nc_index,agriculture_nc_index,industry_nc_index
     parameter (allsource_nc_index=1,traffic_nc_index=2,shipping_nc_index=3,heating_nc_index=4,agriculture_nc_index=5,industry_nc_index=6)
@@ -169,7 +169,7 @@
     !Loop for all pollutants to be calculated
     integer pollutant_index
     integer n_pollutant_nc_index
-    parameter (n_pollutant_nc_index=29) !Includes the addition naming indexes index
+    parameter (n_pollutant_nc_index=30) !Includes the addition naming indexes index
     integer :: n_pollutant_loop = 1
     integer :: n_emep_pollutant_loop = 1
     integer pollutant_loop_index(n_pollutant_nc_index)
@@ -819,6 +819,7 @@
     logical :: save_population=.false.,save_no2_source_contributions=.true.,save_o3_source_contributions=.true.
     logical :: save_aqi=.true.
     logical :: save_emep_species=.false.
+    logical :: save_emep_OP_species=.false.
     logical :: save_deposition=.false.
     logical :: save_seasalt=.false.
 
@@ -850,19 +851,29 @@
     integer pm10_sp_index,pm25_sp_index,pmco_sp_index,n_pmxx_sp_index
     parameter (pm10_sp_index=1,pm25_sp_index=2,pmco_sp_index=3,n_pmxx_sp_index=3) !pmco_sp_index is just for reading
     integer sp_soa_index,sp_sia_index,sp_dust_index,sp_seasalt_index,sp_ffire_index,sp_ppm_index,sp_water_index,sp_pm_index,n_sp_index
-    parameter (sp_soa_index=1,sp_sia_index=2,sp_dust_index=3,sp_seasalt_index=4,sp_ffire_index=5,sp_ppm_index=6,sp_water_index=7,sp_pm_index=8,n_sp_index=8)
+    parameter (sp_soa_index=1,sp_sia_index=2,sp_dust_index=3,sp_seasalt_index=4,sp_ffire_index=5,sp_ppm_index=6,sp_water_index=7,sp_pm_index=8)
+    parameter (n_sp_index=8)
+    !Additional BBOA species used in the OP calculations
+    integer sp_BBOA_index,sp_BBOA_RES_index,sp_asoa_index,sp_bsoa_index,n_sp_OP_index
+    parameter (sp_BBOA_index=9,sp_BBOA_RES_index=10,sp_asoa_index=11,sp_bsoa_index=12)
+    parameter (n_sp_OP_index=12)
     !These are used just for reading
-    integer sp_no3_index,sp_so4_index,sp_nh4_index,sp_dust_sah_index,sp_dust_wb_index,sp_ffire_bc_index,sp_ffire_rem_index,sp_asoa_index,sp_bsoa_index,n_sp_all_index
-    parameter (sp_no3_index=9,sp_so4_index=10,sp_nh4_index=11,sp_dust_sah_index=12,sp_dust_wb_index=13,sp_ffire_bc_index=14,sp_ffire_rem_index=15,sp_asoa_index=16,sp_bsoa_index=17)
+    integer sp_no3_index,sp_so4_index,sp_nh4_index,sp_dust_sah_index,sp_dust_wb_index,sp_ffire_bc_index,sp_ffire_rem_index,n_sp_all_index
+    parameter (sp_no3_index=13,sp_so4_index=14,sp_nh4_index=15,sp_dust_sah_index=16,sp_dust_wb_index=17,sp_ffire_bc_index=18,sp_ffire_rem_index=19)
     !Alternative input names so the other names are reserved for otuput
     integer sp_soa_in_index,sp_sia_in_index,sp_dust_in_index,sp_seasalt_in_index,sp_ffire_in_index,sp_ppm_in_index,sp_water_in_index,sp_pm_in_index
-    parameter (sp_soa_in_index=18,sp_sia_in_index=19,sp_dust_in_index=20,sp_seasalt_in_index=21,sp_ffire_in_index=22,sp_ppm_in_index=23,sp_water_in_index=24,sp_pm_in_index=25,n_sp_all_index=25)
+    parameter (sp_soa_in_index=20,sp_sia_in_index=21,sp_dust_in_index=22,sp_seasalt_in_index=23,sp_ffire_in_index=24,sp_ppm_in_index=25,sp_water_in_index=26,sp_pm_in_index=27)
+    !Alternative input names for OP so the other names are reserved for otuput
+    integer sp_POM_RES_in_index,sp_EC_RES_NEW_in_index,sp_EC_RES_AGE_in_index,sp_REM_RES_in_index,sp_FFIRE_OM_in_index,sp_FFIRE_BC_in_index,sp_FFIRE_REM_in_index,sp_EC_RES_in_index,sp_asoa_in_index,sp_bsoa_in_index
+    parameter (sp_POM_RES_in_index=28,sp_EC_RES_NEW_in_index=29,sp_EC_RES_AGE_in_index=30,sp_REM_RES_in_index=31,sp_FFIRE_OM_in_index=32,sp_FFIRE_BC_in_index=33,sp_FFIRE_REM_in_index=34,sp_EC_RES_in_index=35,sp_asoa_in_index=36,sp_bsoa_in_index=37)
+    parameter (n_sp_all_index=37) !For array dimensions only
     
     real, allocatable :: species_var3d_nc(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_species_loop_index)
     real, allocatable :: species_EMEP_subgrid(:,:,:,:,:) !(x,y,t,n_pmxx_sp_index,n_species_loop_index)
-    integer :: species_loop_index(n_sp_index)
-    integer n_species_loop_index !Variable length of species list, set in uEMEP_set_species_loop
+    integer :: species_loop_index(n_sp_all_index)
+    integer :: n_species_loop_index=n_sp_index !Variable length of species list, set in uEMEP_set_species_loop
     
+    !Dimmension with the largest possible, including OP
     character(256) species_name_nc(n_pmxx_sp_index,n_sp_all_index)
     
     !Deposition and land use

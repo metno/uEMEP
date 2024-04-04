@@ -40,6 +40,7 @@
     real, allocatable :: region_heating_scaling(:,:)
     integer n_region,k,k_index
     integer, allocatable :: count_subgrid(:,:)
+    real, allocatable :: emission_properties_subgrid_sigz00_temp(:,:)
     
     
     integer i_pollutant
@@ -238,6 +239,12 @@
         !Set the existing heights to 0 as these will be replaced
         emission_properties_subgrid(:,:,emission_h_index,source_index)=0
     endif
+    if (read_RWC_file_with_extra_HDD_and_height) then
+        !Set the existing heights to 0 as these will be replaced
+        if (allocated(emission_properties_subgrid_sigz00_temp)) deallocate(emission_properties_subgrid_sigz00_temp)
+        allocate (emission_properties_subgrid_sigz00_temp(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index))) 
+        emission_properties_subgrid_sigz00_temp=0.
+    endif
 
     do count=1,n_RWC_grids
 
@@ -300,9 +307,10 @@
                 emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_h_index,source_index)=emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_h_index,source_index)+RWC_grid_height(count,1)
                 sum_RWC_grid_height(1)=sum_RWC_grid_height(1)+RWC_grid_height(count,1)
                 !Add additional standard deviation to the pre-existing value based on variability within the sub-grid
-                emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_sigz00_index,source_index)=sqrt(emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_sigz00_index,source_index)**2+RWC_grid_height(count,2)**2)
+                !emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_sigz00_index,source_index)=sqrt(emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_sigz00_index,source_index)**2+RWC_grid_height(count,2)**2)
+                emission_properties_subgrid_sigz00_temp(i_ssb_index,j_ssb_index)=emission_properties_subgrid_sigz00_temp(i_ssb_index,j_ssb_index)+RWC_grid_height(count,2)**2
                 sum_RWC_grid_height(2)=sum_RWC_grid_height(2)+RWC_grid_height(count,2)**2
-                sum_RWC_grid_height(3)=sum_RWC_grid_height(3)+emission_properties_subgrid(i_ssb_index,j_ssb_index,emission_sigz00_index,source_index)
+                sum_RWC_grid_height(3)=sum_RWC_grid_height(3)+emission_properties_subgrid_sigz00_temp(i_ssb_index,j_ssb_index)
             endif
             
             !write(*,*) count,i_ssb_index,j_ssb_index,emission_subgrid_dim(x_dim_index,source_index),emission_subgrid_dim(y_dim_index,source_index)
@@ -316,7 +324,8 @@
     !It is assumed that it is possible that more than one ssb_grid can be found in a subgrid, so the total becomes the mean, no weighted avraging
    if (read_RWC_file_with_extra_HDD_and_height) then
        where(count_subgrid.gt.0) emission_properties_subgrid(:,:,emission_h_index,source_index)=emission_properties_subgrid(:,:,emission_h_index,source_index)/count_subgrid
-       where(count_subgrid.gt.0) emission_properties_subgrid(:,:,emission_sigz00_index,source_index)=emission_properties_subgrid(:,:,emission_sigz00_index,source_index)/count_subgrid
+       !where(count_subgrid.gt.0) emission_properties_subgrid(:,:,emission_sigz00_index,source_index)=emission_properties_subgrid(:,:,emission_sigz00_index,source_index)/count_subgrid
+       where(count_subgrid.gt.0) emission_properties_subgrid(:,:,emission_sigz00_index,source_index)=sqrt(emission_properties_subgrid(:,:,emission_sigz00_index,source_index)**2+emission_properties_subgrid_sigz00_temp/count_subgrid)
    endif
    
 
@@ -336,8 +345,8 @@
     enddo
     if (read_RWC_file_with_extra_HDD_and_height) then
         write(unit_logfile,'(A,f12.2)') 'Average heating emission height for replaced values = ',sum_RWC_grid_height(1)/count_grid
-        write(unit_logfile,'(A,f12.2)') 'Average heating emission height total standard deviation = ',sum_RWC_grid_height(3)/count_grid
-        write(unit_logfile,'(A,f12.2)') 'Additional RMS average heating emission height standard deviation = ',sqrt(sum_RWC_grid_height(2))/count_grid
+        write(unit_logfile,'(A,f12.2)') 'Average heating emission height total standard deviation = ',sqrt(sum_RWC_grid_height(3)/count_grid)
+        write(unit_logfile,'(A,f12.2)') 'Additional RMS average heating emission height standard deviation = ',sqrt(sum_RWC_grid_height(2)/count_grid)
    endif
              
     if (allocated(region_heating_scaling)) deallocate(region_heating_scaling)

@@ -249,7 +249,7 @@
        
         f_no2_loc=0.
         nox_loc=0.
-        
+
         do i_source=1,n_source_index
         if (calculate_source(i_source)) then
             do i_subsource=1,n_subsource(i_source)

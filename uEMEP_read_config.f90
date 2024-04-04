@@ -876,7 +876,8 @@
         var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index)=read_name_char('var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index)',var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index),unit_in,unit_logfile)
         var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index)=read_name_char('var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index)',var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index),unit_in,unit_logfile)
 
-        
+        save_emep_OP_species=read_name_logical('save_emep_OP_species',save_emep_OP_species,unit_in,unit_logfile)
+       
     close (unit_in)
     
     enddo !End configuration file number loop

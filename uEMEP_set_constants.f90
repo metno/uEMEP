@@ -90,6 +90,7 @@
         var_name_nc(conc_nc_index,all_totals_nc_index,allsource_nc_index)='all_totals'
         var_name_nc(conc_nc_index,aaqd_totals_nc_index,allsource_nc_index)='aaqd_totals'
         var_name_nc(conc_nc_index,gp_totals_nc_index,allsource_nc_index)='gp_totals'
+        var_name_nc(conc_nc_index,op_totals_nc_index,allsource_nc_index)='op_totals'
        
         var_name_nc(conc_nc_index,pm25_sand_nc_index,allsource_nc_index)='pm25_sand'
         var_name_nc(conc_nc_index,pm10_sand_nc_index,allsource_nc_index)='pm10_sand'
@@ -267,12 +268,20 @@
         comp_name_nc(pm10_sand_nc_index)='PM10_sand'
         comp_name_nc(pm25_salt_nc_index)='PM25_salt'
         comp_name_nc(pm10_salt_nc_index)='PM10_salt'
-
+        
         !Additional speciation of PM from EMEP
+        species_name_nc=''
+        
         species_name_nc(pm10_sp_index,sp_soa_index)='pm10_EMEP_soa'
         species_name_nc(pm25_sp_index,sp_soa_index)='pm25_EMEP_soa'
-            species_name_nc(pm25_sp_index,sp_asoa_index)='SURF_ug_ASOA'
-            species_name_nc(pm25_sp_index,sp_bsoa_index)='SURF_ug_BSOA'
+        species_name_nc(pm10_sp_index,sp_asoa_index)='pm10_EMEP_asoa'
+        species_name_nc(pm25_sp_index,sp_asoa_index)='pm25_EMEP_asoa'
+        species_name_nc(pm10_sp_index,sp_bsoa_index)='pm10_EMEP_bsoa'
+        species_name_nc(pm25_sp_index,sp_bsoa_index)='pm25_EMEP_bsoa'
+            !species_name_nc(pm25_sp_index,sp_asoa_in_index)='SURF_ug_ASOA'
+            !species_name_nc(pm25_sp_index,sp_bsoa_in_index)='SURF_ug_BSOA'
+            species_name_nc(pm25_sp_index,sp_asoa_in_index)='SURF_ug_PM_ASOA'
+            species_name_nc(pm25_sp_index,sp_bsoa_in_index)='SURF_ug_PM_BSOA'
         
         species_name_nc(pm10_sp_index,sp_sia_index)='pm10_EMEP_sia'
         species_name_nc(pm25_sp_index,sp_sia_index)='pm25_EMEP_sia'
@@ -319,6 +328,56 @@
         !species_name_nc(pm25_sp_index,sp_pm_in_index)='SURF_ug_PMFINE'
         species_name_nc(pm25_sp_index,sp_water_in_index)='SURF_PM25water'
 
+        !Additional compounds for OP calculations. From Willem
+        !aSOA = ['SURF_ug_PM_ASOA']
+        !bSOA = ['SURF_ug_PM_BSOA']
+   
+        !# BBOA: the POA from biomass burning (and other residential heating sources such as coal)  
+        !BBOA_f = ['SURF_ug_POM_F_RES',
+        !                  'SURF_ug_EC_F_RES_NEW',
+        !                  'SURF_ug_EC_F_RES_AGE',
+        !                  'SURF_ug_REMPPM25_RES',
+        !                  'SURF_ug_FFIRE_OM',
+        !                  'SURF_ug_FFIRE_BC',
+        !                  'SURF_ug_FFIRE_REMPPM25']
+        
+        species_name_nc(pm10_sp_index,sp_BBOA_index)='pm10_EMEP_BBOA'
+        species_name_nc(pm25_sp_index,sp_BBOA_index)='pm25_EMEP_BBOA'
+        species_name_nc(pmco_sp_index,sp_BBOA_index)='pmco_EMEP_BBOA'
+        species_name_nc(pm10_sp_index,sp_BBOA_RES_index)='pm10_EMEP_BBOA_RES'
+        species_name_nc(pm25_sp_index,sp_BBOA_RES_index)='pm25_EMEP_BBOA_RES'
+        species_name_nc(pmco_sp_index,sp_BBOA_RES_index)='pmco_EMEP_BBOA_RES'
+        
+        species_name_nc(pm25_sp_index,sp_POM_RES_in_index)='SURF_ug_POM_F_RES'
+        species_name_nc(pm25_sp_index,sp_EC_RES_NEW_in_index)='SURF_ug_EC_F_RES_NEW'
+        species_name_nc(pm25_sp_index,sp_EC_RES_AGE_in_index)='SURF_ug_EC_F_RES_AGE'
+        species_name_nc(pm25_sp_index,sp_REM_RES_in_index)='SURF_ug_REMPPM25_RES'
+        species_name_nc(pm25_sp_index,sp_FFIRE_OM_in_index)='SURF_ug_FFIRE_OM'
+        species_name_nc(pm25_sp_index,sp_FFIRE_BC_in_index)='SURF_ug_FFIRE_BC'
+        species_name_nc(pm25_sp_index,sp_FFIRE_REM_in_index)='SURF_ug_FFIRE_REMPPM25'
+        
+        !BBOA_c = ['SURF_ug_EC_C_RES',
+         !                  'SURF_ug_POM_C_RES',
+        !                   'SURF_ug_REMPPM_C_RES',
+        !                   'SURF_ug_FFIRE_C']
+        species_name_nc(pmco_sp_index,sp_EC_RES_in_index)='SURF_ug_EC_C_RES'
+        species_name_nc(pmco_sp_index,sp_POM_RES_in_index)='SURF_ug_POM_C_RES'
+        species_name_nc(pmco_sp_index,sp_REM_RES_in_index)='SURF_ug_REMPPM_C_RES'
+        species_name_nc(pmco_sp_index,sp_FFIRE_in_index)='SURF_ug_FFIRE_C'
+               
+        !OP_aSOA = 0.44 # nmol min-1 ug-1; multiply with the ug/m3 concs to get OP
+        !OP_bSOA = 0.15
+        !OP_BBOA = 0.08
+
+        !-----------------------------------------------------------
+
+        !And then for the non-exhaust and exhaust (HOA) contributions I combine the LFs with the LF pm25 and pmco fields, and multiply by:
+
+        !OP_HOA = 0.94 # nmol min-1 ug-1
+        !OP_nonexh = 3.51
+
+
+
         !Deposition names
         deposition_name_nc=''
             i=nh3_nc_index
@@ -350,6 +409,8 @@
         depo_scale_nc(nh3_nc_index)=(14.+3.*1.)/14. !Value read in is in ugN converted to nh3
 
 
+        !Names for the OP calculations
+        
         
         !Allocate the indexes for specifying compound and sources together. Never used and not correct either!!!
     count=0
@@ -686,6 +747,15 @@
             pollutant_loop_back_index(pm25_nc_index)=2
             pollutant_loop_back_index(pm10_nc_index)=3
             pollutant_loop_back_index(co_nc_index)=4
+        elseif (pollutant_index.eq.op_totals_nc_index) then
+            n_emep_pollutant_loop=3
+            n_pollutant_loop=3
+            pollutant_loop_index(1)=nox_nc_index
+            pollutant_loop_index(2)=pm25_nc_index
+            pollutant_loop_index(3)=pm10_nc_index
+            pollutant_loop_back_index(nox_nc_index)=1
+            pollutant_loop_back_index(pm25_nc_index)=2
+            pollutant_loop_back_index(pm10_nc_index)=3
         elseif (pollutant_index.eq.pm_nc_index) then
             n_emep_pollutant_loop=2
             n_pollutant_loop=3
@@ -782,9 +852,17 @@
             n_species_loop_index=1
             species_loop_index(1)=0
         endif
-                
-        write(unit_logfile,'(a,i)') 'Number of species=',n_species_loop_index
+        !Override the save_emep_species to include the OP species
+        if (save_emep_OP_species) then
+            n_species_loop_index=n_sp_OP_index
+            do s_loop=1,n_species_loop_index
+                species_loop_index(s_loop)=s_loop
+            enddo
+        endif
         
+        write(unit_logfile,'(a,i)') 'Number of species=',n_species_loop_index
+            !write(*,*) '####0: ',n_species_loop_index
+
     end subroutine uEMEP_set_species_loop
 
 

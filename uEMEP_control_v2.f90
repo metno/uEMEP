@@ -11,6 +11,13 @@
 !   Control programme for running the downscaling routine uEMEP
 !****************************************************************************
 
+    !****************************************************************************
+!To link to netcdf in visual studio
+!Tools - options - Intel compilers - VisusalFortran - Compilers - Libraries/includes/executables
+!C:\Program Files (x86)\netcdf 4.3.3.1\include
+!C:\Program Files (x86)\netcdf 4.3.3.1\bin
+!C:\Program Files (x86)\netcdf 4.3.3.1\lib
+    
     program uEMEP_v6
 
     use uEMEP_definitions
@@ -23,7 +30,7 @@
     !real temp_val,area_weighted_interpolation_function
     !real x_temp,y_temp,lon_temp,lat_temp
     
-    model_version_str='uEMEP_v6.2'
+    model_version_str='uEMEP_v6.3'
     
     call CPU_TIME(start_time_cpu)
     
@@ -65,8 +72,11 @@
     endif
     
     !Set the EMEP species definitions if they are to be read
+    !write(*,*) '####-1: ',n_species_loop_index
     call uEMEP_set_species_loop
 
+    !write(*,*) '####1: ',n_species_loop_index
+    
     !Set the names of files to be written to when saving intermediate files
     call uEMEP_set_filenames
     
@@ -77,7 +87,7 @@
     if (save_emissions_for_EMEP(allsource_index)) then
         call uEMEP_calculate_emissions_for_EMEP
     endif
-    
+  
     !We set up an initial emission grid parameter set that can be used to first select the outester region
     !This has been done to enable reading of multiple road link files but only keeping those in the initial defined emission area
     call uEMEP_set_subgrids

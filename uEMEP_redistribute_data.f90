@@ -25,7 +25,9 @@
     real xpos_subgrid,ypos_subgrid
     real xpos_integral_subgrid,ypos_integral_subgrid
     integer i_pollutant
-    
+
+    real mean_mask
+
     !allocate (sum_integral(subgrid_dim(1),subgrid_dim(2))) !Can just be a scalar
     !allocate (scaling_factor_traffic_subgrid(subgrid_dim(1),subgrid_dim(2))) !Can just be a scalar
     !allocate (traffic_redistributed_local_subgrid(subgrid_dim(1),subgrid_dim(2))) !Can just be a scalar
@@ -224,6 +226,8 @@
         
     real, allocatable :: subgrid_dummy(:,:,:,:,:,:)
     integer in_region_loop, n_in_region_loop
+
+    real mean_mask
     
     !if (interpolate_subgrids_flag) then
         !write(unit_logfile,'(a)') 'Interpolate routines not currently active. Doing nothing'
@@ -275,6 +279,7 @@
     do i_pollutant=1,n_pollutant_loop
         !If the compound is PM2.5 or PM10 then add the non PPM part to the non-local
         if (pollutant_loop_index(i_pollutant).eq.pm25_index.or.pollutant_loop_index(i_pollutant).eq.pm10_index) then
+            write(unit_logfile,'(A,A)') 'Pollutant: ',trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
             write(unit_logfile,'(A,f12.2)') 'MEAN PPM NONLOCAL ADDITIONAL: ',sum((subgrid(:,:,:,emep_additional_nonlocal_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
             subgrid(:,:,:,emep_additional_nonlocal_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,emep_additional_nonlocal_subgrid_index,allsource_index,i_pollutant) &
             +(comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant))
@@ -289,10 +294,16 @@
     do i_pollutant=1,n_pollutant_loop
         !If the compound is PM2.5 or PM10 then add the non PPM part to the non-local
         if (pollutant_loop_index(i_pollutant).eq.pm25_index.or.pollutant_loop_index(i_pollutant).eq.pm10_index) then
-            write(unit_logfile,'(A,f12.2)') 'MEAN PPM NONLOCAL: ',sum((subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            write(unit_logfile,'(A,A)') 'Pollutant: ',trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_nc_index))
+            write(unit_logfile,'(A,f12.2)') 'MEAN PPM NONLOCAL: ',mean_mask(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant),use_subgrid(:,:,allsource_index),subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)) !sum((subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            write(unit_logfile,'(A,f12.2)') 'MEAN PPM LOCAL: ',mean_mask(subgrid(:,:,:,emep_local_subgrid_index,allsource_index,i_pollutant),use_subgrid(:,:,allsource_index),subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)) !sum((subgrid(:,:,:,emep_local_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            write(unit_logfile,'(A,f12.2)') 'MEAN PPM TOTAL: ',mean_mask(subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant),use_subgrid(:,:,allsource_index),subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)) !sum((subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            write(unit_logfile,'(A,f12.2)') 'MEAN COMP PM TOTAL: ',mean_mask(comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant)),use_subgrid(:,:,allsource_index),subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)) !sum((comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            write(unit_logfile,'(A,f12.2)') 'MEAN COMP PM ORIGINAL: ',mean_mask(orig_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant)),use_subgrid(:,:,allsource_index),subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)) !sum((orig_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
             subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant) &
             +(comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant))
-            write(unit_logfile,'(A,f12.2)') 'MEAN ADD REST NONLOCAL: ',sum((comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            write(unit_logfile,'(A,f12.2)') 'MEAN ADD REST NONLOCAL: ',mean_mask(comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant),use_subgrid(:,:,allsource_index),subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)) !sum((comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            write(unit_logfile,'(A,f12.2)') 'MEAN NEW PM NONLOCAL: ',mean_mask(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant),use_subgrid(:,:,allsource_index),subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)) !sum((subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
             if (sum(comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)).lt.0) write(unit_logfile,'(A)') 'WARNING!!!: PPM EMEP is more than total EMEP PM. Negative non PPM contributions.'
         endif
     

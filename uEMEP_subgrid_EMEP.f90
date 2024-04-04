@@ -175,7 +175,7 @@
     
         do j=1,subgrid_dim(y_dim_index)
         do i=1,subgrid_dim(x_dim_index)
-            
+        if (use_subgrid(i,j,allsource_index)) then    
             ii=crossreference_target_to_emep_subgrid(i,j,x_dim_index)
             jj=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
          
@@ -191,6 +191,7 @@
             
             endif
             
+        endif
         enddo
         enddo
 
@@ -348,6 +349,7 @@
             !write(*,*) 'Check: ',(subgrid(i,j,1,emep_local_subgrid_index,traffic_index,1)),(subgrid(i,j,1,emep_subgrid_index,allsource_index,1))
             
             !Interpolate the other EMEP compounds as well to subgrid in the same way. Read from the normal EMEP file
+            !comp_var3d_nc(ii,jj,:,pollutant_compound_loop_index(i_pollutant,i_loop))
             do i_pollutant=1,n_emep_pollutant_loop
             do i_loop=1,n_pollutant_compound_loop(i_pollutant)
                 comp_EMEP_subgrid(i,j,:,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_var3d_nc(i_nc,j_nc,:,pollutant_compound_loop_index(i_pollutant,i_loop))

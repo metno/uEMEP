@@ -267,7 +267,8 @@
             ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
         endif
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-            write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(comp_subgrid(:,:,:,i_comp))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
+            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), mean_mask(comp_subgrid(:,:,:,i_comp),use_subgrid(:,:,allsource_index),size(comp_subgrid(:,:,:,i_comp),1),size(comp_subgrid(:,:,:,i_comp),2),size(comp_subgrid(:,:,:,i_comp),3))
+            !write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(comp_subgrid(:,:,:,i_comp))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
             ,comp_subgrid(:,:,:,i_comp),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
             ,unit_str,title_str_rec,create_file_rec,valid_min &
@@ -365,7 +366,7 @@
             !if ((pollutant_loop_index(i_pollutant).ne.nox_index.or.i_source.ne.traffic_index)) then
             else
                 if (i_source.eq.traffic_index.and.(pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index)) then
-                    if (pollutant_index.eq.all_totals_nc_index.or.pollutant_index.eq.aaqd_totals_nc_index.or.pollutant_index.eq.gp_totals_nc_index) then
+                    if (pollutant_index.eq.all_totals_nc_index.or.pollutant_index.eq.aaqd_totals_nc_index.or.pollutant_index.eq.gp_totals_nc_index.or.pollutant_index.eq.op_totals_nc_index) then
                     var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//trim(filename_append)
                     if (save_netcdf_fraction_as_contribution_flag) then
                         temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)
@@ -402,7 +403,8 @@
                         ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
                 endif
                 if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-                    write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+                    write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), mean_mask(temp_subgrid,use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
+                   ! write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                     call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                         ,unit_str,title_str_rec,create_file_rec,valid_min &
@@ -417,7 +419,7 @@
             !Special case for exhaust as this must be given as a fraction for both PM2.5 and PM10.
             !if ((pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index).and.i_source.eq.traffic_index) then
             !Write all exhaust pollutants except the pmex
-            if (i_source.eq.traffic_index.and.(.not.pollutant_index.eq.all_totals_nc_index.and..not.pollutant_index.eq.aaqd_totals_nc_index.and..not.pollutant_index.eq.gp_totals_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_index)) then
+            if (i_source.eq.traffic_index.and.(.not.pollutant_index.eq.all_totals_nc_index.and..not.pollutant_index.eq.aaqd_totals_nc_index.and..not.pollutant_index.eq.gp_totals_nc_index.and..not.pollutant_index.eq.op_totals_nc_index.or.pollutant_loop_index(i_pollutant).eq.nox_index)) then
             
                 !If PM then exhaust output is exhaust
                 if (pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index) then
@@ -443,7 +445,8 @@
                         ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
                 endif
                 if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-                    write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+                    write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), mean_mask(temp_subgrid,use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
+                    !write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
                     call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                         ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                         ,unit_str,title_str_rec,create_file_rec,valid_min &
@@ -1402,13 +1405,15 @@
         unit_str="ug/m3"
         if (i_comp.eq.somo35_index) unit_str="ppb·d"
         if (save_netcdf_file_flag) then 
-            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(orig_EMEP_subgrid(:,:,:,i_comp))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+            !write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(orig_EMEP_subgrid(:,:,:,i_comp))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), mean_mask(orig_EMEP_subgrid(:,:,:,i_comp),use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
             call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,orig_EMEP_subgrid(:,:,:,i_comp),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                 ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
         endif
         if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-                write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(orig_EMEP_subgrid(:,:,:,i_comp))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+            ! write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(orig_EMEP_subgrid(:,:,:,i_comp))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), mean_mask(orig_EMEP_subgrid(:,:,:,i_comp),use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
             call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
                 ,orig_EMEP_subgrid(:,:,:,i_comp),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
                 ,unit_str,title_str_rec,create_file_rec,valid_min &
