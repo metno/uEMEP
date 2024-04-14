@@ -6,3 +6,7 @@ NILU/Not_used
 *.mod
 uEMEPv*
 
+# Build directories
+debug/
+build/
+release/
