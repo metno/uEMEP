@@ -3,15 +3,25 @@ Air quality dispersion model for high resolution downscaling of EMEP MSC-W
 
 Comments, questions to brucerd@met.no
 
+This github repository contains the fortran code for compiling the uEMEP model.
+
 ## This version
-Version 5.0
+Version 6.0
 
 ## Installation
-This github repository contains the fortran code and makefiles for compiling the uEMEP model.
 
-Download/pull these files and adjust the makefile for your directory configuration.
+Download and compile the latest version:
 
-Compilation requires an intel fortran compiler.
+```bash
+git clone https://github.com/metno/uEMEP.git
+cd uEMEP
+mkdir -p build
+cd build
+cmake ..
+make
+```
+
+Compilation requires an Intel Fortran compiler and a compatible NetCDF installation.
 
 ## Implementation
 The command line structure for uEMEP is as follows:
@@ -30,7 +40,5 @@ uEMEP uses the time stamps provided by EMEP to specify the calculation times.
 
 uEMEP requires EMEP output files, one of which contains the local fraction data, for implementation.
 
-## Example files and configuration
-A zip file 'uEMEP_demo_startup_files.zip' containing the data and configuration files for first implementing uEMEP.
 
 
