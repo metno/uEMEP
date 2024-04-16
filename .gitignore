@@ -10,3 +10,6 @@ uEMEPv*
 debug/
 build/
 release/
+
+# Other directories
+doc/
