@@ -1,3 +1,14 @@
+module grid_roads
+
+    use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
+
+    implicit none
+    private
+
+    public :: uEMEP_grid_roads
+
+contains
+
 !==========================================================================
 !   NORTRIP_grid_roads.f90
 !   Places line source proxy emissions in the traffic subgrid
@@ -31,11 +42,6 @@
         
     integer i_pollutant
     
-    !functions
-    real line_fraction_in_grid_func
-    real sigma0_traffic_func
-    real minFF_traffic_func
-        
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Gridding road link proxy data (uEMEP_grid_roads)'
@@ -518,9 +524,6 @@
     integer l,g
     real :: f(50)
     
-    !functions
-    real line_fraction_in_grid_func
-    
     n_grid=2
     x_grid(1,:)=(/-1,1/)
     y_grid(1,:)=(/-1,1/)
@@ -572,3 +575,5 @@
     stop
     end subroutine save_gridded_lines_test_routine
     
+end module grid_roads
+

@@ -1,3 +1,14 @@
+module chemistry_no2
+
+    use time_functions, only: global_radiation_sub
+
+    implicit none
+    private
+
+    public :: uEMEP_chemistry_control, correct_annual_mean_chemistry, &
+        uEMEP_source_fraction_chemistry
+
+contains
 
     subroutine uEMEP_chemistry_control
     
@@ -1484,3 +1495,6 @@
     deallocate (y_Jd)
     
     end subroutine uEMEP_annual_mean_pdf_correction_NO2_O3
+
+end module chemistry_no2
+

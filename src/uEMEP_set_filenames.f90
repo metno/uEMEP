@@ -1,3 +1,12 @@
+module set_filenames
+    
+    implicit none
+    private
+
+    public :: uEMEP_set_filenames
+
+contains
+
 !uEMEP_set_filenames.f90
     
     subroutine uEMEP_set_filenames
@@ -83,3 +92,5 @@
     filename_grid(subgrid_t2m_file_index)='air_temperature_2m'
     
     end subroutine uEMEP_set_filenames
+
+end module set_filenames

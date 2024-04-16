@@ -1,3 +1,18 @@
+module read_shipping_asi_data
+
+    use time_functions, only: datestr_to_date, date_to_number, number_to_date
+    use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical, LL2LAEA
+    use mod_area_interpolation, only: area_weighted_extended_vectorgrid_interpolation_function
+
+    implicit none
+    private
+
+    public :: uEMEP_preaggregate_shipping_asi_data, uEMEP_read_netcdf_shipping_latlon, &
+        uEMEP_read_weekly_shipping_asi_data, uEMEP_read_monthly_and_daily_shipping_asi_data, &
+        uEMEP_read_shipping_asi_data
+
+contains
+
 !uEMEP_read_shipping_asi_data.f90
     
     subroutine uEMEP_read_weekly_shipping_asi_data
@@ -31,8 +46,6 @@
     logical nxtdat_flag
     real ship_delta_x,ship_delta_y
     real lat_ship,lon_ship
-    
-    double precision date_to_number
     
     write(unit_logfile,'(A)') ''
 	write(unit_logfile,'(A)') '================================================================'
@@ -170,8 +183,6 @@
     integer i_ship_range,j_ship_range
     integer date_array(6)
     double precision date_num_temp
-    
-    double precision date_to_number
     
     write(unit_logfile,'(A)') ''
 	write(unit_logfile,'(A)') '================================================================'
@@ -546,9 +557,6 @@
     double precision, allocatable :: var2d_nc_dp(:,:)
     double precision, allocatable :: temp_var2d_nc_dp(:,:)
     
-    !Functions
-    real area_weighted_extended_vectorgrid_interpolation_function
-        
     source_index=shipping_nc_index
     
     !Set the filename
@@ -1059,3 +1067,5 @@
     
     end subroutine uEMEP_preaggregate_shipping_asi_data
     
+end module read_shipping_asi_data
+

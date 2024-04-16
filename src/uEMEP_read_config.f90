@@ -1,16 +1,26 @@
+module read_config
+
+    use uEMEP_definitions
+    use read_namefile_routines, only: read_name_char, read_name_real, &
+        read_name_logical, read_name_integer, read_name_double
+    use time_functions, only: date_to_datestr_bracket, date_to_number, &
+        number_to_date, date_to_datestr_squarebracket, date_to_datestr, &
+        datestr_to_date
+
+    implicit none
+    private
+
+    public :: uEMEP_read_config, replace_string_char
+
+contains
+
 !   Set up of uEMEP before starting calculations
     subroutine uEMEP_read_config
     
-    use uEMEP_definitions
-
     implicit none
     
     integer i
-    real read_name_real
-    logical read_name_logical
-    integer read_name_integer
-    double precision read_name_double
-    character(256) read_name_char,pathfilename_log_file
+    character(256) pathfilename_log_file
     integer exists
     integer a(6)
     character(256) format_temp
@@ -21,10 +31,6 @@
     character(256) yesterday_date_str
     character(256) a_str,b_str
     character(256) temp_str
-    
-    !Functions
-    character(256) replace_string_char
-    double precision date_to_number
     
 !==========================================================================
 !   uEMEP model setup
@@ -1031,3 +1037,5 @@
 
     end function replace_string_char
 !----------------------------------------------------------------------
+
+end module read_config

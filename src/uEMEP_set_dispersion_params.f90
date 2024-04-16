@@ -1,3 +1,14 @@
+module set_dispersion_parameters
+
+    implicit none
+    private
+
+    public :: uEMEP_set_dispersion_sigma_simple, delta_wind_direction, &
+        uEMEP_set_dispersion_sigma_PG, uEMEP_set_dispersion_sigma_Kz_emulator, &
+        uEMEP_set_dispersion_params_simple, uEMEP_set_dispersion_params_PG
+
+contains
+
 !uEMEP_set_dispersion_params.f90
 !Routines for calculating dispersion parameters when sig_z and sig_y are defined as sig=sig0+a*x^b
     
@@ -374,3 +385,6 @@
     
     
     end subroutine uEMEP_set_dispersion_sigma_Kz_emulator
+
+end module set_dispersion_parameters
+

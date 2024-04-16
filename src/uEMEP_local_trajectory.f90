@@ -1,3 +1,12 @@
+module local_trajectory
+
+    implicit none
+    private
+
+    public :: uEMEP_calculate_all_trajectory, uEMEP_minimum_distance_trajectory_fast
+
+contains
+
 !uEMEP_local_trajectory
     
     !subroutine uEMEP_local_trajectory(i_rec,j_rec,i_emis,j_emis,t,traj_max_index,dr_traj,i_source,x_loc,y_loc,valid_traj)
@@ -281,3 +290,6 @@
     y_loc=sqrt(y_loc)
     
     end subroutine uEMEP_minimum_distance_trajectory_fast
+
+end module local_trajectory
+

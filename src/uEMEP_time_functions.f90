@@ -1,3 +1,13 @@
+module time_functions
+
+    implicit none
+    private
+
+    public :: global_radiation_sub, number_to_date, date_to_number, &
+        date_to_datestr_bracket, date_to_datestr_squarebracket, date_to_datestr, &
+        datestr_to_date, day_of_week, summer_time_europe
+
+contains
 !----------------------------------------------------------------------
 ! Various functions for manipulating time
 !----------------------------------------------------------------------
@@ -123,7 +133,6 @@
     
     implicit none
     
-    double precision date_to_number
     real date_to_julian
     integer a(6),b(6)
     integer ref_year
@@ -630,7 +639,6 @@
     integer ref_year
     integer year
     double precision datenum_start,datenum_end,datenum
-    double precision date_to_number
 
     a=a_in
     ref_year=2000
@@ -681,7 +689,6 @@
     
     !FUNCTIONS
     !double precision date_to_number
-    real date_to_julian
     
     if (date_a(1).eq.0) then
         JULIAN_DAY=real(date_num)
@@ -758,3 +765,6 @@
     end subroutine global_radiation_sub
     
  !==========================================================================    
+
+end module time_functions
+

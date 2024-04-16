@@ -1,3 +1,13 @@
+module kz_functions
+
+    implicit none
+    private
+
+    public :: TROENKz_invL_from_phi, z_centremass_gauss_func, &
+        u_profile_neutral_val_func, uEMEP_set_dispersion_sigma_Kz
+
+contains
+
 !   Functions for calculating dispersion from Kz and wind profiles
     
 !==========================================================================
@@ -481,3 +491,5 @@
 
     end subroutine z_centremass_gauss_array_func
     
+end module kz_functions
+

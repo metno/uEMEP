@@ -1,3 +1,26 @@
+module auto_subgrid
+
+    use mod_area_interpolation, only: area_weighted_interpolation_function
+    use uEMEP_definitions, only: allsource_index, use_receptor_positions_for_auto_subgrid_flag, &
+        use_emission_positions_for_auto_subgrid_flag, use_population_positions_for_auto_subgrid_flag, &
+        use_subgrid, unit_logfile, use_subgrid_val, use_subgrid_interpolation_index, &
+        max_interpolation_subgrid_size, traffic_index, shipping_index, n_use_subgrid_levels, &
+        x_dim_index, subgrid_delta, use_subgrid_step_delta, calculate_source, source_file_str, &
+        emission_subgrid_delta, y_dim_index, subgrid_dim, crossreference_target_to_emission_subgrid, &
+        emission_subgrid_dim, proxy_emission_subgrid, interpolate_subgrids_flag, n_source_index, &
+        x_subgrid, y_subgrid, outside_interpolation_region_index, t_dim_index, n_pollutant_loop, &
+        proxy_subgrid_index, subgrid, traveltime_subgrid, outside_region_index, municipality_index, &
+        filename_population, region_index, pathfilename_population, pathname_population, region_id, &
+        subgrid_min, trace_emissions_from_in_region, emission_subgrid_min, x_emission_subgrid, &
+        y_emission_subgrid, use_subgrid_region
+
+    implicit none
+    private
+
+    public :: uEMEP_auto_subgrid, uEMEP_region_mask, uEMEP_interpolate_auto_subgrid
+
+contains
+
 !uEMEP_auto_subgrid.f90
     
 !==========================================================================
@@ -7,7 +30,6 @@
 !==========================================================================
     subroutine uEMEP_auto_subgrid
     
-    use uEMEP_definitions
 
     implicit none
     
@@ -252,7 +274,6 @@
     
     subroutine uEMEP_interpolate_auto_subgrid
     !This is the corresponding routine for interpolating the auto selected data
-    use uEMEP_definitions
 
     implicit none
     
@@ -268,9 +289,6 @@
     integer count
     real val_temp
     
-    !Functions
-    real :: area_weighted_interpolation_function
-
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Interpolating auto grid (uEMEP_interpolate_auto_subgrid)'
@@ -397,8 +415,6 @@
     subroutine uEMEP_region_mask
     !This routine defines use_subgrid_val=2 for regions outside the selected region. This can be used to control the interpolation routine
     !It also sets use_subgrid=.false. outside the region so that no calculations are made there either
-
-    use uEMEP_definitions
 
     implicit none
     
@@ -588,3 +604,6 @@
     if (allocated(tile_municipality_subgrid)) deallocate (tile_municipality_subgrid)
     
     end subroutine uEMEP_region_mask
+
+end module auto_subgrid
+

@@ -1,3 +1,12 @@
+module mod_rargsort
+
+    implicit none
+    private
+
+    public :: rargsort
+
+contains
+
 ! https://github.com/certik/fortran-utils/blob/master/src/sorting.f90
 
     subroutine rargsort(a,b,n_a)
@@ -75,4 +84,5 @@
     end do
     end function
     
-    
+end module mod_rargsort
+

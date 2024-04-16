@@ -1,3 +1,12 @@
+module read_rwc_heating_data
+
+    use mod_lambert_projection, only: lb2lambert2_uEMEP, LL2PS_spherical
+
+    implicit none 
+    private
+
+    public :: uEMEP_read_RWC_heating_data
+contains
 !uEMEP_read_RWC_heating_data.f90
 !Reads in MetVed data in SSB format at 250 m
 !Reads in HDD cdf file in same file
@@ -357,3 +366,6 @@
     stop 
 
     end subroutine uEMEP_read_RWC_heating_data
+
+end module read_rwc_heating_data
+

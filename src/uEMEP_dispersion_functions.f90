@@ -1,3 +1,14 @@
+module dispersion_functions
+
+    implicit none
+    private
+
+    public :: gauss_plume_cartesian_sigma_func, gauss_plume_cartesian_sigma_integral_func, &
+        gauss_plume_second_order_rotated_reflected_func, &
+        gauss_plume_second_order_rotated_reflected_integral_func, &
+        gauss_plume_second_order_rotated_integral_func
+
+contains
     
 !==========================================================================
 !   uEMEP model gauss_plume_second_order_rotated_reflected_func
@@ -451,3 +462,6 @@
     endif
     
     end function gauss_plume_cartesian_sigma_integral_func
+
+end module dispersion_functions
+

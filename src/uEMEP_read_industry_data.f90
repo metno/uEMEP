@@ -1,3 +1,14 @@
+module read_industry_data
+
+    use mod_lambert_projection, only: LL2LAEA, lb2lambert2_uEMEP, LL2PS_spherical
+
+    implicit none
+    private
+
+    public :: uEMEP_read_industry_data
+
+contains
+
 !uEMEP_read_industry_data.f90
 !Reads in and places in subgrid industry emissions
 !These emissions come from norgeutslipp.no but are reformatted for use in uEMEP
@@ -290,3 +301,5 @@
     
     end subroutine uEMEP_read_industry_data
     
+end module read_industry_data
+

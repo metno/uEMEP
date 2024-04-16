@@ -1,8 +1,21 @@
+module read_agriculture_asi_data
+
+    use mod_lambert_projection, only: lb2lambert2_uEMEP, LL2PS_spherical
+    use mod_area_interpolation, only: area_weighted_extended_interpolation_function
+
+    implicit none
+    private
+
+    public :: uEMEP_read_agriculture_rivm_data, uEMEP_read_emission_rivm_data
+
+contains
+
 !uEMEP_read_agriculture_asi_data.f90
     
     subroutine uEMEP_read_agriculture_rivm_data
  
     use uEMEP_definitions
+    use mod_rdm2ll, only: RDM2LL
     
     implicit none
     
@@ -28,7 +41,6 @@
     
     real x_temp(3,3),y_temp(3,3),z_temp(3,3)
     real temp_emission
-    real area_weighted_extended_interpolation_function
    
     write(unit_logfile,'(A)') ''
 	write(unit_logfile,'(A)') '================================================================'
@@ -442,3 +454,6 @@
 
         
     end subroutine uEMEP_read_emission_rivm_data
+
+end module read_agriculture_asi_data
+

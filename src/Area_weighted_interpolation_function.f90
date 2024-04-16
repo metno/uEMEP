@@ -1,3 +1,14 @@
+module mod_area_interpolation
+
+    implicit none
+    private
+
+    public :: area_weighted_interpolation_function, &
+        area_weighted_extended_interpolation_function, &
+        area_weighted_extended_vectorgrid_interpolation_function
+
+contains
+
 !Area_weighted_interpolation_function
       
 function area_weighted_interpolation_function(xgrid,ygrid,zgrid,xdim,ydim,delta,xval,yval)  
@@ -241,3 +252,6 @@ function area_weighted_extended_vectorgrid_interpolation_function(xgrid,ygrid,zg
         
     
 end function area_weighted_extended_vectorgrid_interpolation_function    
+
+end module mod_area_interpolation
+

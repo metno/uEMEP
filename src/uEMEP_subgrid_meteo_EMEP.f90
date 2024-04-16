@@ -1,3 +1,12 @@
+module subgrid_meteo_emep
+
+    implicit none
+    private
+
+    public :: uEMEP_subgrid_meteo_EMEP
+
+contains
+
 !==========================================================================
 !   uEMEP_subgrid_meteo_EMEP
 !   Bruce Rolstad Denby
@@ -371,4 +380,6 @@
     if (allocated(weighting_nc)) deallocate(weighting_nc)
 
     end subroutine uEMEP_subgrid_meteo_EMEP
-    
+  
+end module subgrid_meteo_emep
+

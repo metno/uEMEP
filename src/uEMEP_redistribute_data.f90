@@ -1,3 +1,15 @@
+module redistribute_data
+
+    use save_netcdf_file, only: mean_mask
+
+    implicit none
+    private
+
+    public :: uEMEP_redistribute_local_source, uEMEP_disperse_local_source, &
+        uEMEP_combine_local_source
+
+contains
+
 !uEMEP_redistribute_local_source
 !Same routine for all sources
     
@@ -25,8 +37,6 @@
     real xpos_subgrid,ypos_subgrid
     real xpos_integral_subgrid,ypos_integral_subgrid
     integer i_pollutant
-
-    real mean_mask
 
     !allocate (sum_integral(subgrid_dim(1),subgrid_dim(2))) !Can just be a scalar
     !allocate (scaling_factor_traffic_subgrid(subgrid_dim(1),subgrid_dim(2))) !Can just be a scalar
@@ -227,8 +237,6 @@
     real, allocatable :: subgrid_dummy(:,:,:,:,:,:)
     integer in_region_loop, n_in_region_loop
 
-    real mean_mask
-    
     !if (interpolate_subgrids_flag) then
         !write(unit_logfile,'(a)') 'Interpolate routines not currently active. Doing nothing'
         !call uEMEP_interpolate_auto_subgrid
@@ -485,3 +493,6 @@
     endif
         
     end subroutine uEMEP_combine_local_source
+
+end module redistribute_data
+

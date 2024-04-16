@@ -1,11 +1,24 @@
+module read_meteo_nc
+
+    use uEMEP_definitions
+    use read_config, only: replace_string_char
+    use time_functions, only: date_to_number, number_to_date, &
+        date_to_datestr_bracket, datestr_to_date
+    use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
+    use netcdf
+
+    implicit none
+    private
+
+    public :: uEMEP_read_meteo_nc
+
+contains
+
 !uEMEP_read_meteo_nc
     !Reads in AROME data in 2 files, 3 for meteo and 4 for z0
     !These two files must have the same x,y dimensions as they are placed in the same grid
     
     subroutine uEMEP_read_meteo_nc
-    
-    use uEMEP_definitions
-    use netcdf
     
     implicit none
     
@@ -52,8 +65,6 @@
     integer :: search_hour_step=6
     integer new_start_date_input(6)
     character(256) format_temp
-    double precision date_to_number
-    character(256) replace_string_char
     
     real EMEP_grid_interpolation_size_temp
     
@@ -761,4 +772,5 @@
  
     end subroutine uEMEP_read_meteo_nc
     
-    
+ end module read_meteo_nc
+

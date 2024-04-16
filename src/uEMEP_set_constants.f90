@@ -1,3 +1,13 @@
+module set_constants
+
+    implicit none
+    private
+
+    public :: uEMEP_set_constants, uEMEP_set_pollutant_loop, &
+        uEMEP_reset_constants, uEMEP_set_species_loop
+
+contains
+
     subroutine uEMEP_set_constants
     
     use uEMEP_definitions
@@ -1337,3 +1347,6 @@
     !save_emission_subgrid_dim(y_dim_index)=671
 
     end subroutine uEMEP_reset_constants
+
+end module set_constants
+

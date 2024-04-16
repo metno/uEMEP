@@ -1,3 +1,12 @@
+module read_command_line
+
+    implicit none
+    private
+
+    public :: uEMEP_read_command_line
+
+contains
+  
 !uEMEP_read_command_line.f90
     
     subroutine uEMEP_read_command_line
@@ -38,3 +47,6 @@
     
    
     end subroutine uEMEP_read_command_line
+
+end module read_command_line
+

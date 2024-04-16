@@ -1,3 +1,30 @@
+module save_emission_netcdf
+
+    use uEMEP_definitions
+    use read_rwc_heating_data, only: uEMEP_read_RWC_heating_data
+    use read_meteo_nc, only: uEMEP_read_meteo_nc
+    use read_roadlink_data_ascii, only: uEMEP_read_roadlink_data_ascii, &
+        uEMEP_read_roadlink_emission_data
+    use read_agriculture_asi_data, only: uEMEP_read_agriculture_rivm_data
+    use read_industry_data, only: uEMEP_read_industry_data
+    use read_shipping_asi_data, only: uEMEP_read_weekly_shipping_asi_data, &
+        uEMEP_read_monthly_and_daily_shipping_asi_data, uEMEP_read_shipping_asi_data
+    use read_time_profiles, only: uEMEP_read_time_profiles
+    use save_netcdf_file, only: check
+    use set_emission_factors, only: uEMEP_convert_proxy_to_emissions, &
+        uEMEP_set_emission_factors, uEMEP_nox_emission_temperature
+    use time_functions, only: date_to_number, number_to_date, date_to_datestr, &
+        datestr_to_date
+    use grid_roads, only: uEMEP_grid_roads
+    use mod_lambert_projection, only: lambert2lb2_uEMEP
+
+    implicit none
+    private
+
+    public :: uEMEP_calculate_emissions_for_EMEP
+
+contains
+
 !uEMEP_save_emission_netcdf.f90
     !This routine saves the various emission sources in the EMEP grid
     !It first reads in an example EMEP file (z0 file) to get projections and x,y grid dimensions
@@ -5,8 +32,6 @@
     !It should run independently and stop when it is finished
     
     subroutine uEMEP_calculate_emissions_for_EMEP
-    
-    use uEMEP_definitions
     
     implicit none
     
@@ -17,8 +42,6 @@
     double precision date_num_temp,date_num_start,date_num_start_emission
     integer t,i_source,i,j
     
-    !Functions
-    double precision date_to_number
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -681,3 +704,5 @@
     
     end subroutine uEMEP_save_for_EMEP_netcdf_file
     
+end module save_emission_netcdf
+

@@ -1,3 +1,14 @@
+module define_subgrid
+
+    use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
+
+    implicit none
+    private
+
+    public :: uEMEP_define_subgrid, uEMEP_define_subgrid_extent
+
+contains
+
 !uEMEP_define_subgrid.f90
     subroutine uEMEP_define_subgrid_extent
     
@@ -656,3 +667,6 @@
     if (.not.allocated(exposure_subgrid)) allocate (exposure_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
 
     end subroutine uEMEP_define_subgrid
+
+end module define_subgrid
+

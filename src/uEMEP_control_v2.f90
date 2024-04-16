@@ -21,6 +21,50 @@
     program uEMEP_v6
 
     use uEMEP_definitions
+    use read_command_line, only: uEMEP_read_command_line
+    use set_constants, only: uEMEP_set_constants, uEMEP_set_pollutant_loop, &
+        uEMEP_reset_constants, uEMEP_set_species_loop
+    use read_config, only: uEMEP_read_config
+    use read_emep, only: uEMEP_read_EMEP
+    use read_meteo_nc, only: uEMEP_read_meteo_nc 
+    use read_rwc_heating_data, only: uEMEP_read_RWC_heating_data
+    use save_emission_netcdf, only: uEMEP_calculate_emissions_for_EMEP
+    use set_subgrids, only: uEMEP_set_subgrids, uEMEP_set_subgrid_select_latlon_centre 
+    use read_landuse_rivm_data, only: uEMEP_read_landuse_rivm_data, &
+        uEMEP_set_landuse_classes, uEMEP_read_netcdf_landuse_latlon
+    use read_roadlink_data_ascii, only: read_country_bounding_box_data, &
+        uEMEP_read_roadlink_data_ascii, uEMEP_change_road_data, uEMEP_read_roadlink_emission_data
+    use set_filenames, only: uEMEP_set_filenames
+    use read_receptor_data, only: uEMEP_read_receptor_data, uEMEP_set_loop_receptor_grid, &
+        uEMEP_grid_receptor_data
+    use read_ssb_data, only: uEMEP_read_netcdf_population, uEMEP_read_SSB_data, &
+        uEMEP_read_netcdf_population_latlon
+    use read_agriculture_asi_data, only: uEMEP_read_agriculture_rivm_data, &
+        uEMEP_read_emission_rivm_data
+    use read_industry_data, only: uEMEP_read_industry_data
+    use read_shipping_asi_data, only: uEMEP_preaggregate_shipping_asi_data, &
+        uEMEP_read_netcdf_shipping_latlon, uEMEP_read_weekly_shipping_asi_data, &
+        uEMEP_read_monthly_and_daily_shipping_asi_data, uEMEP_read_shipping_asi_data
+    use read_time_profiles, only: uEMEP_read_time_profiles
+    use redistribute_data, only: uEMEP_redistribute_local_source, uEMEP_disperse_local_source, &
+        uEMEP_combine_local_source
+    use save_netcdf_file, only: uEMEP_save_netcdf_control
+    use subgrid_deposition, only: uEMEP_subgrid_deposition
+    use subgrid_dispersion, only: uEMEP_subgrid_dispersion
+    use set_emission_factors, only: uEMEP_set_emission_factors, uEMEP_convert_proxy_to_emissions, &
+        uEMEP_nox_emission_temperature
+    use subgrid_emep, only: uEMEP_subgrid_EMEP
+    use subgrid_deposition_emep, only: uEMEP_set_deposition_velocities, &
+        uEMEP_subgrid_deposition_EMEP, uEMEP_calculate_deposition
+    use subgrid_emission_emep, only: uEMEP_subgrid_emission_EMEP
+    use subgrid_meteo_emep, only: uEMEP_subgrid_meteo_EMEP
+    use tiling_routines, only: uEMEP_set_tile_grids, uEMEP_set_region_tile_grids
+    use chemistry_no2, only: uEMEP_chemistry_control, correct_annual_mean_chemistry
+    use crossreference_grids, only: uEMEP_crossreference_grids, uEMEP_assign_region_coverage_to_EMEP
+    use grid_roads, only: uEMEP_grid_roads
+    use define_subgrid, only: uEMEP_define_subgrid_extent, uEMEP_define_subgrid
+    use calculate_exposure, only: uEMEP_calculate_exposure
+    use auto_subgrid, only: uEMEP_auto_subgrid, uEMEP_region_mask, uEMEP_interpolate_auto_subgrid
    
     implicit none
     

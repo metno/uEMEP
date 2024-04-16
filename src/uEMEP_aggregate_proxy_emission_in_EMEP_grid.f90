@@ -1,12 +1,31 @@
+module aggregate_proxy_emission_in_emep_grid
+    ! NOTE This module is not currently in use. Should it be deleted?
+
+    use uEMEP_definitions, only: x_dim_nc_index, dim_length_nc, y_dim_nc_index, &
+        unit_conversion, n_pollutant_loop, pollutant_loop_index, n_source_index, &
+        calculate_source, make_EMEP_grid_emission_data, unit_logfile, source_file_str, &
+        pollutant_file_str, agriculture_index, agriculture_nc_index, traffic_index, &
+        shipping_index, shipping_nc_index, traffic_nc_index, agriculture_nc_index, &
+        heating_index, heating_nc_index, y_dim_index, x_dim_index, emission_subgrid_dim, &
+        crossreference_emission_to_emep_subgrid, proxy_emission_subgrid, &
+        compound_index, emission_factor_conversion, hourly_calculations, &
+        emis_nc_index, allsource_index, var3d_nc, time_dim_nc_index, emission_subgrid_delta, &
+        annual_calculations, var1d_nc, replace_EMEP_local_with_subgrid_local, &
+        conc_nc_index, frac_nc_index, emission_file_index, pathname_grid, filename_grid, &
+        file_tag, lat_nc_index, dgrid_nc
+    use mod_read_esri_ascii_file, only: write_esri_ascii_file
+
+    implicit none
+    private
+
+contains
+
 !uEMEP_aggregate_proxy_emission_in_EMEP_grid.f90
     !This routine takes subgrid emissions and aggregates them in the EMEP grid
     !This is used for cross checking emissions
     
     subroutine uEMEP_aggregate_proxy_emission_in_EMEP_grid
     
-    
-    use uEMEP_definitions
-
     implicit none
     
     integer i,j,k
@@ -157,3 +176,6 @@
     if (allocated(lat_array)) deallocate (lat_array)
     
     end subroutine uEMEP_aggregate_proxy_emission_in_EMEP_grid
+
+end module aggregate_proxy_emission_in_emep_grid
+

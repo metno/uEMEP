@@ -1,3 +1,12 @@
+module subgrid_emep
+
+    implicit none
+    private
+
+    public :: uEMEP_subgrid_EMEP
+
+contains
+
 !==========================================================================
 !   uEMEP_subgrid_EMEP
 !   Bruce Rolstad Denby
@@ -1771,4 +1780,6 @@
   
   
     end subroutine uEMEP_subgrid_EMEP
+
+end module subgrid_emep
 

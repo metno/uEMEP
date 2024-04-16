@@ -1,3 +1,12 @@
+module mod_rdm2ll
+
+    implicit none
+    private
+
+    public :: RDM2LL
+
+contains
+
 subroutine RDM2LL(y,x,lat,lon)
 
     implicit none
@@ -26,3 +35,6 @@ subroutine RDM2LL(y,x,lat,lon)
     lon = referenceWgs84Y + (sumE / 3600.)
 
 end subroutine RDM2LL
+
+end module mod_rdm2ll
+

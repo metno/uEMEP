@@ -1,3 +1,14 @@
+module read_time_profiles
+
+    use time_functions, only: day_of_week, summer_time_europe, number_to_date
+
+    implicit none
+    private
+
+    public :: uEMEP_read_time_profiles
+
+contains
+
 !uEMEP_read_time_profiles.f90
     
     subroutine uEMEP_read_time_profiles
@@ -30,10 +41,6 @@
     real hdd_temp
     integer col_val,index_val
     logical do_not_calculate_RWC_emissions
-    
-    !Functions
-    integer day_of_week
-    logical summer_time_europe
     
     !double precision date_to_number
     
@@ -248,3 +255,6 @@
     
    
     end subroutine uEMEP_read_time_profiles
+
+end module read_time_profiles
+

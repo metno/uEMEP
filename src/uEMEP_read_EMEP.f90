@@ -1,3 +1,16 @@
+module read_emep
+
+    use time_functions, only: number_to_date, date_to_number
+    use kz_functions, only: TROENKz_invL_from_phi
+    use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
+
+    implicit none
+    private
+
+    public :: uEMEP_read_EMEP
+
+contains
+
 !uEMEP_read_EMEP
     
     subroutine uEMEP_read_EMEP
@@ -77,9 +90,6 @@
     real mean_phi_temp,mean_invL_temp
     integer phi_count
 
-    !Functions
-    double precision date_to_number
-    
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
 	write(unit_logfile,'(A)') 'Reading EMEP data (uEMEP_read_EMEP)'
@@ -1699,4 +1709,5 @@
 
     end subroutine uEMEP_read_EMEP
     
-    
+end module read_emep
+

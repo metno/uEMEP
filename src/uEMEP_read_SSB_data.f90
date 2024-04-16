@@ -1,3 +1,15 @@
+module read_ssb_data
+
+    use mod_lambert_projection, only: LL2LAEA, PROJ2LL
+    use mod_area_interpolation, only: area_weighted_extended_vectorgrid_interpolation_function
+
+    implicit none
+    private
+
+    public :: uEMEP_read_netcdf_population, uEMEP_read_SSB_data, uEMEP_read_netcdf_population_latlon
+
+contains
+
 !uEMEP_read_SSB_data.f90
     
     
@@ -605,9 +617,6 @@
     double precision, allocatable :: var2d_nc_dp(:,:)
     double precision, allocatable :: temp_var2d_nc_dp(:,:)
     
-    !Functions
-    real area_weighted_extended_vectorgrid_interpolation_function
-        
     !If the data type is dwelling then this means it is for heating
     !Always set to this since emissions will be the largest domain, when reducing the reading domain
     !source_index=heating_index
@@ -901,3 +910,6 @@
         if (allocated(temp_var2d_nc_dp)) deallocate (temp_var2d_nc_dp)
     
     end subroutine uEMEP_read_netcdf_population_latlon
+
+end module read_ssb_data
+

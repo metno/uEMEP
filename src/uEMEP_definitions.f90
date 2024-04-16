@@ -1,9 +1,9 @@
+module uEMEP_definitions
 !UEMEP_definitions
 !Defines variables and indexes used in the uEMEP routines
 !Bruce Rolstad Denby 09.11.2016
    
-    module uEMEP_definitions
-    
+
     implicit none
     
     !Directory seperator for linux (/) or windows (\)
@@ -1132,6 +1132,5 @@
     logical :: use_alternative_ppm_variable_for_lf=.false.
     integer :: alternative_ppm_variable_for_lf_dim=4
     
-    end module uEMEP_definitions
-    
-    
+end module uEMEP_definitions
+

@@ -1,3 +1,13 @@
+module set_emission_factors
+
+    implicit none
+    private
+
+    public :: uEMEP_set_emission_factors, uEMEP_convert_proxy_to_emissions, &
+        uEMEP_nox_emission_temperature
+
+contains
+
 !uEMEP_set_emission_factors.f90
     
     subroutine uEMEP_set_emission_factors
@@ -242,3 +252,6 @@
 
     
     end subroutine uEMEP_nox_emission_temperature
+
+end module set_emission_factors
+

@@ -1,3 +1,14 @@
+module subgrid_emission_emep
+
+    use mod_lambert_projection, only: lb2lambert2_uEMEP, LL2PS_spherical, lb2lambert_uEMEP
+
+    implicit none
+    private
+
+    public :: uEMEP_subgrid_emission_EMEP
+
+contains
+
 !==========================================================================
 !   uEMEP model subgrid_emission_EMEP
 !==========================================================================
@@ -566,3 +577,6 @@
     if (allocated(subgrid_count_subgrid)) deallocate(subgrid_count_subgrid)
     
     end subroutine uEMEP_subgrid_emission_EMEP
+
+end module subgrid_emission_emep
+

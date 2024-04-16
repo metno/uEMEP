@@ -1,3 +1,14 @@
+module crossreference_grids
+
+    use mod_lambert_projection, only: lb2lambert2_uEMEP, LL2PS_spherical
+
+    implicit none
+    private
+
+    public :: uEMEP_crossreference_grids, uEMEP_assign_region_coverage_to_EMEP
+
+contains
+
 !uEMEP_crossreference_grids
     
     subroutine uEMEP_crossreference_grids
@@ -480,3 +491,6 @@
             
 
     end subroutine uEMEP_assign_region_coverage_to_EMEP
+
+end module crossreference_grids
+

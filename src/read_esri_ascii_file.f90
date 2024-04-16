@@ -1,3 +1,12 @@
+module mod_read_esri_ascii_file
+
+    implicit none
+    private
+
+    public :: write_esri_ascii_file, read_esri_ascii_file, read_esri_ascii_header
+
+contains
+
 !read_esri_ascii_file.f90
     
     subroutine read_esri_ascii_header(unit_logfile,filename_ascii_sub,ncols_sub,nrows_sub,cellsize_sub,xllcorner,yllcorner,read_nodata_flag)
@@ -268,3 +277,6 @@
     close(unit_in)
 
     end subroutine write_esri_ascii_3d_file
+
+end module mod_read_esri_ascii_file
+

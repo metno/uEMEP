@@ -1,3 +1,14 @@
+module set_subgrids
+
+    use mod_lambert_projection, only: LL2LAEA
+
+    implicit none
+    private
+
+    public :: uEMEP_set_subgrids, uEMEP_set_subgrid_select_latlon_centre
+
+contains
+
 !uEMEP_set_subgrids.f90
     
     subroutine uEMEP_set_subgrids
@@ -186,3 +197,5 @@
     init_subgrid_max(y_dim_index)=subgrid_max(y_dim_index)
     
     end subroutine uEMEP_set_subgrid_select_latlon_centre
+
+end module set_subgrids

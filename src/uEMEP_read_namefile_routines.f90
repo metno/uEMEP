@@ -1,3 +1,13 @@
+module read_namefile_routines
+
+    implicit none
+    private
+
+    public :: read_name_char, read_name_logical, read_name_integer, &
+        read_name_real, read_name_double
+
+contains
+
 !Subroutines and functions for reading in name files
     
     function read_name_real(name_str,default_val,unit_in,unit_out)
@@ -365,3 +375,6 @@
 20    enddo    
     
 30    end function read_name_logical
+
+end module read_namefile_routines
+

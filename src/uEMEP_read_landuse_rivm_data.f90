@@ -1,9 +1,36 @@
+module read_landuse_rivm_data
+
+    use uEMEP_definitions
+    use crossreference_grids, only: uEMEP_crossreference_grids
+    use mod_read_esri_ascii_file, only: read_esri_ascii_file, read_esri_ascii_header
+    use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
+
+    implicit none
+
+    private
+
+    public :: uEMEP_read_landuse_rivm_data, uEMEP_set_landuse_classes, &
+        uEMEP_read_netcdf_landuse_latlon
+    
+    integer Continuous_urban_fabric_value,Discontinuous_urban_fabric_value,Industrial_or_commercial_units_value,Road_and_rail_networks_and_associated_land_value,Port_areas_value
+    integer Airports_value,Mineral_extraction_sites_value,Dump_sites_value,Construction_sites_value,Green_urban_areas_value
+    integer Sport_and_leisure_facilities_value,Non_irrigated_arable_land_value,Permanently_irrigated_land_value,Rice_fields_value,Vineyards_value
+    integer Fruit_trees_and_berry_plantations_value,Olive_groves_value,Pastures_value,Annual_crops_associated_with_permanent_crops_value,Complex_cultivation_patterns_value
+    integer Land_principally_occupied_by_agriculture_value,Agro_forestry_areas_value,Broad_leaved_forest_value,Coniferous_forest_value,Mixed_forest_value
+    integer Natural_grasslands_value,Moors_and_heathland_value,Sclerophyllous_vegetation_value,Transitional_woodland_shrub_value,Beaches_dunes_sands_value
+    integer Bare_rocks_value,Sparsely_vegetated_areas_value,Burnt_areas_value,Glaciers_and_perpetual_snow_value,Inland_marshes_value
+    integer Peat_bogs_value,Salt_marshes_value,Salines_value,Intertidal_flats_value,Water_courses_value,Water_bodies_value,Coastal_lagoons_value,Estuaries_value,Sea_and_ocean_value
+    integer NODATA_clc_value
+    integer n_corine_landuse_index
+    parameter (n_corine_landuse_index=48)
+    integer Corine_to_EMEP_landuse(n_corine_landuse_index)
+
+contains
+
 !uEMEP_read_landuse_rivm_data.f90
     
     subroutine uEMEP_read_landuse_rivm_data
     
-    use uEMEP_definitions
-
     implicit none
 
     integer i,j
@@ -152,29 +179,9 @@
     end subroutine uEMEP_read_landuse_rivm_data
     
     
-    module uEMEP_landuse_definitions
-        
-    implicit none
-    
-    integer Continuous_urban_fabric_value,Discontinuous_urban_fabric_value,Industrial_or_commercial_units_value,Road_and_rail_networks_and_associated_land_value,Port_areas_value
-    integer Airports_value,Mineral_extraction_sites_value,Dump_sites_value,Construction_sites_value,Green_urban_areas_value
-    integer Sport_and_leisure_facilities_value,Non_irrigated_arable_land_value,Permanently_irrigated_land_value,Rice_fields_value,Vineyards_value
-    integer Fruit_trees_and_berry_plantations_value,Olive_groves_value,Pastures_value,Annual_crops_associated_with_permanent_crops_value,Complex_cultivation_patterns_value
-    integer Land_principally_occupied_by_agriculture_value,Agro_forestry_areas_value,Broad_leaved_forest_value,Coniferous_forest_value,Mixed_forest_value
-    integer Natural_grasslands_value,Moors_and_heathland_value,Sclerophyllous_vegetation_value,Transitional_woodland_shrub_value,Beaches_dunes_sands_value
-    integer Bare_rocks_value,Sparsely_vegetated_areas_value,Burnt_areas_value,Glaciers_and_perpetual_snow_value,Inland_marshes_value
-    integer Peat_bogs_value,Salt_marshes_value,Salines_value,Intertidal_flats_value,Water_courses_value,Water_bodies_value,Coastal_lagoons_value,Estuaries_value,Sea_and_ocean_value
-    integer NODATA_clc_value
-    integer n_corine_landuse_index
-    parameter (n_corine_landuse_index=48)
-    integer Corine_to_EMEP_landuse(n_corine_landuse_index)
-    
-    end module uEMEP_landuse_definitions
-
     subroutine uEMEP_read_netcdf_landuse_latlon
  
     use uEMEP_definitions
-    use uEMEP_landuse_definitions
     use netcdf
     
     implicit none
@@ -475,7 +482,6 @@
     subroutine uEMEP_set_landuse_classes
     
     use uEMEP_definitions
-    use uEMEP_landuse_definitions
     
     implicit none
     
@@ -578,3 +584,6 @@
     
          
     end subroutine uEMEP_set_landuse_classes
+
+end module read_landuse_rivm_data
+

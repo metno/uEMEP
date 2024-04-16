@@ -1,3 +1,16 @@
+module read_roadlink_data_ascii
+
+    use time_functions, only: date_to_number, number_to_date, datestr_to_date
+    use mod_lambert_projection, only: LL2LAEA, PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
+
+    implicit none
+    private
+
+    public :: read_country_bounding_box_data, uEMEP_read_roadlink_data_ascii, &
+        uEMEP_change_road_data, uEMEP_read_roadlink_emission_data
+
+contains
+    
     subroutine uEMEP_read_roadlink_data_ascii
     
     use uEMEP_definitions
@@ -649,7 +662,6 @@
     character(256) format_temp
     
     double precision emission_date_number_start,emission_date_number
-    double precision date_to_number
     
     write(unit_logfile,'(A)') ''
 	write(unit_logfile,'(A)') '================================================================'
@@ -1084,3 +1096,6 @@
     
 
     end subroutine read_country_bounding_box_data
+
+end module read_roadlink_data_ascii
+

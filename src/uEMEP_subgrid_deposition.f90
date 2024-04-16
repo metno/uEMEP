@@ -1,3 +1,25 @@
+module subgrid_deposition
+
+    use set_dispersion_parameters, only: delta_wind_direction, &
+        uEMEP_set_dispersion_sigma_PG, uEMEP_set_dispersion_sigma_simple, &
+        uEMEP_set_dispersion_params_PG, uEMEP_set_dispersion_params_simple
+    use local_trajectory, only: uEMEP_calculate_all_trajectory, &
+        uEMEP_minimum_distance_trajectory_fast
+    use dispersion_functions, only: gauss_plume_cartesian_sigma_integral_func, &
+        gauss_plume_cartesian_sigma_func
+    use kz_functions, only: z_centremass_gauss_func, u_profile_neutral_val_func, &
+        uEMEP_set_dispersion_sigma_Kz
+    use mod_area_interpolation, only: area_weighted_interpolation_function, &
+        area_weighted_extended_interpolation_function
+    use mod_rargsort, only: rargsort
+
+    implicit none
+    private
+
+    public :: uEMEP_subgrid_deposition
+
+contains
+
 ! uEMEP_subgrid_deposition.f90
     
 !Calculations the dry deposition and source depletion of a plume
@@ -81,10 +103,6 @@
     real gauss_plume_second_order_rotated_func
     real gauss_plume_cartesian_func
     real gauss_plume_cartesian_trajectory_func
-    real gauss_plume_cartesian_sigma_func
-    real area_weighted_interpolation_function
-    real gauss_plume_cartesian_sigma_integral_func
-    real area_weighted_extended_interpolation_function
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -803,3 +821,6 @@
         endif        
 
     end subroutine uEMEP_create_wind_field
+
+end module subgrid_deposition
+

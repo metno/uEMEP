@@ -1,3 +1,12 @@
+module calculate_exposure
+
+    implicit none
+    private
+
+    public :: uEMEP_calculate_exposure
+
+contains
+
 !uEMEP_calculate_exposure.f90
 
     subroutine uEMEP_calculate_exposure
@@ -154,3 +163,6 @@
     enddo !pollutant loop
     
     end subroutine uEMEP_calculate_exposure
+
+end module calculate_exposure
+

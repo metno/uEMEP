@@ -1,3 +1,15 @@
+module subgrid_deposition_emep
+
+    use mod_area_interpolation, only: area_weighted_extended_interpolation_function
+
+    implicit none
+    private
+
+    public :: uEMEP_set_deposition_velocities, uEMEP_subgrid_deposition_EMEP, &
+        uEMEP_calculate_deposition
+
+contains
+
 !uEMEP_read_deposition_EMEP.f90
     
     subroutine uEMEP_subgrid_deposition_EMEP
@@ -25,9 +37,6 @@
     
     integer i_depo,i_loop
     
-    !Functions
-    real area_weighted_extended_interpolation_function
-
     write(unit_logfile,'(A)')'Distributing deposition to the subgrid'
     
         
@@ -345,3 +354,6 @@
         enddo
 
     end subroutine uEMEP_set_deposition_velocities
+
+end module subgrid_deposition_emep
+

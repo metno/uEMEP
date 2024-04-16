@@ -1,3 +1,14 @@
+module tiling_routines
+
+    use mod_lambert_projection, only: PROJ2LL
+
+    implicit none
+    private
+
+    public :: uEMEP_set_tile_grids, uEMEP_set_region_tile_grids
+
+contains
+
 !uEMEP_tiling_routines.f90
     
 !Routines for calculating the positions, size and resolution of the tiling regions
@@ -1244,3 +1255,6 @@
     stop
     
     end subroutine uEMEP_set_region_tile_grids
+
+end module tiling_routines
+

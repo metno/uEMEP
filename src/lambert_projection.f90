@@ -1,3 +1,15 @@
+module mod_lambert_projection
+
+    use mod_rdm2ll, only: RDM2LL
+
+    implicit none
+    private
+
+    public :: lb2lambert2_uEMEP, LL2PS_spherical, PROJ2LL, LL2LAEA, lambert2lb2_uEMEP, &
+        lb2lambert_uEMEP
+
+contains
+
 !compile with
 !ifort -r8 Lambert.f90
 subroutine testlambert
@@ -552,3 +564,6 @@ end subroutine testlambert
     lon=lon*rad2deg
     
     end subroutine PS2LL_spherical
+
+end module mod_lambert_projection
+

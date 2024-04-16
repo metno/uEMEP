@@ -1,3 +1,27 @@
+module subgrid_dispersion
+
+    use set_dispersion_parameters, only: delta_wind_direction, &
+        uEMEP_set_dispersion_sigma_simple, uEMEP_set_dispersion_params_PG, &
+        uEMEP_set_dispersion_sigma_Kz_emulator, uEMEP_set_dispersion_params_simple, &
+        uEMEP_set_dispersion_sigma_PG
+    use local_trajectory, only: uEMEP_calculate_all_trajectory, &
+        uEMEP_minimum_distance_trajectory_fast
+    use dispersion_functions, only: gauss_plume_second_order_rotated_reflected_integral_func, &
+        gauss_plume_second_order_rotated_reflected_func, gauss_plume_cartesian_sigma_func, &
+        gauss_plume_cartesian_sigma_integral_func, &
+        gauss_plume_second_order_rotated_reflected_integral_func, &
+        gauss_plume_second_order_rotated_integral_func
+    use kz_functions, only: z_centremass_gauss_func, u_profile_neutral_val_func, &
+        uEMEP_set_dispersion_sigma_Kz
+    use mod_area_interpolation, only: area_weighted_interpolation_function
+
+    implicit none
+    private
+
+    public :: uEMEP_subgrid_dispersion
+
+contains
+
 !uEMEP_subgrid_dispersion.f90
     
 !==========================================================================
@@ -64,7 +88,6 @@
     real temp_target_subgrid_delta(2)
     logical :: use_target_subgrid=.true.
     integer i_target_start,i_target_end,j_target_start,j_target_end
-    real area_weighted_interpolation_function
     logical temp_use_subgrid
 
     integer i_pollutant
@@ -94,9 +117,6 @@
     real gauss_plume_cartesian_func
     !real gauss_plume_cartesian_integral_func
     real gauss_plume_cartesian_trajectory_func
-    real gauss_plume_cartesian_sigma_func
-    real gauss_plume_second_order_rotated_reflected_func
-    real gauss_plume_second_order_rotated_reflected_integral_func
     
     real, allocatable :: temp_subgrid_from_in_region(:,:,:)
     real, allocatable :: temp_target_subgrid_from_in_region(:,:,:)
@@ -1138,11 +1158,9 @@
 
     !functions
     !real gauss_plume_second_order_rotated_func
-    real gauss_plume_second_order_rotated_integral_func
     !real gauss_plume_cartesian_func
     real gauss_plume_cartesian_integral_func
     real gauss_plume_cartesian_trajectory_integral_func
-    real gauss_plume_cartesian_sigma_integral_func
    
     
     allocate (temp_FF_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
@@ -1531,3 +1549,6 @@
     if (allocated(temp_FF_subgrid)) deallocate(temp_FF_subgrid)
 
     end subroutine uEMEP_subgrid_dispersion_integral
+
+end module subgrid_dispersion
+

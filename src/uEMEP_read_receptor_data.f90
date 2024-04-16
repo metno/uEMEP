@@ -1,3 +1,14 @@
+module read_receptor_data
+
+    use mod_lambert_projection, only: LL2LAEA
+
+    implicit none
+    private
+
+    public :: uEMEP_read_receptor_data, uEMEP_set_loop_receptor_grid, uEMEP_grid_receptor_data
+
+contains
+
 !uEMEP_read_receptor_data
 !Reads in receptor positions and names
     
@@ -277,3 +288,6 @@
      !write(unit_logfile,'(a,i)') ' Number of subgrids to be calculated = ', count
         
     end subroutine uEMEP_set_loop_receptor_grid
+
+end module read_receptor_data
+
