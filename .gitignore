@@ -5,6 +5,7 @@ NILU/Not_used
 *.o
 *.mod
 uEMEPv*
+ford*
 
 # Build directories
 debug/
@@ -13,3 +14,4 @@ release/
 
 # Other directories
 doc/
+test/
