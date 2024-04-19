@@ -21,22 +21,18 @@ contains
     implicit none
     
     integer i,j,k,t
-    integer ii,jj,iii,jjj,iiii,jjjj
+    integer ii,jj,iii,jjj
     logical exists
-    character(256) pathfilename_nc
     integer status_nc     !Error message
     integer id_nc
     integer dim_id_nc(num_dims_nc)
     character(256) dimname_temp,var_name_nc_temp,var_name_nc_temp2,unit_name_nc_temp
     integer var_id_nc
-    real :: local_fraction_scaling=1.0
     integer i_file,i_source,i_conc,i_dim
-    integer temp_frac_index,temp_file_index,temp_compound_index,temp_source_index
     integer temp_num_dims
     integer temp_start_time_nc_index,temp_end_time_nc_index
     integer i_loop
     integer valid_dim_length_nc(num_dims_nc) !dimensions of file 1
-    integer numAtts_projection
     integer surface_level_nc_2
     
     real temp_lat(4),temp_lon(4)

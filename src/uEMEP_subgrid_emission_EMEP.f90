@@ -18,12 +18,8 @@ contains
 
     implicit none
     
-    integer i,j,k
-    character(256) temp_name
-    logical exists
+    integer i,j
     integer ii,jj,tt,t
-    integer i_temp,j_temp,i_file
-    integer i_nc_temp,j_nc_temp
     real, allocatable :: weighting_nc(:,:),weighting_subgrid(:,:,:)
     real, allocatable :: total_weighting_nc(:,:,:),proxy_weighting_nc(:,:,:)
     real, allocatable :: total_proxy_emission_subgrid(:,:,:,:)
@@ -34,12 +30,9 @@ contains
     integer i_start,i_end,j_start,j_end,t_start,t_end
     real lon_min,lon_max,lat_min,lat_max
     integer i_nc,j_nc
-    integer id,jd
-    integer subsource_index
-    integer i_source,i_subsource
-    integer id_p,jd_p,id_m,jd_m,in_p,jn_p,in_m,jn_m
+    integer i_source
     integer ii_nc,jj_nc,ii_w,jj_w
-    integer :: n_weight=3,ii_w0=2,jj_w0=2
+    integer :: n_weight=3
     integer weighting_subgrid_dim(2,n_source_index)
     integer i_cross,j_cross
     !integer, allocatable :: crossreference_weighting_to_emep_subgrid(:,:,:,:)
@@ -48,7 +41,6 @@ contains
     real sum_temp(n_pollutant_loop)
     real xpos_subgrid,ypos_subgrid
     real xpos_subgrid2,ypos_subgrid2
-    real EMEP_emission_scaling
     integer i_pollutant
     
     !functions

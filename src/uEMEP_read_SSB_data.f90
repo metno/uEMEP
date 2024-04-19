@@ -22,13 +22,12 @@ contains
     integer i,j,k
     character(256) temp_name
     character(256) temp_str,temp_str1,temp_str2
-    real temp_val
     integer unit_in
     integer exists
     integer count,index_val
     integer temp_int
     integer*8 ssb_id
-    real dwe_todw,dwe_det,dwe_2dw,dwe_row,dwe_mult,dwe_com,dwe_oth,dwe_area
+    real dwe_todw,dwe_mult
     real pop_tot,emp_tot
     integer i_ssb_index,j_ssb_index
     integer source_index,subsource_index
@@ -42,7 +41,6 @@ contains
     real :: ssb_dx=250.,ssb_dy=250.
     real heating_proxy
     integer :: use_region=0
-    real y_32,x_32,lat_32,lon_32
 
     character(256) region_number_str
     integer n_search
@@ -589,18 +587,14 @@ contains
     
     implicit none
     integer status_nc,exists
-    integer i_split,j_split,n_delta_split
     integer i,j
     integer i_dim,id_nc
     character(256) var_name_nc_temp,dimname_temp
     integer var_id_nc
-    real x_ssb,y_ssb
-    integer i_ssb_index,j_ssb_index
     real delta_pop_nc(num_dims_population_nc)
     integer dim_id_nc(num_dims_population_nc)
     integer dim_length_population_nc(num_dims_population_nc)
     integer dim_start_population_nc(num_dims_population_nc)
-    real y_pop,x_pop
     integer source_index
     logical reduce_population_region_flag
     real temp_lon(4),temp_lat(4),temp_x(4),temp_y(4)

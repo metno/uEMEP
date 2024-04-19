@@ -17,11 +17,11 @@ contains
     
     implicit none
     
-    integer i,j,k
+    integer i,j
     character(256) temp_str
     integer unit_in
     integer exists
-    integer week_day_temp,hour_temp
+    integer week_day_temp
     double precision date_num_temp
 
     integer n_col

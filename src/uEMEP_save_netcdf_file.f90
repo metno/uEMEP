@@ -1409,7 +1409,7 @@ contains
         i_file=emep_subgrid_file_index(allsource_index)
         var_name_temp=trim(var_name_nc(conc_nc_index,i_comp,allsource_index))//'_original_EMEP_concentration'
         unit_str="ug/m3"
-        if (i_comp.eq.somo35_index) unit_str="ppb·d"
+        if (i_comp.eq.somo35_index) unit_str="ppbï¿½d"
         if (save_netcdf_file_flag) then 
             !write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(orig_EMEP_subgrid(:,:,:,i_comp))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
             write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), mean_mask(orig_EMEP_subgrid(:,:,:,i_comp),use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
@@ -2234,7 +2234,7 @@ contains
     integer n_time_total
     integer nt
     integer(8) time_seconds_output_nc(nt_in) !Need integer 8 for the averaging
-    integer i_file,i_source
+    integer i_source
     character(2) temp_str
     integer i
     character(256) temp_str2
@@ -2697,7 +2697,7 @@ contains
     
     implicit none
     
-    character(256) filename_netcdf,name_array,unit_array,title_str,temp_name,temp_name3(3)
+    character(256) filename_netcdf,name_array,unit_array,title_str,temp_name
     integer unit_logfile_in
     integer nx,ny,nt_in,nr
     real val_array(nx,ny,nt_in),val_array_in(nx,ny,nt_in)!,val_array_temp(nx,ny,nt_in)
@@ -2714,9 +2714,9 @@ contains
     real scale_factor
     
     integer ncid
-    integer station_dimid,lat_dimid,lon_dimid,val_dimid,time_dimid,charlen_dimid
+    integer station_dimid,time_dimid,charlen_dimid
     integer station_varid,station_name_varid,lat_varid,lon_varid,val_varid,time_varid,proj_varid,x_varid,y_varid,height_varid
-    integer dimids3(3),dimids2(2)
+    integer dimids2(2)
     integer n_dims_length(3),n_dims_start(3)
     integer status
     integer tr,rr

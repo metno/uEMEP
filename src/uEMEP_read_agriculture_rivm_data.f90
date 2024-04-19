@@ -19,14 +19,11 @@ contains
     
     implicit none
     
-    integer i,j,k
-    character(256) temp_name
-    character(256) temp_str,temp_str1,temp_str2
-    real temp_val
+    integer i,j
+    character(256) temp_str,temp_str1
     integer unit_in
     integer exists
     integer count,index_val
-    integer temp_int
     real ddlatitude,ddlongitude,totalnh3emission
     real y_agriculture,x_agriculture
     integer i_agriculture_index,j_agriculture_index
@@ -35,7 +32,7 @@ contains
     integer i_start,i_end,j_start,j_end
     logical, allocatable :: agriculture_emission_data_available(:,:)
     integer, allocatable :: agriculture_emission_emep_subgrid_count(:,:)
-    integer ii,jj,iii,jjj
+    integer iii,jjj
     integer source_index,subsource_index
     integer t
     
@@ -284,7 +281,7 @@ contains
     
     implicit none
     
-    integer i,j,k
+    integer i,j
     character(256) temp_str
     integer unit_in
     integer exists
@@ -294,7 +291,7 @@ contains
     integer i_emission_index,j_emission_index
     real emission_scale
     integer i_file
-    integer source_index,subsource_index
+    integer source_index
     
     character(256) component_str
     integer i_source

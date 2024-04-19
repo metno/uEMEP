@@ -16,7 +16,7 @@ contains
     
     implicit none
     
-    integer i,j,k
+    integer k
     real x_loc,y_loc
     
     !integer i_rec,j_rec,i_emis,j_emis
@@ -112,7 +112,7 @@ contains
     
     implicit none
     
-    integer i,j,k
+    integer k
     !integer i_rec,j_rec,i_emis,j_emis
     integer t,traj_max_index
     !integer i_source

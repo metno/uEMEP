@@ -19,7 +19,7 @@ contains
     
     implicit none
     
-    integer i,j,k
+    integer i,j
     integer unit_in
     character(256) temp_str
     integer count
@@ -135,7 +135,7 @@ contains
     
         rewind(unit_in)
     
-        !Read header: År	AnleggNummer	Komponent	Samlet_mengde	Enhet
+        !Read header: ï¿½r	AnleggNummer	Komponent	Samlet_mengde	Enhet
         read(unit_in,'(A)') temp_str
 
         do while(.not.eof(unit_in))

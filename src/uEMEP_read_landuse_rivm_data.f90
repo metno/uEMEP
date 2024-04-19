@@ -200,7 +200,6 @@ contains
     real temp_delta(num_dims_landuse_nc)
     real correct_lon(2)
     real temp_scale
-    integer :: name_index=0
     integer i_source,i_landuse
     real buffer_delta
     

@@ -224,10 +224,10 @@ contains
     function gauss_plume_cartesian_func(x_s,y_s,z_s,cos_val,sin_val,x_r,y_r,z_r,ay,by,az,bz,sig_y_0,sig_z_0,delta)
 
     implicit none
-    real x_s,y_s,z_s,u_s,v_s,x_r,y_r,z_r
-    real r,ay,by,az,bz,sig_y_0,sig_z_0,delta
+    real x_s,y_s,z_s,x_r,y_r,z_r
+    real ay,by,az,bz,sig_y_0,sig_z_0,delta
     real gauss_plume_cartesian_func
-    real sig_y,sig_z,x,y,th
+    real sig_y,sig_z,x,y
     real cos_val,sin_val
     real pi,sig_limit
     parameter (pi=3.141592,sig_limit=3.)
@@ -265,10 +265,10 @@ contains
     function gauss_plume_cartesian_integral_func(x_s,y_s,z_s,cos_val,sin_val,x_r,y_r,z_r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta)
 
     implicit none
-    real x_s,y_s,z_s,u_s,v_s,x_r,y_r,z_r
-    real r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta
+    real x_s,y_s,z_s,x_r,y_r,z_r
+    real ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta
     real gauss_plume_cartesian_integral_func
-    real sig_y,sig_z,x,y,th
+    real sig_y,sig_z,x,y
     real cos_val,sin_val
     real pi,sig_limit
     parameter (pi=3.141592,sig_limit=3.)
@@ -308,7 +308,7 @@ contains
     real x,y,z_s,z_r
     real ay,by,az,bz,sig_y_0,sig_z_0,delta
     real gauss_plume_cartesian_trajectory_func
-    real sig_y,sig_z,th
+    real sig_y,sig_z
     real pi,sig_limit
     parameter (pi=3.141592,sig_limit=3.)
     
@@ -341,9 +341,9 @@ contains
 
     implicit none
     real x,y,z_s,z_r
-    real r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta
+    real ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta
     real gauss_plume_cartesian_trajectory_integral_func
-    real sig_y,sig_z,th
+    real sig_y,sig_z
     real pi,sig_limit
     parameter (pi=3.141592,sig_limit=3.)
     

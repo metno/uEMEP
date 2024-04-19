@@ -24,15 +24,10 @@ contains
 
     implicit none
     
-    integer i,j,k
-    character(256) temp_name
-    logical exists
-    integer ii,jj,tt,iii,jjj
-    integer i_temp,j_temp,i_source,i_file
-    integer i_nc_temp,j_nc_temp
+    integer i,j
+    integer ii,jj,iii,jjj
     real, allocatable :: weighting_nc(:,:)
-    integer i_nc_start,i_nc_end,j_nc_start,j_nc_end
-    integer i_start,i_end,j_start,j_end,t_start,t_end
+    integer t_start,t_end
     real xpos_min,xpos_max,ypos_min,ypos_max
     real xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
     integer i_nc,j_nc

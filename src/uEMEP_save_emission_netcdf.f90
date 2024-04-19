@@ -467,7 +467,7 @@ contains
     
     implicit none
     
-    character(256) filename_netcdf,name_array,unit_array,title_str,temp_name,temp_name3(3)
+    character(256) filename_netcdf,name_array,unit_array,title_str,temp_name
     integer unit_logfile_in
     integer nx,ny,nt
     real val_array(nx,ny,nt)!,val_array_temp(nx,ny,nt)
@@ -484,7 +484,7 @@ contains
     real scale_factor
     
     integer ncid
-    integer y_dimid,x_dimid,lat_dimid,lon_dimid,val_dimid,time_dimid
+    integer y_dimid,x_dimid,time_dimid
     integer y_varid,x_varid,lat_varid,lon_varid,val_varid,time_varid,proj_varid
     integer dimids3(3),dimids2(2),chunks3(3)
     integer n_dims(3)

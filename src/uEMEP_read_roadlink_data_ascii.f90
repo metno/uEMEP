@@ -17,9 +17,7 @@ contains
     
     implicit none
     
-    integer i,j,k
-    character(256) search_str,temp_str
-    real temp
+    integer i,j
     integer unit_in
     integer rl_length_short
     integer exists
@@ -49,7 +47,6 @@ contains
     integer m
     integer n_road_link_file_loop
     logical :: first_road_link_file_read=.false. 
-    real temp_val
     integer temp_int
     
     write(unit_logfile,'(A)') ''
@@ -633,19 +630,11 @@ contains
     
     implicit none
     
-    integer i,j,k
-    character(256) search_str,temp_str
-    real temp
+    integer i,j
     integer unit_in
-    integer rl_length_short
     integer exists
     logical nxtdat_flag
-    real sub_nodes_x(5000),sub_nodes_y(5000)
-    integer temp_id,n_subnodes,temp_road_type,temp_nlanes
-    real temp_adt,temp_hdv,temp_speed,temp_width
     integer counter
-    real size_major(3)
-    integer n_loop,loop_step
 
     real, allocatable :: inputdata_rl_temp(:)
     integer, allocatable :: inputdata_int_rl_id(:)
@@ -819,7 +808,7 @@ contains
     
     implicit none
     
-    integer i,j,k
+    integer i,j
     character(256) pathfilename_rl_change
     integer unit_in
     integer change_offset_index,change_scale_index,change_replace_index

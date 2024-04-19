@@ -18,7 +18,7 @@ contains
  
     implicit none
     
-    integer i,j,k
+    integer k
     logical exists
     character(256) temp_str
     integer unit_in
@@ -215,7 +215,7 @@ contains
  
     implicit none
     
-    integer i,j,k
+    integer k
     integer count
     !integer :: use_region=2 ! +/- number of grids to loop around so that receptor positions can be interpolated linearly
     real x_ref,y_ref

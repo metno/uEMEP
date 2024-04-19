@@ -19,7 +19,7 @@ contains
     implicit none
 
     integer i_source,i_pollutant
-    integer i,j,i_cross_emep,j_cross_emep
+    integer i,j
     
     real xpos_min,xpos_max,ypos_min,ypos_max
     real xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
@@ -34,8 +34,6 @@ contains
     real temp(subgrid_dim(t_dim_index),2)
     integer tt
     real ratio_interp(subgrid_dim(t_dim_index),2)
-    
-    integer i_depo,i_loop
     
     write(unit_logfile,'(A)')'Distributing deposition to the subgrid'
     
@@ -214,12 +212,9 @@ contains
     
     implicit none
 
-    character(256) temp_name
-    integer subsource_index,source_index    
-    integer i_pollutant,i_loop
+    integer source_index    
     integer i,j
     !real sum_temp(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index))
-    integer i_cross_deposition,j_cross_deposition
     
     write(unit_logfile,'(A)')'Combining local deposition sources'
 
@@ -267,8 +262,8 @@ contains
 
     implicit none
 
-    integer i_source,i_pollutant
-    integer i,j,i_cross_emep,j_cross_emep
+    integer i_pollutant
+    integer i,j
     
     real xpos_min,xpos_max,ypos_min,ypos_max
     real xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
@@ -278,7 +273,6 @@ contains
     real weighting_nc(-1:1,-1:1)
     
     integer i_landuse
-    integer i_depo,i_loop
 
     write(unit_logfile,'(A)')'Placing EMEP deposition velocities on the deposition subgrid'
     

@@ -31,13 +31,13 @@ contains
     
     integer n_loop,j
     
-    real K_z,K_y,L
+    real K_z,L
     real :: z_tau_min=2.,z_tau_max=100.
-    real z0,zc,ustar0,u_hmix
+    real z0,zc
     real :: K_min=0.001
     real l_t,f_t
-    real u_star0,u_star0_val,tau,zc_start,K_z_start,u_zc_start
-    real min_xy,x,h_y
+    real u_star0,u_star0_val,tau
+    real min_xy,x
     real phih_temp
     
     n_loop=n_kz_iterations
@@ -255,7 +255,6 @@ contains
     real, intent(out) :: z_c
     real z_loop(5)
     real H_c
-    real c_z,c_av
     integer i_loop,i
     real sqrt_2pi,sqrt_2
     real pi

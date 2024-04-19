@@ -750,7 +750,7 @@ contains
     real, allocatable :: aggregated_y_tile_subgrid(:,:,:)
     integer, allocatable :: aggregated_tile_class_subgrid(:,:,:)
    
-    integer i,j,i_class,i_tile,j_tile,i_source,k,l
+    integer i,j,i_class,i_tile,j_tile,i_source,k
     integer n_tile_index
     integer tile_population_index !,tile_municipality_index,tile_class_index
     
@@ -783,15 +783,7 @@ contains
     real aggregated_tile_subgrid_min(n_dim_index,n_aggregated_tiles)
     real aggregated_tile_subgrid_max(n_dim_index,n_aggregated_tiles)
     integer aggregated_tile_subgrid_dim(n_dim_index,n_aggregated_tiles)
-    integer count_tile_class(4)
-    integer i_tile_class(4)
-    integer j_tile_class(4)
-    logical :: use_aggregated_tiling=.true.
     logical :: save_as_seperate_files=.true.
-    integer sum_count,max_count
-    integer count_class(n_aggregated_tiles,10)
-    logical OK
-    integer max_counter,zero_counter
 
     integer n_search
     parameter (n_search=5)

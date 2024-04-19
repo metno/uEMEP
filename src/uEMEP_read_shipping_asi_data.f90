@@ -21,15 +21,10 @@ contains
     
     implicit none
     
-    integer i,j,k
-    character(256) temp_name
-    character(2048) temp_str
-    character(256) temp_str1,temp_str2
-    real temp_val
+    integer i
+    character(256) temp_str1
     integer unit_in
     integer exists
-    integer count,index_val
-    integer temp_int
     real totalnoxemission,totalparticulatematteremission
     real y_ship,x_ship
     integer i_ship_index,j_ship_index
@@ -154,15 +149,10 @@ contains
     
     implicit none
     
-    integer i,j,k
-    character(256) temp_name
-    character(2048) temp_str
-    character(256) temp_str1,temp_str2
-    real temp_val
+    integer i
+    character(256) temp_str1
     integer unit_in
     integer exists
-    integer count,index_val
-    integer temp_int
     real totalnoxemission,totalparticulatematteremission
     real y_ship,x_ship
     integer i_ship_index,j_ship_index
@@ -174,7 +164,6 @@ contains
     
     integer a(6)
     character(256) format_temp,month_of_year_str
-    double precision date_num,date_num_start
     integer month_of_year,ship_month,ship_counts
     logical nxtdat_flag
     real ship_delta_x,ship_delta_y
@@ -370,15 +359,11 @@ contains
     
     implicit none
     
-    integer i,j,k
-    character(256) temp_name
     character(2048) temp_str
-    character(256) temp_str1,temp_str2
-    real temp_val
+    character(256) temp_str1
     integer unit_in
     integer exists
     integer count,index_val
-    integer temp_int
     real ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission
     real y_ship,x_ship
     integer i_ship_index,j_ship_index
@@ -530,18 +515,14 @@ contains
     
     implicit none
     integer status_nc,exists
-    integer i_split,j_split,n_delta_split
     integer i,j
     integer i_dim,id_nc
     character(256) var_name_nc_temp,dimname_temp
     integer var_id_nc
-    real x_ssb,y_ssb
-    integer i_ssb_index,j_ssb_index
     real delta_shipping_nc(num_dims_shipping_nc)
     integer dim_id_nc(num_dims_shipping_nc)
     integer dim_length_shipping_nc(num_dims_shipping_nc)
     integer dim_start_shipping_nc(num_dims_shipping_nc)
-    real y_pop,x_pop
     integer source_index
     logical reduce_shipping_region_flag
     real temp_lon(4),temp_lat(4),temp_x(4),temp_y(4)
@@ -825,14 +806,11 @@ contains
     
     implicit none
     
-    character(256) temp_name
     character(1024) temp_str
-    character(256) temp_str1,temp_str2
-    real temp_val
+    character(256) temp_str1
     integer unit_in
     integer exists
     integer count,index_val
-    integer temp_int
     real ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission
     real y_ship,x_ship
     integer i_ship_index,j_ship_index

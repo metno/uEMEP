@@ -16,7 +16,7 @@ contains
 
     implicit none   
     
-    integer i,j,k
+    integer i
     real read_name_real
     real default_val
     character(*) name_str
@@ -87,7 +87,7 @@ contains
 
     implicit none   
     
-    integer i,j,k
+    integer i
     double precision read_name_double
     double precision default_val
     character(*) name_str
@@ -160,7 +160,7 @@ contains
 
     implicit none   
     
-    integer i,j,k
+    integer i
     integer read_name_integer
     integer default_val
     character(*) name_str
@@ -233,7 +233,7 @@ contains
 
     implicit none   
     
-    integer i,j,k
+    integer i
     character(256) read_name_char
     character(*) default_val
     character(*) name_str
@@ -310,7 +310,7 @@ contains
 
     implicit none   
     
-    integer i,j,k
+    integer i
     logical read_name_logical
     logical default_val
     character(*) name_str

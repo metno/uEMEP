@@ -16,12 +16,10 @@ contains
     
     implicit none
     
-    integer i,j
     integer i_source
     !integer ii,jj
     real dx_temp,dy_temp
     real lon_temp,lat_temp
-    integer :: subsource_index=1
 
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -263,8 +261,6 @@ contains
     integer i,j
     integer i_source
     !integer ii,jj
-    real dx_temp,dy_temp
-    real lon_temp,lat_temp
     integer :: subsource_index=1
 
     write(unit_logfile,'(A)') ''

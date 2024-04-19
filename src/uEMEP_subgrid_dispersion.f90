@@ -35,25 +35,19 @@ contains
 
     implicit none
     
-    integer i,j,k
+    integer i,j
     integer         source_index
-    character(256)  temp_name
-    logical         exists
-    integer         jj,ii,tt,tt_emis
+    integer         jj,ii,tt
     real            distance_subgrid
-    real            dx_temp,dy_temp
     integer         i_start,i_end,j_start,j_end,t_start,t_end
     integer         i_cross,j_cross
     integer         i_cross_integral,j_cross_integral,i_cross_target_integral,j_cross_target_integral
-    real            u_subgrid_loc,v_subgrid_loc,kz_subgrid_loc
     real            cos_subgrid_loc,sin_subgrid_loc,FF_loc,FF_zc_loc
-    integer         i_nc,j_nc
     integer         subsource_index
     real            ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc
     real            xpos_limit,ypos_limit
     real            xpos_limit2,ypos_limit2
     real            time_weight(subgrid_dim(t_dim_index),n_pollutant_loop),time_total(subgrid_dim(t_dim_index),n_pollutant_loop)
-    integer         time_count(subgrid_dim(t_dim_index))
     real            x_downwind,y_downwind
     real            xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
     real            distance_subgrid_min
@@ -112,11 +106,8 @@ contains
     
 
     !functions
-    real gauss_plume_second_order_rotated_func
     !real gauss_plume_second_order_rotated_integral_func
-    real gauss_plume_cartesian_func
     !real gauss_plume_cartesian_integral_func
-    real gauss_plume_cartesian_trajectory_func
     
     real, allocatable :: temp_subgrid_from_in_region(:,:,:)
     real, allocatable :: temp_target_subgrid_from_in_region(:,:,:)
@@ -1119,25 +1110,19 @@ contains
 
     implicit none
     
-    integer i,j,k
+    integer i,j
     integer         source_index
-    character(256)  temp_name
-    logical         exists
-    integer         jj,ii,tt,tt_emis
+    integer         jj,ii,tt
     real            distance_subgrid
-    real            dx_temp,dy_temp
     integer         i_start,i_end,j_start,j_end,t_start,t_end
     integer         i_cross,j_cross
     integer         i_cross_integral,j_cross_integral,i_cross_target_integral,j_cross_target_integral
-    real            u_subgrid_loc,v_subgrid_loc,kz_subgrid_loc
     real            cos_subgrid_loc,sin_subgrid_loc,FF_loc,FF_zc_loc,zc_loc
-    integer         i_nc,j_nc
     integer         subsource_index
     real            ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc
     real            xpos_limit,ypos_limit
     real            x_downwind,y_downwind
     real            xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
-    real            xpos_subgrid,ypos_subgrid
     real            xpos_emission_subgrid,ypos_emission_subgrid
     real            xpos_integral_subgrid,ypos_integral_subgrid
     real            distance_emission_subgrid_min
@@ -1146,8 +1131,6 @@ contains
     logical         valid_traj
     real            traj_step_size,x_loc,y_loc,invL_loc,FFgrid_loc,logz0_loc,u_star0_loc,FF10_loc
     real            z0_temp,h_temp
-    
-    integer i_pollutant
     
     !real, allocatable :: temp_emission_subgrid(:,:)
     !real, allocatable :: temp_subgrid(:,:)
@@ -1159,9 +1142,6 @@ contains
     !functions
     !real gauss_plume_second_order_rotated_func
     !real gauss_plume_cartesian_func
-    real gauss_plume_cartesian_integral_func
-    real gauss_plume_cartesian_trajectory_integral_func
-   
     
     allocate (temp_FF_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 
     allocate (angle_diff(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index))) 

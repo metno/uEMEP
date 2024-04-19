@@ -19,7 +19,7 @@ contains
 
     implicit none
     
-    integer i,j,k
+    integer i,j
     integer ro
     real, allocatable :: f_subgrid(:)
     real, allocatable :: adt_temp(:,:)
@@ -28,11 +28,8 @@ contains
     real x_subgrid_in(2),y_subgrid_in(2)
     real x_line_in(2),y_line_in(2),lat_line_in(2),lon_line_in(2)
     integer i_traffic_index(2),j_traffic_index(2)
-    character(256) temp_name
-    logical exists
     integer i_start,i_end,j_start,j_end
     integer source_index,t
-    integer :: subsource_index=1
     integer i_roadlink_emission_compound(n_pollutant_loop)
     integer tt,ttt
     integer major_ro
@@ -326,9 +323,9 @@ contains
         
     end function sigma0_traffic_func
     
-    function minFF_traffic_func(speed,adt,width)
+    function minFF_traffic_func(speed)
     implicit none
-    real:: speed,adt,width
+    real:: speed
     real:: minFF_traffic_func
     real :: min_FF=0.0
     real :: max_FF=2.

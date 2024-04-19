@@ -15,7 +15,7 @@ contains
 subroutine testlambert
   implicit none
   real ::gl,gb,x,y,lon0,lat0,y0,k,F,earth_radius,lat_stand1,GRIDWIDTH_M
-  real ::PI,x1,y1,k_lambert,F_lambert,deg2rad,lat_stand2
+  real ::PI,deg2rad
   PI=3.14159265358979323
   GRIDWIDTH_M =2500.0
   lon0=15.0
@@ -63,7 +63,7 @@ end subroutine testlambert
     implicit none
     real, intent(in) ::gl,gb,lon0,y0,k,F
     real, intent(out)::x,y
-    real ::r,t,dr2,dr
+    real ::r,dr2,dr
     real ::PI
     PI=3.14159265358979323
     dr=PI/180.
@@ -146,7 +146,7 @@ end subroutine testlambert
     implicit none
     real, intent(in) ::gl,gb,lon0,lat0
     real, intent(out)::x,y
-    real ::r,t
+    real ::r
     real ::PI
     real :: earth_radius,k,F,y0
     real rad2deg
@@ -170,7 +170,7 @@ end subroutine testlambert
     double precision, intent(in) :: projection_attributes(10)
     real, intent(in) ::gl,gb
     real, intent(out)::x,y
-    real ::r,t
+    real ::r
     real ::PI
     real :: earth_radius,k,F,y0
     real deg2rad,rad2deg,k_lambert,lat0_lambert
@@ -300,7 +300,6 @@ end subroutine testlambert
     double precision, intent(in) :: projection_attributes(10)
     real, intent(in) ::lon_in,lat_in
     real, intent(out)::x,y
-    real ::r
     real ::PI
     real :: semi_major_axis
     real deg2rad,rad2deg
@@ -365,7 +364,7 @@ end subroutine testlambert
     real deg2rad,rad2deg
     real lat0,lat0_in,lon0,lon0_in
     real false_easting,false_northing
-    real inv_f,f,a,e,q_p,q_0,q,beta,beta_0,R_q,D,B
+    real inv_f,f,a,e,q_p,q_0,beta_0,R_q,D
     real C,beta_d
     
     !grid_mapping_name = lambert_azimuthal_equal_area

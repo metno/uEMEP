@@ -286,8 +286,6 @@ contains
     integer i_source,i_pollutant,t
     integer i_in(3),j_in(3)
     integer use_subgrid_step
-    integer count
-    real val_temp
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'

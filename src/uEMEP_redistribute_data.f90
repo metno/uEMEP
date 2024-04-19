@@ -19,22 +19,16 @@ contains
     
     implicit none
 
-    integer i,j,k
+    integer i,j
     integer source_index
-    character(256) temp_name
-    logical exists
     integer ii,jj,tt
-    integer i_temp,j_temp
     integer integral_counter
     real sum_integral(n_pollutant_loop)
     integer i_start,i_end,j_start,j_end,t_start,t_end
-    integer subsource_index,emep_subsource
-    integer i_cross,j_cross
+    integer emep_subsource
     integer i_cross_integral,j_cross_integral
-    real x_pos,y_pos
     real xpos_limit,ypos_limit
     real xpos_area_min,xpos_area_max,ypos_area_min,ypos_area_max
-    real xpos_subgrid,ypos_subgrid
     real xpos_integral_subgrid,ypos_integral_subgrid
     integer i_pollutant
 
@@ -176,19 +170,7 @@ contains
     
     implicit none
 
-    integer i,j,k
     integer source_index
-    character(256) temp_name
-    logical exists
-    integer ii,jj,tt
-    integer i_temp,j_temp
-    integer integral_counter
-    real sum_integral
-    integer i_start,i_end,j_start,j_end,t_start,t_end
-    integer subsource_index
-    integer i_cross,j_cross
-    real u_temp
-    real z0_temp,h_temp
     
     !allocate (sum_integral(subgrid_dim(1),subgrid_dim(2))) !Can just be a scalar
     !allocate (scaling_factor_traffic_subgrid(subgrid_dim(1),subgrid_dim(2))) !Can just be a scalar
@@ -226,10 +208,8 @@ contains
     
     implicit none
 
-    character(256) temp_name
-    logical exists
-    integer subsource_index,source_index    
-    integer i_pollutant,i_loop
+    integer source_index    
+    integer i_pollutant
     integer i,j
     integer i_sp
     real sum_temp(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index))

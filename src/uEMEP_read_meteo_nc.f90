@@ -22,26 +22,18 @@ contains
     
     implicit none
     
-    integer i,j,k,t
+    integer i,j,t
     integer ii,jj
     logical exists
-    character(256) pathfilename_nc
     integer status_nc     !Error message
     integer id_nc
     integer dim_id_nc(num_dims_meteo_nc)
     character(256) dimname_temp,var_name_nc_temp,unit_name_nc_temp
     integer var_id_nc
-    real :: local_fraction_scaling=1.0
-    integer i_file,i_source,i_conc,i_dim
-    integer temp_frac_index,temp_file_index,temp_compound_index,temp_source_index
+    integer i_file,i_dim
     integer temp_num_dims
-    integer temp_start_time_nc_index,temp_end_time_nc_index
     integer temp_start_time_meteo_nc_index,temp_end_time_meteo_nc_index
-    integer i_loop
     integer valid_dim_length_meteo_nc(num_dims_meteo_nc) !dimensions of file 3
-    integer numAtts_projection
-    logical :: invert_levels_flag=.false.
-    integer surface_level_nc_2
     
     real temp_lat(4),temp_lon(4)
     real temp_y(4),temp_x(4)
@@ -49,7 +41,6 @@ contains
     integer i_temp_min,i_temp_max,j_temp_min,j_temp_max
     double precision temp_var1d_nc_dp(2,2)
     real temp_delta(2)
-    real H_emep_temp
     real scale_grid_interpolation_size(2)
     real EMEP_temp_delta(2)
     real temp_lat_mean
@@ -58,8 +49,6 @@ contains
     double precision date_num_temp
     integer date_array(6)
     double precision scale_factor_nc
-    integer temp_nc_projection_type
-    double precision :: temp_nc_projection_attributes(10)
 
     logical found_file
     integer :: search_hour_step=6

@@ -54,9 +54,8 @@ contains
     integer traj_max_index
     logical valid_traj
     real traj_step_size,x_loc,y_loc,FFgrid_loc,logz0_loc,u_star0_loc,FF10_loc,zc_loc,invL_loc
-    real z0_temp,h_temp
     real ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,sig_y_00_loc,sig_z_00_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc
-    real cos_subgrid_loc,sin_subgrid_loc,FF_loc,FF_zc_loc,precip_loc
+    real FF_loc,FF_zc_loc,precip_loc
     real FF_integral_loc
 
     integer n_plume_subgrid_max
@@ -82,7 +81,7 @@ contains
     integer subsource_index
     real subgrid_internal,subgrid_internal_integral
     real subgrid_internal_pollutant(n_pollutant_loop),drydepo_internal_pollutant(n_pollutant_loop),wetdepo_internal_pollutant(n_pollutant_loop)
-    real subgrid_internal_integral_pollutant(n_pollutant_loop),drydepo_internal_integral
+    real drydepo_internal_integral
     real vertical_integral_internal,wetdepo_internal,wetdepo_internal_integral
 
     real xpos_emission_subgrid,ypos_emission_subgrid
@@ -90,7 +89,6 @@ contains
     real xpos_target_subgrid,ypos_target_subgrid
     integer target_subgrid_dim_min(2),target_subgrid_dim_max(2)
    
-    integer i_loop_deposition
     real plume_vertical_integral(n_integral_subgrid_index)
     real plume_vertical_integral_pollutant(n_integral_subgrid_index)
     real, allocatable :: target_vertical_integral_subgrid(:,:,:)
@@ -100,9 +98,6 @@ contains
     integer count
     !Functions
     !integer rargsort(n_plume_subgrid_max)
-    real gauss_plume_second_order_rotated_func
-    real gauss_plume_cartesian_func
-    real gauss_plume_cartesian_trajectory_func
     
     write(unit_logfile,'(A)') ''
     write(unit_logfile,'(A)') '================================================================'
@@ -723,7 +718,7 @@ contains
     integer i_cross_integral,j_cross_integral
     integer ii,jj
     real z0_temp,h_temp
-    real sig_y_00_loc,h_emis_loc,h_mix_loc,FF10_loc,x_loc,sig_z_loc,sig_y_loc,ff_loc,logz0_loc,sig_z00_loc
+    real sig_y_00_loc,h_emis_loc,h_mix_loc,FF10_loc,x_loc,sig_z_loc,sig_y_loc,ff_loc,logz0_loc
     real sig_z_00_loc,sig_y_0_loc,sig_z_0_loc,zc_loc,u_star0_loc
     
     !define the temporary arrays for meteo

@@ -15,7 +15,7 @@ contains
     
     implicit none
     
-    integer i,j,k
+    integer i,j
     integer i_source
     integer i_cross,j_cross
     real weighted_concentration(n_source_index,n_pollutant_loop)

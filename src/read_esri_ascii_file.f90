@@ -14,9 +14,7 @@ contains
     implicit none
     character(*) filename_ascii_sub
     character(256) temp_str
-    integer i,j,ii,jj
     integer ncols_sub,nrows_sub
-    integer ncols_sub_temp,nrows_sub_temp
     real cellsize_sub
     real xllcorner
     real yllcorner
@@ -126,8 +124,7 @@ contains
     
     implicit none
     character(*) filename_ascii_sub
-    character(256) temp_str
-    integer i,j,ii,jj
+    integer ii,jj
     integer ncols_sub,nrows_sub
     real cellsize_sub
     real xllcorner
@@ -240,8 +237,7 @@ contains
     
     implicit none
     character(*) filename_ascii_sub
-    character(256) temp_str
-    integer i,j,ii,jj,tt
+    integer ii,jj,tt
     integer ncols_sub,nrows_sub,nblocks_sub
     real cellsize_sub
     real xllcorner

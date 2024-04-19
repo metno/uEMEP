@@ -33,13 +33,8 @@ contains
     use uEMEP_definitions
     implicit none
     
-    integer i,j,k
-    character(256) temp_name
-    logical exists
+    integer i,j
     integer ii,jj,tt,iii,jjj
-    integer i_temp,j_temp,i_file
-    integer i_nc_temp,j_nc_temp
-    real, allocatable :: weighting_nc2(:,:,:,:)
     real, allocatable :: weighting_nc(:,:,:,:),weighting_subgrid(:,:,:,:,:)
     real, allocatable :: total_weighting_nc(:,:,:,:,:),proxy_weighting_nc(:,:,:,:,:)
     real, allocatable :: area_weighting_nc(:,:,:,:,:,:)
@@ -51,27 +46,20 @@ contains
     real xpos_min3,xpos_max3,ypos_min3,ypos_max3
     real xpos_area_min2,xpos_area_max2,ypos_area_min2,ypos_area_max2
     integer i_nc,j_nc
-    integer id,jd
-    integer source_index,emep_subsource
+    integer emep_subsource
     real, allocatable :: nonlocal_correction(:,:,:)
     real, allocatable :: nonlocal_correction_average(:,:)
-    integer i_source,i_subsource
-    integer id_p,jd_p,id_m,jd_m,in_p,jn_p,in_m,jn_m
+    integer i_source
     integer ii_nc,jj_nc,ii_w,jj_w
-    integer iii_nc,jjj_nc,iii_w,jjj_w
     integer :: n_weight=3,ii_w0=2,jj_w0=2
     integer weighting_subgrid_dim(2,n_source_index)
     integer i_cross,j_cross
-    integer i_cross_integral,j_cross_integral
     integer, allocatable :: crossreference_weighting_to_emep_subgrid(:,:,:,:)
     integer i_w_c,j_w_c
     integer i_nc_c,j_nc_c
-    integer i_comp
     integer count
     integer ii_start,ii_end,jj_start,jj_end
     integer iii_start,iii_end,jjj_start,jjj_end
-    real u_subgrid_loc,v_subgrid_loc
-    real x_downwind,y_downwind
     real xpos_limit,ypos_limit
     real xpos_limit2,ypos_limit2
     real xpos_subgrid,ypos_subgrid

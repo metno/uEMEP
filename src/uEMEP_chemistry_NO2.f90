@@ -980,9 +980,8 @@ contains
     real :: b_rom=35
     real :: c_rom=0.20
     real ox_init,no2_init,no2_equ
-    real beta,F,K
     !Gral values 30 35 0.18
-    !Bächlin and Bösinger (2008) 29 35 0.217
+    !Bï¿½chlin and Bï¿½singer (2008) 29 35 0.217
     
     if (romberg_parameters(1).ne.0) then
         a_rom=romberg_parameters(1)
@@ -1018,7 +1017,7 @@ contains
     real :: beta=0.45
     real :: K=30
     real :: F=0.2
-    real ox_init,no2_init,no2_equ
+    real ox_init,no2_init
 
     !From RIVM Briefrapport 2014-0109
     !beta=1
@@ -1057,7 +1056,7 @@ contains
     real, intent(out) :: p_bg_out,p_out
     
     real :: mol_nox_bg,mol_no2_bg,mol_nox_loc,mol_o3_bg,mol_no2_loc,mol_ox_loc,mol_no_bg,mol_ox_bg
-    real :: mol_nox_out,mol_no2_out,mol_o3_out,mol_no_out
+    real :: mol_no2_out,mol_o3_out,mol_no_out
     real :: mol_nox_emep,mol_no2_emep,mol_o3_emep,mol_no_emep,mol_ox_emep,p_emep_out
     real :: b,d,r,c,k1
     real :: Na,Na_fac
@@ -1069,9 +1068,9 @@ contains
     no2_i=1;no_i=2;nox_i=3;o3_i=4;ox_i=5
 
     !Reference
-    !Düring, I., Bächlin, W., Ketzel, M., Baum, A., Friedrich, U., Wurzler, S., 2011.
+    !Dï¿½ring, I., Bï¿½chlin, W., Ketzel, M., Baum, A., Friedrich, U., Wurzler, S., 2011.
     !A new simplified NO/NO2 conversion model under consideration of direct NO2-emissions.
-    !Meteorol. Zeitschrift 20, 67–73. doi:10.1127/0941-2948/2011/0491
+    !Meteorol. Zeitschrift 20, 67ï¿½73. doi:10.1127/0941-2948/2011/0491
     
     !Improved Methodologies for NO2 Exposure Assessment in the EU, page 53
     !https://ec.europa.eu/environment/air/pdf/NO2_Exposure_Final_Report.pdf
@@ -1207,7 +1206,7 @@ contains
     real o3_in,nox_in,no2_in,J_photo_in,temperature_in,lon_in,lat_in
     real ox_sigma_ratio_in,nox_sigma_ratio_in
     real o3_out,no2_out
-    real sum_no2_in,sum_no2_out,mean_no2_in,mean_no2_out
+    real sum_no2_in,sum_no2_out
     integer no2_count
     logical run_all_flag
 
@@ -1306,9 +1305,7 @@ contains
     real, intent(in) :: lon_in,lat_in
     real, intent(out) :: no2_out,o3_out
 
-    real :: mol_nox_bg
     real :: mol_no2_out,mol_o3_out
-    real :: mol_nox_emep,mol_no2_emep,mol_o3_emep,mol_ox_emep,mol_no_emep
     real :: Na,Na_fac,k1
     integer no2_i,no_i,nox_i,o3_i,ox_i,n_i
     parameter (no2_i=1,no_i=2,nox_i=3,o3_i=4,ox_i=5,n_i=5)

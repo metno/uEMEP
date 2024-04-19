@@ -28,13 +28,13 @@ contains
     
     implicit none
     
-    integer i,j,k
+    integer i,j
     integer i_source
     real, allocatable :: EMEP_aggregated_subgid_emission(:,:)
     real, allocatable :: EMEP_aggregated_emission(:,:)
     integer, allocatable :: EMEP_aggregated_subgid_emission_count(:,:)
     real, allocatable :: lon_array(:,:),lat_array(:,:)
-    integer ii,jj,iii,jjj   
+    integer iii,jjj   
     character(256) temp_name
     real var3d_nc_local_temp
     integer t
