@@ -939,7 +939,7 @@ module uEMEP_definitions
     integer, parameter :: pm25_sp_index = 2
     integer, parameter :: pmco_sp_index = 3 ! pmco_sp_index is just for reading
     integer, parameter :: n_pmxx_sp_index = 3
-    
+
     integer, parameter :: sp_soa_index = 1
     integer, parameter :: sp_sia_index = 2
     integer, parameter :: sp_dust_index = 3
@@ -949,14 +949,14 @@ module uEMEP_definitions
     integer, parameter :: sp_water_index = 7
     integer, parameter :: sp_pm_index = 8
     integer, parameter :: n_sp_index = 8
-    
+
     ! Additional BBOA species used in the OP calculations
     integer, parameter :: sp_BBOA_index = 9
     integer, parameter :: sp_BBOA_RES_index = 10
     integer, parameter :: sp_asoa_index = 11
     integer, parameter :: sp_bsoa_index = 12
     integer, parameter :: n_sp_OP_index = 12
-    
+
     ! These are used just for reading
     integer, parameter :: sp_no3_index = 13
     integer, parameter :: sp_so4_index = 14
@@ -965,7 +965,7 @@ module uEMEP_definitions
     integer, parameter :: sp_dust_wb_index = 17
     integer, parameter :: sp_ffire_bc_index = 18
     integer, parameter :: sp_ffire_rem_index = 19
-    
+
     ! Alternative input names so the other names are reserved for otuput
     integer, parameter :: sp_soa_in_index = 20
     integer, parameter :: sp_sia_in_index = 21
@@ -975,7 +975,7 @@ module uEMEP_definitions
     integer, parameter :: sp_ppm_in_index = 25
     integer, parameter :: sp_water_in_index = 26
     integer, parameter :: sp_pm_in_index = 27
-    
+
     ! Alternative input names for OP so the other names are reserved for otuput
     integer, parameter :: sp_POM_RES_in_index = 28
     integer, parameter :: sp_EC_RES_NEW_in_index = 29
@@ -1027,7 +1027,7 @@ module uEMEP_definitions
     real :: landuse_subgrid_delta(2) = 0.0
     real :: landuse_subgrid_min(2)
     real :: landuse_subgrid_max(2) ! Only x and y
-    
+
     integer, parameter :: temp_conif_index = 1
     integer, parameter :: temp_decid_index = 2
     integer, parameter :: med_needle_index = 3
