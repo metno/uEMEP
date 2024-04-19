@@ -447,7 +447,7 @@ contains
 
                         if (save_netcdf_file_flag.or.save_netcdf_receptor_flag) then
                             write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid(:,:,:))/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
-                            call uEMEP_save_for_EMEP_netcdf_file(unit_logfile,temp_name,emission_subgrid_dim(x_dim_index,i_source),emission_subgrid_dim(y_dim_index,i_source),temp_time_dim &
+                            call uEMEP_save_for_EMEP_netcdf_file(temp_name,emission_subgrid_dim(x_dim_index,i_source),emission_subgrid_dim(y_dim_index,i_source),temp_time_dim &
                                 ,temp_subgrid(:,:,:),x_emission_subgrid(:,:,i_source),y_emission_subgrid(:,:,i_source),lon_emission_subgrid(:,:,i_source),lat_emission_subgrid(:,:,i_source),var_name_temp &
                                 ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
                         endif
@@ -460,7 +460,7 @@ contains
 
     end subroutine uEMEP_save_emission_netcdf
 
-    subroutine uEMEP_save_for_EMEP_netcdf_file(unit_logfile_in,filename_netcdf,nx,ny,nt,val_array,x_array,y_array,lon_array,lat_array,name_array,unit_array,title_str,create_file,valid_min,variable_type,scale_factor)
+    subroutine uEMEP_save_for_EMEP_netcdf_file(filename_netcdf,nx,ny,nt,val_array,x_array,y_array,lon_array,lat_array,name_array,unit_array,title_str,create_file,valid_min,variable_type,scale_factor)
 
         use uEMEP_definitions
         use netcdf
@@ -468,7 +468,6 @@ contains
         implicit none
 
         character(256) filename_netcdf,name_array,unit_array,title_str,temp_name
-        integer unit_logfile_in
         integer nx,ny,nt
         real val_array(nx,ny,nt)!,val_array_temp(nx,ny,nt)
         real x_array(nx,ny)
