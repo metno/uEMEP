@@ -14,7 +14,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
   set(F90DIALECT "") # For future use
   set(F90FLAGS "-O3") # Compiler flags used for release mode
-  set(F90DEBUGFLAGS "-O0 -g -debug all -traceback -check all -check bounds") # debug mode
+  set(F90DEBUGFLAGS "-O0 -g -debug all -traceback -check all -check bounds -warn all") # debug mode
   set(F90DISABLE "-diag-disable=10448") # Disable specific diagnostics 
 endif()
 
