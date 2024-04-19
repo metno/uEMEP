@@ -1230,7 +1230,7 @@
             lat_in=lat_subgrid(i,j)        
             ox_sigma_ratio_in=ox_sigma_ratio_pdf
             nox_sigma_ratio_in=nox_sigma_ratio_pdf
-            call uEMEP_annual_mean_pdf_correction_NO2_O3(max_bin_pdf,log10_step_bin_pdf,.true.,no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out)
+            call uEMEP_annual_mean_pdf_correction_NO2_O3(min_bin_pdf,max_bin_pdf,log10_step_bin_pdf,.true.,no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out)
         else
             run_all_flag=.true.
         endif
@@ -1257,7 +1257,7 @@
             o3_out=o3_in
             no2_out=no2_in
         else
-            call uEMEP_annual_mean_pdf_correction_NO2_O3(max_bin_pdf,log10_step_bin_pdf,run_all_flag,no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out)
+            call uEMEP_annual_mean_pdf_correction_NO2_O3(min_bin_pdf,max_bin_pdf,log10_step_bin_pdf,run_all_flag,no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out)
         endif
 
         comp_subgrid(i,j,t,o3_index)=o3_out
@@ -1283,11 +1283,11 @@
     
     end subroutine correct_annual_mean_chemistry
 
-    subroutine uEMEP_annual_mean_pdf_correction_NO2_O3(bin_max,delta_log10_bin,run_all,no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out)
+    subroutine uEMEP_annual_mean_pdf_correction_NO2_O3(bin_min,bin_max,delta_log10_bin,run_all,no2_in,nox_in,o3_in,J_photo_in,temperature_in,ox_sigma_ratio_in,nox_sigma_ratio_in,lon_in,lat_in,no2_out,o3_out)
     
     implicit none
 
-    real, intent(in) :: bin_max,delta_log10_bin
+    real, intent(in) :: bin_min,bin_max,delta_log10_bin
     logical, intent(in) :: run_all
     real, intent(in) :: J_photo_in,temperature_in
     real, intent(in) :: no2_in,nox_in,o3_in
@@ -1304,7 +1304,7 @@
     real mmass(n_i)
     DATA mmass /46.,30.,46.,48.,47./
 
-    real bin_min,log10_bin_max,log10_bin_min
+    real log10_bin_max,log10_bin_min
     real, allocatable :: log10_bin(:),bin(:),delta_bin(:)
     integer n_bin
     real nox_sigma_ratio,ox_sigma_ratio
@@ -1341,7 +1341,9 @@
     !bin_max=1000. !In ug/m^3
     !delta_log10_bin=0.05
     !delta_log10_bin=0.01
-    bin_min=0.1
+    !Changed from 0.1 to 0.0001 due to inaccuracies for low concentrations (< 0.1 ug/m3)
+    !Have increased default delta_log10_bin to 0.1 to reduce the increase in bins
+    !bin_min=0.0001
     log10_bin_max=log10(bin_max)
     log10_bin_min=log10(bin_min)
     n_bin=(log10_bin_max-log10_bin_min)/delta_log10_bin+1

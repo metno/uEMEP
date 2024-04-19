@@ -1043,6 +1043,7 @@
     real :: ox_sigma_ratio_pdf=0.
     real :: nox_sigma_ratio_pdf=0.
     real :: max_bin_pdf=1000.
+    real :: min_bin_pdf=0.0001
     real :: log10_step_bin_pdf=0.05
     
     !Landuse proxy

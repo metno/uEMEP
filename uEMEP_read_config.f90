@@ -805,6 +805,7 @@
         quick_annual_mean_pdf_chemistry_correction=read_name_logical('quick_annual_mean_pdf_chemistry_correction',quick_annual_mean_pdf_chemistry_correction,unit_in,unit_logfile)
         ox_sigma_ratio_pdf=read_name_real('ox_sigma_ratio_pdf',ox_sigma_ratio_pdf,unit_in,unit_logfile)
         nox_sigma_ratio_pdf=read_name_real('nox_sigma_ratio_pdf',nox_sigma_ratio_pdf,unit_in,unit_logfile)
+        min_bin_pdf=read_name_real('min_bin_pdf',min_bin_pdf,unit_in,unit_logfile)
         max_bin_pdf=read_name_real('max_bin_pdf',max_bin_pdf,unit_in,unit_logfile)
         log10_step_bin_pdf=read_name_real('log10_step_bin_pdf',log10_step_bin_pdf,unit_in,unit_logfile)
 
