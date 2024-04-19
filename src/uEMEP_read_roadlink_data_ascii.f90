@@ -9,6 +9,22 @@ module read_roadlink_data_ascii
     public :: read_country_bounding_box_data, uEMEP_read_roadlink_data_ascii, &
         uEMEP_change_road_data, uEMEP_read_roadlink_emission_data
 
+    ! Temporary interface for NILU legacy Fortran functions
+    interface
+        subroutine NXTDAT(UN,LEOF)
+            integer :: UN
+            logical :: LEOF
+        end subroutine NXTDAT
+        subroutine LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
+            integer :: IUTM, ISONE, ISONE_IN
+            real :: LAT, LON, UTMN, UTME
+        end subroutine LL2UTM
+        subroutine LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
+            integer :: IUTM
+            real :: LAT, LON, UTMN, UTME, LON0
+        end subroutine LL2LTM
+    end interface
+
 contains
 
     subroutine uEMEP_read_roadlink_data_ascii

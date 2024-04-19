@@ -11,6 +11,26 @@ module read_shipping_asi_data
         uEMEP_read_weekly_shipping_asi_data, uEMEP_read_monthly_and_daily_shipping_asi_data, &
         uEMEP_read_shipping_asi_data
 
+    ! Temporary interface for NILU legacy Fortran functions
+    interface
+        subroutine NXTDAT(UN,LEOF)
+              integer :: UN
+              logical :: LEOF
+        end subroutine NXTDAT
+        subroutine LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
+            integer :: IUTM, ISONE, ISONE_IN
+            real :: LAT, LON, UTMN, UTME
+        end subroutine LL2UTM
+        subroutine LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
+            integer :: IUTM
+            real :: LAT, LON, UTMN, UTME, LON0
+        end subroutine LL2LTM
+        subroutine UTM2LL(ISONE_IN,UTMN_IN,UTME,LAT,LON)
+            integer :: ISONE_IN
+            real :: UTMN_IN,UTME,LAT,LON
+        end subroutine UTM2LL
+    end interface
+
 contains
 
 !uEMEP_read_shipping_asi_data.f90

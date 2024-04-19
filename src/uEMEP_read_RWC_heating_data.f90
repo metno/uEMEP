@@ -6,6 +6,19 @@ module read_rwc_heating_data
     private
 
     public :: uEMEP_read_RWC_heating_data
+
+    ! Temporary interface for NILU legacy Fortran functions
+    interface
+        subroutine NXTDAT(UN,LEOF)
+            integer :: UN
+            logical :: LEOF
+        end subroutine NXTDAT
+        subroutine UTM2LL(ISONE_IN,UTMN_IN,UTME,LAT,LON)
+            integer :: ISONE_IN
+            real :: UTMN_IN,UTME,LAT,LON
+        end subroutine UTM2LL
+    end interface
+
 contains
 !uEMEP_read_RWC_heating_data.f90
 !Reads in MetVed data in SSB format at 250 m

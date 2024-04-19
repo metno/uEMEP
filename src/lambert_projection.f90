@@ -8,6 +8,18 @@ module mod_lambert_projection
     public :: lb2lambert2_uEMEP, LL2PS_spherical, PROJ2LL, LL2LAEA, lambert2lb2_uEMEP, &
         lb2lambert_uEMEP
 
+    ! Temporary interface for NILU legacy Fortran functions
+    interface
+        subroutine LTM2LL(ISONE_IN,LA0,UTMN_IN,UTME,LAT,LON)
+            real :: LA0, UTMN_IN,UTME,LAT,LON
+            integer :: ISONE_IN
+        end subroutine LTM2LL
+        subroutine UTM2LL(ISONE_IN,UTMN_IN,UTME,LAT,LON)
+            integer :: ISONE_IN
+            real :: UTMN_IN,UTME,LAT,LON
+        end subroutine UTM2LL
+    end interface
+
 contains
 
 !compile with

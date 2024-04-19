@@ -7,6 +7,18 @@ module read_receptor_data
 
     public :: uEMEP_read_receptor_data, uEMEP_set_loop_receptor_grid, uEMEP_grid_receptor_data
 
+    ! Temporary interface for NILU legacy Fortran functions
+    interface
+        subroutine LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
+            integer :: IUTM, ISONE, ISONE_IN
+            real :: LAT, LON, UTMN, UTME
+        end subroutine LL2UTM
+        subroutine LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
+            integer :: IUTM
+            real :: LAT, LON, UTMN, UTME, LON0
+        end subroutine LL2LTM
+    end interface
+
 contains
 
 !uEMEP_read_receptor_data

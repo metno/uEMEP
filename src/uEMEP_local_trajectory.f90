@@ -5,6 +5,13 @@ module local_trajectory
 
     public :: uEMEP_calculate_all_trajectory, uEMEP_minimum_distance_trajectory_fast
 
+    ! Temporary interface for NILU legacy Fortran functions
+    interface
+        subroutine DISTRL_SQR(X0,Y0,X1,Y1,X2,Y2,XM,YM,DM_SQR,WM)
+              real :: X0, Y0, X1, Y1, X2, Y2, XM, YM, DM_SQR, WM
+        end subroutine DISTRL_SQR
+    end interface
+
 contains
 
 !uEMEP_local_trajectory

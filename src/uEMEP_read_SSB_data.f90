@@ -8,6 +8,18 @@ module read_ssb_data
 
     public :: uEMEP_read_netcdf_population, uEMEP_read_SSB_data, uEMEP_read_netcdf_population_latlon
 
+    ! Temporary interface for NILU legacy Fortran functions
+    interface
+        subroutine LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
+            integer :: IUTM, ISONE, ISONE_IN
+            real :: LAT, LON, UTMN, UTME
+        end subroutine LL2UTM
+        subroutine LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
+            integer :: IUTM
+            real :: LAT, LON, UTMN, UTME, LON0
+        end subroutine LL2LTM
+    end interface
+    
 contains
 
 !uEMEP_read_SSB_data.f90
