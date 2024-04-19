@@ -4,6 +4,8 @@ NILU/Not_used
 
 *.o
 *.mod
+*.i90
+*.i
 uEMEPv*
 ford*
 
@@ -13,5 +15,8 @@ build/
 release/
 
 # Other directories
+mod/
+.mod/
 doc/
 test/
+.vscode/
