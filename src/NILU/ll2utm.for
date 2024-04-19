@@ -137,7 +137,8 @@ C End of subroutine LL2UTM
       END
 
       SUBROUTINE LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
-      !Local lon version without zone, so just typical Transverse Mecantor (Local Transverse Mecantor)
+      !Local lon version without zone, so just typical Transverse
+      !Mecantor (Local Transverse Mecantor)
       
       implicit none
       

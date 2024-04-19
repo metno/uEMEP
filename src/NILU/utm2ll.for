@@ -39,7 +39,8 @@ C Define constants
       PI    = 3.1415927
       SCALE = 0.9996
 
-      !Update 17.02.2021. This now conforms to IUTM = 1 which is always used in ll2utm. Difference?
+      !Update 17.02.2021. This now conforms to IUTM = 1 which is always
+      !used in ll2utm. Difference?
       A = 6378137.0
       F = 1./298.257222101        
       DEAST = 500000.
@@ -145,7 +146,8 @@ C Define constants
       PI    = 3.1415927
       SCALE = 0.9996
       
-      !Update 17.02.2021. This now conforms to IUTM = 1 which is always used in ll2utm. Difference?
+      !Update 17.02.2021. This now conforms to IUTM = 1 which is always
+      !used in ll2utm. Difference?
       A = 6378137.0
       F = 1./298.257222101        
       DEAST = 500000.
