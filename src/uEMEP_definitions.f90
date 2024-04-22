@@ -646,7 +646,7 @@ module uEMEP_definitions
     real :: FF_min_dispersion = 0.1
     integer :: emission_timeprofile_hour_shift = 1 ! Winter European time
 
-    real, parameter :: pi = 3.141592
+    real, parameter :: pi = 3.14159265358979323
 
     integer, parameter :: UTM_projection_index = 1
     integer, parameter :: RDM_projection_index = 2

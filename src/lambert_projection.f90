@@ -26,8 +26,7 @@ contains
 
     subroutine testlambert()
         real :: gl, gb, x, y, lon0, lat0, y0, k, F, earth_radius, lat_stand1, GRIDWIDTH_M
-        real :: PI, deg2rad
-        PI = 3.14159265358979323
+        real :: deg2rad
         GRIDWIDTH_M = 2500.0
         lon0 = 15.0
         lat0 = 63.0
@@ -60,8 +59,6 @@ contains
         real, intent(in) ::x, y, lon0, y0, k, F
         real, intent(out) ::gl, gb
         real :: r, t
-        real :: PI
-        PI = 3.14159265358979323
         r = sqrt(x*x + (y0 - y)*(y0 - y))
         t = atan(x/(y0 - y))
         gb = 2.0*180.0/PI*atan((F/r)**(1.0/k)) - 90.0
@@ -72,8 +69,6 @@ contains
         real, intent(in) :: gl, gb, lon0, y0, k, F
         real, intent(out) :: x, y
         real :: r, dr2, dr
-        real :: PI
-        PI = 3.14159265358979323
         dr = PI/180.0
         dr2 = PI/360.0
         r = F*tan(PI/4 - dr2*gb)**k
@@ -85,10 +80,8 @@ contains
         real, intent(in) ::x, y, lon0, lat0
         real, intent(out)::gl, gb
         real ::r, t
-        real :: PI
         real :: earth_radius, k, F, y0
 
-        PI = 3.14159265358979323
         earth_radius = 6371000.0
 
         k = sin(PI/180.0*lat0)
@@ -100,24 +93,22 @@ contains
         gl = lon0 + 180.0/PI*t/k
     end subroutine lambert2lb_uEMEP
 
-    subroutine lambert2lb2_uEMEP(x, y, gl, gb, projection_attributes)
-        double precision, intent(in) :: projection_attributes(10)
+    subroutine lambert2lb2_uEMEP(x, y, gl, gb, projection_attr)
+        double precision, intent(in) :: projection_attr(10)
         real, intent(in) :: x, y
         real, intent(out):: gl, gb
         real :: r, t
-        real :: PI
         real :: earth_radius, k, F, y0
         real :: deg2rad, rad2deg, k_lambert, lat0_lambert
         real :: lat0
         real :: lat_stand1_lambert, lat_stand2_lambert, lon0, lat0_in
 
-        lat_stand1_lambert = projection_attributes(1)
-        lat_stand2_lambert = projection_attributes(2)
-        lon0 = projection_attributes(3)
-        lat0_in = projection_attributes(4)
-        earth_radius = projection_attributes(5)
+        lat_stand1_lambert = projection_attr(1)
+        lat_stand2_lambert = projection_attr(2)
+        lon0 = projection_attr(3)
+        lat0_in = projection_attr(4)
+        earth_radius = projection_attr(5)
 
-        PI = 3.14159265358979323
         deg2rad = PI/180.0
         rad2deg = 180.0/PI
 
@@ -143,11 +134,9 @@ contains
         real, intent(in) :: gl, gb, lon0, lat0
         real, intent(out):: x, y
         real :: r
-        real :: PI
         real :: earth_radius, k, F, y0
         real :: rad2deg
 
-        PI = 3.14159265358979323
         earth_radius = 6371000.0
         rad2deg = PI/180.0
 
@@ -159,23 +148,21 @@ contains
         y = y0 - r*cos(PI/180.0*k*(gl - lon0))
     end subroutine lb2lambert_uEMEP
 
-    subroutine lb2lambert2_uEMEP(x, y, gl, gb, projection_attributes)
-        double precision, intent(in) :: projection_attributes(10)
+    subroutine lb2lambert2_uEMEP(x, y, gl, gb, projection_attr)
+        double precision, intent(in) :: projection_attr(10)
         real, intent(in) :: gl, gb
         real, intent(out):: x, y
         real :: r
-        real :: PI
         real :: earth_radius, k, F, y0
         real :: deg2rad, rad2deg, k_lambert, lat0_lambert
         real :: lat0
         real :: lat_stand1_lambert, lat_stand2_lambert, lon0, lat0_in
 
-        lat_stand1_lambert = projection_attributes(1)
-        lat_stand2_lambert = projection_attributes(2)
-        lon0 = projection_attributes(3)
-        lat0_in = projection_attributes(4)
-        earth_radius = projection_attributes(5)
-        PI = 3.14159265358979323
+        lat_stand1_lambert = projection_attr(1)
+        lat_stand2_lambert = projection_attr(2)
+        lon0 = projection_attr(3)
+        lat0_in = projection_attr(4)
+        earth_radius = projection_attr(5)
         deg2rad = PI/180.0
         rad2deg = 180.0/PI
 
@@ -196,7 +183,7 @@ contains
         y = y0 - r*cos(PI/180.0*k*(gl - lon0))
     end subroutine lb2lambert2_uEMEP
 
-    subroutine LL2LAEA_spherical(x, y, lon_in, lat_in, projection_attributes)
+    subroutine LL2LAEA_spherical(x, y, lon_in, lat_in, projection_attr)
         ! https://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html
         ! grid_mapping_name = lambert_azimuthal_equal_area
         ! Map parameters:
@@ -204,26 +191,24 @@ contains
         ! latitude_of_projection_origin
         ! false_easting - This parameter is optional (default is 0)
         ! false_northing - This parameter is optional (default is 0)lat_stand1_lambert=projection_attributes(1)
-        double precision, intent(in) :: projection_attributes(10)
+        double precision, intent(in) :: projection_attr(10)
         real, intent(in) :: lon_in, lat_in
         real, intent(out):: x, y
 
         ! Local variables
         real :: r
-        real :: PI
         real :: earth_radius
         real :: deg2rad, rad2deg, k_lambert
         real :: lat0, lat0_in, lon0, lon0_in
         real :: false_easting, false_northing
         real :: lon, lat
 
-        lon0_in = projection_attributes(1)
-        lat0_in = projection_attributes(2)
-        false_easting = projection_attributes(3)
-        false_northing = projection_attributes(4)
-        earth_radius = projection_attributes(5)
+        lon0_in = projection_attr(1)
+        lat0_in = projection_attr(2)
+        false_easting = projection_attr(3)
+        false_northing = projection_attr(4)
+        earth_radius = projection_attr(5)
 
-        PI = 3.14159265358979323
         deg2rad = PI/180.0
         rad2deg = 180.0/PI
         r = earth_radius
@@ -238,7 +223,7 @@ contains
         y = false_northing + r*k_lambert*(cos(lat0)*sin(lat) - sin(lat0)*cos(lat)*cos(lon - lon0))
     end subroutine LL2LAEA_spherical
 
-    subroutine LAEA2LL_spherical(x, y, lon, lat, projection_attributes)
+    subroutine LAEA2LL_spherical(x, y, lon, lat, projection_attr)
         ! https://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html
         ! grid_mapping_name = lambert_azimuthal_equal_area
         ! Map parameters:
@@ -246,25 +231,23 @@ contains
         ! latitude_of_projection_origin
         ! false_easting - This parameter is optional (default is 0)
         ! false_northing - This parameter is optional (default is 0)lat_stand1_lambert=projection_attributes(1)
-        double precision, intent(in) :: projection_attributes(10)
+        double precision, intent(in) :: projection_attr(10)
         real, intent(out) :: lon, lat
         real, intent(in):: x, y
 
         ! Local variables
         real :: r, rho, c
-        real :: PI
         real :: earth_radius
         real :: deg2rad, rad2deg
         real :: lat0, lat0_in, lon0, lon0_in
         real :: false_easting, false_northing
         
-        lon0_in = projection_attributes(1)
-        lat0_in = projection_attributes(2)
-        false_easting = projection_attributes(3)
-        false_northing = projection_attributes(4)
-        earth_radius = projection_attributes(5)
+        lon0_in = projection_attr(1)
+        lat0_in = projection_attr(2)
+        false_easting = projection_attr(3)
+        false_northing = projection_attr(4)
+        earth_radius = projection_attr(5)
 
-        PI = 3.14159265358979323
         deg2rad = PI/180.0
         rad2deg = 180.0/PI
         r = earth_radius
@@ -280,7 +263,7 @@ contains
         lon = lon*rad2deg
     end subroutine LAEA2LL_spherical
 
-    subroutine LL2LAEA(x, y, lon_in, lat_in, projection_attributes)
+    subroutine LL2LAEA(x, y, lon_in, lat_in, projection_attr)
         ! https://epsg.io/3035
         ! grid_mapping_name = lambert_azimuthal_equal_area
         ! Map parameters:
@@ -288,12 +271,11 @@ contains
         ! latitude_of_projection_origin
         ! false_easting - This parameter is optional (default is 0)
         ! false_northing - This parameter is optional (default is 0)lat_stand1_lambert=projection_attributes(1)
-        double precision, intent(in) :: projection_attributes(10)
+        double precision, intent(in) :: projection_attr(10)
         real, intent(in) :: lon_in, lat_in
         real, intent(out) :: x, y
 
         ! Local variables
-        real :: PI
         real :: semi_major_axis
         real :: deg2rad,rad2deg
         real :: lat0, lat0_in, lon0, lon0_in
@@ -301,14 +283,13 @@ contains
         real :: lon, lat
         real :: inv_f, f, a, e, q_p, q_0, q, beta, beta_0, R_q, D, B
         
-        lon0_in = projection_attributes(1)
-        lat0_in = projection_attributes(2)
-        false_easting = projection_attributes(3)
-        false_northing = projection_attributes(4)
-        semi_major_axis = projection_attributes(5)
-        inv_f = projection_attributes(6) !flattening
+        lon0_in = projection_attr(1)
+        lat0_in = projection_attr(2)
+        false_easting = projection_attr(3)
+        false_northing = projection_attr(4)
+        semi_major_axis = projection_attr(5)
+        inv_f = projection_attr(6) !flattening
 
-        PI = 3.14159265358979323
         deg2rad = PI/180.0
         rad2deg = 180.0/PI
         a = semi_major_axis
@@ -332,7 +313,7 @@ contains
         y = false_northing + B/D*(cos(beta_0)*sin(beta) - sin(beta_0)*cos(beta)*cos(lon - lon0))
     end subroutine LL2LAEA
 
-    subroutine LAEA2LL(x, y, lon, lat, projection_attributes)
+    subroutine LAEA2LL(x, y, lon, lat, projection_attr)
         ! www.epsg.org
         ! grid_mapping_name = lambert_azimuthal_equal_area
         ! Map parameters:
@@ -340,11 +321,10 @@ contains
         ! latitude_of_projection_origin
         ! false_easting - This parameter is optional (default is 0)
         ! false_northing - This parameter is optional (default is 0)lat_stand1_lambert=projection_attributes(1)
-        double precision, intent(in) :: projection_attributes(10)
+        double precision, intent(in) :: projection_attr(10)
         real, intent(out) :: lon, lat
         real, intent(in) :: x, y
         real :: rho
-        real :: PI
         real :: semi_major_axis
         real :: deg2rad,rad2deg
         real :: lat0, lat0_in, lon0, lon0_in
@@ -352,14 +332,13 @@ contains
         real :: inv_f, f, a, e, q_p, q_0, beta_0, R_q, D
         real :: C, beta_d
         
-        lon0_in = projection_attributes(1)
-        lat0_in = projection_attributes(2)
-        false_easting = projection_attributes(3)
-        false_northing = projection_attributes(4)
-        semi_major_axis = projection_attributes(5)
-        inv_f = projection_attributes(6) ! flattening
+        lon0_in = projection_attr(1)
+        lat0_in = projection_attr(2)
+        false_easting = projection_attr(3)
+        false_northing = projection_attr(4)
+        semi_major_axis = projection_attr(5)
+        inv_f = projection_attr(6) ! flattening
 
-        PI = 3.14159265358979323
         deg2rad = PI/180.0
         rad2deg = 180.0/PI
         a = semi_major_axis
@@ -417,7 +396,7 @@ contains
         end if
     end subroutine PROJ2LL
 
-    subroutine LL2PS_spherical(x, y, lon_in, lat_in, projection_attributes)
+    subroutine LL2PS_spherical(x, y, lon_in, lat_in, projection_attr)
         ! https://mathworld.wolfram.com/StereographicProjection.html
         ! grid_mapping_name = Polar_Stereographic
         ! Map parameters:
@@ -425,11 +404,10 @@ contains
         ! latitude_of_projection_origin
         ! false_easting - This parameter is optional (default is 0)
         ! false_northing - This parameter is optional (default is 0)lat_stand1_lambert=projection_attributes(1)
-        double precision, intent(in) :: projection_attributes(10)
+        double precision, intent(in) :: projection_attr(10)
         real, intent(in) ::lon_in,lat_in
         real, intent(out)::x,y
         real ::r
-        real ::PI
         real :: earth_radius
         real deg2rad,rad2deg,k_ps
         real lat0,lat0_in,lon0,lon0_in
@@ -437,14 +415,13 @@ contains
         real scaling
         real lon,lat
 
-        lon0_in = projection_attributes(1)
-        lat0_in = projection_attributes(2)
-        false_easting = projection_attributes(3)
-        false_northing = projection_attributes(4)
-        earth_radius = projection_attributes(5)
-        scaling = projection_attributes(6)
+        lon0_in = projection_attr(1)
+        lat0_in = projection_attr(2)
+        false_easting = projection_attr(3)
+        false_northing = projection_attr(4)
+        earth_radius = projection_attr(5)
+        scaling = projection_attr(6)
 
-        PI = 3.14159265358979323
         deg2rad = PI/180.0
         rad2deg = 180.0/PI
         r = earth_radius
@@ -459,7 +436,7 @@ contains
         y = false_northing + k_ps*(cos(lat0)*sin(lat) - sin(lat0)*cos(lat)*cos(lon - lon0))
     end subroutine LL2PS_spherical
 
-    subroutine PS2LL_spherical(x, y, lon, lat, projection_attributes)
+    subroutine PS2LL_spherical(x, y, lon, lat, projection_attr)
         ! https://mathworld.wolfram.com/StereographicProjection.html
         ! grid_mapping_name = Polar_Stereographic
         ! Map parameters:
@@ -468,25 +445,23 @@ contains
         ! false_easting - This parameter is optional (default is 0)
         ! false_northing - This parameter is optional (default is 0)
         ! NOTE scale_factor_at_projection_origin =0.5(1+sin(Standard Parallel))
-        double precision, intent(in) :: projection_attributes(10)
+        double precision, intent(in) :: projection_attr(10)
         real, intent(out) :: lon, lat
         real, intent(in) :: x, y
         real :: r, rho, c
-        real :: PI
         real :: earth_radius
         real :: deg2rad, rad2deg
         real :: lat0, lat0_in, lon0, lon0_in
         real :: false_easting,false_northing
         real :: scaling
         
-        lon0_in = projection_attributes(1)
-        lat0_in = projection_attributes(2)
-        false_easting = projection_attributes(3)
-        false_northing = projection_attributes(4)
-        earth_radius = projection_attributes(5)
-        scaling = projection_attributes(6)
+        lon0_in = projection_attr(1)
+        lat0_in = projection_attr(2)
+        false_easting = projection_attr(3)
+        false_northing = projection_attr(4)
+        earth_radius = projection_attr(5)
+        scaling = projection_attr(6)
 
-        PI = 3.14159265358979323
         deg2rad = PI/180.0
         rad2deg = 180.0/PI
         r = earth_radius
