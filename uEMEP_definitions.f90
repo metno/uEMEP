@@ -850,12 +850,12 @@
     !Species variables
     integer pm10_sp_index,pm25_sp_index,pmco_sp_index,n_pmxx_sp_index
     parameter (pm10_sp_index=1,pm25_sp_index=2,pmco_sp_index=3,n_pmxx_sp_index=3) !pmco_sp_index is just for reading
-    integer sp_soa_index,sp_sia_index,sp_dust_index,sp_seasalt_index,sp_ffire_index,sp_ppm_index,sp_water_index,sp_pm_index,n_sp_index
-    parameter (sp_soa_index=1,sp_sia_index=2,sp_dust_index=3,sp_seasalt_index=4,sp_ffire_index=5,sp_ppm_index=6,sp_water_index=7,sp_pm_index=8)
-    parameter (n_sp_index=8)
+    integer sp_soa_index,sp_sia_index,sp_dust_index,sp_seasalt_index,sp_ffire_index,sp_ppm_index,sp_water_index,sp_pm_index,sp_asoa_index,sp_bsoa_index,n_sp_index
+    parameter (sp_soa_index=1,sp_sia_index=2,sp_dust_index=3,sp_seasalt_index=4,sp_ffire_index=5,sp_ppm_index=6,sp_water_index=7,sp_pm_index=8,sp_asoa_index=9,sp_bsoa_index=10)
+    parameter (n_sp_index=10)
     !Additional BBOA species used in the OP calculations
-    integer sp_BBOA_index,sp_BBOA_RES_index,sp_asoa_index,sp_bsoa_index,n_sp_OP_index
-    parameter (sp_BBOA_index=9,sp_BBOA_RES_index=10,sp_asoa_index=11,sp_bsoa_index=12)
+    integer sp_BBOA_index,sp_BBOA_RES_index,n_sp_OP_index
+    parameter (sp_BBOA_index=11,sp_BBOA_RES_index=12)
     parameter (n_sp_OP_index=12)
     !These are used just for reading
     integer sp_no3_index,sp_so4_index,sp_nh4_index,sp_dust_sah_index,sp_dust_wb_index,sp_ffire_bc_index,sp_ffire_rem_index,n_sp_all_index
