@@ -1143,7 +1143,7 @@
 
                 write(unit_logfile,'(A,2A,2f16.4)') ' Calculating species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_var3d_nc(:,:,:,pm25_sp_index,sp_soa_index)),maxval(species_var3d_nc(:,:,:,pm25_sp_index,sp_soa_index))
                 
-                where (species_EMEP_subgrid(:,:,:,:,sp_soa_index).le.0) species_EMEP_subgrid(:,:,:,:,sp_soa_index)=0
+                where (species_var3d_nc(:,:,:,:,sp_soa_index).le.0) species_var3d_nc(:,:,:,:,sp_soa_index)=0
                 
                 write(unit_logfile,'(A,2A,2f16.4)') ' Limitting species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_var3d_nc(:,:,:,pm25_sp_index,sp_soa_index)),maxval(species_var3d_nc(:,:,:,pm25_sp_index,sp_soa_index))
                
