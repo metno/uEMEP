@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.20)
 # Project description
 project(uemep)
 
+enable_testing()
+
 # Hardcode ifort as the Fortran compiler (gfortran currently does not work)
 set(CMAKE_Fortran_COMPILER "ifort")
 enable_language(Fortran)
@@ -31,10 +33,8 @@ include_directories(${NETCDF_INCLUDES})
 file(GLOB_RECURSE SOURCES src/*.f90 src/*.for)
 
 # Create executable and link
-add_executable(uemep ${SOURCES})
+add_executable(uemep exe/uEMEP_control_v2.f90 ${SOURCES})
 target_link_libraries(uemep ${NETCDF_LIBRARIES})
 
-# message(STATUS "${NFLIB}")
+add_subdirectory(test)
 
-#file(GLOB_RECURSE SRC src/*.f90 src/*.for)
-#add_executable(uEMEP ${SRC})
