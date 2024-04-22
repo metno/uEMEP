@@ -186,7 +186,7 @@ contains
 
                         write(unit_logfile,'(a,f12.3)')'Writing ascii array variable: '//trim(var_name_temp),sum(comp_subgrid(:,:,:,i_comp))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
 
-                        call write_esri_ascii_file(unit_logfile,filename_ascii,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_delta(x_dim_index),temp_subgrid_ascii,x_subgrid,y_subgrid)
+                        call write_esri_ascii_file(filename_ascii,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_delta(x_dim_index),temp_subgrid_ascii,x_subgrid,y_subgrid)
 
                     enddo
                 endif

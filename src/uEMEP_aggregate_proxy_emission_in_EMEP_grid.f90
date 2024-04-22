@@ -153,12 +153,12 @@ contains
                         temp_name=trim(pathname_grid(emission_file_index(i_source)))//trim(filename_grid(emission_file_index(i_source)))//'_'//trim(pollutant_file_str(p_loop))//'_aggregated_proxy_EMEP_'//trim(file_tag)//'.asc'
                         write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
                         write(unit_logfile,'(a,f12.2)')'Total local emissions (ton/year): ',sum(EMEP_aggregated_subgid_emission)
-                        call write_esri_ascii_file(unit_logfile,temp_name,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dgrid_nc(lat_nc_index), &
+                        call write_esri_ascii_file(temp_name,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dgrid_nc(lat_nc_index), &
                             EMEP_aggregated_subgid_emission(:,:),lon_array,lat_array)
                         temp_name=trim(pathname_grid(emission_file_index(i_source)))//trim(filename_grid(emission_file_index(i_source)))//'_'//trim(pollutant_file_str(p_loop))//'_EMEP_'//trim(file_tag)//'.asc'
                         write(unit_logfile,'(a)')'Writing to: '//trim(temp_name)
                         write(unit_logfile,'(a,f12.2)')'Total EMEP emissions (ton/year): ',sum(EMEP_aggregated_emission)
-                        call write_esri_ascii_file(unit_logfile,temp_name,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dgrid_nc(lat_nc_index), &
+                        call write_esri_ascii_file(temp_name,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dgrid_nc(lat_nc_index), &
                             EMEP_aggregated_emission(:,:),lon_array,lat_array)
 
                         write(unit_logfile,'(a,f12.4)')'Ratio of local to EMEP emissions: ',sum(EMEP_aggregated_subgid_emission)/sum(EMEP_aggregated_emission)

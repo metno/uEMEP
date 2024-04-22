@@ -51,7 +51,7 @@ contains
             stop
         endif
 
-        call read_esri_ascii_header(unit_logfile,pathfilename_landuse,ncols_sub,nrows_sub,cellsize_sub,xll_corner_sub,yll_corner_sub,.false.)
+        call read_esri_ascii_header(pathfilename_landuse,ncols_sub,nrows_sub,cellsize_sub,xll_corner_sub,yll_corner_sub,.false.)
 
         landuse_subgrid_dim(x_dim_index)=ncols_sub
         landuse_subgrid_dim(y_dim_index)=nrows_sub
@@ -148,7 +148,7 @@ contains
         !Read the landuse index into the temporary landuse array
         if (.not.allocated(landuse_array)) allocate (landuse_array(landuse_subgrid_dim(x_dim_index),landuse_subgrid_dim(y_dim_index)))
 
-        call read_esri_ascii_file(unit_logfile,pathfilename_landuse,ncols_sub,nrows_sub,cellsize_sub,landuse_array,x_landuse_subgrid,y_landuse_subgrid,.false.)
+        call read_esri_ascii_file(pathfilename_landuse,ncols_sub,nrows_sub,cellsize_sub,landuse_array,x_landuse_subgrid,y_landuse_subgrid,.false.)
 
         !set the depac indicies to the matching EMEP ones
         depac_index=0
