@@ -401,7 +401,7 @@
             if (landuse_subgrid(i,j,clc_index).gt.0) then
                 landuse_subgrid(i,j,Corine_to_EMEP_landuse(landuse_subgrid(i,j,clc_index)))=1
             else
-                landuse_subgrid(i,j,NODATA_clc_value)=1
+                landuse_subgrid(i,j,Corine_to_EMEP_landuse(NODATA_clc_value))=1
             endif
             
             !Do the interpolation on the same grid then scale afterwards. Equivalent to interpolating density then rescaling with grid size
