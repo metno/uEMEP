@@ -1,5 +1,6 @@
 module read_shipping_asi_data
 
+    use utility_functions, only: nxtdat, ll2utm, ll2ltm, utm2ll
     use time_functions, only: datestr_to_date, date_to_number, number_to_date
     use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical, LL2LAEA
     use mod_area_interpolation, only: area_weighted_extended_vectorgrid_interpolation_function
@@ -10,26 +11,6 @@ module read_shipping_asi_data
     public :: uEMEP_preaggregate_shipping_asi_data, uEMEP_read_netcdf_shipping_latlon, &
         uEMEP_read_weekly_shipping_asi_data, uEMEP_read_monthly_and_daily_shipping_asi_data, &
         uEMEP_read_shipping_asi_data
-
-    ! Temporary interface for NILU legacy Fortran functions
-    interface
-        subroutine NXTDAT(UN,LEOF)
-              integer :: UN
-              logical :: LEOF
-        end subroutine NXTDAT
-        subroutine LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
-            integer :: IUTM, ISONE, ISONE_IN
-            real :: LAT, LON, UTMN, UTME
-        end subroutine LL2UTM
-        subroutine LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
-            integer :: IUTM
-            real :: LAT, LON, UTMN, UTME, LON0
-        end subroutine LL2LTM
-        subroutine UTM2LL(ISONE_IN,UTMN_IN,UTME,LAT,LON)
-            integer :: ISONE_IN
-            real :: UTMN_IN,UTME,LAT,LON
-        end subroutine UTM2LL
-    end interface
 
 contains
 
@@ -106,7 +87,7 @@ contains
         subsource_index=1
 
         !Skip over lines starting with #
-        call NXTDAT(unit_in,nxtdat_flag)
+        call nxtdat(unit_in,nxtdat_flag)
 
         !Read data
         read(unit_in,*) temp_str1,ship_delta_x
@@ -122,7 +103,7 @@ contains
             !Special case when saving emissions, convert to either latlon or lambert
             if (save_emissions_for_EMEP(shipping_index)) then
                 call PROJ2LL(x_ship,y_ship,lon_ship,lat_ship,projection_attributes,projection_type)
-                !call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
+                ! call utm2ll_modern(1, utm_zone,y_ship,x_ship,lat_ship,lon_ship)
                 if (EMEP_projection_type.eq.LL_projection_index) then
                     x_ship=lon_ship
                     y_ship=lat_ship
@@ -238,7 +219,7 @@ contains
         subsource_index=1
 
         !Skip over lines starting with #
-        call NXTDAT(unit_in,nxtdat_flag)
+        call nxtdat(unit_in,nxtdat_flag)
 
         !Read data
         read(unit_in,*) temp_str1,ship_delta_x
@@ -254,7 +235,7 @@ contains
             !Special case when saving emissions, convert to either latlon or lambert
             if (save_emissions_for_EMEP(shipping_index)) then
                 call PROJ2LL(x_ship,y_ship,lon_ship,lat_ship,projection_attributes,projection_type)
-                !call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
+                ! call utm2ll_modern(1, utm_zone,y_ship,x_ship,lat_ship,lon_ship)
                 if (EMEP_projection_type.eq.LL_projection_index) then
                     x_ship=lon_ship
                     y_ship=lat_ship
@@ -317,7 +298,7 @@ contains
         subsource_index=1
 
         !Skip over lines starting with #
-        call NXTDAT(unit_in,nxtdat_flag)
+        call nxtdat(unit_in,nxtdat_flag)
 
         !Read data
         read(unit_in,*) temp_str1,ship_delta_x
@@ -334,7 +315,7 @@ contains
             !Convert to EMEP coordinates if it is to be saved. emission grids are already in the EMEP coordinate system
             if (save_emissions_for_EMEP(shipping_index)) then
                 call PROJ2LL(x_ship,y_ship,lon_ship,lat_ship,projection_attributes,projection_type)
-                !call UTM2LL(utm_zone,y_ship,x_ship,lat_ship,lon_ship)
+                ! call utm2ll_modern(1, utm_zone,y_ship,x_ship,lat_ship,lon_ship)
                 call lb2lambert2_uEMEP(x_ship,y_ship,lon_ship,lat_ship,EMEP_projection_attributes)
             endif
 
@@ -483,9 +464,9 @@ contains
                 else
                     !Convert lat lon to utm coords
                     if (projection_type.eq.UTM_projection_index) then
-                        call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
+                        call ll2utm(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
                     elseif (projection_type.eq.LTM_projection_index) then
-                        call LL2LTM(1,ltm_lon0,ddlatitude,ddlongitude,y_ship,x_ship)
+                        call ll2ltm(1,ltm_lon0,ddlatitude,ddlongitude,y_ship,x_ship)
                     elseif (projection_type.eq.LAEA_projection_index) then
                         call LL2LAEA(x_ship,y_ship,ddlongitude,ddlatitude,projection_attributes)
                     endif
@@ -953,9 +934,9 @@ contains
 
                 !Convert lat lon to utm coords
                 if (projection_type.eq.UTM_projection_index) then
-                    call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
+                    call ll2utm(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
                 elseif (projection_type.eq.LTM_projection_index) then
-                    call LL2LTM(1,ltm_lon0,ddlatitude,ddlongitude,y_ship,x_ship)
+                    call ll2ltm(1,ltm_lon0,ddlatitude,ddlongitude,y_ship,x_ship)
                 elseif (projection_type.eq.LAEA_projection_index) then
                     call LL2LAEA(x_ship,y_ship,ddlongitude,ddlatitude,projection_attributes)
                 endif
@@ -991,7 +972,7 @@ contains
                 ship_value(i_count,ship_x_dim_index)=(ship_index(i_count,ship_i_dim_index)+.5)*ship_delta
                 ship_value(i_count,ship_y_dim_index)=(ship_index(i_count,ship_j_dim_index)+.5)*ship_delta
                 call PROJ2LL(ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_lon_dim_index),ship_value(i_count,ship_lat_dim_index),projection_attributes,projection_type)
-                call UTM2LL(utm_zone,ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index))
+                call utm2ll(1,utm_zone,ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index))
 
                 !if (mod(count,10000).eq.0) write(*,'(2i,2f,2e)') count,ship_index_count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission
                 !if (mod(count,10000).eq.0) write(*,'(3i12,4f14.4,2es14.5)') count,i_count,ship_index(i_count,ship_count_dim_index),ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index),ship_value(i_count,ship_pm_dim_index),ship_value(i_count,ship_nox_dim_index)
@@ -1039,7 +1020,7 @@ contains
         !do i_count=1,ship_index_count
         !ship_value(i_count,ship_x_dim_index)=(ship_index(i_count,ship_i_dim_index)+.5)*ship_delta
         !ship_value(i_count,ship_y_dim_index)=(ship_index(i_count,ship_j_dim_index)+.5)*ship_delta
-        !call UTM2LL(utm_zone,ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index))
+        !call utm2ll_modern(1,utm_zone,ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index))
         !enddo
 
         !Save the data in the same format as previously provided

@@ -1,23 +1,12 @@
 module read_industry_data
 
     use mod_lambert_projection, only: LL2LAEA, lb2lambert2_uEMEP, LL2PS_spherical
+    use utility_functions, only: ll2utm, ll2ltm
 
     implicit none
     private
 
     public :: uEMEP_read_industry_data
-
-    ! Temporary interface for NILU legacy Fortran functions
-    interface
-        subroutine LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
-            integer :: IUTM, ISONE, ISONE_IN
-            real :: LAT, LON, UTMN, UTME
-        end subroutine LL2UTM
-        subroutine LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
-            integer :: IUTM
-            real :: LAT, LON, UTMN, UTME, LON0
-        end subroutine LL2LTM
-    end interface
 
 contains
 
@@ -209,9 +198,9 @@ contains
 
             !Convert lat lon to utm coords
             if  (projection_type.eq.UTM_projection_index) then
-                call LL2UTM(1,utm_zone,industry_lb_pos(industry_number,2),industry_lb_pos(industry_number,1),y_industry,x_industry)
+                call ll2utm(1,utm_zone,industry_lb_pos(industry_number,2),industry_lb_pos(industry_number,1),y_industry,x_industry)
             elseif  (projection_type.eq.LTM_projection_index) then
-                call LL2LTM(1,ltm_lon0,industry_lb_pos(industry_number,2),industry_lb_pos(industry_number,1),y_industry,x_industry)
+                call ll2ltm(1,ltm_lon0,industry_lb_pos(industry_number,2),industry_lb_pos(industry_number,1),y_industry,x_industry)
             elseif (projection_type.eq.LAEA_projection_index) then
                 call LL2LAEA(x_industry,y_industry,industry_lb_pos(industry_number,1),industry_lb_pos(industry_number,2),projection_attributes)
             endif

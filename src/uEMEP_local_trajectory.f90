@@ -1,16 +1,11 @@
 module local_trajectory
 
+    use utility_functions, only: distrl_sqr
+
     implicit none
     private
 
     public :: uEMEP_calculate_all_trajectory, uEMEP_minimum_distance_trajectory_fast
-
-    ! Temporary interface for NILU legacy Fortran functions
-    interface
-        subroutine DISTRL_SQR(X0,Y0,X1,Y1,X2,Y2,XM,YM,DM_SQR,WM)
-              real :: X0, Y0, X1, Y1, X2, Y2, XM, YM, DM_SQR, WM
-        end subroutine DISTRL_SQR
-    end interface
 
 contains
 
@@ -87,7 +82,7 @@ contains
                 !distance_traj(k)=sqrt((x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r))
                 distance_traj(k)=(x_traj(k)-x_r)*(x_traj(k)-x_r)+(y_traj(k)-y_r)*(y_traj(k)-y_r)
 
-                call DISTRL_SQR(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj(k),y_intercept_traj(k),distance_intercept_traj(k),frac_length_traj(k))
+                call distrl_sqr(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj(k),y_intercept_traj(k),distance_intercept_traj(k),frac_length_traj(k))
 
                 if (distance_intercept_traj(k).lt.distance_traj(k).and.distance_intercept_traj(k).le.distance_traj(k-1)) then
                     exit_traj=.true.
@@ -214,7 +209,7 @@ contains
         do k=2,traj_max_index_in
 
             if (x_traj(k).ne.NODATA_value) then
-                call DISTRL_SQR(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj(k),y_intercept_traj(k),distance_intercept_traj(k),frac_length_traj(k))
+                call distrl_sqr(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj(k),y_intercept_traj(k),distance_intercept_traj(k),frac_length_traj(k))
 
                 if (distance_intercept_traj(k).lt.distance_intercept_min) then
                     distance_intercept_min=distance_intercept_traj(k)
@@ -278,7 +273,7 @@ contains
 
         do k=2,traj_max_index_in
             if (x_traj(k).ne.NODATA_value) then
-                call DISTRL_SQR(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj,y_intercept_traj,distance_intercept_traj,frac_length_traj)
+                call distrl_sqr(x_r,y_r,x_traj(k-1),y_traj(k-1),x_traj(k),y_traj(k),x_intercept_traj,y_intercept_traj,distance_intercept_traj,frac_length_traj)
 
                 if (distance_intercept_traj.lt.distance_intercept_min) then
                     distance_intercept_min=distance_intercept_traj

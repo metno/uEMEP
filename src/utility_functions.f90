@@ -3,17 +3,17 @@ module utility_functions
     implicit none
     private
 
-    public :: distrl_modern, distrl_sqr_modern
-    public :: nxtdat_modern
-    public :: ll2utm_modern, ll2ltm_modern
-    public :: utm2ll_modern, ltm2ll_modern
+    public :: distrl, distrl_sqr
+    public :: nxtdat
+    public :: ll2utm, ll2ltm
+    public :: utm2ll, ltm2ll
 
     integer, parameter :: dp = selected_real_kind(15, 307)
     real(dp), parameter :: pi = 3.141592653589793
 
 contains
 
-    subroutine distrl_modern(x0, y0, x1, y1, x2, y2, xm, ym, dm, wm)
+    subroutine distrl(x0, y0, x1, y1, x2, y2, xm, ym, dm, wm)
         !! The subroutine calculates the minimum distance from a given receptor
         !! point to a given line source.
         real, intent(in) :: x0 !! Receptor point x-coordinate
@@ -43,9 +43,9 @@ contains
         xm = (1.0 - wm)*x1 + wm*x2
         ym = (1.0 - wm)*y1 + wm*y2
         dm = sqrt((x0 - xm)*(x0 - xm) + (y0 - ym)*(y0 - ym))
-    end subroutine distrl_modern
+    end subroutine distrl
 
-    subroutine distrl_sqr_modern(x0, y0, x1, y1, x2, y2, xm, ym, dm_sqr, wm)
+    subroutine distrl_sqr(x0, y0, x1, y1, x2, y2, xm, ym, dm_sqr, wm)
         real, intent(in) :: x0 !! Receptor point x-coordinate
         real, intent(in) :: y0 !! Receptor point y-coordinate
         real, intent(in) :: x1 !! Line source x-coordinate 1
@@ -73,9 +73,9 @@ contains
         xm = (1.0 - wm)*x1 + wm*x2
         ym = (1.0 - wm)*y1 + wm*y2
         dm_sqr = (x0 - xm)*(x0 - xm) + (y0 - ym)*(y0 - ym)
-    end subroutine distrl_sqr_modern
+    end subroutine distrl_sqr
 
-    subroutine nxtdat_modern(un, leof)
+    subroutine nxtdat(un, leof)
         !! The subroutine prepares for reading the next uncommented line of data from file
         integer, intent(inout) :: un
         logical, intent(out) :: leof
@@ -104,9 +104,9 @@ contains
                 end if
             end if
         end do
-    end subroutine nxtdat_modern
+    end subroutine nxtdat
 
-    subroutine ll2utm_modern(iutm, isone_in, lat, lon, utmn, utme)
+    subroutine ll2utm(iutm, isone_in, lat, lon, utmn, utme)
         integer, intent(in) :: iutm !! UTM coordinate system indicator
         integer, intent(in) :: isone_in !! UTM zone input?
         real, intent(in) :: lat !! Latitude in decimal degrees
@@ -168,7 +168,7 @@ contains
             / 720.0)*scale
 
         if (lat < 0.0) then
-            utmn = utme + 10000000.0
+            utmn = utmn + 10000000.0
         end if
 
         ! Calculate UTM east coordinate
@@ -180,9 +180,9 @@ contains
             * (5.0 - 18.0*dtan(latv)*dtan(latv) &
             + dtan(latv)*dtan(latv)*dtan(latv)*dtan(latv))/120.0) &
             * scale + deast
-    end subroutine ll2utm_modern
+    end subroutine ll2utm
 
-    subroutine ll2ltm_modern(iutm, lon0, lat, lon, utmn, utme)
+    subroutine ll2ltm(iutm, lon0, lat, lon, utmn, utme)
         !! Local lon version (of ll2utm) without zone, so just typical Transverse
         !! Mecantor (Local Transverse Mecantor)
         integer, intent(in) :: iutm !! UTM coordinate system indicator
@@ -255,9 +255,9 @@ contains
             * (5.0 - 18.0*dtan(latv)*dtan(latv) &
             + dtan(latv)*dtan(latv)*dtan(latv)*dtan(latv))/120.0) &
             * scale + deast
-    end subroutine ll2ltm_modern
+    end subroutine ll2ltm
 
-    subroutine utm2ll_modern(iutm, isone_in, utmn_in, utme, lat, lon)
+    subroutine utm2ll(iutm, isone_in, utmn_in, utme, lat, lon)
         !! The subroutine converts UTM north- and east-coordinates to latitude
         !! and longitude
         integer, intent(in) :: iutm !! UTM coordinate system indicator
@@ -337,9 +337,9 @@ contains
         ! Convert from radians to degrees
         lat = lat*180.0/pi
         lon = lon*180.0/pi
-    end subroutine utm2ll_modern
+    end subroutine utm2ll
 
-    subroutine ltm2ll_modern(iutm, isone_in, la0, utmn_in, utme, lat, lon)
+    subroutine ltm2ll(iutm, isone_in, la0, utmn_in, utme, lat, lon)
         !! Local Transverse Mecantor version of utm2ll
         integer, intent(in) :: iutm !! UTM coordinate system indicator
         integer, intent(in) :: isone_in !! UTM zone
@@ -417,6 +417,6 @@ contains
         ! Convert from radians to degrees
         lat = lat*180.0/pi
         lon = lon*180.0/PI
-    end subroutine ltm2ll_modern
+    end subroutine ltm2ll
 
 end module utility_functions

@@ -2,6 +2,7 @@ module mod_lambert_projection
     ! Routines for calling the various possible projections for the uEMEP sub-grid to lat lon
 
     use uEMEP_definitions
+    use utility_functions, only: ltm2ll, utm2ll
     use mod_rdm2ll, only: RDM2LL
 
     implicit none
@@ -9,18 +10,6 @@ module mod_lambert_projection
 
     public :: lb2lambert2_uEMEP, LL2PS_spherical, PROJ2LL, LL2LAEA, lambert2lb2_uEMEP, &
         lb2lambert_uEMEP
-
-    ! Temporary interface for NILU legacy Fortran functions
-    interface
-        subroutine LTM2LL(ISONE_IN,LA0,UTMN_IN,UTME,LAT,LON)
-            real :: LA0, UTMN_IN,UTME,LAT,LON
-            integer :: ISONE_IN
-        end subroutine LTM2LL
-        subroutine UTM2LL(ISONE_IN,UTMN_IN,UTME,LAT,LON)
-            integer :: ISONE_IN
-            real :: UTMN_IN,UTME,LAT,LON
-        end subroutine UTM2LL
-    end interface
 
 contains
 
@@ -379,11 +368,11 @@ contains
             call RDM2LL(y_in, x_in, lat_out, lon_out)
         else if (projection_type_in .eq. UTM_projection_index) then
             utm_zone_in = floor(projection_attributes_in(1) + 0.5)
-            call UTM2LL(utm_zone_in, y_in, x_in, lat_out, lon_out)
+            call utm2ll(1, utm_zone_in, y_in, x_in, lat_out, lon_out)
         else if (projection_type_in .eq. LTM_projection_index) then
             utm_zone_in = floor(projection_attributes_in(1) + 0.5)
             ltm_lon0_in = projection_attributes_in(2)
-            call LTM2LL(utm_zone_in, ltm_lon0_in, y_in, x_in, lat_out, lon_out)
+            call ltm2ll(1, utm_zone_in, ltm_lon0_in, y_in, x_in, lat_out, lon_out)
         else if (projection_type_in .eq. LAEA_projection_index) then
             call LAEA2LL(x_in, y_in, lon_out, lat_out, projection_attributes_in)
         else if (projection_type_in .eq. LCC_projection_index) then

@@ -1,23 +1,12 @@
 module set_subgrids
 
+    use utility_functions, only: ll2utm, ll2ltm
     use mod_lambert_projection, only: LL2LAEA
 
     implicit none
     private
 
     public :: uEMEP_set_subgrids, uEMEP_set_subgrid_select_latlon_centre
-
-    ! Temporary interface for NILU legacy Fortran functions
-    interface
-        subroutine LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
-            integer :: IUTM, ISONE, ISONE_IN
-            real :: LAT, LON, UTMN, UTME
-        end subroutine LL2UTM
-        subroutine LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
-            integer :: IUTM
-            real :: LAT, LON, UTMN, UTME, LON0
-        end subroutine LL2LTM
-    end interface
 
 contains
 
@@ -181,9 +170,9 @@ contains
 
         !Find centre position in specified coordinates
         if  (projection_type.eq.UTM_projection_index) then
-            call LL2UTM(1,utm_zone,select_lat_centre_position,select_lon_centre_position,y_out,x_out)
+            call ll2utm(1,utm_zone,select_lat_centre_position,select_lon_centre_position,y_out,x_out)
         elseif  (projection_type.eq.LTM_projection_index) then
-            call LL2LTM(1,ltm_lon0,select_lat_centre_position,select_lon_centre_position,y_out,x_out)
+            call ll2ltm(1,ltm_lon0,select_lat_centre_position,select_lon_centre_position,y_out,x_out)
         elseif (projection_type.eq.LAEA_projection_index) then
             call LL2LAEA(x_out,y_out,select_lon_centre_position,select_lat_centre_position,projection_attributes)
         endif

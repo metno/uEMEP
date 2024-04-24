@@ -1,23 +1,12 @@
 module read_rwc_heating_data
 
+    use utility_functions, only: nxtdat, utm2ll
     use mod_lambert_projection, only: lb2lambert2_uEMEP, LL2PS_spherical
 
     implicit none
     private
 
     public :: uEMEP_read_RWC_heating_data
-
-    ! Temporary interface for NILU legacy Fortran functions
-    interface
-        subroutine NXTDAT(UN,LEOF)
-            integer :: UN
-            logical :: LEOF
-        end subroutine NXTDAT
-        subroutine UTM2LL(ISONE_IN,UTMN_IN,UTME,LAT,LON)
-            integer :: ISONE_IN
-            real :: UTMN_IN,UTME,LAT,LON
-        end subroutine UTM2LL
-    end interface
 
 contains
 !uEMEP_read_RWC_heating_data.f90
@@ -133,7 +122,7 @@ contains
             !read (unit_in,'(a)') header_str(3)
             !write(*,*) header_str(1:3)
 
-            call NXTDAT(unit_in,nxtdat_flag)
+            call nxtdat(unit_in,nxtdat_flag)
             !Read number of grids
             read(unit_in,'(i)') n_RWC_grids
             write(unit_logfile,'(A,i)') 'Number of RWC grids =',n_RWC_grids
@@ -219,7 +208,7 @@ contains
 
             !Skip over header lines starting with *
             rewind(unit_in)
-            call NXTDAT(unit_in,nxtdat_flag)
+            call nxtdat(unit_in,nxtdat_flag)
 
             !Read the data
             read(unit_in,*,ERR=10) n_region
@@ -228,7 +217,7 @@ contains
             if (allocated(region_heating_scaling)) deallocate (region_heating_scaling)
             allocate (region_heating_scaling(n_region,n_compound_nc_index))
 
-            call NXTDAT(unit_in,nxtdat_flag)
+            call nxtdat(unit_in,nxtdat_flag)
             do k=1,n_region
                 read(unit_in,*,ERR=10) &
                     k_index,region_scaling_id(k), &
@@ -276,7 +265,7 @@ contains
 
             !Convert to EMEP coordinates. SSB data always in UTM coordinates
             if (save_emissions_for_EMEP(heating_index)) then
-                call UTM2LL(utm_zone,y_ssb,x_ssb,lat_ssb,lon_ssb)
+                call utm2ll(1, utm_zone,y_ssb,x_ssb,lat_ssb,lon_ssb)
                 if (EMEP_projection_type.eq.LL_projection_index) then
                     x_ssb=lon_ssb
                     y_ssb=lat_ssb

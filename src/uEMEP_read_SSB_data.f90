@@ -1,5 +1,6 @@
 module read_ssb_data
 
+    use utility_functions, only: ll2utm, ll2ltm
     use mod_lambert_projection, only: LL2LAEA, PROJ2LL
     use mod_area_interpolation, only: area_weighted_extended_vectorgrid_interpolation_function
 
@@ -8,18 +9,6 @@ module read_ssb_data
 
     public :: uEMEP_read_netcdf_population, uEMEP_read_SSB_data, uEMEP_read_netcdf_population_latlon
 
-    ! Temporary interface for NILU legacy Fortran functions
-    interface
-        subroutine LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
-            integer :: IUTM, ISONE, ISONE_IN
-            real :: LAT, LON, UTMN, UTME
-        end subroutine LL2UTM
-        subroutine LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
-            integer :: IUTM
-            real :: LAT, LON, UTMN, UTME, LON0
-        end subroutine LL2LTM
-    end interface
-    
 contains
 
 !uEMEP_read_SSB_data.f90
@@ -251,7 +240,7 @@ contains
                 !Convert from UTM32 to 33
                 !call UTM2LL(utm_zone-1,y_32,x_32,lat_32,lon_32)
                 !write(*,*) lat_32,lon_32
-                !call LL2UTM(1,utm_zone,lat_32,lon_32,y_ssb,x_ssb)
+                !call ll2utm_modern(1,utm_zone,lat_32,lon_32,y_ssb,x_ssb)
                 !write(*,*) y_ssb,x_ssb
             endif
 
@@ -267,7 +256,7 @@ contains
                 endif
 
                 !Convert lat lon to utm coords
-                !call LL2UTM(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
+                !call ll2utm_modern(1,utm_zone,ddlatitude,ddlongitude,y_ship,x_ship)
 
                 !Add to heating emission proxy subgrid
                 if (SSB_data_type.eq.dwelling_index) then
@@ -518,12 +507,12 @@ contains
 
                     if (projection_type.eq.UTM_projection_index) then
 
-                        call LL2UTM(1,utm_zone,population_nc_dp(i,j,lat_nc_index),population_nc_dp(i,j,lon_nc_index),y_pop,x_pop)
+                        call ll2utm(1,utm_zone,population_nc_dp(i,j,lat_nc_index),population_nc_dp(i,j,lon_nc_index),y_pop,x_pop)
                         !write(*,*) population_nc_dp(i,j,lat_nc_index),population_nc_dp(i,j,lon_nc_index),y_pop,x_pop
 
                     elseif (projection_type.eq.LTM_projection_index) then
 
-                        call LL2LTM(1,ltm_lon0,population_nc_dp(i,j,lat_nc_index),population_nc_dp(i,j,lon_nc_index),y_pop,x_pop)
+                        call ll2ltm(1,ltm_lon0,population_nc_dp(i,j,lat_nc_index),population_nc_dp(i,j,lon_nc_index),y_pop,x_pop)
 
                     elseif (projection_type.eq.LAEA_projection_index) then
 

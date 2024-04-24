@@ -4,472 +4,416 @@ program test_utility_functions
 
     implicit none
 
-    logical :: ok = .true.
+    logical :: ok = .true. ! Test suite boolean - must be true initially
 
-    ! distrl and distrl_sqr
-    real :: xm0, ym0, dm0, wm0, xm1, ym1, dm1, wm1
-
-    ! nxtdat
-    character(len=256) :: txtstr0, txtstr1
+    logical :: flag_out, flag_test
+    character(len=256) :: txtstr_out, txtstr_test
     character(len=2048) :: path, relpath
-    integer :: unit0
-    logical :: flag0, flag1
+    integer :: unit_in, iutm_in, isone_in
+    real :: lat_in, lon_in, lon0_in, la0_in, utmn_in, utme_in
+    real :: utmn_out, utme_out, lat_out, lon_out
+    real :: utmn_test, utme_test, lat_test, lon_test
+    real :: x0_in, y0_in, x1_in, y1_in, x2_in, y2_in
+    real :: xm_out, ym_out, dm_out, wm_out
+    real :: xm_test, ym_test, dm_test
 
-    ! ll2utm and ll2ltm and utm2ll
-    integer :: iutm, isone_in
-    real :: lat, lon, utmn0, utme0, utmn1, utme1, lon0, utmn_in, utme, lat0, lat1, lon1, la0
-
-    interface
-        SUBROUTINE DISTRL(X0,Y0,X1,Y1,X2,Y2,XM,YM,DM,WM)
-            REAL :: X0,Y0,X1,Y1,X2,Y2,XM,YM,DM,WM
-        END SUBROUTINE DISTRL
-        SUBROUTINE DISTRL_SQR(X0,Y0,X1,Y1,X2,Y2,XM,YM,DM_SQR,WM)
-            REAL :: X0,Y0,X1,Y1,X2,Y2,XM,YM,DM_SQR,WM
-        END SUBROUTINE DISTRL_SQR
-    end interface
-
-    interface
-        SUBROUTINE NXTDAT(UN,LEOF)
-            INTEGER :: UN
-            LOGICAL :: LEOF
-        END SUBROUTINE NXTDAT
-    end interface
-
-    interface
-        SUBROUTINE LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
-            INTEGER :: IUTM,ISONE_IN
-            REAL :: LAT,LON,UTMN,UTME
-        END SUBROUTINE LL2UTM
-        SUBROUTINE LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
-            INTEGER :: IUTM
-            REAL :: LON0,LAT,LON,UTMN,UTME
-        END SUBROUTINE LL2LTM
-        SUBROUTINE UTM2LL(ISONE_IN,UTMN_IN,UTME,LAT,LON)
-            INTEGER :: ISONE_IN
-            REAL :: UTMN_IN,UTME,LAT,LON
-        END SUBROUTINE UTM2LL
-        SUBROUTINE LTM2LL(ISONE_IN,LA0,UTMN_IN,UTME,LAT,LON)
-            INTEGER :: ISONE_IN
-            REAL :: LA0, UTMN_IN,UTME,LAT,LON
-        END SUBROUTINE LTM2LL
-    end interface
-
-    ! DISTRL vs distrl_modern
-
-    ! Test case 1: Check that old and new version outputs the same values
-    !              when "the line is point"
-    call DISTRL(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, xm0, ym0, dm0, wm0)
-    call distrl_modern(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12 .or. abs(ym0 - ym1) > 1.0e-12 .or. &
-        abs(dm0 - dm1) > 1.0e-12 .or. abs(wm0 - wm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 1 failed!"
-    end if
-
-    ! Test case 2: Check that old and new version outputs the same values
-    !              when the line is increasing and point is below and right of the line
-    call DISTRL(1.0, 1.0, 5.0, 5.0, 5.0, 2.0, xm0, ym0, dm0, wm0)
-    call distrl_modern(1.0, 1.0, 5.0, 5.0, 5.0, 2.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 2 failed!"
-    end if
-
-    ! Test case 3: Check that old and new version outputs the same values
-    !              when the line is increasing and point is above and left of the line
-    call DISTRL(1.0, 1.0, 5.0, 5.0, 2.0, 5.0, xm0, ym0, dm0, wm0)
-    call distrl_modern(1.0, 1.0, 5.0, 5.0, 2.0, 5.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 3 failed!"
-    end if
-
-    ! Test case 4: Check that old and new version outputs the same values
-    !              when the line is decreasing and point is below the line
-    call DISTRL(1.0, 5.0, 5.0, 1.0, 2.0, 2.0, xm0, ym0, dm0, wm0)
-    call distrl_modern(1.0, 5.0, 5.0, 1.0, 2.0, 2.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 4 failed!"
-    end if
-
-    ! Test case 5: Check that old and new version outputs the same values
-    !              when the line is decreasing and point is above the line
-    call DISTRL(1.0, 5.0, 5.0, 1.0, 4.0, 4.0, xm0, ym0, dm0, wm0)
-    call distrl_modern(1.0, 5.0, 5.0, 1.0, 4.0, 4.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 5 failed!"
-    end if
-
-    ! Test case 6: Check that old and new version outputs the same values
-    !              when the point is on the line
-    call DISTRL(1.0, 1.0, 3.0, 3.0, 2.0, 2.0, xm0, ym0, dm0, wm0)
-    call distrl_modern(1.0, 1.0, 3.0, 3.0, 2.0, 2.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 6 failed!"
-    end if
-
-    ! DISTRL_SQR vs distrl_sqr_modern
-
-    ! Test case 7: Check that old and new version outputs the same values
-    !              when "the line is point"
-    call DISTRL_SQR(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, xm0, ym0, dm0, wm0)
-    call distrl_sqr_modern(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12 .or. abs(ym0 - ym1) > 1.0e-12 .or. &
-        abs(dm0 - dm1) > 1.0e-12 .or. abs(wm0 - wm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 7 failed!"
-    end if
-
-    ! Test case 8: Check that old and new version outputs the same values
-    !              when the line is increasing and point is below and right of the line
-    call DISTRL_SQR(1.0, 1.0, 5.0, 5.0, 5.0, 2.0, xm0, ym0, dm0, wm0)
-    call distrl_sqr_modern(1.0, 1.0, 5.0, 5.0, 5.0, 2.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 8 failed!"
-    end if
-
-    ! Test case 9: Check that old and new version outputs the same values
-    !              when the line is increasing and point is above and left of the line
-    call DISTRL_SQR(1.0, 1.0, 5.0, 5.0, 2.0, 5.0, xm0, ym0, dm0, wm0)
-    call distrl_sqr_modern(1.0, 1.0, 5.0, 5.0, 2.0, 5.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 9 failed!"
-    end if
-
-    ! Test case 10: Check that old and new version outputs the same values
-    !              when the line is decreasing and point is below the line
-    call DISTRL_SQR(1.0, 5.0, 5.0, 1.0, 2.0, 2.0, xm0, ym0, dm0, wm0)
-    call distrl_sqr_modern(1.0, 5.0, 5.0, 1.0, 2.0, 2.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 10 failed!"
-    end if
-
-    ! Test case 11: Check that old and new version outputs the same values
-    !              when the line is decreasing and point is above the line
-    call DISTRL_SQR(1.0, 5.0, 5.0, 1.0, 4.0, 4.0, xm0, ym0, dm0, wm0)
-    call distrl_sqr_modern(1.0, 5.0, 5.0, 1.0, 4.0, 4.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 11 failed!"
-    end if
-
-    ! Test case 12: Check that old and new version outputs the same values
-    !              when the point is on the line
-    call DISTRL_SQR(1.0, 1.0, 3.0, 3.0, 2.0, 2.0, xm0, ym0, dm0, wm0)
-    call distrl_sqr_modern(1.0, 1.0, 3.0, 3.0, 2.0, 2.0, xm1, ym1, dm1, wm1)
-    if (abs(xm0 - xm1) > 1.0e-12) then
-        ok = .false.
-        print "(a)", "Test case 12 failed!"
-    end if
-
-    ! NXTDAT vs nextdat_modern
-
-    ! Test case 13: Check that non-positive file unit returns false
-    unit0 = 0
-    call NXTDAT(unit0, flag0)
-    call nxtdat_modern(unit0, flag1)
-    if ( .not. flag0 == flag1) then
-        ok = .false.
-        print "(a)", "Test case 13 failed!"
-    end if
-
-    ! Test case 14 + 15: File with commented lines
-    unit0 = 20
+    ! Test case 1 (nxtdat): check that file with any remaining uncommented lines returns false
+    unit_in = 20
+    flag_out = .true.
+    flag_test = .false.
     call get_environment_variable("PWD", path)
     relpath = trim(path)//"/../test/test_data/"
-
-    open(unit=unit0, file=trim(relpath)//"test_commented_file.txt", status="old")
-    call NXTDAT(unit0, flag0)
-    read(unit0,"(a)") txtstr0
-    close(unit0)
-
-    open(unit=unit0, file=trim(relpath)//"test_commented_file.txt", status="old")
-    call nxtdat_modern(unit0, flag1)
-    read(unit0,"(a)") txtstr1
-    close(unit0)
-
-    if ( .not. flag0 == flag1 .or. flag0 .eqv. .true. .or. flag1 .eqv. .true.) then
+    open(unit=unit_in, file=trim(relpath)//"test_commented_file.txt", status="old")
+    call nxtdat(unit_in, flag_out)
+    close(unit_in)
+    if (flag_out .neqv. flag_test) then
         ok = .false.
-        print "(a)", "Test case 14 failed!"
+        print "(a)", "Test case 1 failed! Routine: nxtdat"
     end if
 
-    if ( .not. txtstr0 == txtstr1 .or. trim(txtstr0) /= "non-commented line 4" .or. trim(txtstr1) /= "non-commented line 4") then
-        ok = .false.
-        print "(a)", "Test case 15 failed!"
-    end if
-
-    ! Test case 16: File with only commented lines
-    unit0 = 20
+    ! Test case 2 (nxtdat): check that read returns the right uncommented line
+    unit_in = 20
+    txtstr_test = "non-commented line 4"
     call get_environment_variable("PWD", path)
     relpath = trim(path)//"/../test/test_data/"
-
-    open(unit=unit0, file=trim(relpath)//"test_only_commented_file.txt", status="old")
-    call NXTDAT(unit0, flag0)
-    close(unit0)
-
-    open(unit=unit0, file=trim(relpath)//"test_only_commented_file.txt", status="old")
-    call nxtdat_modern(unit0, flag1)
-    close(unit0)
-
-    if ( .not. flag0 == flag1 .or. flag0 .eqv. .false. .or. flag1 .eqv. .false.) then
+    open(unit=unit_in, file=trim(relpath)//"test_commented_file.txt", status="old")
+    call nxtdat(unit_in, flag_out)
+    read(unit_in,"(a)") txtstr_out
+    close(unit_in)
+    if (trim(txtstr_out) /= trim(txtstr_test)) then
         ok = .false.
-        print "(a)", "Test case 16 failed"
+        print "(a)", "Test case 2 failed! Routine: nxtdat"
     end if
 
-    ! LL2UTM vs ll2utm_modern
+    ! Test case 3 (nxtdat): check that file with only commented lines returns "end of file" = true
+    unit_in = 20
+    flag_out = .false.
+    flag_test = .true.
+    call get_environment_variable("PWD", path)
+    relpath = trim(path)//"/../test/test_data/"
+    open(unit=unit_in, file=trim(relpath)//"test_only_commented_file.txt", status="old")
+    call nxtdat(unit_in, flag_out)
+    close(unit_in)
 
+    if (flag_out .neqv. flag_test) then
+        ok = .false.
+        print "(a)", "Test case 3 failed! Routine: nxtdat"
+    end if
+
+    ! Test case 4 (ll2utm): Check outputted UTM coordinates against expected values in the Northern hemisphere
+    ! 
+    ! Note that iutm /= different from 1 is not tested as it is not used!
+    iutm_in = 1
     isone_in = 32
-    lat = 55.0
-    lon = 12.0
-
-    ! Test case 17-19: UTM WGS84 EUREF 89 (AirQUIS)
-    iutm = 1
-    call LL2UTM(iutm, isone_in, lat, lon, utmn0, utme0)
-    call ll2utm_modern(iutm, isone_in, lat, lon, utmn1, utme1)
-
-    if (abs(utme0 - utme1) > 1.0e-4 .or. abs(utmn0 - utmn1) > 1.0e-4) then
-        print *, abs(utme0 - utme1), abs(utmn0 - utmn1)
+    lat_in = 55.0
+    lon_in = 12.0
+    utmn_out = 0.0
+    utme_out = 0.0
+    utmn_test = 6098908.0
+    utme_test = 691875.6
+    call ll2utm(iutm_in, isone_in, lat_in, lon_in, utmn_out, utme_out)
+    if (abs(utmn_out - utmn_test) > 1.0e-4 .or. abs(utme_out - utme_test) > 1.0e-4) then
         ok = .false.
-        print "(a)", "Test case 17 failed"
+        print "(a)", "Test case 4 failed! Routine: ll2utm"
     end if
 
-    if (abs(utmn0 - 6098908.0) > 1.0e-4 .or. abs(utme0 - 691875.6) > 1.0e-4) then
+    ! Test case 5 (ll2utm): Check outputted UTM coordinates against expected values in the Southern hemisphere
+    ! 
+    ! Note that iutm /= different from 1 is not tested as it is not used!
+    iutm_in = 1
+    isone_in = -32
+    lat_in = -30.0
+    lon_in = 12.0
+    utmn_out = 0.0
+    utme_out = 0.0
+    utmn_test = 6677424.0
+    utme_test = 789409.688
+    call ll2utm(iutm_in, isone_in, lat_in, lon_in, utmn_out, utme_out)
+    if (abs(utmn_out - utmn_test) > 1.0e-4 .or. abs(utme_out - utme_test) > 1.0e-4) then
         ok = .false.
-        print "(a)", "Test case 18 failed!"
+        print "(a)", "Test case 5 failed! Routine: ll2utm"
     end if
 
-    if (abs(utmn1 - 6098908.0) > 1.0e-4 .or. abs(utme1 - 691875.6) > 1.0e-4) then
+    ! Test case 6 (ll2ltm): Check outputted UTM coordinates against expected values in the Northern hemisphere
+    ! 
+    ! Note that iutm /= different from 1 is not tested as it is not used!
+    iutm_in = 1
+    lon0_in = 9.0
+    lat_in = 55.0
+    lon_in = 12.0
+    utmn_out = 0.0
+    utme_out = 0.0
+    utmn_test = 6098908.0
+    utme_test = 691875.625
+    call ll2ltm(iutm_in, lon0_in, lat_in, lon_in, utmn_out, utme_out)
+    if (abs(utmn_out - utmn_test) > 1.0e-4 .or. abs(utme_out - utme_test) > 1.0e-4) then
         ok = .false.
-        print "(a)", "Test case 19 failed!"
+        print "(a)", "Test case 6 failed! Routine: ll2ltm"
     end if
 
-    ! Test case 20-22: UTM WGS84 OLD
-    iutm = 2
-    call LL2UTM(iutm, isone_in, lat, lon, utmn0, utme0)
-    call ll2utm_modern(iutm, isone_in, lat, lon, utmn1, utme1)
-
-    if (abs(utme0 - utme1) > 1.0e-4 .or. abs(utmn0 - utmn1) > 1.0e-4) then
-        print *, abs(utme0 - utme1), abs(utmn0 - utmn1)
+    ! Test case 7 (ll2ltm): Check outputted UTM coordinates against expected values in the Southern hemisphere
+    ! 
+    ! Note that iutm /= different from 1 is not tested as it is not used!
+    iutm_in = 1
+    lon0_in = 9.0
+    lat_in = -30.0
+    lon_in = 12.0
+    utmn_out = 0.0
+    utme_out = 0.0
+    utmn_test = 6677424.0
+    utme_test = 789409.688
+    call ll2ltm(iutm_in, lon0_in, lat_in, lon_in, utmn_out, utme_out)
+    if (abs(utmn_out - utmn_test) > 1.0e-4 .or. abs(utme_out - utme_test) > 1.0e-4) then
         ok = .false.
-        print "(a)", "Test case 20 failed"
+        print "(a)", "Test case 7 failed! Routine: ll2ltm"
     end if
 
-    if (abs(utmn0 - 6098908.0) > 1.0e-4 .or. abs(utme0 - 691875.6) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 21 failed!"
-    end if
-
-    if (abs(utmn1 - 6098908.0) > 1.0e-4 .or. abs(utme1 - 691875.6) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 22 failed!"
-    end if
-
-    ! Test case 23-25: UTM ED50
-    iutm = 3
-    call LL2UTM(iutm, isone_in, lat, lon, utmn0, utme0)
-    call ll2utm_modern(iutm, isone_in, lat, lon, utmn1, utme1)
-
-    if (abs(utme0 - utme1) > 1.0e-4 .or. abs(utmn0 - utmn1) > 1.0e-4) then
-        print *, abs(utme0 - utme1), abs(utmn0 - utmn1)
-        ok = .false.
-        print "(a)", "Test case 23 failed"
-    end if
-
-    if (abs(utmn0 - 6099040.5) > 1.0e-4 .or. abs(utme0 - 691885.0) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 24 failed!"
-    end if
-
-    if (abs(utmn1 - 6099040.5) > 1.0e-4 .or. abs(utme1 - 691885.0) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 25 failed!"
-    end if
-
-    ! LL2LTM vs ll2ltm_modern
-
-    ! Test case 26-28: UTM WGS84 EUREF 89 (AirQUIS) with central meridian
-    iutm = 1
-    lon0 = 3.0
-    lat = 55.0
-    lon = 12.0
-    call LL2LTM(iutm, lon0, lat, lon, utmn0, utme0)
-    call ll2ltm_modern(iutm, lon0, lat, lon, utmn1, utme1)
-    
-    if (abs(utme0 - utme1) > 1.0e-4 .or. abs(utmn0 - utmn1) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 26 failed!"
-    end if
-
-    if (abs(utme0 - 1074900.0) > 1.0e-4 .or. abs(utmn0 - 6131905.0) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 27 failed!"
-    end if
-
-    if (abs(utme1 - 1074900.0) > 1.0e-4 .or. abs(utmn1 - 6131905.0) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 28 failed!"
-    end if
-
-    ! Test case 29-31: UTM WGS84 OLD without central meridian
-    iutm = 2
-    lon0 = 0.0
-    lat = 55.0
-    lon = 12.0
-    call LL2LTM(iutm, lon0, lat, lon, utmn0, utme0)
-    call ll2ltm_modern(iutm, lon0, lat, lon, utmn1, utme1)
-
-    if (abs(utme0 - utme1) > 1.0e-4 .or. abs(utmn0 - utmn1) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 29 failed!"
-    end if
-
-    if (abs(utme0 - 1265670.375) > 1.0e-4 .or. abs(utmn0 - 6160873.500) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 30 failed!"
-    end if
-
-    if (abs(utme1 - 1265670.375) > 1.0e-4 .or. abs(utmn1 - 6160873.500) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 31 failed!"
-    end if
-
-    ! Test case 32-34: UTM ED50 with negative latitude
-    iutm = 3
-    lon0 = 6.0
-    lat = -55.0
-    lon = 12.0
-    call LL2LTM(iutm, lon0, lat, lon, utmn0, utme0)
-    call ll2ltm_modern(iutm, lon0, lat, lon, utmn1, utme1)
-
-    if (abs(utme0 - utme1) > 1.0e-4 .or. abs(utmn0 - utmn1) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 32 failed!"
-    end if
-
-    if (abs(utme0 - 883589.375) > 1.0e-4 .or. abs(utmn0 - 3888598.500) > 1.0e-4) then
-        print "(2f15.3)", utme0, utmn0
-        ok = .false.
-        print "(a)", "Test case 33 failed!"
-    end if
-
-    if (abs(utme1 - 883589.375) > 1.0e-4 .or. abs(utmn1 - 3888598.500) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 34 failed!"
-    end if
-
-    ! UTM2LL vs utm2ll_modern
-    
-    ! Test case 35-37: UTM WGS84 EUREF 89 (AirQUIS) in Northern Hemisphere
-    iutm = 1
+    ! Test case 8 (utm2ll): Check outputted lat/lon coordinates against expected values in the Northern hemisphere
+    ! 
+    ! Note that iutm /= different from 1 is not tested as it is not used!
+    iutm_in = 1
     isone_in = 32
     utmn_in = 6098908.0
-    utme = 691875.6
-
-    call UTM2LL(isone_in, utmn_in, utme, lat0, lon0)
-    call utm2ll_modern(iutm, isone_in, utmn_in, utme, lat1, lon1)
-
-    if (abs(lat0 - lat1) > 1.0e-4 .or. abs(lon0 - lon1) > 1.0e-4) then
+    utme_in = 691875.625
+    lat_out = 0.0
+    lon_out = 0.0
+    lat_test = 55.0
+    lon_test = 12.0
+    call utm2ll(iutm_in, isone_in, utmn_in, utme_in, lat_out, lon_out)
+    if (abs(lat_out - lat_test) > 1.0e-4 .or. abs(lon_out - lon_test) > 1.0e-4) then
         ok = .false.
-        print "(a)", "Test case 35 failed!"
+        print "(a)", "Test case 8 failed! Routine: utm2ll"
     end if
 
-    if (abs(lat0 - 55.0) > 1.0e-4 .or. abs(lon0 - 12.0) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 36 failed!"
-    end if
-
-    if (abs(lat1 - 55.0) > 1.0e-4 .or. abs(lon1 - 12.0) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 37 failed!"
-    end if
-
-    ! Test case 38-40: UTM WGS84 EUREF 89 (AirQUIS) in Southern Hemisphere
-    iutm = 1
+    ! Test case 9 (utm2ll): Check outputted lat/lon coordinates against expected values in the Southern hemisphere
+    ! 
+    ! Note that iutm /= different from 1 is not tested as it is not used!
+    iutm_in = 1
     isone_in = -32
-    utmn_in = 3901092.0
-    utme = 691875.625
-
-    call UTM2LL(isone_in, utmn_in, utme, lat0, lon0)
-    call utm2ll_modern(iutm, isone_in, utmn_in, utme, lat1, lon1)
-
-    if (abs(lat0 - lat1) > 1.0e-4 .or. abs(lon0 - lon1) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 38 failed!"
-    end if
-
-    if (abs(lat0 + 55.0) > 1.0e-4 .or. abs(lon0 - 12.0) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 39 failed!"
-    end if
-
-    if (abs(lat1 + 55.0) > 1.0e-4 .or. abs(lon1 - 12.0) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 40 failed!"
-    end if
-
-    ! LTM2LL vs ltm2ll_modern
-
-    ! Test case 41-43: Local TM with positive ISONE in Northern Hemisphere
-    iutm = 1
-    isone_in = 32
-    la0 = 9.0
-    utmn_in = 6098908.0
-    utme = 691875.625
-    call LTM2LL(isone_in, la0, utmn_in, utme, lat0, lon0)
-    call ltm2ll_modern(iutm, isone_in, la0, utmn_in, utme, lat1, lon1)
-
-    if (abs(lat0 - lat1) > 1.0e-4 .or. abs(lon0 - lon1) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 41 failed!"
-    end if
-
-    if (abs(lat0 - 55.0) > 1.0e-4 .or. abs(lon0 - 12.0) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 42 failed!"
-    end if
-
-    if (abs(lat1 - 55.0) > 1.0e-4 .or. abs(lon1 - 12.0) > 1.0e-4) then
-        ok = .false.
-        print "(a)", "Test case 43 failed!"
-    end if
-
-    ! Test case 44-46: Local TM with negative ISONE in Southern Hemisphere
-    iutm = 1
-    isone_in = -32
-    la0 = 9.0
     utmn_in = 6677424.0
-    utme = 789409.688
-    call LTM2LL(isone_in, la0, utmn_in, utme, lat0, lon0)
-    call ltm2ll_modern(iutm, isone_in, la0, utmn_in, utme, lat1, lon1)
-
-    if (abs(lat0 - lat1) > 1.0e-4 .or. abs(lon0 - lon1) > 1.0e-4) then
+    utme_in = 789409.688
+    lat_out = 0.0
+    lon_out = 0.0
+    lat_test = -30.0
+    lon_test = 12.0
+    call utm2ll(iutm_in, isone_in, utmn_in, utme_in, lat_out, lon_out)
+    if (abs(lat_out - lat_test) > 1.0e-4 .or. abs(lon_out - lon_test) > 1.0e-4) then
         ok = .false.
-        print "(a)", "Test case 44 failed!"
+        print "(a)", "Test case 9 failed! Routine: utm2ll"
     end if
 
-    if (abs(lat0 + 30.0) > 1.0e-4 .or. abs(lon0 - 12.0) > 1.0e-4) then
+    ! Test case 10 (ltm2ll): Check outputted lat/lon coordinates against expected values in the Northern hemisphere
+    ! 
+    ! Note that iutm /= different from 1 is not tested as it is not used!
+    iutm_in = 1
+    isone_in = 32
+    la0_in = 9.0
+    utmn_in = 6098908.0
+    utme_in = 691875.625
+    lat_out = 0.0
+    lon_out = 0.0
+    lat_test = 55.0
+    lon_test = 12.0
+    call ltm2ll(iutm_in, isone_in, la0_in, utmn_in, utme_in, lat_out, lon_out)
+    if (abs(lat_out - lat_test) > 1.0e-4 .or. abs(lon_out - lon_test) > 1.0e-4) then
         ok = .false.
-        print "(a)", "Test case 45 failed!"
+        print "(a)", "Test case 10 failed! Routine: ltm2ll"
     end if
 
-    if (abs(lat1 + 30.0) > 1.0e-4 .or. abs(lon1 - 12.0) > 1.0e-4) then
+    ! Test case 11 (ltm2ll): Check outputted lat/lon coordinates against expected values in the Southern hemisphere
+    ! 
+    ! Note that iutm /= different from 1 is not tested as it is not used!
+    iutm_in = 1
+    isone_in = -32
+    la0_in = 9.0
+    utmn_in = 6677424.0
+    utme_in = 789409.688
+    lat_out = 0.0
+    lon_out = 0.0
+    lat_test = -30.0
+    lon_test = 12.0
+    call ltm2ll(iutm_in, isone_in, la0_in, utmn_in, utme_in, lat_out, lon_out)
+    if (abs(lat_out - lat_test) > 1.0e-4 .or. abs(lon_out - lon_test) > 1.0e-4) then
         ok = .false.
-        print "(a)", "Test case 46 failed!"
+        print "(a)", "Test case 11 failed! Routine: ltm2ll"
     end if
 
+    ! Test case 12 (distrl): Check returned distances against expected values when "line is a point"
+    ! and when receptor point is on the "line"
+    x0_in = 0.0
+    y0_in = 0.0
+    x1_in = 0.0
+    y1_in = 0.0
+    x2_in = 0.0
+    y2_in = 0.0
+    xm_out = -999.0
+    ym_out = -999.0
+    dm_out = -999.0
+    wm_out = 0.0
+    xm_test = 0.0
+    ym_test = 0.0
+    dm_test = 0.0
+    call distrl(x0_in, y0_in, x1_in, y1_in, x2_in, y2_in, xm_out, ym_out, dm_out, wm_out)
+    if (abs(xm_out - xm_test) > 1.0e-4 .or. abs(ym_out - ym_test) > 1.0e-4 .or. abs(dm_out - dm_test) > 1.0e-4) then
+        ok = .false.
+        print "(a)", "Test case 12 failed! Routine: distrl"
+    end if
+
+    ! Test case 13 (distrl): Check returned distances against expected values when "line is a point"
+    ! and when receptor point is above the "line"
+    x0_in = 2.0
+    y0_in = 2.0
+    x1_in = 0.0
+    y1_in = 0.0
+    x2_in = 0.0
+    y2_in = 0.0
+    xm_out = -999.0
+    ym_out = -999.0
+    dm_out = -999.0
+    wm_out = 0.0
+    xm_test = 0.0
+    ym_test = 0.0
+    dm_test = 2.8284
+    call distrl(x0_in, y0_in, x1_in, y1_in, x2_in, y2_in, xm_out, ym_out, dm_out, wm_out)
+    if (abs(xm_out - xm_test) > 1.0e-4 .or. abs(ym_out - ym_test) > 1.0e-4 .or. abs(dm_out - dm_test) > 1.0e-4) then
+        ok = .false.
+        print "(a)", "Test case 13 failed! Routine: distrl"
+    end if
+
+    ! Test case 14 (distrl): Check returned distances against expected values when line is
+    ! "increasing" and receptor point is above the line
+    x0_in = 1.0
+    y0_in = 4.0
+    x1_in = 0.0
+    y1_in = 0.0
+    x2_in = 3.0
+    y2_in = 4.0
+    xm_out = -999.0
+    ym_out = -999.0
+    dm_out = -999.0
+    wm_out = 0.0
+    xm_test = 2.28
+    ym_test = 3.04
+    dm_test = 1.6
+    call distrl(x0_in, y0_in, x1_in, y1_in, x2_in, y2_in, xm_out, ym_out, dm_out, wm_out)
+    if (abs(xm_out - xm_test) > 1.0e-4 .or. abs(ym_out - ym_test) > 1.0e-4 .or. abs(dm_out - dm_test) > 1.0e-4) then
+        ok = .false.
+        print "(a)", "Test case 14 failed! Routine: distrl"
+    end if
+
+    ! Test case 15 (distrl): Check returned distances against expected values when line is
+    ! "increasing" and receptor point is below the line
+    x0_in = 4.0
+    y0_in = 1.0
+    x1_in = 0.0
+    y1_in = 0.0
+    x2_in = 3.0
+    y2_in = 4.0
+    xm_out = -999.0
+    ym_out = -999.0
+    dm_out = -999.0
+    wm_out = 0.0
+    xm_test = 1.92
+    ym_test = 2.56
+    dm_test = 2.6
+    call distrl(x0_in, y0_in, x1_in, y1_in, x2_in, y2_in, xm_out, ym_out, dm_out, wm_out)
+    if (abs(xm_out - xm_test) > 1.0e-4 .or. abs(ym_out - ym_test) > 1.0e-4 .or. abs(dm_out - dm_test) > 1.0e-4) then
+        ok = .false.
+        print "(a)", "Test case 15 failed! Routine: distrl"
+    end if
+
+    ! Test case 16 (distrl): Check returned distances against expected values when line is
+    ! "decreasing" and receptor point is above the line
+    x0_in = 8.0
+    y0_in = 8.0
+    x1_in = 1.0
+    y1_in = 5.0
+    x2_in = 6.0
+    y2_in = 2.0
+    xm_out = -999.0
+    ym_out = -999.0
+    dm_out = -999.0
+    wm_out = 0.0
+    xm_test = 4.8235
+    ym_test = 2.7059
+    dm_test = 6.1739
+    call distrl(x0_in, y0_in, x1_in, y1_in, x2_in, y2_in, xm_out, ym_out, dm_out, wm_out)
+    if (abs(xm_out - xm_test) > 1.0e-4 .or. abs(ym_out - ym_test) > 1.0e-4 .or. abs(dm_out - dm_test) > 1.0e-4) then
+        ok = .false.
+        print "(a)", "Test case 16 failed! Routine: distrl"
+    end if
+
+    ! Test case 17 (distrl_sqr): Check returned distances against expected values when "line is a point"
+    ! and when receptor point is on the "line"
+    x0_in = 0.0
+    y0_in = 0.0
+    x1_in = 0.0
+    y1_in = 0.0
+    x2_in = 0.0
+    y2_in = 0.0
+    xm_out = -999.0
+    ym_out = -999.0
+    dm_out = -999.0
+    wm_out = 0.0
+    xm_test = 0.0
+    ym_test = 0.0
+    dm_test = 0.0
+    call distrl_sqr(x0_in, y0_in, x1_in, y1_in, x2_in, y2_in, xm_out, ym_out, dm_out, wm_out)
+    if (abs(xm_out - xm_test) > 1.0e-4 .or. abs(ym_out - ym_test) > 1.0e-4 .or. abs(dm_out - dm_test) > 1.0e-4) then
+        ok = .false.
+        print "(a)", "Test case 17 failed! Routine: distrl_sqr"
+    end if
+
+    ! Test case 18 (distrl_sqr): Check returned distances against expected values when "line is a point"
+    ! and when receptor point is above the "line"
+    x0_in = 2.0
+    y0_in = 2.0
+    x1_in = 0.0
+    y1_in = 0.0
+    x2_in = 0.0
+    y2_in = 0.0
+    xm_out = -999.0
+    ym_out = -999.0
+    dm_out = -999.0
+    wm_out = 0.0
+    xm_test = 0.0
+    ym_test = 0.0
+    dm_test = 8.0
+    call distrl_sqr(x0_in, y0_in, x1_in, y1_in, x2_in, y2_in, xm_out, ym_out, dm_out, wm_out)
+    if (abs(xm_out - xm_test) > 1.0e-4 .or. abs(ym_out - ym_test) > 1.0e-4 .or. abs(dm_out - dm_test) > 1.0e-4) then
+        ok = .false.
+        print "(a)", "Test case 18 failed! Routine: distrl_sqr"
+    end if
+
+    ! Test case 19 (distrl_sqr): Check returned distances against expected values when line is
+    ! "increasing" and receptor point is above the line
+    x0_in = 1.0
+    y0_in = 4.0
+    x1_in = 0.0
+    y1_in = 0.0
+    x2_in = 3.0
+    y2_in = 4.0
+    xm_out = -999.0
+    ym_out = -999.0
+    dm_out = -999.0
+    wm_out = 0.0
+    xm_test = 2.28
+    ym_test = 3.04
+    dm_test = 2.56
+    call distrl_sqr(x0_in, y0_in, x1_in, y1_in, x2_in, y2_in, xm_out, ym_out, dm_out, wm_out)
+    if (abs(xm_out - xm_test) > 1.0e-4 .or. abs(ym_out - ym_test) > 1.0e-4 .or. abs(dm_out - dm_test) > 1.0e-4) then
+        ok = .false.
+        print "(a)", "Test case 19 failed! Routine: distrl_sqr"
+    end if
+
+    ! Test case 20 (distrl_sqr): Check returned distances against expected values when line is
+    ! "increasing" and receptor point is below the line
+    x0_in = 4.0
+    y0_in = 1.0
+    x1_in = 0.0
+    y1_in = 0.0
+    x2_in = 3.0
+    y2_in = 4.0
+    xm_out = -999.0
+    ym_out = -999.0
+    dm_out = -999.0
+    wm_out = 0.0
+    xm_test = 1.92
+    ym_test = 2.56
+    dm_test = 6.76
+    call distrl_sqr(x0_in, y0_in, x1_in, y1_in, x2_in, y2_in, xm_out, ym_out, dm_out, wm_out)
+    if (abs(xm_out - xm_test) > 1.0e-4 .or. abs(ym_out - ym_test) > 1.0e-4 .or. abs(dm_out - dm_test) > 1.0e-4) then
+        ok = .false.
+        print "(a)", "Test case 20 failed! Routine: distrl_sqr"
+    end if
+
+    ! Test case 21 (distrl_sqr): Check returned distances against expected values when line is
+    ! "decreasing" and receptor point is above the line
+    x0_in = 8.0
+    y0_in = 8.0
+    x1_in = 1.0
+    y1_in = 5.0
+    x2_in = 6.0
+    y2_in = 2.0
+    xm_out = -999.0
+    ym_out = -999.0
+    dm_out = -999.0
+    wm_out = 0.0
+    xm_test = 4.8235
+    ym_test = 2.7059
+    dm_test = 38.1177
+    call distrl_sqr(x0_in, y0_in, x1_in, y1_in, x2_in, y2_in, xm_out, ym_out, dm_out, wm_out)
+    if (abs(xm_out - xm_test) > 1.0e-4 .or. abs(ym_out - ym_test) > 1.0e-4 .or. abs(dm_out - dm_test) > 1.0e-4) then
+        ok = .false.
+        print "(a)", "Test case 21 failed! Routine: distrl_sqr"
+    end if
+
+    ! Return test results summary
     if (ok) then
         print "(a)", "test_utility_functions: All tests passed."
     else
         print "(a)", "test_utility_functions: One ore more tests failed."
         stop 1
     end if
-
-    
 
 end program test_utility_functions

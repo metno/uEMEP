@@ -1,5 +1,6 @@
 module read_roadlink_data_ascii
 
+    use utility_functions, only: nxtdat, ll2utm, ll2ltm
     use time_functions, only: date_to_number, number_to_date, datestr_to_date
     use mod_lambert_projection, only: LL2LAEA, PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
 
@@ -8,22 +9,6 @@ module read_roadlink_data_ascii
 
     public :: read_country_bounding_box_data, uEMEP_read_roadlink_data_ascii, &
         uEMEP_change_road_data, uEMEP_read_roadlink_emission_data
-
-    ! Temporary interface for NILU legacy Fortran functions
-    interface
-        subroutine NXTDAT(UN,LEOF)
-            integer :: UN
-            logical :: LEOF
-        end subroutine NXTDAT
-        subroutine LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
-            integer :: IUTM, ISONE, ISONE_IN
-            real :: LAT, LON, UTMN, UTME
-        end subroutine LL2UTM
-        subroutine LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
-            integer :: IUTM
-            real :: LAT, LON, UTMN, UTME, LON0
-        end subroutine LL2LTM
-    end interface
 
 contains
 
@@ -117,7 +102,7 @@ contains
                 write(unit_logfile,'(a)') ' Opening road link file(ascii) '//trim(pathfilename_rl(1))
 
                 rewind(unit_in)
-                call NXTDAT(unit_in,nxtdat_flag)
+                call nxtdat(unit_in,nxtdat_flag)
 
                 !read the header to find out how many links there are
                 !read(unit_in,'(a)',ERR=20) temp_str
@@ -141,7 +126,7 @@ contains
                     n_roadlinks_major=i
                     !n_roadlinks=0
                     rewind(unit_in)
-                    call NXTDAT(unit_in,nxtdat_flag)
+                    call nxtdat(unit_in, nxtdat_flag)
                 else
                     read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
                 endif
@@ -149,7 +134,7 @@ contains
                 if (n_roadlinks.eq.0) then
                     write(unit_logfile,'(a)') ' Reading road link file(ascii) with header but without subnode counts: '//trim(pathfilename_rl(1))
                     rewind(unit_in)
-                    call NXTDAT(unit_in,nxtdat_flag)
+                    call nxtdat(unit_in,nxtdat_flag)
                     read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
                     i=0
                     do while(.not.eof(unit_in))
@@ -165,7 +150,7 @@ contains
                     !Have commented out this in the cases where the number of links are not as written. Can happen with OSM data
                     !n_roadlinks_major=i
                     rewind(unit_in)
-                    call NXTDAT(unit_in,nxtdat_flag)
+                    call nxtdat(unit_in, nxtdat_flag)
                     read(unit_in,*,ERR=20) temp_int,temp_int
                 endif
 
@@ -207,7 +192,7 @@ contains
                 !endif
 
                 !rewind(unit_in)
-                !call NXTDAT(unit_in,nxtdat_flag)
+                !call nxtdat_modern(unit_in,nxtdat_flag)
                 !read(unit_in,*,ERR=20) temp_int,temp_int
 
                 do i=1,n_roadlinks_major
@@ -223,10 +208,10 @@ contains
 
                         if  (projection_type.eq.UTM_projection_index) then
                             !write(*,*) i,sub_nodes_x(1),sub_nodes_y(1)
-                            call LL2UTM(1,utm_zone,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1))
+                            call ll2utm(1,utm_zone,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1))
                             !write(*,*) i,sub_nodes_x(1),sub_nodes_y(1)
                         elseif  (projection_type.eq.LTM_projection_index) then
-                            call LL2LTM(1,ltm_lon0,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1))
+                            call ll2ltm(1,ltm_lon0,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_y(1),sub_nodes_x(1))
                         elseif (projection_type.eq.LCC_projection_index) then
                         elseif (projection_type.eq.PS_projection_index) then
                         elseif (projection_type.eq.LAEA_projection_index) then
@@ -277,7 +262,7 @@ contains
             write(unit_logfile,'(a)') ' Opening road link file(ascii) '//trim(pathfilename_rl(1))
 
             rewind(unit_in)
-            call NXTDAT(unit_in,nxtdat_flag)
+            call nxtdat(unit_in, nxtdat_flag)
 
             !read the header to find out how many links there are
             !read(unit_in,'(a)',ERR=20) temp_str
@@ -296,7 +281,7 @@ contains
                 n_roadlinks_major=i
                 n_roadlinks=n_roadlinks+n_subnodes-1
                 rewind(unit_in)
-                call NXTDAT(unit_in,nxtdat_flag)
+                call nxtdat(unit_in,nxtdat_flag)
             else
                 read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
             endif
@@ -304,7 +289,7 @@ contains
             if (n_roadlinks.eq.0.and..not.reduce_roadlink_region_flag) then
                 write(unit_logfile,'(a)') ' Reading road link file(ascii) with header but without subnode counts: '//trim(pathfilename_rl(1))
                 rewind(unit_in)
-                call NXTDAT(unit_in,nxtdat_flag)
+                call nxtdat(unit_in,nxtdat_flag)
                 read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
                 i=0
                 do while(.not.eof(unit_in))
@@ -319,7 +304,7 @@ contains
                 enddo
                 !n_roadlinks_major=i
                 rewind(unit_in)
-                call NXTDAT(unit_in,nxtdat_flag)
+                call nxtdat(unit_in, nxtdat_flag)
             endif
 
             write(unit_logfile,'(a,i)') ' Number of major road links= ', n_roadlinks_major
@@ -349,7 +334,7 @@ contains
             counter_major=0
 
             !rewind(unit_in)
-            !call NXTDAT(unit_in,nxtdat_flag)
+            !call nxtdat_modern(unit_in,nxtdat_flag)
             !read(unit_in,*,ERR=20) temp_int,temp_int
             !Read the data
             do i=1,n_roadlinks_major
@@ -453,11 +438,11 @@ contains
 
                 do i=1,n_roadlinks
                     if  (projection_type.eq.UTM_projection_index) then
-                        call LL2UTM(1,utm_zone,inputdata_rl_temp(i,x1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index))
-                        call LL2UTM(1,utm_zone,inputdata_rl_temp(i,x2_rl_index),inputdata_rl_temp(i,y2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index))
+                        call ll2utm(1,utm_zone,inputdata_rl_temp(i,x1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index))
+                        call ll2utm(1,utm_zone,inputdata_rl_temp(i,x2_rl_index),inputdata_rl_temp(i,y2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index))
                     elseif  (projection_type.eq.LTM_projection_index) then
-                        call LL2LTM(1,ltm_lon0,inputdata_rl_temp(i,x1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index))
-                        call LL2LTM(1,ltm_lon0,inputdata_rl_temp(i,x2_rl_index),inputdata_rl_temp(i,y2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index))
+                        call ll2ltm(1,ltm_lon0,inputdata_rl_temp(i,x1_rl_index),inputdata_rl_temp(i,y1_rl_index),inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index))
+                        call ll2ltm(1,ltm_lon0,inputdata_rl_temp(i,x2_rl_index),inputdata_rl_temp(i,y2_rl_index),inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index))
                     elseif (projection_type.eq.LCC_projection_index) then
                     elseif (projection_type.eq.PS_projection_index) then
                     elseif (projection_type.eq.LAEA_projection_index) then
@@ -690,21 +675,21 @@ contains
         write(unit_logfile,'(a)') ' Opening road link file(ascii) '//trim(pathfilename_rl(2))
 
         rewind(unit_in)
-        call NXTDAT(unit_in,nxtdat_flag)
+        call nxtdat(unit_in, nxtdat_flag)
         !read the header to find out how many links there are
         !read(unit_in,'(a)',ERR=20) temp_str
         read(unit_in,*,ERR=20) n_roadlink_emission_compound
         write(unit_logfile,'(a,i)') ' Number of road link emission compounds= ', n_roadlink_emission_compound
-        call NXTDAT(unit_in,nxtdat_flag)
+        call nxtdat(unit_in, nxtdat_flag)
         read(unit_in,*,ERR=20) n_roadlink_emission_compound_str(1:n_roadlink_emission_compound)
         write(unit_logfile,'(a,<n_roadlink_emission_compound>a16)') ' Road link emission compounds= ', n_roadlink_emission_compound_str(1:n_roadlink_emission_compound)
-        call NXTDAT(unit_in,nxtdat_flag)
+        call nxtdat(unit_in, nxtdat_flag)
         read(unit_in,*,ERR=20) n_roadlink_emission_unit_str
         write(unit_logfile,'(a,a)') ' Road link emission units= ', trim(n_roadlink_emission_unit_str)
-        call NXTDAT(unit_in,nxtdat_flag)
+        call nxtdat(unit_in, nxtdat_flag)
         read(unit_in,*,ERR=20) n_roadlink_emission_date_str
         write(unit_logfile,'(a,a)') ' Road link emission start date= ', trim(n_roadlink_emission_date_str)
-        call NXTDAT(unit_in,nxtdat_flag)
+        call nxtdat(unit_in, nxtdat_flag)
         read(unit_in,*,ERR=20) n_roadlink_emission,n_roadlink_emission_time
         write(unit_logfile,'(a,i)') ' Number of road links= ', n_roadlink_emission
         write(unit_logfile,'(a,i)') ' Number of time steps= ', n_roadlink_emission_time
@@ -773,7 +758,7 @@ contains
 
         counter=0
         !Read the data
-        call NXTDAT(unit_in,nxtdat_flag)
+        call nxtdat(unit_in, nxtdat_flag)
         do i=1,n_roadlink_emission
             if (valid_link_flag(i)) then
                 counter=counter+1
@@ -965,15 +950,15 @@ contains
 
                     !Set the min and max lat and lon values for the current grid
                     if  (projection_type.eq.UTM_projection_index) then
-                        call LL2UTM(1,utm_zone,min_lat,min_lon,y_out(1),x_out(1))
-                        call LL2UTM(1,utm_zone,max_lat,max_lon,y_out(2),x_out(2))
-                        call LL2UTM(1,utm_zone,max_lat,min_lon,y_out(3),x_out(3))
-                        call LL2UTM(1,utm_zone,min_lat,max_lon,y_out(4),x_out(4))
+                        call ll2utm(1,utm_zone,min_lat,min_lon,y_out(1),x_out(1))
+                        call ll2utm(1,utm_zone,max_lat,max_lon,y_out(2),x_out(2))
+                        call ll2utm(1,utm_zone,max_lat,min_lon,y_out(3),x_out(3))
+                        call ll2utm(1,utm_zone,min_lat,max_lon,y_out(4),x_out(4))
                     elseif  (projection_type.eq.LTM_projection_index) then
-                        call LL2LTM(1,ltm_lon0,min_lat,min_lon,y_out(1),x_out(1))
-                        call LL2LTM(1,ltm_lon0,max_lat,max_lon,y_out(2),x_out(2))
-                        call LL2LTM(1,ltm_lon0,max_lat,min_lon,y_out(3),x_out(3))
-                        call LL2LTM(1,ltm_lon0,min_lat,max_lon,y_out(4),x_out(4))
+                        call ll2ltm(1,ltm_lon0,min_lat,min_lon,y_out(1),x_out(1))
+                        call ll2ltm(1,ltm_lon0,max_lat,max_lon,y_out(2),x_out(2))
+                        call ll2ltm(1,ltm_lon0,max_lat,min_lon,y_out(3),x_out(3))
+                        call ll2ltm(1,ltm_lon0,min_lat,max_lon,y_out(4),x_out(4))
                     elseif (projection_type.eq.LAEA_projection_index) then
                         call LL2LAEA(x_out(1),y_out(1),min_lon,min_lat,projection_attributes)
                         call LL2LAEA(x_out(2),y_out(2),max_lon,max_lat,projection_attributes)

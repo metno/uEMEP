@@ -1,23 +1,12 @@
 module read_receptor_data
 
+    use utility_functions, only: ll2utm, ll2ltm
     use mod_lambert_projection, only: LL2LAEA
 
     implicit none
     private
 
     public :: uEMEP_read_receptor_data, uEMEP_set_loop_receptor_grid, uEMEP_grid_receptor_data
-
-    ! Temporary interface for NILU legacy Fortran functions
-    interface
-        subroutine LL2UTM(IUTM,ISONE_IN,LAT,LON,UTMN,UTME)
-            integer :: IUTM, ISONE, ISONE_IN
-            real :: LAT, LON, UTMN, UTME
-        end subroutine LL2UTM
-        subroutine LL2LTM(IUTM,LON0,LAT,LON,UTMN,UTME)
-            integer :: IUTM
-            real :: LAT, LON, UTMN, UTME, LON0
-        end subroutine LL2LTM
-    end interface
 
 contains
 
@@ -95,9 +84,9 @@ contains
             if (projection_type.eq.RDM_projection_index) then
                 !No conversion exists for RDM
             elseif (projection_type.eq.UTM_projection_index) then
-                call LL2UTM(1,utm_zone,lat_receptor(k),lon_receptor(k),y_receptor(k),x_receptor(k))
+                call ll2utm(1,utm_zone,lat_receptor(k),lon_receptor(k),y_receptor(k),x_receptor(k))
             elseif (projection_type.eq.LTM_projection_index) then
-                call LL2LTM(1,ltm_lon0,lat_receptor(k),lon_receptor(k),y_receptor(k),x_receptor(k))
+                call ll2ltm(1,ltm_lon0,lat_receptor(k),lon_receptor(k),y_receptor(k),x_receptor(k))
             elseif (projection_type.eq.LAEA_projection_index) then
                 call LL2LAEA(x_receptor(k),y_receptor(k),lon_receptor(k),lat_receptor(k),projection_attributes)
             endif
