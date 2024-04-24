@@ -29,12 +29,16 @@ set(NETCDF_F90 YES)
 find_package(NetCDF REQUIRED)
 include_directories(${NETCDF_INCLUDES})
 
-# Glob source files
-file(GLOB_RECURSE SOURCES src/*.f90 src/*.for)
+set(SOURCES)
+include(src/CMakeLists.txt)
 
-# Create executable and link
-add_executable(uemep exe/uEMEP_control_v2.f90 ${SOURCES})
-target_link_libraries(uemep ${NETCDF_LIBRARIES})
+# Build uEMEP as static library
+add_library(uemeplib ${SOURCES})
 
-add_subdirectory(test)
+# Build and link test executables
+include(test/CMakeLists.txt)
+
+# Build and link main executable
+add_executable(uemep src/uEMEP_control_v2.f90)
+target_link_libraries(uemep PRIVATE uemeplib ${NETCDF_LIBRARIES})
 

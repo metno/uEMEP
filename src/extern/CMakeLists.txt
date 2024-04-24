@@ -1,0 +1,3 @@
+list(APPEND SOURCES
+  ${CMAKE_CURRENT_LIST_DIR}/rargsort.f90
+  ${CMAKE_CURRENT_LIST_DIR}/rdm2ll.f90)
