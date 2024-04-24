@@ -1,5 +1,5 @@
 foreach(execid
-    distrl
+    utility_functions
     )
 
     add_executable(test_${execid} test_${execid}.f90 ${SOURCES})

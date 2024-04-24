@@ -1,0 +1,4 @@
+# commented line 1
+* commented line 2
+{ commented line 3
+non-commented line 4
