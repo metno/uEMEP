@@ -21,7 +21,13 @@ cmake ..
 make
 ```
 
+Note: uEMEP supports multiple cores during the build process, e.g., `make -j 4`.
+
 Compilation requires an Intel Fortran compiler and a compatible NetCDF installation.
+
+## Testing
+
+Tests are currently built by default when building uEMEP. To run the tests, simply run `make test` or `ctest` ib the build directory after running `make`.
 
 ## Implementation
 The command line structure for uEMEP is as follows:
