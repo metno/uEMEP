@@ -124,10 +124,10 @@ contains
 !   Rotationally symetric Gaussian plume function to second order vertically integrated from H1 to H2
 !==========================================================================
 
-    function gauss_plume_second_order_rotated_integral_func(r,z,ay,by,az,bz,sig_y_0,sig_z_0,h,H1,H2)
+    function gauss_plume_second_order_rotated_integral_func(r,ay,by,az,bz,sig_y_0,sig_z_0,h,H1,H2)
 
         implicit none
-        real r,z,ay,by,az,bz,sig_y_0,sig_z_0,h,H1,H2
+        real r,ay,by,az,bz,sig_y_0,sig_z_0,h,H1,H2
         real gauss_plume_second_order_rotated_integral_func
         real sig_th,sig_z,B,c_y_int,c_z_int
         real order_1,order_2
@@ -164,10 +164,10 @@ contains
 !   Rotationally symetric Gaussian plume function to second order vertically integrated from H1 to H2
 !==========================================================================
 
-    function gauss_plume_second_order_rotated_reflected_integral_func(r,z,ay,by,az,bz,sig_y_0,sig_z_0,z_s,z_pbl,H1,H2)
+    function gauss_plume_second_order_rotated_reflected_integral_func(r,ay,by,az,bz,sig_y_0,sig_z_0,z_s,z_pbl,H1,H2)
 
         implicit none
-        real r,z,ay,by,az,bz,sig_y_0,sig_z_0,z_s,z_pbl,H1,H2
+        real r,ay,by,az,bz,sig_y_0,sig_z_0,z_s,z_pbl,H1,H2
         real gauss_plume_second_order_rotated_reflected_integral_func
         real sig_th,sig_z,B,c_y_int,c_z_int
         real order_1,order_2
@@ -262,10 +262,10 @@ contains
 !   Cartesian Gaussian plume function
 !==========================================================================
 
-    function gauss_plume_cartesian_integral_func(x_s,y_s,z_s,cos_val,sin_val,x_r,y_r,z_r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta)
+    function gauss_plume_cartesian_integral_func(x_s,y_s,z_s,cos_val,sin_val,x_r,y_r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta)
 
         implicit none
-        real x_s,y_s,z_s,x_r,y_r,z_r
+        real x_s,y_s,z_s,x_r,y_r
         real ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta
         real gauss_plume_cartesian_integral_func
         real sig_y,sig_z,x,y
@@ -337,10 +337,10 @@ contains
 !   Cartesian Gaussian plume function
 !==========================================================================
 
-    function gauss_plume_cartesian_trajectory_integral_func(x,y,z_s,z_r,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta)
+    function gauss_plume_cartesian_trajectory_integral_func(x,y,z_s,ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta)
 
         implicit none
-        real x,y,z_s,z_r
+        real x,y,z_s
         real ay,by,az,bz,sig_y_0,sig_z_0,H1,H2,delta
         real gauss_plume_cartesian_trajectory_integral_func
         real sig_y,sig_z
@@ -416,10 +416,10 @@ contains
 
     end function gauss_plume_cartesian_sigma_func
 
-    function gauss_plume_cartesian_sigma_integral_func(x,y,z_s,z_r,sig_z,sig_y,z_pbl,FF,H1,H2)
+    function gauss_plume_cartesian_sigma_integral_func(x,y,z_s,sig_z,sig_y,z_pbl,FF,H1,H2)
 
         implicit none
-        real, intent(in) :: x,y,z_s,z_r,sig_y,sig_z,z_pbl,FF,H1,H2
+        real, intent(in) :: x,y,z_s,sig_y,sig_z,z_pbl,FF,H1,H2
         real gauss_plume_cartesian_sigma_integral_func
         real pi,sig_limit
         parameter (pi=3.141592,sig_limit=3.)

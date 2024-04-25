@@ -839,7 +839,7 @@ contains
                                                 !if (source_index.eq.traffic_index.and.distance_subgrid.eq.0) write(*,'(16es12.2)') sigy_0_subgid_width_scale,distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_00_loc,sig_z_00_loc,sig_y_0_loc,sig_z_0_loc,sig_y_loc,sig_z_loc,h_emis_loc,FF_loc,1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,inv_FF10_subgrid_index)
                                                 !Divide by wind speed at receptor position
                                                 if (calc_grid_vertical_average_concentration_annual_flag) then
-                                                    temp_subgrid_rotated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0.,H_emep)
+                                                    temp_subgrid_rotated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0.,H_emep)
                                                 else
                                                     temp_subgrid_rotated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc)
                                                 endif
@@ -906,7 +906,7 @@ contains
                                                     !Wet deposition
                                                     precip_loc=meteo_subgrid(i_cross_target_integral,j_cross_target_integral,tt,precip_subgrid_index)
 
-                                                    temp_subgrid_rotated_integrated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0.,h_mix_loc)/FF_loc*h_mix_loc
+                                                    temp_subgrid_rotated_integrated=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0.,h_mix_loc)/FF_loc*h_mix_loc
 
                                                     !write(*,*) temp_emission_subgrid(ii,jj,:),gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0,H_emep)/FF_loc
 
@@ -917,7 +917,7 @@ contains
                                                     !write(*,*) subgrid(i,j,tt,wetdepo_local_subgrid_index,source_index,:),temp_subgrid_rotated_integrated,wetdepo_scavanging_rate(nh3_index),precip_loc
 
                                                     if (adjust_wetdepo_integral_to_lowest_layer_flag) then
-                                                        plume_vertical_integral(1,:)=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0.,H_emep)/FF_loc*H_emep
+                                                        plume_vertical_integral(1,:)=temp_emission_subgrid(ii,jj,:)*gauss_plume_second_order_rotated_reflected_integral_func(distance_subgrid,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,h_mix_loc,0.,H_emep)/FF_loc*H_emep
                                                         plume_vertical_integral(2,:)=temp_subgrid_rotated_integrated
                                                         plume_vertical_integral(3,:)=plume_vertical_integral(1,:)/H_emep
                                                     endif
@@ -1474,7 +1474,7 @@ contains
 
                                                 !Calculate the dispersion
                                                 integral_subgrid(i,j,tt,hsurf_average_subgrid_index,source_index,:)=integral_subgrid(i,j,tt,hsurf_average_subgrid_index,source_index,:) &
-                                                    + gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,H_emep) &
+                                                    + gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,H_emep) &
                                                     * emission_subgrid(ii,jj,tt,source_index,:)
 
                                                 !write(*,*) i,j,integral_subgrid(i,j,tt,hsurf_average_subgrid_index,source_index,1)
@@ -1494,7 +1494,7 @@ contains
 
                                             integral_subgrid(i,j,tt,hsurf_average_subgrid_index,source_index,:)=integral_subgrid(i,j,hsurf_average_subgrid_index,tt,source_index,:) &
                                                 +emission_subgrid(ii,jj,tt,source_index,:) &
-                                                *gauss_plume_second_order_rotated_integral_func(distance_subgrid,z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,0.,H_emep) &
+                                                *gauss_plume_second_order_rotated_integral_func(distance_subgrid,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc,h_emis_loc,0.,H_emep) &
                                                 /FF_loc
 
                                         endif

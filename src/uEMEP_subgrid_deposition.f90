@@ -507,8 +507,8 @@ contains
 
                             !Calculate the vertically integrated mass of the plume (s/m2) up to the lowest level and up to the mixing height
                             if (adjust_wetdepo_integral_to_lowest_layer_flag.and.calculate_deposition_flag) then
-                                plume_vertical_integral(hsurf_integral_subgrid_index)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,H_emep)*H_emep
-                                plume_vertical_integral(hmix_integral_subgrid_index)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,h_mix_loc)*h_mix_loc
+                                plume_vertical_integral(hsurf_integral_subgrid_index)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,H_emep)*H_emep
+                                plume_vertical_integral(hmix_integral_subgrid_index)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_loc,0.,h_mix_loc)*h_mix_loc
                                 !write(*,*) h_mix_loc,x_loc,sig_z_loc,vertical_integral_internal/(sig_z_loc*sqrt(2.*3.14159)/(2.*3.14159*sig_y_loc*sig_z_loc)*exp(-0.5*(y_loc*y_loc)/(sig_y_loc*sig_y_loc))/FF_loc*plume_source(i_pollutant) )
                                 !write(*,*) plume_vertical_integral(1)/plume_vertical_integral(2),H_emep/h_mix_loc,H_emep/h_mix_loc/(plume_vertical_integral(1)/plume_vertical_integral(2))
                                 !Calculate the average concentration in the lowest layer
@@ -520,7 +520,7 @@ contains
 
                             endif
                             if (local_subgrid_method_flag.eq.1) then
-                                plume_vertical_integral(hsurf_average_subgrid_index)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,z_rec_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_integral_loc,0.,H_emep)
+                                plume_vertical_integral(hsurf_average_subgrid_index)=gauss_plume_cartesian_sigma_integral_func(x_loc,y_loc,h_emis_loc,sig_z_loc,sig_y_loc,h_mix_loc,FF_integral_loc,0.,H_emep)
                             endif
 
 
