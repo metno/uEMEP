@@ -529,10 +529,10 @@ contains
 
                                                     !Calculate the minimum distance to the trajectory. Time consuming
                                                     if (use_target_subgrid) then
-                                                        call uEMEP_minimum_distance_trajectory_fast(x_target_subgrid(i,j),y_target_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index), &
+                                                        call uEMEP_minimum_distance_trajectory_fast(x_target_subgrid(i,j),y_target_subgrid(i,j), &
                                                             traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                                     else
-                                                        call uEMEP_minimum_distance_trajectory_fast(x_subgrid(i,j),y_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index), &
+                                                        call uEMEP_minimum_distance_trajectory_fast(x_subgrid(i,j),y_subgrid(i,j), &
                                                             traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                                     endif
 
@@ -1384,7 +1384,7 @@ contains
                                             if (use_trajectory_flag(source_index)) then
 
                                                 !Calculate the minimum distance to the trajectory. Time consuming
-                                                call uEMEP_minimum_distance_trajectory_fast(x_integral_subgrid(i,j),y_integral_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index), &
+                                                call uEMEP_minimum_distance_trajectory_fast(x_integral_subgrid(i,j),y_integral_subgrid(i,j), &
                                                     traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
 
                                             else

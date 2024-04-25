@@ -380,7 +380,7 @@ contains
                                     precip_loc=meteo_subgrid(i_cross_target_integral,j_cross_target_integral,tt,precip_subgrid_index)
 
                                     !Find the minimum distance to the trajectory and check it is valid (downwind)
-                                    call uEMEP_minimum_distance_trajectory_fast(x_target_subgrid(i,j),y_target_subgrid(i,j),x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index), &
+                                    call uEMEP_minimum_distance_trajectory_fast(x_target_subgrid(i,j),y_target_subgrid(i,j), &
                                         traj_max_index,traj_step_size,trajectory_vector(:,x_dim_index),trajectory_vector(:,y_dim_index),x_loc,y_loc,valid_traj)
 
                                     !valid_traj=.false.
