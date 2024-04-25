@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 # Project description
 project(uemep)
 
+# Enable testing
 enable_testing()
 
 # Hardcode ifort as the Fortran compiler (gfortran currently does not work)
@@ -25,10 +26,10 @@ set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${F90FLAGS} ${F90DISABLE}")
 set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS} ${F90DEBUGFLAGS}")
 
 # Import NetCDF
-set(NETCDF_F90 YES)
 find_package(NetCDF REQUIRED)
-include_directories(${NETCDF_INCLUDES})
+include_directories(${NC_INC})
 
+# Add source files
 set(SOURCES)
 include(src/CMakeLists.txt)
 
@@ -40,5 +41,5 @@ include(test/CMakeLists.txt)
 
 # Build and link main executable
 add_executable(uemep src/uEMEP_control_v2.f90)
-target_link_libraries(uemep PRIVATE uemeplib ${NETCDF_LIBRARIES})
+target_link_libraries(uemep PRIVATE uemeplib ${NC_LIB})
 
