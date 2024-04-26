@@ -13,8 +13,6 @@ enable_language(Fortran)
 # Append additional cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-# Extract 
-
 # Define compiler flags
 if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
   set(F90DIALECT "") # For future use

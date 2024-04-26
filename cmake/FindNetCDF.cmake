@@ -9,8 +9,10 @@ execute_process(COMMAND nf-config --flibs OUTPUT_VARIABLE NC_LIB)
 # Strip trailing whitespace
 string(STRIP ${NC_LIB} NC_LIB)
 
-# Pretend we always have interface
-set(NC_HAS_INTERFACE "YES")
+# Check if nf-config returned a string and assume we have interface if true
+if(NC_INC AND NC_LIB)
+  set(NC_HAS_INTERFACE "YES")
+endif()
 
 # Handle arguments
 include(FindPackageHandleStandardArgs)
