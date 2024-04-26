@@ -1,5 +1,6 @@
 foreach(execid
     utility_functions
+    read_namefile_routines
     )
 
     add_executable(test_${execid} test/test_${execid}.f90)
