@@ -1,5 +1,7 @@
 module utility_functions
 
+    use uemep_constants, only: dp
+
     implicit none
     private
 
@@ -8,7 +10,6 @@ module utility_functions
     public :: ll2utm, ll2ltm
     public :: utm2ll, ltm2ll
 
-    integer, parameter :: dp = selected_real_kind(15, 307)
     real(dp), parameter :: pi = 3.141592653589793
 
 contains

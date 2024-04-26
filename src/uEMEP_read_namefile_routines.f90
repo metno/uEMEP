@@ -1,13 +1,13 @@
 module read_namefile_routines
     !! Subroutines and functions for reading in name files
 
+    use uemep_constants, only: dp
+
     implicit none
     private
 
     public :: read_name_char, read_name_logical, read_name_integer, &
         read_name_real, read_name_double
-
-    integer, parameter :: dp = selected_real_kind(15, 307)
 
     interface read_name
         module procedure read_name_real

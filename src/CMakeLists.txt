@@ -1,5 +1,6 @@
 # Append source files
 list(APPEND SOURCES 
+  ${CMAKE_CURRENT_LIST_DIR}/uemep_constants.f90
   ${CMAKE_CURRENT_LIST_DIR}/utility_functions.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_definitions.f90
   ${CMAKE_CURRENT_LIST_DIR}/Area_weighted_interpolation_function.f90
