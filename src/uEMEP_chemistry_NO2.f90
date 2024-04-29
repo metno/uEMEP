@@ -1,7 +1,7 @@
 module chemistry_no2
 
     use uEMEP_definitions
-    use time_functions, only: global_radiation_sub
+    use time_functions, only: get_sun_angles
 
     implicit none
     private
@@ -1057,7 +1057,7 @@ contains
         real, save :: y_Jd_acc(nbin_Jd)
         real :: mean_y_Jd_acc, y_Jd_acc_temp, y_Jd_acc_temp_log10
         real :: y_all_val, y_all_prob, y_all_sum, y_all_prob_sum, y_all, y_annual, y_scale
-        real :: solar_net, azimuth_ang, zenith_ang
+        real :: azimuth_ang, zenith_ang
         real :: mol_nox, mol_no2, mol_ox, mol_o3, Jd
         double precision :: date_num
         integer :: i, j, k, l
@@ -1129,7 +1129,7 @@ contains
                 date_num = 1.0 + i/24.0
                 date_array = 0
                 zenith_ang = 0.0
-                call global_radiation_sub(lat_in, lon_in, date_array, date_num, 0.0, 0.0, 0.0,0.0, solar_net, azimuth_ang, zenith_ang)
+                call get_sun_angles(lat_in, lon_in, date_array, date_num, 0.0, azimuth_ang, zenith_ang)
                 if (zenith_ang .ge. 90.0) then
                     y_Jd_acc(i) = 0
                 else
