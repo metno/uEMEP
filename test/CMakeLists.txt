@@ -2,6 +2,7 @@ foreach(execid
     utility_functions
     read_namefile_routines
     time_functions
+    uemep_logger
     )
 
     add_executable(test_${execid} test/test_${execid}.f90)
