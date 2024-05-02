@@ -3,7 +3,8 @@ module uemep_configuration
     use uEMEP_definitions, only: n_population_index, num_var_nc_name, n_pollutant_nc_index, n_source_nc_index, &
         n_compound_nc_index, num_var_population_nc, num_var_landuse_nc, n_source_index, UTM_projection_index, &
         LCC_projection_index, population_index, max_n_local_fraction_grids, n_dim_index, n_possible_subsource, &
-        NODATA_value, n_clc_landuse_index
+        n_clc_landuse_index
+    use uemep_constants, only: NODATA_value
     use uemep_logger
 
     implicit none

@@ -1,5 +1,6 @@
 module subgrid_emep
 
+    use uemep_constants, only: pi
     use uemep_configuration
 
     implicit none

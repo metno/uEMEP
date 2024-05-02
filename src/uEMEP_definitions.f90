@@ -18,9 +18,6 @@ module uEMEP_definitions
 
     logical :: read_EMEP_only_once_flag = .false. ! Note can lead to virtual memory overflow
 
-    ! No data value
-    real, parameter :: NODATA_value = -128.0
-
     integer :: unit_logfile = 0
     integer :: unit_finishedfile = 20
     integer :: n_roadlinks = 0
@@ -541,8 +538,6 @@ module uEMEP_definitions
     real :: bz(n_source_index, n_possible_subsource)
     real :: sig_y_0(n_source_index, n_possible_subsource)
     real :: sig_z_0(n_source_index, n_possible_subsource)
-
-    real, parameter :: pi = 3.14159265358979323
 
     integer, parameter :: UTM_projection_index = 1
     integer, parameter :: RDM_projection_index = 2

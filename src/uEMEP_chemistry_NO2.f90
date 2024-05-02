@@ -1,5 +1,6 @@
 module chemistry_no2
 
+    use uemep_constants, only: pi
     use uemep_configuration
     use uEMEP_definitions
     use time_functions, only: get_sun_angles

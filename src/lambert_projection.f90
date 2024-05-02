@@ -1,6 +1,7 @@
 module mod_lambert_projection
     ! Routines for calling the various possible projections for the uEMEP sub-grid to lat lon
 
+    use uemep_constants, only: pi
     use uEMEP_definitions
     use utility_functions, only: ltm2ll, utm2ll
     use mod_rdm2ll, only: RDM2LL

@@ -1,5 +1,6 @@
 module define_subgrid
 
+    use uemep_constants, only: pi
     use uemep_configuration
     use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
 

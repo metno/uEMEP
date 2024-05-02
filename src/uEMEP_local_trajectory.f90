@@ -1,5 +1,6 @@
 module local_trajectory
 
+    use uemep_constants, only: NODATA_value
     use utility_functions, only: distrl_sqr
 
     implicit none
