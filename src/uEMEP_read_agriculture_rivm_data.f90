@@ -1,5 +1,6 @@
 module read_agriculture_asi_data
 
+    use uemep_configuration
     use mod_lambert_projection, only: lb2lambert2_uEMEP, LL2PS_spherical
     use mod_area_interpolation, only: area_weighted_extended_interpolation_function
 

@@ -1,5 +1,7 @@
 module read_command_line
 
+    use uemep_configuration
+
     implicit none
     private
 

@@ -1,5 +1,7 @@
 module set_dispersion_parameters
 
+    use uemep_configuration
+
     implicit none
     private
 

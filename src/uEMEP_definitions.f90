@@ -13,19 +13,9 @@ module uEMEP_definitions
     ! Configuration file name entered in command line
     integer, parameter :: n_max_config_files = 10
     character(256) :: name_config_file(n_max_config_files) = ''
-    character(256) :: filename_log_file = 'uEMEP_log.txt'
-    character(256) :: pathname_log_file = ''
-    character(256) :: config_date_str = ''
     character(256) :: emission_date_str = ''
-    character(256) :: replacement_date_str = '<>'
-    character(256) :: replacement_yesterday_date_str = '[]'
-    character(256) :: replacement_hour_str = '<>'
-    character(256) :: NORTRIP_replacement_hour_str = '<>'
     integer :: n_config_files = 0
 
-    logical :: use_single_time_loop_flag = .false.
-    logical :: reduce_EMEP_region_flag = .false.
-    logical :: reduce_roadlink_region_flag = .true.
     logical :: read_EMEP_only_once_flag = .false. ! Note can lead to virtual memory overflow
 
     ! No data value
@@ -36,14 +26,6 @@ module uEMEP_definitions
     integer :: n_roadlinks = 0
     integer :: n_roadlinks_major = 0
     integer :: n_roadlinks_major_selected = 0
-    integer :: utm_zone = 33
-    real :: utm_lon0 = 15.
-    real :: ltm_lon0 = 0.
-    integer :: EMEP_grid_interpolation_flag = 0
-    integer :: EMEP_meteo_grid_interpolation_flag = 1
-    real :: EMEP_grid_interpolation_size = 1.
-    real :: EMEP_additional_grid_interpolation_size = 0.
-    integer :: local_subgrid_method_flag = 1
     logical :: calculate_EMEP_additional_grid_flag = .false.
 
     ! Single loop time variables
@@ -180,7 +162,6 @@ module uEMEP_definitions
     integer, parameter :: n_source_nc_index = 22
 
     integer :: convert_GNFR_to_uEMEP_sector_index(n_source_nc_index)
-    integer :: convert_uEMEP_to_GNFR_sector_index(n_source_nc_index)
 
     ! Loop for all pollutants to be calculated
     integer :: pollutant_index
@@ -198,19 +179,14 @@ module uEMEP_definitions
     integer :: meteo_p_loop_index = 1
     character(256) :: pollutant_file_str(n_pollutant_nc_index) = ''
 
-    character(256) :: var_name_nc(num_var_nc_name, n_pollutant_nc_index, n_source_nc_index)
     character(256) :: dim_name_nc(num_dims_nc)
     character(256) :: var_name_meteo_nc(num_var_meteo_nc)
     character(256) :: dim_name_meteo_nc(num_dims_meteo_nc)
-    character(256) :: comp_name_nc(n_compound_nc_index)
-    character(256) :: input_comp_name
-    real :: comp_scale_nc(n_compound_nc_index)
 
     integer, parameter :: num_var_population_nc = 2
     integer, parameter :: num_dims_population_nc = 2
     integer, parameter :: population_nc_index = 1 ! population_nc_index=1 assumes population files in lat and lon
     integer, parameter :: dwelling_nc_index = 2
-    character(256) :: var_name_population_nc(num_var_population_nc)
     character(256) :: dim_name_population_nc(num_dims_population_nc)
 
     integer, parameter :: num_var_shipping_nc = 1 ! assumes shipping files in lat and lon
@@ -220,7 +196,6 @@ module uEMEP_definitions
 
     integer, parameter :: num_var_landuse_nc = 1 ! assumes landuse files in lat and lon
     integer, parameter :: num_dims_landuse_nc = 2
-    character(256) :: var_name_landuse_nc(num_var_landuse_nc)
     character(256) :: dim_name_landuse_nc(num_dims_landuse_nc)
     integer :: dim_length_landuse_nc(num_dims_landuse_nc)
     integer :: dim_start_landuse_nc(num_dims_landuse_nc) = [1, 1] ! start at first value
@@ -267,8 +242,6 @@ module uEMEP_definitions
     real, allocatable :: inputdata_rl(:, :)
     integer, allocatable :: inputdata_int_rl(:, :)
     real, allocatable :: inputdata_rl_emissions(:, :, :)
-    logical :: use_NORTRIP_emission_data = .false.
-    logical :: use_NORTRIP_emission_pollutant(n_pollutant_nc_index) = .true.
     logical, allocatable :: valid_link_flag(:)
 
     ! Road link (rl) indexes
@@ -300,16 +273,10 @@ module uEMEP_definitions
     integer, parameter :: num_int_rl = 4
 
     ! Declare file and path names for input roadlink files
-    character(256) :: filename_rl(2)
-    character(256) :: pathname_rl(2)
     character(256) :: pathfilename_rl(2)
 
     ! Filenames for multiple road link (mrl) files
-    integer :: num_multiple_roadlink_files = 0
-    character(256) :: filename_mrl(50)
-    character(256) :: pathname_mrl(50)
     character(256) :: pathfilename_mrl(50)
-    character(256) :: file_tag
 
     ! Input shipping (ship) indexes
     integer, parameter :: lon_ship_index = 1 !! Ship longitude index
@@ -327,61 +294,17 @@ module uEMEP_definitions
     integer :: num_char_ship ! TODO: Should this be set?
     integer, parameter :: num_char_rl = 2 ! TODO: Strange position, move to road links?
 
-    ! Declare file and path names for shipping ais files
-    character(256) :: filename_ship(2)
-    character(256) :: pathname_ship(2)
-    character(256) :: pathfilename_ship(2)
-
     ! Input agriculture
     integer, parameter :: lon_agriculture_index = 1
     integer, parameter :: lat_agriculture_index = 2
     integer, parameter :: nh3_agriculture_index = 3
     integer, parameter :: num_var_agriculture = 3
 
-    ! Declare file and path names for input agriculture rivm files
-    character(256) :: filename_agriculture(2)
-    character(256) :: pathname_agriculture(2)
-    character(256) :: pathfilename_agriculture(2)
-
-    ! Declare file and path names for input emission rivm files
-    character(256) :: filename_emission_rivm(2)
-    character(256) :: pathname_emission_rivm(2)
-    character(256) :: pathfilename_emission_rivm(2)
-
-    ! Declare file and path names for SSB building and population files
-    ! TODO Check this, should be limitted by n_population_index=8 but really not necessary
-    character(256) :: filename_heating(10)
-    character(256) :: pathname_heating(10)
-    character(256) :: pathfilename_heating(10)
-
-    character(256) :: filename_industry(10)
-    character(256) :: pathname_industry(10)
-    character(256) :: pathfilename_industry(10)
-
-    ! Definition of the EMEP file to be read. Two files. 1 is base file and 2 is uEMEP file
-    character(256) :: filename_EMEP(4)
-    character(256) :: pathname_EMEP(4)
-    character(256) :: pathfilename_EMEP(4)  ! Combined path and filename
-    character(256) :: original_filename_EMEP(4)
-    character(256) :: original_pathname_EMEP(4)
-
-    ! Definition of the receptor file to be read.
-    character(256) :: filename_receptor
-    character(256) :: pathname_receptor
-    character(256) :: pathfilename_receptor  ! Combined path and filename
-
-    ! Definition of the timeprofilefile to be read.
-    character(256) :: filename_timeprofile
-    character(256) :: pathname_timeprofile
-    character(256) :: pathfilename_timeprofile  ! Combined path and filename
-
     ! Declaration for all filenames used to save gridded data produced by uEMEP. Up to 200 file names but of course can be more
     integer, parameter :: n_filenames_grid = 500
     character(256) :: filename_grid(n_filenames_grid)
     character(256) :: pathname_grid(n_filenames_grid)
     character(256) :: pathfilename_grid(n_filenames_grid)  ! Combined path and filename
-    character(256) :: pathname_output_grid
-    character(256) :: filename_date_output_grid = '<replace_date>_<replace_hour>'
 
     ! Declare subgrid variable indexes for 'subgrid' array
     integer, parameter :: proxy_subgrid_index = 1
@@ -476,11 +399,7 @@ module uEMEP_definitions
     integer :: compound_source_index(n_compound_index, n_source_index)
 
     character(256) :: source_file_postfix(n_source_nc_index)
-    logical :: calculate_source(n_source_nc_index) = .false.
-    logical :: calculate_EMEP_source(n_source_nc_index) = .false.
     logical :: save_EMEP_source(n_source_nc_index) = .false.
-    logical :: make_EMEP_grid_emission_data(n_source_nc_index) = .false.
-    logical :: replace_EMEP_local_with_subgrid_local(n_source_nc_index) = .false.
 
     integer, parameter :: x_dim_index = 1
     integer, parameter :: y_dim_index = 2
@@ -489,15 +408,9 @@ module uEMEP_definitions
 
     ! Target redistribution grid, the same for all sources and compounds
     integer :: subgrid_dim(n_dim_index)
-    real :: subgrid_delta(2)
-    real :: subgrid_min(2)
-    real :: subgrid_max(2)
     real :: subgrid_proj_min(2)
     real :: subgrid_proj_max(2)
     integer :: init_subgrid_dim(n_dim_index)
-    real :: init_subgrid_delta(2)
-    real :: init_subgrid_min(2)
-    real :: init_subgrid_max(2)
     real, allocatable :: subgrid(:, :, :, :, :, :) ! subgrid (i,j,t,type_subgrid,type_source,type_subsource)
     real, allocatable :: meteo_subgrid(:, :, :, :)
     real, allocatable :: last_meteo_subgrid(:, :, :)
@@ -520,7 +433,6 @@ module uEMEP_definitions
     integer, allocatable :: use_subgrid_val(:, :, :) ! Same as use_subgrid but given a value to indicate if it is in the buffer zone of a region ore not
     integer, allocatable :: use_subgrid_interpolation_index(:, :, :) ! Assigns the resolution level for auto gridding to the target grid
     integer :: n_use_subgrid_levels(n_source_index)
-    logical :: use_emission_positions_for_auto_subgrid_flag(n_source_index) = .false.
 
     real :: loop_index_scale = 1.5
     real :: buffer_index_scale = 1.5
@@ -529,7 +441,6 @@ module uEMEP_definitions
     ! Each source type has its own x and y and dim
     ! Each source may be of lesser dimensions than the total array size (which is the same as the target grid)
     integer, parameter :: n_possible_subsource = 2
-    integer :: n_subsource(n_source_index) = 1 !Initialise the number of actual emission subsources to 1 for all subsources
     character(2) :: subsource_str(n_possible_subsource)
 
     integer, parameter :: emission_h_index = 1
@@ -577,7 +488,6 @@ module uEMEP_definitions
     integer, parameter :: n_integral_subgrid_index = 3
 
     integer :: integral_subgrid_dim(n_dim_index)
-    real :: integral_subgrid_delta_ref = 0.
     real :: integral_subgrid_delta(2) = 0.
     real :: integral_subgrid_min(2)
     real :: integral_subgrid_max(2)
@@ -620,31 +530,17 @@ module uEMEP_definitions
 
     real :: min_link_size = 50.0
     real :: min_adt = 1000.0
-    real :: H_emep = 90.0 ! Height of lowest level in EMEP
     real :: H_meteo = 45.0 ! Height of the gridded meteo values
 
-    logical :: hourly_calculations = .false.
-    logical :: annual_calculations = .false.
     integer :: start_month_in_annual_calculations = 1
     integer :: end_month_in_annual_calculations = 12
 
     ! Pseudo dispersion parameters
-    real :: z_rec(n_source_index, n_possible_subsource)
-    real :: ay(n_source_index, n_possible_subsource)
     real :: by(n_source_index, n_possible_subsource)
     real :: az(n_source_index, n_possible_subsource)
     real :: bz(n_source_index, n_possible_subsource)
     real :: sig_y_0(n_source_index, n_possible_subsource)
     real :: sig_z_0(n_source_index, n_possible_subsource)
-
-    ! To be set at input
-    real :: sig_y_00(n_source_index, n_possible_subsource)
-    real :: sig_z_00(n_source_index, n_possible_subsource)
-    real :: h_emis(n_source_index, n_possible_subsource)
-    integer :: stability_scheme_flag
-
-    real :: FF_min_dispersion = 0.1
-    integer :: emission_timeprofile_hour_shift = 1 ! Winter European time
 
     real, parameter :: pi = 3.14159265358979323
 
@@ -655,10 +551,6 @@ module uEMEP_definitions
     integer, parameter :: LAEA_projection_index = 5
     integer, parameter :: LTM_projection_index = 6
     integer, parameter :: PS_projection_index = 7
-    integer :: projection_type = UTM_projection_index
-    integer :: EMEP_projection_type = LCC_projection_index
-    double precision :: EMEP_projection_attributes(10)
-    double precision :: projection_attributes(10)
     double precision :: population_nc_projection_attributes(10)
     integer :: meteo_nc_projection_type = LCC_projection_index
     double precision :: meteo_nc_projection_attributes(10)
@@ -706,38 +598,11 @@ module uEMEP_definitions
     real :: unit_conversion(n_source_index) = 1.0
 
     real :: emission_factor_conversion(n_compound_nc_index, n_source_index, n_possible_subsource) = 0.0
-    real :: emission_factor(n_compound_nc_index, n_source_index, n_possible_subsource) = 1.0
-    real :: ratio_truck_car_emission(n_compound_nc_index) = 10.0
 
-    integer :: integral_subgrid_step = 1
     integer :: weighting_step = 1
 
-    real :: limit_shipping_delta = 250.0
-    real :: limit_heating_delta = 250.0
-    real :: limit_industry_delta = 250.0
-    real :: limit_population_delta = 250.0
-    real :: traj_step_scale = 2.0
-
-    integer :: start_time_nc_index = 1
-    integer :: end_time_nc_index = 1
-    integer :: start_time_meteo_nc_index = 1
-    integer :: end_time_meteo_nc_index = 1
     integer :: ref_year_EMEP = 1900
     integer :: ref_year_meteo = 1970
-
-    integer :: EMEP_emission_grid_interpolation_flag = 0
-    logical :: subgrid_emission_distribution_flag = .false. ! If true then distributes the EMEP emissions to the existing emission subgrid
-    logical :: use_downwind_position_flag = .false. ! If true then searches the upwind EMEP grid position for emissions
-    logical :: use_trajectory_flag(n_source_index) = .false.
-    integer :: no2_chemistry_scheme_flag = 1
-    integer :: wind_level_flag = 3
-    integer :: wind_level_integral_flag = 3
-    logical :: use_receptor_positions_for_auto_subgrid_flag = .false.
-    logical :: interpolate_subgrids_flag = .false.
-    logical :: use_aggregated_shipping_emissions_flag = .true.
-    logical :: calculate_aggregated_shipping_emissions_flag = .false.
-    logical :: average_zc_h_in_Kz_flag = .true.
-    logical :: wind_level_zc_flag = .false. ! This will use the centre of mass wind no matter what type of wind_level_flag is used
 
     integer :: n_receptor
     integer :: n_receptor_in
@@ -759,7 +624,6 @@ module uEMEP_definitions
     character(256) :: name_receptor(n_receptor_max, 2)
     character(256) :: name_receptor_in(n_receptor_max, 2)
     logical :: use_receptor(n_receptor_max) = .true.
-    integer :: use_receptor_region = 1 ! Surrounding grid region when just running for receptors
     integer :: valid_receptor_index(n_receptor_max)
     integer :: valid_receptor_inverse_index(n_receptor_max)
 
@@ -775,52 +639,13 @@ module uEMEP_definitions
     integer, parameter :: n_population_index = 8
     integer :: population_file_index(n_population_index)
 
-    character(256) :: filename_population(n_population_index)
-    character(256) :: pathname_population(n_population_index)
-    character(256) :: pathfilename_population(n_population_index)
-
     ! Is a temporary variable set when reading SSB data
     integer :: SSB_data_type = dwelling_index
 
-    logical :: calculate_population_exposure_flag = .false.
-    logical :: use_population_positions_for_auto_subgrid_flag = .false.
-    integer :: population_data_type = population_index
-
-    logical :: use_multiple_receptor_grids_flag = .false.
     integer :: n_receptor_grid
     integer :: start_grid_loop_index
     integer :: end_grid_loop_index
     integer :: g_loop
-
-    logical :: use_last_meteo_in_dispersion = .false.
-    logical :: use_meandering_in_dispersion = .false.
-    logical :: use_traffic_for_sigma0_flag = .false.
-    logical :: use_alternative_meteorology_flag = .false.
-    character(256) :: alternative_meteorology_type = 'meps'
-    logical :: use_alternative_z0_flag = .false.
-    logical :: save_netcdf_file_flag = .false.
-    logical :: save_netcdf_receptor_flag = .false.
-    logical :: save_netcdf_fraction_as_contribution_flag = .false.
-    logical :: calculate_tiling_flag = .false.
-    logical :: calculate_region_tiling_flag = .false.
-
-    ! Some testing and scaling values
-    real :: replace_z0 = NODATA_value  ! Will not replace z0 when it has a NODATA value
-    real :: replace_invL = NODATA_value  ! Will not replace invL when it has a NODATA value
-    real :: replace_hmix = NODATA_value  ! Will not replace mix when it has a NODATA value
-    real :: FF_scale = NODATA_value
-    real :: FF10_offset = NODATA_value
-    real :: DD_offset = NODATA_value
-    real :: J_scale = NODATA_value
-
-    real :: hmix_max = 2000.0
-    real :: hmix_min = 25.0
-    real :: ustar_min = 0.001
-
-    character(256) :: pathname_tiles = ''
-    character(256) :: filename_tiles = ''
-    character(256) :: tile_tag = ''
-    character(256) :: save_tile_tag = ''
 
     ! Correction output time array converting days 1900 to seconds 2000
     integer(kind=4), allocatable :: time_seconds_output(:)
@@ -833,92 +658,18 @@ module uEMEP_definitions
     integer, allocatable :: RWC_region_id(:)
     real, allocatable :: RWC_grid_height(:, :)
     real, allocatable :: DMT_EMEP_grid_nc(:, :, :)
-    integer :: HDD_threshold_value = 15
-    real :: DMT_min_value = -20.0 !Minimum allowable daily mean temperature for heating degree day calculation
-    logical :: use_RWC_emission_data = .false.
-    character(256) :: pathfilename_region_heating_scaling = ''
-    character(256) :: inpath_region_heating_scaling = ''
-    character(256) :: infile_region_heating_scaling = ''
-
-    ! Forecast hour string for writing to files
-    character(256) :: forecast_hour_str = '00'
-    character(256) :: NORTRIP_hour_str = '01'
 
     ! Scenario calculator variables
-    character(256) :: pathname_rl_change = ''
-    character(256) :: filename_rl_change = ''
 
     real :: aqi_hourly_limits(n_compound_index, 1:3)
     real :: aqi_daily_limits(n_compound_index, 1:3)
     real :: aqi_annual_limits(n_compound_index, 1:3)
-
-    logical :: include_o3_in_aqi_index = .false.
-
-    integer :: n_kz_iterations = 2
 
     ! Special source allocation for no2 based on leaving out the source in the chemistry calculation
     real, allocatable :: comp_source_subgrid(:, :, :, :, :)
     real, allocatable :: comp_source_additional_subgrid(:, :, :, :, :)
     real, allocatable :: comp_source_EMEP_subgrid(:, :, :, :, :)
     real, allocatable :: comp_source_EMEP_additional_subgrid(:, :, :, :, :)
-
-    logical :: save_emissions_for_EMEP(n_source_index) = .false.
-    character(256) :: pathname_emissions_for_EMEP = ''
-    integer :: save_emissions_start_index = 1
-    integer :: save_emissions_end_index = 24
-    character(256) :: save_emissions_for_EMEP_projection = 'lambert'
-    character(256) :: save_emissions_for_EMEP_region = 'NO'
-
-    logical :: read_weekly_shipping_data_flag = .false.
-    logical :: read_monthly_and_daily_shipping_data_flag = .false.
-
-    logical :: use_tunnel_deposition_flag = .false.
-    logical :: use_tunnel_emissions_flag = .true.
-    real :: ventilation_factor = 1.0
-    real :: windspeed_tunnel = 1.0
-    real :: min_length_ventilation_factor = 0.0
-    real :: min_ADT_ventilation_factor = 0.0
-
-    real :: tunnel_sig_z_00 = 5.0
-
-    real :: bridge_h_emis = 10.0 ! Bridge height not in use yet
-
-    real :: sigy_0_subgid_width_scale = 0.25
-    real :: lowest_stable_L = 1.0e6
-    real :: lowest_unstable_L = -10.0
-
-    logical :: use_traffic_nox_emission_temperature_dependency = .false.
-    real :: traffic_nox_emission_temperature_ref_temperature(2)
-    real :: traffic_nox_emission_temperature_ref_scaling(2)
-
-    ! Output data saving flags
-    logical :: save_compounds = .true.
-    logical :: save_source_contributions = .true.
-    logical :: save_wind_vectors = .false.
-    logical :: save_other_meteo = .false.
-    logical :: save_emep_source_contributions = .false.
-    logical :: save_emep_original = .true.
-    logical :: save_emissions = .false.
-    logical :: save_for_chemistry = .false.
-    logical :: save_population = .false.
-    logical :: save_no2_source_contributions = .true.
-    logical :: save_o3_source_contributions = .true.
-    logical :: save_aqi = .true.
-    logical :: save_emep_species = .false.
-    logical :: save_emep_OP_species = .false.
-    logical :: save_deposition = .false.
-    logical :: save_seasalt = .false.
-
-    ! Region ID file names
-    character(256) :: pathfilename_region_id = ''
-    character(256) :: pathname_region_id = ''
-    character(256) :: filename_region_id = ''
-    character(256) :: region_name = ''
-    integer :: region_id = 0
-    integer :: region_index = 0
-    real :: region_subgrid_delta = 50.0
-    logical :: use_region_select_and_mask_flag = .false.
-    real :: max_interpolation_subgrid_size = 1000.0
 
     ! Set the scaling factors for the auto gridding routine
     integer :: use_subgrid_step_delta(0:10)
@@ -928,8 +679,6 @@ module uEMEP_definitions
     integer, parameter :: inside_region_index = 0
 
     ! Variables for saving averages
-    integer :: n_var_av = 100  ! Maximum number of variables to be saved as averages
-    logical :: save_netcdf_average_flag = .false.
     real, allocatable :: val_array_av(:, :, :)
     integer(8), allocatable :: time_seconds_output_av(:)
     integer :: counter_av = 0
@@ -1001,7 +750,6 @@ module uEMEP_definitions
     real, allocatable :: orig_EMEP_deposition_subgrid(:, :, :, :, :)
     real, allocatable :: depo_var3d_nc(:, :, :, :, :)
     integer :: deposition_subgrid_dim(n_dim_index)
-    real :: deposition_subgrid_delta(2) = 0.0
     real :: deposition_subgrid_min(2)
     real :: deposition_subgrid_max(2)
 
@@ -1024,7 +772,6 @@ module uEMEP_definitions
     real :: drydepo_vd_default(n_compound_index)
 
     integer :: landuse_subgrid_dim(n_dim_index)
-    real :: landuse_subgrid_delta(2) = 0.0
     real :: landuse_subgrid_min(2)
     real :: landuse_subgrid_max(2) ! Only x and y
 
@@ -1059,102 +806,23 @@ module uEMEP_definitions
     integer :: landuse_buffer_index(2)
     real :: landuse_buffer_size(2)
 
-    logical :: calculate_deposition_flag = .false.
-    logical :: calculate_source_depletion_flag = .false.
-    logical :: read_landuse_flag = .false.
-    logical :: adjust_wetdepo_integral_to_lowest_layer_flag = .false.
-    logical :: use_plume_dispersion_deposition_flag = .false.
-
-    ! Definition of the landuse file to be read.
-    character(256) :: filename_landuse = ''
-    character(256) :: pathname_landuse = ''
-    character(256) :: pathfilename_landuse = '' ! Combined path and filename
-
     character(256) :: deposition_name_nc(n_landuse_index, n_compound_nc_index)
 
     real :: depo_scale_nc(n_compound_nc_index)
-    logical :: auto_adjustment_for_summertime = .true.
-
-    logical :: use_EMEP_surface_ozone_flag = .false.
-    logical :: use_EMEP_surface_compounds_flag = .false.
-    logical :: use_water_in_EMEP_surface_pm_flag = .false.
-
-    logical :: save_compounds_as_ascii = .false.
 
     logical :: first_g_loop = .true.
 
-    logical :: use_GNFR_emissions_from_EMEP_flag = .false.
-    logical :: use_alphabetic_GNFR_emissions_from_EMEP_flag = .false.
-    logical :: use_GNFR19_emissions_from_EMEP_flag = .false.
-
-    logical :: use_emission_naming_template_flag = .false.
-    character(256) :: emission_naming_template_str = 'Sec<n>_Emis_mgm2_'
-    logical :: read_OSM_roadlink_data_flag = .false.
-    logical :: no_header_roadlink_data_flag = .false.
-
-    integer :: EMEP_surface_level_nc = 1
-    integer :: EMEP_surface_level_nc_2 = 1
-
     ! Define the source sector match between uEMEP and EMEP
-    logical :: use_user_specified_sectors_flag = .false.
     integer :: uEMEP_to_EMEP_sector(n_source_nc_index) = 0
-    integer :: uEMEP_to_EMEP_replace_sector(n_source_nc_index) = 0
     character(2) :: uEMEP_to_EMEP_sector_str(n_source_nc_index) = ''
     character(2) :: uEMEP_to_EMEP_emis_sector_str(n_source_nc_index) = ''
 
     ! Define the aggregation period for EMEP emissions when these are to be used in calculations. Annual is 365*24=8760 or 8784 for leap years
-    real :: EMEP_emission_aggregation_period = 1.0
 
-    logical :: read_population_from_netcdf_flag = .false.
-    logical :: read_population_from_netcdf_local_flag = .false.
     integer :: population_nc_projection_type = LL_projection_index
 
-    logical :: auto_select_OSM_country_flag = .false.
-    character(256) :: pathfilename_boundingbox = ''
-    character(256) :: pathname_boundingbox = ''
-    character(256) :: filename_boundingbox = ''
-    character(256) :: select_country_by_name = ''
-
-    logical :: select_latlon_centre_domain_position_flag = .false.
-    real :: select_lat_centre_position = 60.0
-    real :: select_lon_centre_position = 11.0
-    real :: select_domain_width_EW_km = 20.0
-    real :: select_domain_height_NS_km = 20.0
-
-    real :: osm_adt_power_scale = 1.0
-
-    real :: romberg_parameters(3) = 0.0
-    real :: SRM_parameters(3) = 0.0
-
-    real :: sig_y_scaling_factor = 2.0
-
-    logical :: read_shipping_from_netcdf_flag = .false.
-    real :: min_proxy_emission_shipping_value = 0.0
-
-    real :: population_power_scale = 1.0
-
-    logical :: read_RWC_file_with_extra_HDD = .false.
-    logical :: read_RWC_file_with_extra_HDD_and_height = .false.
-
-    logical :: use_alternative_traveltime_weighting = .false.
-    real :: traveltime_power = 1.
-    logical :: use_straightline_traveltime_distance = .false.
-
-    ! Provides a test control for adjusting the traveltime
-    real :: traveltime_scaling = 1.0
-
-    integer :: no2_background_chemistry_scheme_flag = 0
-    real :: f_no2_emep = 0.1
-
-    logical :: limit_emep_grid_interpolation_region_to_calculation_region = .false.
-
     ! Additional multiple local fraction variables
-    logical :: use_local_fraction_naming_template_flag = .false.
-    logical :: use_local_fraction_grid_size_in_template_flag = .false.
-    character(256) :: local_fraction_naming_template_str = 'sec<n>_local_fraction'
-    integer :: n_local_fraction_grids = 1
     integer, parameter :: max_n_local_fraction_grids = 3
-    integer :: local_fraction_grid_size(max_n_local_fraction_grids) = 1
     integer :: frac_nc_loop_index(max_n_local_fraction_grids)
     integer :: local_nc_loop_index(max_n_local_fraction_grids)
     integer :: lc_frac_nc_loop_index(max_n_local_fraction_grids)
@@ -1165,75 +833,30 @@ module uEMEP_definitions
     integer :: max_lc_frac_nc_loop_index
     integer :: convert_frac_to_lc_frac_loop_index(num_var_nc_name)
 
-    integer :: local_fraction_grid_for_EMEP_grid_interpolation = 1
     integer :: local_fraction_grid_for_EMEP_grid_interpolation_source(n_source_index) = 1
-    integer :: local_fraction_grid_for_EMEP_additional_grid_interpolation = 1
     real :: local_fraction_grid_size_scaling = 1.0
     real :: EMEP_grid_interpolation_size_original = 1.0
     real :: EMEP_grid_interpolation_size_source(n_source_index) = 1.0
     real :: local_fraction_additional_grid_size_scaling = 1.0
     real :: EMEP_additional_grid_interpolation_size_original = 0.0
 
-    logical :: save_traffic_emissions_for_EMEP_as_exhaust_nonexhaust_flag = .false.
-
-    character(256) :: finished_filename = ''
     character(256) :: finished_file = ''
     character(256) :: finished_file_rec = ''
-    character(256) :: finished_subpath = 'finished/'
-
-    logical :: use_annual_mean_pdf_chemistry_correction = .false.
-    logical :: quick_annual_mean_pdf_chemistry_correction = .true.
-    real :: ox_sigma_ratio_pdf = 0.0
-    real :: nox_sigma_ratio_pdf = 0.0
-    real :: max_bin_pdf = 1000.0
-    real :: log10_step_bin_pdf = 0.05
 
     ! Landuse proxy
-    logical :: use_landuse_as_proxy = .false.
-    logical :: read_rivm_landuse_flag = .false.
-    logical :: use_rivm_agricuture_emission_data = .false.
-    logical :: read_subgrid_emission_data = .false.
-    logical :: use_rivm_subgrid_emission_format = .false.
 
     integer, parameter :: n_clc_landuse_index = 44
-    real :: landuse_proxy_weighting(n_source_index, n_clc_landuse_index) = 0.0
 
     ! Benzene split from VOC
     logical :: extract_benzene_from_voc_emissions = .false.
     real :: benzene_split_voc_in_GNFR_sectors(13) = &
         [0.0449, 0.0212, 0.0668, 0.0084, 0.0, 0.0266, 0.0226, 0.0214, 0.0223, 0.0362, 0.068, 0.0601, 0.068]
 
-    logical :: use_phi_for_invL = .false.
-    real :: z_invL = 10.0
-
-    real :: scale_GNFR_emission_source(n_source_index) = 1.0
-
-    logical :: save_EMEP_somo35 = .false.
-    logical :: save_EMEP_comax = .false.
-    logical :: save_EMEP_o3max = .false.
-    logical :: save_EMEP_o3_26th = .false.
-    logical :: save_EMEP_so2 = .false.
-
-    real :: subgrid_receptor_offset(2) = 0.0
-
-    logical :: derive_SOA_from_other_species = .false.
-
-    ! 1 is O'Brian, 2 is Troen
-    integer :: Kz_scheme = 2
-
-    ! Not used
-    logical :: EMEP_grid_interpolation_simple_flag = .false.
-
     ! Definitions of the grid when saving emissions
-    integer :: save_emission_subgrid_dim(n_dim_index)
-    real :: save_emission_subgrid_delta(2)
-    real :: save_emission_subgrid_min(2)  !Only x and y
 
-    logical :: trace_emissions_from_in_region = .false.
     real, allocatable :: subgrid_from_in_region(:, :, :, :, :, :)
     real, allocatable :: EMEP_grid_fraction_in_region(:, :, :, :)
     real, allocatable :: lf_EMEP_grid_fraction_in_region(:, :, :, :, :, :)
-    logical :: save_netcdf_fraction_as_contribution_from_in_region_flag = .false.
     logical, allocatable :: use_subgrid_region(:, :, :) ! Specifies the region emissions will be carried from for subgrid_from_in_region
     real, allocatable :: comp_subgrid_from_in_region(:, :, :, :)
 
@@ -1243,13 +866,9 @@ module uEMEP_definitions
     real, allocatable :: comp_source_EMEP_additional_subgrid_from_in_region(:, :, :, :, :)
 
     ! Setting this to true is for diagnostic puroses. Gived the integrated lowest grid average concentration instead of the receptor
-    logical :: calc_grid_vertical_average_concentration_annual_flag = .false.
 
     logical :: save_emep_region_mask = .false.
     logical :: wind_vectors_10m_available = .false.
-
-    logical :: use_alternative_ppm_variable_for_lf = .false.
-    integer :: alternative_ppm_variable_for_lf_dim = 4
 
 end module uEMEP_definitions
 

@@ -1,5 +1,6 @@
 module auto_subgrid
 
+    use uemep_configuration
     use uEMEP_definitions
     use mod_area_interpolation, only: area_weighted_interpolation_function
 

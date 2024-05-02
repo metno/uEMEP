@@ -1,5 +1,6 @@
 module read_landuse_rivm_data
 
+    use uemep_configuration
     use uEMEP_definitions
     use crossreference_grids, only: uEMEP_crossreference_grids
     use mod_read_esri_ascii_file, only: read_esri_ascii_file, read_esri_ascii_header

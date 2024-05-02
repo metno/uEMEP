@@ -1,5 +1,7 @@
 module subgrid_meteo_emep
 
+    use uemep_configuration
+    
     implicit none
     private
 

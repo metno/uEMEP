@@ -1,5 +1,6 @@
 module read_config
 
+    use uemep_configuration
     use uEMEP_definitions
     use read_namefile_routines, only: read_name_char, read_name_real, &
         read_name_logical, read_name_integer, read_name_double

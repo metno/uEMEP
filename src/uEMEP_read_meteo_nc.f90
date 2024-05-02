@@ -1,5 +1,6 @@
 module read_meteo_nc
 
+    use uemep_configuration
     use uEMEP_definitions
     use read_config, only: replace_string_char
     use time_functions, only: date_to_number, number_to_date, &

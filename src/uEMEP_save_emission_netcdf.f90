@@ -1,5 +1,6 @@
 module save_emission_netcdf
 
+    use uemep_configuration
     use uEMEP_definitions
     use read_rwc_heating_data, only: uEMEP_read_RWC_heating_data
     use read_meteo_nc, only: uEMEP_read_meteo_nc

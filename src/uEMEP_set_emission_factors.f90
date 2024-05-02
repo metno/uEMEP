@@ -1,5 +1,7 @@
 module set_emission_factors
 
+    use uemep_configuration
+
     implicit none
     private
 

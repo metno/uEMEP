@@ -1,5 +1,6 @@
 module read_rwc_heating_data
 
+    use uemep_configuration
     use utility_functions, only: nxtdat, utm2ll
     use mod_lambert_projection, only: lb2lambert2_uEMEP, LL2PS_spherical
 

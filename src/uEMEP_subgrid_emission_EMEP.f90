@@ -1,5 +1,6 @@
 module subgrid_emission_emep
 
+    use uemep_configuration
     use mod_lambert_projection, only: lb2lambert2_uEMEP, LL2PS_spherical, lb2lambert_uEMEP
 
     implicit none

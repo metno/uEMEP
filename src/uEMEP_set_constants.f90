@@ -1,5 +1,7 @@
 module set_constants
 
+    use uemep_configuration
+
     implicit none
     private
 

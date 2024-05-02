@@ -1,5 +1,6 @@
 module subgrid_deposition
 
+    use uemep_configuration
     use set_dispersion_parameters, only: delta_wind_direction, &
         uEMEP_set_dispersion_sigma_PG, uEMEP_set_dispersion_sigma_simple, &
         uEMEP_set_dispersion_params_PG, uEMEP_set_dispersion_params_simple

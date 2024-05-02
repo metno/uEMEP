@@ -1,6 +1,7 @@
 module aggregate_proxy_emission_in_emep_grid
     ! NOTE This module is not currently in use. Should it be deleted?
 
+    use uemep_configuration
     use uEMEP_definitions
     use mod_read_esri_ascii_file, only: write_esri_ascii_file
 

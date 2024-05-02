@@ -1,5 +1,6 @@
 module crossreference_grids
 
+    use uemep_configuration
     use uEMEP_definitions
     use mod_lambert_projection, only: lb2lambert2_uEMEP, LL2PS_spherical
 

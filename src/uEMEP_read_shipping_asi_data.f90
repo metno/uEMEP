@@ -1,5 +1,6 @@
 module read_shipping_asi_data
 
+    use uemep_configuration
     use utility_functions, only: nxtdat, ll2utm, ll2ltm, utm2ll
     use time_functions, only: datestr_to_date, date_to_number, number_to_date
     use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical, LL2LAEA

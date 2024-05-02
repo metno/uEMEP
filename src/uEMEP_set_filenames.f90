@@ -1,5 +1,7 @@
 module set_filenames
 
+    use uemep_configuration
+
     implicit none
     private
 

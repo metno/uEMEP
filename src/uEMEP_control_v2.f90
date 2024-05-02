@@ -19,6 +19,7 @@ program uEMEP_v6
     !! C:\Program Files (x86)\netcdf 4.3.3.1\bin
     !! C:\Program Files (x86)\netcdf 4.3.3.1\lib
     
+    use uemep_configuration
     use uEMEP_definitions
     use read_command_line, only: uEMEP_read_command_line
     use set_constants, only: uEMEP_set_constants, uEMEP_set_pollutant_loop, &

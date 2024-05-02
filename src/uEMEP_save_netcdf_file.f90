@@ -1,5 +1,6 @@
 module save_netcdf_file
 
+    use uemep_configuration
     use chemistry_no2, only: uEMEP_source_fraction_chemistry
     use mod_read_esri_ascii_file, only: write_esri_ascii_file
     use mod_area_interpolation, only: area_weighted_interpolation_function
