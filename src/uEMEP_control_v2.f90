@@ -66,16 +66,31 @@ program uEMEP_v6
     use calculate_exposure, only: uEMEP_calculate_exposure
     use auto_subgrid, only: uEMEP_auto_subgrid, uEMEP_region_mask, uEMEP_interpolate_auto_subgrid
 
+    use uemep_logger
+
     implicit none
 
     integer :: source_index
     real :: start_time_cpu, end_time_cpu
     logical :: have_read_emep = .false.
+    character(len=64) :: logfile_name = "logfile.txt", program_name
+
+    ! Open new log file
+    call open_log_file(logfile_name)
+    call set_log_level(INFO)
 
     ! Set model version
     model_version_str='uEMEP_v6.3'
 
     call cpu_Time(start_time_cpu)
+
+    ! Test of new logger module
+    write(log_msg,"(2a)") "Starting program " // trim(model_version_str)
+    call log_header(log_msg, INFO, upper_space=.false.)
+    call get_command_argument(0, program_name)
+    write(log_msg,"(2a)") "Program executable name: " // trim(program_name)
+    call log_message(log_msg, INFO)
+    call log_message("", INFO)
 
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
@@ -84,6 +99,7 @@ program uEMEP_v6
 
     ! Read the command line, assigning the configuration file names and the substitution date_str
     call uEMEP_read_command_line()
+    call close_log_file()
 
     ! Set constants and variable names to be read from EMEP and meteo files
     call uEMEP_set_constants()

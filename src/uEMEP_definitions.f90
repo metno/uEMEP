@@ -9,6 +9,7 @@ module uEMEP_definitions
     character(1) :: slash = '\'
 
     character(256) :: model_version_str = 'uEMEP_vx.x'
+    character(len=1028) :: log_msg
 
     ! Configuration file name entered in command line
     integer, parameter :: n_max_config_files = 10
