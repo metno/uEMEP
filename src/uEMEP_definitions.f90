@@ -11,12 +11,6 @@ module uEMEP_definitions
     character(256) :: model_version_str = 'uEMEP_vx.x'
     character(len=1028) :: log_msg
 
-    ! Configuration file name entered in command line
-    integer, parameter :: n_max_config_files = 10
-    character(256) :: name_config_file(n_max_config_files) = ''
-    character(256) :: emission_date_str = ''
-    integer :: n_config_files = 0
-
     logical :: read_EMEP_only_once_flag = .false. ! Note can lead to virtual memory overflow
 
     integer :: unit_logfile = 0

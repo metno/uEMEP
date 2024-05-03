@@ -9,6 +9,12 @@ module uemep_configuration
 
     implicit none
 
+    ! Configuration file name entered in command line
+    integer, parameter :: n_max_config_files = 10
+    character(256) :: name_config_file(n_max_config_files) = ''
+    character(256) :: emission_date_str = ''
+    integer :: n_config_files = 0
+
     character(256) :: config_date_str = ''
     character(256) :: filename_log_file = 'uEMEP_log.txt'
     character(256) :: pathname_log_file = ''
@@ -323,51 +329,5 @@ module uemep_configuration
 
     double precision :: projection_attributes(10)
     double precision :: EMEP_projection_attributes(10)
-
-
-
-
-
-contains
-
-    ! subroutine read_command_line()
-    !     !! Reads the configuration file name and substitution date_str from the command line
-    !     !!
-    !     !! Can have up to 10 config files, limitted by the array definition
-    !     !! Last command line string is always the date string
-
-    !     ! Local variables
-    !     integer :: nb, i
-
-    !     ! Get number of command line arguments
-    !     nb = command_argument_count()
-
-    !     if (nb > n_max_config_files + 1) then
-    !         write(log_msg,"(a,i0,a)") "Too many command line arguments. Maximum is ", n_max_config_files, &
-    !             " configuration files plus one date_str. Stopping uEMEP"
-    !         call log_message(log_msg, ERROR)
-    !         call close_log_file()
-    !         stop 1
-    !     end if
-
-    !     if (nb >= 2) then
-    !         n_config_files = nb + 1
-    !         ! Get config file names
-    !         do i = 1, n_config_files
-    !             call get_command_argument(i, name_config_file(i))
-    !             write(log_msg,"(a,i0,2a)") "name_config_file(", i, ") = ", trim(name_config_file(i))
-    !             call log_message(log_msg, INFO)
-    !         end do
-    !         ! Get date string
-    !         call get_command_argument(nb, config_date_str)
-    !         write(log_msg,"(2a)") "config_date_str = ", trim(config_date_str)
-    !         call log_message(log_msg, INFO)
-    !     else
-    !         write(log_msg,"(a)") "Insufficient number of command line arguments. Stopping uEMEP"
-    !         call log_message(log_msg, ERROR)
-    !         call close_log_file()
-    !         stop 1
-    !     end if
-    ! end subroutine read_command_line
 
 end module uemep_configuration
