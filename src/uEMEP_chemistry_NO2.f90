@@ -982,7 +982,7 @@ contains
                 lat_in = lat_subgrid(i,j)
                 ox_sigma_ratio_in = ox_sigma_ratio_pdf
                 nox_sigma_ratio_in = nox_sigma_ratio_pdf
-                call uEMEP_annual_mean_pdf_correction_NO2_O3(max_bin_pdf, log10_step_bin_pdf, .true., no2_in, nox_in, o3_in, J_photo_in, &
+                call uEMEP_annual_mean_pdf_correction_NO2_O3(min_bin_pdf, max_bin_pdf, log10_step_bin_pdf, .true., no2_in, nox_in, o3_in, J_photo_in, &
                     temperature_in, ox_sigma_ratio_in, nox_sigma_ratio_in, lon_in, lat_in, no2_out, o3_out)
             else
                 run_all_flag = .true.
@@ -1008,7 +1008,7 @@ contains
                         o3_out = o3_in
                         no2_out = no2_in
                     else
-                        call uEMEP_annual_mean_pdf_correction_NO2_O3(max_bin_pdf, log10_step_bin_pdf, run_all_flag, no2_in, nox_in, o3_in, J_photo_in, &
+                        call uEMEP_annual_mean_pdf_correction_NO2_O3(min_bin_pdf, max_bin_pdf, log10_step_bin_pdf, run_all_flag, no2_in, nox_in, o3_in, J_photo_in, &
                             temperature_in, ox_sigma_ratio_in, nox_sigma_ratio_in, lon_in, lat_in, no2_out, o3_out)
                     end if
 
@@ -1029,8 +1029,8 @@ contains
         write(unit_logfile,'(a,f12.4)') 'Average NO2 scaling with pdf correction = ',sum_no2_out/sum_no2_in
     end subroutine correct_annual_mean_chemistry
 
-    subroutine uEMEP_annual_mean_pdf_correction_NO2_O3(bin_max, delta_log10_bin, run_all, no2_in, nox_in, o3_in, J_photo_in, temperature_in, ox_sigma_ratio_in, nox_sigma_ratio_in, lon_in, lat_in, no2_out, o3_out)
-        real, intent(in) :: bin_max, delta_log10_bin
+    subroutine uEMEP_annual_mean_pdf_correction_NO2_O3(bin_min, bin_max, delta_log10_bin, run_all, no2_in, nox_in, o3_in, J_photo_in, temperature_in, ox_sigma_ratio_in, nox_sigma_ratio_in, lon_in, lat_in, no2_out, o3_out)
+        real, intent(in) :: bin_min, bin_max, delta_log10_bin
         logical, intent(in) :: run_all
         real, intent(in) :: J_photo_in, temperature_in
         real, intent(in) :: no2_in, nox_in, o3_in
@@ -1048,7 +1048,7 @@ contains
         integer, parameter :: ox_i = 5
         integer, parameter :: n_i = 5
         real :: mmass(n_i) = [46.0, 30.0, 46.0, 48.0, 47.0]
-        real :: bin_min, log10_bin_max, log10_bin_min
+        real :: log10_bin_max, log10_bin_min
         real, allocatable :: log10_bin(:), bin(:), delta_bin(:)
         integer :: n_bin
         real :: nox_sigma_ratio, ox_sigma_ratio
@@ -1079,7 +1079,6 @@ contains
         o3_out = o3_in
 
         !Create the bins for the pdf in (mol/cm3). ox, nox and J
-        bin_min = 0.1
         log10_bin_max = log10(bin_max)
         log10_bin_min = log10(bin_min)
         n_bin = (log10_bin_max - log10_bin_min)/delta_log10_bin + 1

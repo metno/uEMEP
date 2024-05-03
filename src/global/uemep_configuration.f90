@@ -311,6 +311,7 @@ module uemep_configuration
     real :: ox_sigma_ratio_pdf = 0.0
     real :: nox_sigma_ratio_pdf = 0.0
     real :: max_bin_pdf = 1000.0
+    real :: min_bin_pdf = 0.0001
     real :: log10_step_bin_pdf = 0.05
     real :: landuse_proxy_weighting(n_source_index, n_clc_landuse_index) = 0.0
     real :: scale_GNFR_emission_source(n_source_index) = 1.0

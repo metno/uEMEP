@@ -692,13 +692,13 @@ module uEMEP_definitions
     integer, parameter :: sp_ppm_index = 6
     integer, parameter :: sp_water_index = 7
     integer, parameter :: sp_pm_index = 8
-    integer, parameter :: n_sp_index = 8
+    integer, parameter :: sp_asoa_index = 9
+    integer, parameter :: sp_bsoa_index = 10
+    integer, parameter :: n_sp_index = 10
 
     ! Additional BBOA species used in the OP calculations
-    integer, parameter :: sp_BBOA_index = 9
-    integer, parameter :: sp_BBOA_RES_index = 10
-    integer, parameter :: sp_asoa_index = 11
-    integer, parameter :: sp_bsoa_index = 12
+    integer, parameter :: sp_BBOA_index = 11
+    integer, parameter :: sp_BBOA_RES_index = 12
     integer, parameter :: n_sp_OP_index = 12
 
     ! These are used just for reading

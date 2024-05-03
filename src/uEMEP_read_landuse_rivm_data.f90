@@ -405,7 +405,11 @@ contains
                     landuse_subgrid(i,j,clc_index)=landuse_nc_dp(i_landuse_index,j_landuse_index)
 
                     !Place the clc landuse in the EMEP landuse
-                    landuse_subgrid(i,j,Corine_to_EMEP_landuse(landuse_subgrid(i,j,clc_index)))=1
+                    if (landuse_subgrid(i,j,clc_index).gt.0) then
+                        landuse_subgrid(i,j,Corine_to_EMEP_landuse(landuse_subgrid(i,j,clc_index)))=1
+                    else
+                        landuse_subgrid(i,j,Corine_to_EMEP_landuse(NODATA_clc_value))=1
+                    endif
 
                     !Do the interpolation on the same grid then scale afterwards. Equivalent to interpolating density then rescaling with grid size
                     !landuse_subgrid(i,j,clc_index)=area_weighted_extended_vectorgrid_interpolation_function( &
