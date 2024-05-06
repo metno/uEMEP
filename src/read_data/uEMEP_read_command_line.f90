@@ -1,7 +1,6 @@
 module read_command_line
     !! Routines for interacting with the command line
 
-    use uEMEP_definitions, only: log_msg
     use uemep_configuration, only: name_config_file, config_date_str, n_config_files, n_max_config_files
     use uemep_logger
 

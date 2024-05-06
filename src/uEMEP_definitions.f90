@@ -9,7 +9,6 @@ module uEMEP_definitions
     character(1) :: slash = '\'
 
     character(256) :: model_version_str = 'uEMEP_vx.x'
-    character(len=1028) :: log_msg
 
     logical :: read_EMEP_only_once_flag = .false. ! Note can lead to virtual memory overflow
 

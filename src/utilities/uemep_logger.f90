@@ -6,7 +6,7 @@ module uemep_logger
 
     public :: DEBUG, INFO, WARNING, ERROR
     public :: open_log_file, close_log_file, set_log_level, log_message, log_header
-    public :: log_level
+    public :: log_msg
 
     integer, parameter :: DEBUG = 1
     integer, parameter :: INFO = 2
@@ -17,6 +17,7 @@ module uemep_logger
     character(len=256), save :: log_name
     logical, save :: file_opened = .false.
     integer :: log_unit
+    character(len=1028) :: log_msg
 
     integer :: unit
 
