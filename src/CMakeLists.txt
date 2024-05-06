@@ -28,8 +28,7 @@ list(APPEND SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_subgrid_emission_EMEP.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_subgrid_meteo_EMEP.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_tiling_routines.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_time_functions.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uemep_logger.f90)
+  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_time_functions.f90)
 
 # Include source files in sub-directories
 include(${CMAKE_CURRENT_LIST_DIR}/extern/CMakeLists.txt)
@@ -37,3 +36,4 @@ include(${CMAKE_CURRENT_LIST_DIR}/global/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/read_data/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/save_data/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/chemistry/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/utilities/CMakeLists.txt)
