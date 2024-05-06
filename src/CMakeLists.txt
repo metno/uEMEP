@@ -8,31 +8,14 @@ list(APPEND SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_aggregate_proxy_emission_in_EMEP_grid.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_auto_subgrid.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_calculate_exposure.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_chemistry_NO2.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_crossreference_grids.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_definitions.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_dispersion_functions.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_grid_roads.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_Kz_functions.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_local_trajectory.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_agriculture_rivm_data.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_define_subgrid.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_command_line.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_config.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_EMEP.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_industry_data.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_landuse_rivm_data.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_meteo_nc.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_namefile_routines.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_receptor_data.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_roadlink_data_ascii.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_RWC_heating_data.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_shipping_asi_data.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_SSB_data.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_time_profiles.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_redistribute_data.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_save_emission_netcdf.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_save_netcdf_file.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_set_constants.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_set_dispersion_params.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_set_emission_factors.f90
@@ -51,3 +34,6 @@ list(APPEND SOURCES
 # Include source files in sub-directories
 include(${CMAKE_CURRENT_LIST_DIR}/extern/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/global/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/read_data/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/save_data/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/chemistry/CMakeLists.txt)
