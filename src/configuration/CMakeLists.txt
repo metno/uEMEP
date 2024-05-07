@@ -1,0 +1,2 @@
+list(APPEND SOURCES
+  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_indices.f90)
