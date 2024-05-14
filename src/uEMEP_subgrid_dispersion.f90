@@ -240,8 +240,8 @@ contains
             do tt=t_start,t_end
 
                 subgrid(:,:,tt,proxy_subgrid_index,source_index,:)=0.
-                temp_target_subgrid=0.
-                traveltime_temp_target_subgrid=0.
+                if (use_target_subgrid) temp_target_subgrid=0.
+                if (use_target_subgrid) traveltime_temp_target_subgrid=0.
                 if (trace_emissions_from_in_region) then
                     subgrid_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=0.
                     temp_target_subgrid_from_in_region=0.
