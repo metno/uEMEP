@@ -106,6 +106,7 @@ contains
 
         real distance_grid_x,distance_grid_y
         integer temp_count
+        character(len=:), allocatable :: fmt
 
         write(unit_logfile,'(A)') ''
         write(unit_logfile,'(A)') '================================================================'
@@ -1015,7 +1016,8 @@ contains
                 if (tt.eq.t_end) then
                     nonlocal_correction_average=nonlocal_correction_average/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
                     do i_pollutant=1,n_emep_pollutant_loop
-                        write(unit_logfile,'(A,<n_source_index>es12.4)') 'Nonlocal correction for area weighting ('//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//') = ',nonlocal_correction_average(:,i_pollutant)
+                        write(fmt,'(A,I0,A)'), '(', n_source_index, 'es12.4)'
+                        write(unit_logfile,fmt) 'Nonlocal correction for area weighting ('//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//') = ',nonlocal_correction_average(:,i_pollutant)
                     enddo
                 endif
 
@@ -1597,7 +1599,8 @@ contains
                 if (tt.eq.t_end) then
                     nonlocal_correction_average=nonlocal_correction_average/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)
                     do i_pollutant=1,n_emep_pollutant_loop
-                        write(unit_logfile,'(A,<n_source_index>es12.4)') 'Nonlocal correction for proxy weighting ('//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//') = ',nonlocal_correction_average(:,i_pollutant)
+                        write(fmt,'(A,I0,A)') '(', n_source_index, 'es12.4)'
+                        write(unit_logfile,fmt) 'Nonlocal correction for proxy weighting ('//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//') = ',nonlocal_correction_average(:,i_pollutant)
                     enddo
                 endif
 

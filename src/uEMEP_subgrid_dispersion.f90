@@ -814,7 +814,7 @@ contains
 
                                                 h_temp=h_emis_loc
 
-                                                if (wind_level_flag.eq.5.or.wind_level_zc_flag.eq.6) then
+                                                if (wind_level_flag.eq.5.or.wind_level_zc_flag) then
                                                     FF_loc=temp_FF_emission_subgrid(ii,jj)
                                                 else
                                                     FF_loc=temp_FF_subgrid(i_cross_integral,j_cross_integral)

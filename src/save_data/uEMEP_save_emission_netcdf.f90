@@ -331,7 +331,7 @@ contains
         real scale_factor,valid_min
         integer i_file,i_pollutant,i_source
         real, allocatable :: temp_subgrid(:,:,:)
-        integer exists
+        logical :: exists
         integer temp_time_dim
         integer i,j
 
@@ -378,7 +378,7 @@ contains
         write(unit_logfile,'(A)') 'Saving emission netcdf data (uEMEP_save_emission_netcdf)'
         write(unit_logfile,'(A)') '================================================================'
 
-        inquire(directory=trim(pathname_emissions_for_EMEP),exist=exists)
+        inquire(file=trim(pathname_emissions_for_EMEP),exist=exists)
         if (.not.exists) then
             write(unit_logfile,'(A)')'ERROR: Path to EMEP emission output '//trim(pathname_emissions_for_EMEP)//' does not exist.'
             stop
@@ -632,11 +632,11 @@ contains
 
             !Specify other variable attributes
             if (nf90_type.eq.NF90_byte) then
-                call check(  nf90_put_att(ncid, val_varid, "missing_value", int1(NODATA_value) ) ) !New
-                call check(  nf90_put_att(ncid, val_varid, "valid_min", int1(valid_min)) )
+                call check(  nf90_put_att(ncid, val_varid, "missing_value", int(NODATA_value,kind=1) ) ) !New
+                call check(  nf90_put_att(ncid, val_varid, "valid_min", int(valid_min,kind=1)) )
             elseif (nf90_type.eq.NF90_short) then
-                call check(  nf90_put_att(ncid, val_varid, "missing_value", int2(NODATA_value) ) ) !New
-                call check(  nf90_put_att(ncid, val_varid, "valid_min", int2(valid_min)) )
+                call check(  nf90_put_att(ncid, val_varid, "missing_value", int(NODATA_value,kind=2) ) ) !New
+                call check(  nf90_put_att(ncid, val_varid, "valid_min", int(valid_min,kind=2)) )
             else
                 call check(  nf90_put_att(ncid, val_varid, "missing_value", NODATA_value ) ) !New
                 call check(  nf90_put_att(ncid, val_varid, "valid_min", valid_min) )
@@ -676,9 +676,9 @@ contains
             !Add dimension and array to existing
             call check( nf90_inq_varid(ncid, trim(name_array), val_varid) )
             if (nf90_type.eq.NF90_byte) then
-                call check( nf90_put_var(ncid, val_varid, int1(val_array), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
+                call check( nf90_put_var(ncid, val_varid, int(val_array,kind=1), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
             elseif (nf90_type.eq.NF90_short) then
-                call check( nf90_put_var(ncid, val_varid, int2(val_array), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
+                call check( nf90_put_var(ncid, val_varid, int(val_array,kind=2), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
             else
                 call check( nf90_put_var(ncid, val_varid, val_array, start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
             endif
@@ -688,9 +688,9 @@ contains
 
             !Write the variable to file. Default is float
             if (nf90_type.eq.NF90_byte) then
-                call check( nf90_put_var(ncid, val_varid, int1(val_array)) )
+                call check( nf90_put_var(ncid, val_varid, int(val_array,kind=1)) )
             elseif (nf90_type.eq.NF90_short) then
-                call check( nf90_put_var(ncid, val_varid, int2(val_array)) )
+                call check( nf90_put_var(ncid, val_varid, int(val_array,kind=2)) )
             else
                 !write(*,*) ncid, val_varid, shape(val_array)
                 call check( nf90_put_var(ncid, val_varid, val_array) )

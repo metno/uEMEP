@@ -26,7 +26,7 @@ contains
         integer i
         character(256) temp_str1
         integer unit_in
-        integer exists
+        logical :: exists
         real totalnoxemission,totalparticulatematteremission
         real y_ship,x_ship
         integer i_ship_index,j_ship_index
@@ -154,7 +154,7 @@ contains
         integer i
         character(256) temp_str1
         integer unit_in
-        integer exists
+        logical :: exists
         real totalnoxemission,totalparticulatematteremission
         real y_ship,x_ship
         integer i_ship_index,j_ship_index
@@ -364,7 +364,7 @@ contains
         character(2048) temp_str
         character(256) temp_str1
         integer unit_in
-        integer exists
+        logical :: exists
         integer count,index_val
         real ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission
         real y_ship,x_ship
@@ -375,6 +375,7 @@ contains
         real, allocatable :: temp1_subgrid(:,:),temp2_subgrid(:,:),temp3_subgrid(:,:)
 
         integer i_pollutant
+        integer :: io
 
         write(unit_logfile,'(A)') ''
         write(unit_logfile,'(A)') '================================================================'
@@ -416,8 +417,9 @@ contains
         read(unit_in,'(A)') temp_str
         !write(*,*) trim(temp_str)
         count=0
-        do while(.not.eof(unit_in))
-            read(unit_in,'(A)') temp_str
+        do
+            read(unit_in,'(A)',iostat=io) temp_str
+            if (io /= 0) exit
 
             ddlatitude=0.;ddlongitude=0.;totalnoxemission=0.;totalparticulatematteremission=0.
             !Extract the values in the temp_str
@@ -516,7 +518,7 @@ contains
         use netcdf
 
         implicit none
-        integer status_nc,exists
+        integer status_nc
         integer i,j
         integer i_dim,id_nc
         character(256) var_name_nc_temp,dimname_temp
@@ -534,6 +536,7 @@ contains
         real correct_lon(2)
         real temp_scale
         integer i_ship
+        logical :: exists
 
         !Temporary reading rvariables
         real, allocatable :: shipping_nc_dp(:,:,:)
@@ -763,6 +766,7 @@ contains
         character(256) temp_str1,temp_str2,temp_str
         integer unit_in,unit_output
         integer index_val
+        character(len=:), allocatable :: fmt
 
         val=-999.
         temp_str1=''
@@ -787,7 +791,8 @@ contains
         endif
 
         if (unit_output.ge.0) then
-            write(unit_output,'(A40,A3,<n_val>es10.2)') trim(match_str),' = ',val
+            write(fmt,'(A,I0,A)') '(A40,A3', n_val, 'es10.2)'
+            write(unit_output,fmt) trim(match_str),' = ',val
         endif
         return
 
@@ -811,7 +816,7 @@ contains
         character(1024) temp_str
         character(256) temp_str1
         integer unit_in
-        integer exists
+        logical :: exists
         integer count,index_val
         real ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission
         real y_ship,x_ship
@@ -834,6 +839,7 @@ contains
         parameter (i_ship_dim_min=-400,i_ship_dim_max=4500,j_ship_dim_min=25000,j_ship_dim_max=32000)
         integer ship_array_index(i_ship_dim_min:i_ship_dim_max,j_ship_dim_min:j_ship_dim_max)
         logical :: havbase_data_type=.false.
+        integer :: io
 
         if (.not.calculate_aggregated_shipping_emissions_flag) return
 
@@ -876,8 +882,9 @@ contains
         read(unit_in,'(A)') temp_str
         write(*,*) trim(temp_str)
         count=0
-        do while(.not.eof(unit_in))
-            read(unit_in,'(A)') temp_str
+        do
+            read(unit_in,'(A)',iostat=io) temp_str
+            if (io /= 0) exit
             !read(unit_in,*) temp_str
             !write(*,*) trim(temp_str)
             ddlatitude=0.;ddlongitude=0.;totalnoxemission=0.;totalparticulatematteremission=0.

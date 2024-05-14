@@ -23,7 +23,7 @@ contains
         integer i,j
         character(256) temp_str,temp_str1
         integer unit_in
-        integer exists
+        logical :: exists
         integer count,index_val
         real ddlatitude,ddlongitude,totalnh3emission
         real y_agriculture,x_agriculture
@@ -36,6 +36,7 @@ contains
         integer iii,jjj
         integer source_index,subsource_index
         integer t
+        integer :: io
 
         real x_temp(3,3),y_temp(3,3),z_temp(3,3)
         real temp_emission
@@ -88,8 +89,9 @@ contains
             read(unit_in,'(A)') temp_str
             write(unit_logfile,'(A)') trim(temp_str)
             count=0
-            do while(.not.eof(unit_in))
-                read(unit_in,'(A)') temp_str
+            do
+                read(unit_in,'(A)',iostat=io) temp_str
+                if (io /= 0) exit
 
                 ddlatitude=0.;ddlongitude=0.;totalnh3emission=0.;
                 !Extract the values in the temp_str
@@ -285,7 +287,7 @@ contains
         integer i,j
         character(256) temp_str
         integer unit_in
-        integer exists
+        logical :: exists
         integer count
         real ddlatitude,ddlongitude,totalemission
         real y_emission,x_emission
@@ -302,6 +304,7 @@ contains
         integer, allocatable :: count_subgrid(:,:,:)
         real :: height_mean(n_source_index)=0
         integer :: count_mean(n_source_index)=0
+        integer :: io
 
         write(unit_logfile,'(A)') ''
         write(unit_logfile,'(A)') '================================================================'
@@ -355,12 +358,13 @@ contains
         read(unit_in,'(A)') temp_str
         write(unit_logfile,'(A)') trim(temp_str)
         count=0
-        do while(.not.eof(unit_in))
+        do
             !read(unit_in,'(A)') temp_str
 
             ddlatitude=0.;ddlongitude=0.;totalemission=0.;height=0;snap=0;component_str='';
             !read(unit_in,'(2f,e,f,i,a)') x_emission,y_emission,totalemission,height,snap,component_str
-            read(unit_in,*) x_emission,y_emission,totalemission,height,snap,component_str
+            read(unit_in,*,iostat=io) x_emission,y_emission,totalemission,height,snap,component_str
+            if (io /= 0) exit
             !write(*,'(2f,e,f,i,a)') x_emission,y_emission,totalemission,height,snap,trim(component_str)
 
             compound_nc_index=0

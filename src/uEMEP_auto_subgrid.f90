@@ -333,8 +333,9 @@ contains
         integer :: i_range_region, j_range_region
         integer :: total_grids = 0
         integer :: source_count = 0
+        integer :: io
 
-        search_str = ['_1000m', '_500m', '_250m', '_100m', '_50m']
+        search_str = ['_1000m', '_500m ', '_250m ', '_100m ', '_50m  ']
         search_delta = [1000.0, 500.0, 250.0, 100.0, 50.0]
 
         write(unit_logfile,'(A)') ''
@@ -393,10 +394,11 @@ contains
         j_range = ceiling(ssb_dy/subgrid_delta(y_dim_index)/2.0) + 1
         i_range_interp = ceiling(ssb_dx/subgrid_delta(x_dim_index)/2.0 + max_interpolation_subgrid_size/subgrid_delta(x_dim_index)) + 1
         j_range_interp = ceiling(ssb_dy/subgrid_delta(y_dim_index)/2.0 + max_interpolation_subgrid_size/subgrid_delta(y_dim_index)) + 1
-        do while( .not. eof(unit_in))
+        do
             ssb_id = 0; municipality_id = 0
             ! Read in file string
-            read(unit_in,'(A)') temp_str
+            read(unit_in,'(A)',iostat=io) temp_str
+            if (io /= 0) exit
             index_val = index(temp_str,';', back=.false.)
             temp_str1 = temp_str(1:index_val-1)
             temp_str = temp_str(index_val+1:)

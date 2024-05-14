@@ -27,6 +27,7 @@ contains
         integer count
         logical unique_receptor(n_receptor_max)
         integer kk
+        integer :: io
 
         use_receptor=.true.
 
@@ -67,15 +68,18 @@ contains
         rewind(unit_in)
         !call NXTDAT(unit_in,nxtdat_flag)
         !read the header to find out how many links there are
-        read(unit_in,'(a)',ERR=20) temp_str
-        k=0
-        do while(.not.eof(unit_in).and.k.lt.n_receptor_max)
-            k=k+1
-            read(unit_in,*,ERR=20) name_receptor(k,1),lon_receptor(k),lat_receptor(k),height_receptor(k)!,name_receptor(k,2)
-            !write(*,*) trim(name_receptor(k,1)),lon_receptor(k),lat_receptor(k),trim(name_receptor(k,2))
-        enddo
+        read(unit_in,'(a)',iostat=io) temp_str
+        if (io == 0) then
+            k=0
+            do while(k.lt.n_receptor_max)
+                k=k+1
+                read(unit_in,*,iostat=io) name_receptor(k,1),lon_receptor(k),lat_receptor(k),height_receptor(k)!,name_receptor(k,2)
+                if (io /= 0) exit
+                !write(*,*) trim(name_receptor(k,1)),lon_receptor(k),lat_receptor(k),trim(name_receptor(k,2))
+            enddo
+        end if
 
-20      close(unit_in)
+        close(unit_in)
 
         n_receptor=k
         write(unit_logfile,'(a,2i)') ' Number of receptor points and max allowable = ', n_receptor,n_receptor_max

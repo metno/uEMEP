@@ -53,6 +53,7 @@ contains
         integer n_region,k,k_index
         integer, allocatable :: count_subgrid(:,:)
         real, allocatable :: emission_properties_subgrid_sigz00_temp(:,:)
+        integer :: io
 
 
         integer i_pollutant
@@ -144,31 +145,35 @@ contains
 
             if (read_RWC_file_with_extra_HDD_and_height) then
                 !Read new version
-                do while(.not.eof(unit_in))
+                do
                     count=count+1
-                    read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_grid_height(count,1),RWC_grid_height(count,2),RWC_region_id(count)
+                    read(unit_in,*,iostat=io) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_grid_height(count,1),RWC_grid_height(count,2),RWC_region_id(count)
+                    if (io /= 0) exit
                     !write(*,'(i,9es,i)') RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_grid_height(count,1),RWC_grid_height(count,2),RWC_region_id(count)
                 enddo
             elseif (read_RWC_file_with_extra_HDD) then
                 !Read new version
-                do while(.not.eof(unit_in))
+                do                
                     count=count+1
-                    read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
+                    read(unit_in,*,iostat=io) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
+                    if (io /= 0) exit
                     !write(*,'(i,5es,i)') RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
                 enddo
             elseif (read_file_with_nox_and_kommune_number) then
                 !Read new version
-                do while(.not.eof(unit_in))
+                do
                     count=count+1
-                    read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
+                    read(unit_in,*,iostat=io) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
+                    if (io /= 0) exit
                     !write(*,'(i,5es,i)') RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
                 enddo
             else
                 !Read old version
-                do while(.not.eof(unit_in))
+                do
                     count=count+1
                     !read(unit_in,'(i,4es)') RWC_grid_id(count),RWC_grid_val(count,1:4)
                     read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index)
+                    if (io /= 0) exit
                     !write(*,'(2i,4es)') count,RWC_grid_id(count),RWC_grid_val(count,1:4)
                     RWC_grid_emission(count,RWC_nox_index)=RWC_grid_emission(count,RWC_pm25_index)*emission_scaling(RWC_nox_index)
                     RWC_region_id(count)=1

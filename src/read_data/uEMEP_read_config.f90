@@ -22,7 +22,7 @@ contains
 
         integer i
         character(256) pathfilename_log_file
-        integer exists
+        logical :: exists
         integer a(6)
         character(256) format_temp
 
@@ -74,7 +74,7 @@ contains
                 if (len(trim(filename_log_file)).gt.0) then
                     unit_logfile=10
                     !Check existence of path
-                    inquire(directory=trim(pathname_log_file),exist=exists)
+                    inquire(file=trim(pathname_log_file),exist=exists)
                     if (.not.exists) then
                         write(unit_logfile,'(A)')'ERROR: Log file directory path '//trim(pathname_log_file)//' does not exist.'
                         stop

@@ -22,7 +22,7 @@ contains
         integer i,j
         integer unit_in
         integer rl_length_short
-        integer exists
+        logical :: exists
         logical nxtdat_flag
         real sub_nodes_x(5000),sub_nodes_y(5000),sub_nodes_lon(5000),sub_nodes_lat(5000)
         integer temp_id,n_subnodes,temp_road_type,temp_nlanes
@@ -50,6 +50,7 @@ contains
         integer n_road_link_file_loop
         logical :: first_road_link_file_read=.false.
         integer temp_int
+        integer :: io
 
         write(unit_logfile,'(A)') ''
         write(unit_logfile,'(A)') '================================================================'
@@ -110,11 +111,14 @@ contains
                 if (no_header_roadlink_data_flag) then
                     write(unit_logfile,'(a)') ' Reading road link file(ascii) without header: '//trim(pathfilename_rl(1))
                     i=0
-                    do while(.not.eof(unit_in))
-                        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_real,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
-                        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_x(1) !Read x nodes
-                        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_y(1) !Read y nodes
-                        if (temp_real.gt.0.and..not.eof(unit_in)) then
+                    do
+                        read(unit_in,*,iostat=io) temp_real,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+                        if (io /= 0) exit
+                        read(unit_in,*,iostat=io) sub_nodes_x(1) !Read x nodes
+                        if (io /= 0) exit
+                        read(unit_in,*,iostat=io) sub_nodes_y(1) !Read y nodes
+                        if (io /= 0) exit
+                        if (temp_real.gt.0) then
                             i=i+1
                             n_roadlinks=n_roadlinks+n_subnodes-1
                         endif
@@ -122,8 +126,14 @@ contains
                             write(unit_logfile,'(a,i,f)') ' Problem with record at point with ID: ',i,temp_real
                             stop
                         endif
-
                     enddo
+
+                    ! Check for any errors during reading
+                    if (io > 0) then
+                        write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
+                        stop 1
+                    end if
+
                     n_roadlinks_major=i
                     !n_roadlinks=0
                     rewind(unit_in)
@@ -138,16 +148,25 @@ contains
                     call nxtdat(unit_in,nxtdat_flag)
                     read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
                     i=0
-                    do while(.not.eof(unit_in))
-                        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes up to n_subnodes
-                        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_x(1) !Read x nodes
-                        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_y(1) !Read y nodes
-                        !write(*,*) temp_id
-                        if (temp_id.gt.0.and..not.eof(unit_in)) then
+                    do
+                        read(unit_in,*,iostat=io) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes up to n_subnodes
+                        if (io /= 0) exit
+                        read(unit_in,*,iostat=io) sub_nodes_x(1) !Read x nodes
+                        if (io /= 0) exit
+                        read(unit_in,*,iostat=io) sub_nodes_y(1) !Read y nodes
+                        if (io /= 0) exit
+                        if (temp_id.gt.0) then
                             i=i+1
                             n_roadlinks=n_roadlinks+n_subnodes-1
                         endif
                     enddo
+
+                    ! Check for any errors during reading
+                    if (io > 0) then
+                        write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
+                        stop 1
+                    end if
+
                     !Have commented out this in the cases where the number of links are not as written. Can happen with OSM data
                     !n_roadlinks_major=i
                     rewind(unit_in)
@@ -271,11 +290,14 @@ contains
             if (no_header_roadlink_data_flag) then
                 write(unit_logfile,'(a)') ' Reading road link file(ascii) without header: '//trim(pathfilename_rl(1))
                 i=0
-                do while(.not.eof(unit_in))
-                    if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes
-                    if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_x(1) !Read x nodes
-                    if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_y(1) !Read y nodes
-                    if (temp_id.gt.0.and..not.eof(unit_in)) then
+                do
+                    read(unit_in,*,iostat=io) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes
+                    if (io /= 0) exit
+                    read(unit_in,*,iostat=io) sub_nodes_x(1) !Read x nodes
+                    if (io /= 0) exit
+                    read(unit_in,*,iostat=io) sub_nodes_y(1) !Read y nodes
+                    if (io /= 0) exit
+                    if (temp_id.gt.0) then
                         i=i+1
                     endif
                 enddo
@@ -287,18 +309,27 @@ contains
                 read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
             endif
 
+            ! Check for any errors during reading
+            if (io > 0) then
+                write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
+                stop 1
+            end if
+
             if (n_roadlinks.eq.0.and..not.reduce_roadlink_region_flag) then
                 write(unit_logfile,'(a)') ' Reading road link file(ascii) with header but without subnode counts: '//trim(pathfilename_rl(1))
                 rewind(unit_in)
                 call nxtdat(unit_in,nxtdat_flag)
                 read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
                 i=0
-                do while(.not.eof(unit_in))
-                    if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes
-                    if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_x(1) !Read x nodes
-                    if (.not.eof(unit_in)) read(unit_in,*,ERR=20) sub_nodes_y(1) !Read y nodes
+                do
+                    read(unit_in,*,iostat=io) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes
+                    if (io /= 0) exit
+                    read(unit_in,*,iostat=io) sub_nodes_x(1) !Read x nodes
+                    if (io /= 0) exit
+                    read(unit_in,*,iostat=io) sub_nodes_y(1) !Read y nodes
+                    if (io /= 0) exit
                     !write(*,*) temp_id
-                    if (temp_id.gt.0.and..not.eof(unit_in)) then
+                    if (temp_id.gt.0) then
                         i=i+1
                         n_roadlinks=n_roadlinks+n_subnodes-1
                     endif
@@ -307,6 +338,12 @@ contains
                 rewind(unit_in)
                 call nxtdat(unit_in, nxtdat_flag)
             endif
+
+            ! Check for any errors during reading
+            if (io > 0) then
+                write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
+                stop 1
+            end if
 
             write(unit_logfile,'(a,i)') ' Number of major road links= ', n_roadlinks_major
             write(unit_logfile,'(a,i)') ' Number of sub road links= ', n_roadlinks
@@ -354,16 +391,23 @@ contains
 !    else
                 if (read_OSM_roadlink_data_flag) then
                     !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
-                    if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+                    read(unit_in,*,iostat=io) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
                     temp_category=0;temp_length=0;temp_structure_type=0;temp_region_id=0;temp_surface_id=0;temp_tunnel_length=0;temp_route_id=0
                 else
                     !ID ADT HDV ROAD_ACTIVITY_TYPE SPEED ROAD_WIDTH N_LANES N_SUBNODES ROAD_CATEGORY ROAD_LENGTH ROAD_STRUCTURE_TYPE REGION_ID ROAD_SURFACE_ID TUNNEL_LENGTH ROUTE_ID
-                    if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes &
+                    read(unit_in,*,iostat=io) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes &
                         ,temp_category,temp_length,temp_structure_type,temp_region_id,temp_surface_id,temp_tunnel_length,temp_route_id
                 endif
+
+                ! Check for any errors during reading
+                if (io > 0) then
+                    write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
+                    stop 1
+                end if
+
                 !write(*,*) i,temp_id,temp_adt,n_subnodes
-                if (.not.eof(unit_in)) read(unit_in,*) sub_nodes_x(1:n_subnodes)
-                if (.not.eof(unit_in)) read(unit_in,*) sub_nodes_y(1:n_subnodes)
+                read(unit_in,*,iostat=io) sub_nodes_x(1:n_subnodes)
+                read(unit_in,*,iostat=io) sub_nodes_y(1:n_subnodes)
                 !write(*,*) sub_nodes_x(1:n_subnodes),sub_nodes_y(1:n_subnodes)
                 !put in the road link data
 
@@ -634,7 +678,7 @@ contains
 
         integer i,j
         integer unit_in
-        integer exists
+        logical :: exists
         logical nxtdat_flag
         integer counter
 
@@ -651,6 +695,7 @@ contains
         integer date_array_temp(6)
         integer n_roadlink_emission_selected
         character(256) format_temp
+        character(len=:), allocatable :: fmt
 
         double precision emission_date_number_start,emission_date_number
 
@@ -683,7 +728,8 @@ contains
         write(unit_logfile,'(a,i)') ' Number of road link emission compounds= ', n_roadlink_emission_compound
         call nxtdat(unit_in, nxtdat_flag)
         read(unit_in,*,ERR=20) n_roadlink_emission_compound_str(1:n_roadlink_emission_compound)
-        write(unit_logfile,'(a,<n_roadlink_emission_compound>a16)') ' Road link emission compounds= ', n_roadlink_emission_compound_str(1:n_roadlink_emission_compound)
+        write(fmt,'(A,I0,A)') '(', n_roadlink_emission_compound, 'a16)'
+        write(unit_logfile,fmt) ' Road link emission compounds= ', n_roadlink_emission_compound_str(1:n_roadlink_emission_compound)
         call nxtdat(unit_in, nxtdat_flag)
         read(unit_in,*,ERR=20) n_roadlink_emission_unit_str
         write(unit_logfile,'(a,a)') ' Road link emission units= ', trim(n_roadlink_emission_unit_str)
@@ -823,7 +869,7 @@ contains
         integer count
         integer change_loop(3),change_index
         integer :: n_change_loop=3
-        integer exists
+        logical :: exists
 
         change_loop(1)=adt_rl_index
         change_loop(2)=hdv_rl_index
@@ -902,7 +948,7 @@ contains
 
         implicit none
 
-        integer exists
+        logical :: exists
         integer i
         character(256) CNTR_ID
         character(256) OSM_country,Long_name
@@ -915,7 +961,7 @@ contains
         integer count
         logical found_country
         real x_out(4),y_out(4)
-
+        integer :: io
 
         !Will fail at lon=-180
 
@@ -943,8 +989,9 @@ contains
 
             !Read coordinates
             found_country=.false.
-            do while (.not.eof(unit_in))
-                read(unit_in,*) i,CNTR_ID,OSM_country,min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,Long_name
+            do
+                read(unit_in,*,iostat=io) i,CNTR_ID,OSM_country,min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,Long_name
+                if (io /= 0) exit
                 !write(*,*) i,trim(CNTR_ID),trim(OSM_country),min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,trim(Long_name)
 
                 if (index(trim(select_country_by_name),trim(CNTR_ID)).gt.0) then
@@ -994,7 +1041,7 @@ contains
 
             enddo
 
-10          close(unit_in)
+            close(unit_in)
 
             if (.not.found_country) then
                 write(unit_logfile,'(a)') ' No country with this ID found: '//trim(select_country_by_name)
@@ -1041,8 +1088,9 @@ contains
             !Read coordinates
             count=0
             filename_mrl=''
-            do while (.not.eof(unit_in))
-                read(unit_in,*) i,CNTR_ID,OSM_country,min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,Long_name
+            do
+                read(unit_in,*,iostat=io) i,CNTR_ID,OSM_country,min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,Long_name
+                if (io /= 0) exit
                 !write(*,*) i,trim(CNTR_ID),trim(OSM_country),min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,trim(Long_name)
 
                 !test the bounding box in lat lon coordinates
@@ -1078,7 +1126,7 @@ contains
             endif
 
 
-20          close(unit_in)
+            close(unit_in)
 
 
         endif

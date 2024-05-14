@@ -25,7 +25,7 @@ contains
         character(256) temp_name
         character(256) temp_str,temp_str1,temp_str2
         integer unit_in
-        integer exists
+        logical :: exists
         integer count,index_val
         integer temp_int
         integer*8 ssb_id
@@ -50,6 +50,7 @@ contains
         character(16) search_str(n_search)
         real search_delta(n_search)
         integer temp_search
+        integer :: io
 
         data search_str /'1000m','500m','250m','100m','50m'/
         data search_delta /1000.,500.,250.,100.,50./
@@ -162,12 +163,13 @@ contains
         !read(unit_in,'(A)') temp_str
         !write(*,*) trim(temp_str)
         count=0
-        do while(.not.eof(unit_in))
+        do
             ssb_id=0;dwe_todw=0;dwe_mult=0;pop_tot=0;emp_tot=0
             if (SSB_data_type.eq.dwelling_index) then
 
                 !Read in file string
-                read(unit_in,'(A)') temp_str
+                read(unit_in,'(A)',iostat=io) temp_str
+                if (io /= 0) exit
                 !Extract the ssb id for the coordinates
                 index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) ssb_id
                 !Extract the total number of dwellings
@@ -186,7 +188,8 @@ contains
             if (SSB_data_type.eq.population_index) then
 
                 !Read in file string
-                read(unit_in,'(A)') temp_str
+                read(unit_in,'(A)',iostat=io) temp_str
+                if (io /= 0) exit
                 !write(*,*) trim(temp_str)
                 !Extract the ssb id for the coordinates
                 index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) ssb_id
@@ -199,7 +202,8 @@ contains
             if (SSB_data_type.eq.establishment_index) then
 
                 !Read in file string
-                read(unit_in,'(A)') temp_str
+                read(unit_in,'(A)',iostat=io) temp_str
+                if (io /= 0) exit
                 !write(*,*) trim(temp_str)
                 !Extract the ssb id for the coordinates
                 index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) ssb_id
@@ -212,7 +216,8 @@ contains
             if (SSB_data_type.eq.kindergaten_index.or.SSB_data_type.eq.school_index) then
 
                 !Read in file string
-                read(unit_in,'(A)') temp_str
+                read(unit_in,'(A)',iostat=io) temp_str
+                if (io /= 0) exit
                 !write(*,'(a)') trim(temp_str)
                 !Extract the ssb id for the coordinates
                 index_val=index(temp_str,',',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) x_ssb
@@ -228,7 +233,8 @@ contains
             if (SSB_data_type.eq.home_index) then
 
                 !Read in file string
-                read(unit_in,'(A)') temp_str
+                read(unit_in,'(A)',iostat=io) temp_str
+                if (io /= 0) exit
                 !write(*,'(a)') trim(temp_str)
                 !Extract the ssb id for the coordinates
                 index_val=index(temp_str,',',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) temp_str2
@@ -358,7 +364,7 @@ contains
         use netcdf
 
         implicit none
-        integer status_nc,exists
+        integer status_nc
         integer i_split,j_split,n_delta_split
         integer i,j
         integer i_dim,id_nc
@@ -371,6 +377,7 @@ contains
         integer dim_length_population_nc(num_dims_population_nc)
         real y_pop,x_pop
         integer source_index
+        logical :: exists
 
 
         !Temporary reading rvariables
@@ -588,7 +595,7 @@ contains
         use netcdf
 
         implicit none
-        integer status_nc,exists
+        integer status_nc
         integer i,j
         integer i_dim,id_nc
         character(256) var_name_nc_temp,dimname_temp
@@ -606,6 +613,7 @@ contains
         real correct_lon(2)
         real temp_scale
         integer :: name_index=0
+        logical :: exists
 
         !Temporary reading rvariables
         real, allocatable :: population_nc_dp(:,:,:)

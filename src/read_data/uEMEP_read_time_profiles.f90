@@ -21,7 +21,7 @@ contains
         integer i,j
         character(256) temp_str
         integer unit_in
-        integer exists
+        logical :: exists
         integer week_day_temp
         double precision date_num_temp
 

@@ -40,7 +40,7 @@ contains
         real, allocatable :: landuse_array(:,:)
         integer depac_index(9)
         integer emep_landuse_index
-        integer exists
+        logical :: exists
 
         !landuse_subgrid=0
         !landuse_subgrid(:,:,temp_decid_index)=1.
@@ -186,7 +186,7 @@ contains
         use netcdf
 
         implicit none
-        integer status_nc,exists
+        integer status_nc
         integer i,j
         integer i_dim,id_nc
         character(256) var_name_nc_temp,dimname_temp
@@ -203,6 +203,7 @@ contains
         real temp_scale
         integer i_source,i_landuse
         real buffer_delta
+        logical :: exists
 
         !Temporary reading variables
         real, allocatable :: landuse_nc_dp(:,:)

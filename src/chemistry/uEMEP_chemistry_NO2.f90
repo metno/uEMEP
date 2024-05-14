@@ -1019,7 +1019,7 @@ contains
                     no2_count = no2_count + 1
 
                     if (isnan(no2_out)) then
-                        write(unit_logfile,'(a,2i,4f12.4)') 'NaN in pdf output. Stopping ',i,j,no2_in,no2_out,o3_in,o3_out
+                        write(unit_logfile,'(a,2i5,4f12.4)') 'NaN in pdf output. Stopping ',i,j,no2_in,no2_out,o3_in,o3_out
                         stop 1
                     end if
                 end do

@@ -102,7 +102,7 @@ contains
                     daysinmonth(2) = 28
                 end if
                 do m = 1, 12
-                    res = res + sngl(daysinmonth(m))
+                    res = res + sngl(real(daysinmonth(m)))
                 end do
             end do
         end if
@@ -115,14 +115,14 @@ contains
         end if
         if (date_array(2) .gt. 1) then
             do m = 1, date_array(2) - 1
-                res = res + sngl(daysinmonth(m))
+                res = res + sngl(real(daysinmonth(m)))
             end do
         end if
 
-        res = res + sngl(date_array(3)) - 1.0
-        res = res + sngl(date_array(4))/24.0 ! starts at 0
-        res = res + sngl(date_array(5))/24.0/60.0 ! starts at 0
-        res = res + sngl(date_array(6))/24.0/60.0/60.0 ! starts at 0
+        res = res + sngl(real(date_array(3))) - 1.0
+        res = res + sngl(real(date_array(4)))/24.0 ! starts at 0
+        res = res + sngl(real(date_array(5)))/24.0/60.0 ! starts at 0
+        res = res + sngl(real(date_array(6)))/24.0/60.0/60.0 ! starts at 0
     end function date_to_number
 
     function date_to_julian(date_array, ref_year) result(res)

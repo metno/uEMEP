@@ -2519,11 +2519,11 @@ contains
 
             !Specify other variable attributes
             if (nf90_type.eq.NF90_byte) then
-                call check(  nf90_put_att(ncid, val_varid, "missing_value", int1(NODATA_value) ) ) !New
-                call check(  nf90_put_att(ncid, val_varid, "valid_min", int1(valid_min)) )
+                call check(  nf90_put_att(ncid, val_varid, "missing_value", int(NODATA_value,kind=1) ) ) !New
+                call check(  nf90_put_att(ncid, val_varid, "valid_min", int(valid_min,kind=1)) )
             elseif (nf90_type.eq.NF90_short) then
-                call check(  nf90_put_att(ncid, val_varid, "missing_value", int2(NODATA_value) ) ) !New
-                call check(  nf90_put_att(ncid, val_varid, "valid_min", int2(valid_min)) )
+                call check(  nf90_put_att(ncid, val_varid, "missing_value", int(NODATA_value,kind=2) ) ) !New
+                call check(  nf90_put_att(ncid, val_varid, "valid_min", int(valid_min,kind=2)) )
             else
                 call check(  nf90_put_att(ncid, val_varid, "missing_value", NODATA_value ) ) !New
                 call check(  nf90_put_att(ncid, val_varid, "valid_min", valid_min) )
@@ -2564,9 +2564,9 @@ contains
             !Add dimension and array to existing
             call check( nf90_inq_varid(ncid, trim(name_array), val_varid) )
             if (nf90_type.eq.NF90_byte) then
-                call check( nf90_put_var(ncid, val_varid, int1(val_array(:,:,1:nt)), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
+                call check( nf90_put_var(ncid, val_varid, int(val_array(:,:,1:nt),kind=1), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
             elseif (nf90_type.eq.NF90_short) then
-                call check( nf90_put_var(ncid, val_varid, int2(val_array(:,:,1:nt)), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
+                call check( nf90_put_var(ncid, val_varid, int(val_array(:,:,1:nt),kind=2), start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
             else
                 call check( nf90_put_var(ncid, val_varid, val_array, start=(/1,1,n_dims(3)/), count=(/n_dims(1),n_dims(2),1/)) )
             endif
@@ -2575,9 +2575,9 @@ contains
 
             !Write the whole variable to file. Default is float
             if (nf90_type.eq.NF90_byte) then
-                call check( nf90_put_var(ncid, val_varid, int1(val_array(:,:,1:nt))) )
+                call check( nf90_put_var(ncid, val_varid, int(val_array(:,:,1:nt),kind=1)) )
             elseif (nf90_type.eq.NF90_short) then
-                call check( nf90_put_var(ncid, val_varid, int2(val_array(:,:,1:nt))) )
+                call check( nf90_put_var(ncid, val_varid, int(val_array(:,:,1:nt),kind=2)) )
             else
                 call check( nf90_put_var(ncid, val_varid, val_array(:,:,1:nt)) )
             endif
@@ -3038,11 +3038,11 @@ contains
 
             !Specify other variable attributes
             if (nf90_type.eq.NF90_byte) then
-                call check(  nf90_put_att(ncid, val_varid, "missing_value", int1(NODATA_value) ) ) !New
-                call check(  nf90_put_att(ncid, val_varid, "valid_min", int1(valid_min)) )
+                call check(  nf90_put_att(ncid, val_varid, "missing_value", int(NODATA_value,kind=1) ) ) !New
+                call check(  nf90_put_att(ncid, val_varid, "valid_min", int(valid_min,kind=1)) )
             elseif (nf90_type.eq.NF90_short) then
-                call check(  nf90_put_att(ncid, val_varid, "missing_value", int2(NODATA_value) ) ) !New
-                call check(  nf90_put_att(ncid, val_varid, "valid_min", int2(valid_min)) )
+                call check(  nf90_put_att(ncid, val_varid, "missing_value", int(NODATA_value,kind=2) ) ) !New
+                call check(  nf90_put_att(ncid, val_varid, "valid_min", int(valid_min,kind=2)) )
             else
                 call check(  nf90_put_att(ncid, val_varid, "missing_value", NODATA_value ) ) !New
                 call check(  nf90_put_att(ncid, val_varid, "valid_min", valid_min) )
@@ -3130,9 +3130,9 @@ contains
 
         !Write the variable to file
         if (nf90_type.eq.NF90_byte) then
-            call check( nf90_put_var(ncid, val_varid, int1(val_rec(:,1:nt)), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
+            call check( nf90_put_var(ncid, val_varid, int(val_rec(:,1:nt),kind=1), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
         elseif (nf90_type.eq.NF90_short) then
-            call check( nf90_put_var(ncid, val_varid, int2(val_rec(:,1:nt)), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
+            call check( nf90_put_var(ncid, val_varid, int(val_rec(:,1:nt),kind=2), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
         else
             call check( nf90_put_var(ncid, val_varid, val_rec(:,1:nt), start = (/n_dims_start(1),n_dims_start(2)/), count=(/n_dims_length(1),n_dims_length(2)/)) )
         endif

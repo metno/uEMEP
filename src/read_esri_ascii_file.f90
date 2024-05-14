@@ -91,6 +91,7 @@ contains
         real :: yllcorner
         real :: NODATA_value = -999.0
         integer :: unit_in = 20
+        character(len=:), allocatable :: fmt
 
         xllcorner = x_array(1,1) - cellsize_sub/2.0
         yllcorner = y_array(1,1) - cellsize_sub/2.0
@@ -103,7 +104,8 @@ contains
         write(unit_in,*) 'NODATA_value', NODATA_value
 
         do jj = nrows_sub, 1, -1
-            write(unit_in,'(<ncols_sub>es12.3)') (val_array(ii,jj), ii = 1, ncols_sub)
+            write(fmt, '(A,I0,A)') '(', ncols_sub, 'es12.3)'
+            write(unit_in,fmt) (val_array(ii,jj), ii = 1, ncols_sub)
         end do
         close(unit_in)
     end subroutine write_esri_ascii_file
@@ -175,6 +177,7 @@ contains
         real :: yllcorner
         real :: NODATA_value = -999.0
         integer :: unit_in = 20
+        character(len=:), allocatable :: fmt
 
         xllcorner = x_array(1,1) - cellsize_sub/2.0
         yllcorner = y_array(1,1) - cellsize_sub/2.0
@@ -189,7 +192,8 @@ contains
 
         do tt = 1, nblocks_sub
             do jj = nrows_sub, 1, -1
-                write(unit_in,'(<ncols_sub>es12.3)') (val_array(ii,jj,tt), ii = 1, ncols_sub)
+                write(fmt,'(A,I0,A)') '(', ncols_sub, 'es12.3)'
+                write(unit_in,fmt) (val_array(ii,jj,tt), ii = 1, ncols_sub)
             end do
         end do
         close(unit_in)

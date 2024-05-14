@@ -46,6 +46,7 @@ contains
         integer, allocatable :: count_subgrid(:,:,:)
         real, allocatable :: emission_height_subgrid(:,:,:)
         integer pollutant_count
+        integer :: io
 
 
         subsource_index=1
@@ -90,8 +91,9 @@ contains
 
         !Count how many lines for allocation of arrays
         count=0
-        do while(.not.eof(unit_in))
-            read(unit_in,'(A)') temp_str
+        do
+            read(unit_in,'(A)',iostat=io) temp_str
+            if (io /= 0) exit
             count=count+1
         enddo
 
@@ -140,8 +142,9 @@ contains
         !Read header: �r	AnleggNummer	Komponent	Samlet_mengde	Enhet
         read(unit_in,'(A)') temp_str
 
-        do while(.not.eof(unit_in))
-            read(unit_in,*) industry_emission_year,industry_emission_num,industry_emission_comp_str,industry_emission_comp_val,industry_emission_unit
+        do
+            read(unit_in,*,iostat=io) industry_emission_year,industry_emission_num,industry_emission_comp_str,industry_emission_comp_val,industry_emission_unit
+            if (io /= 0) exit
             !write(unit_logfile,'(i12,2a16,f12.2,a16)' ) industry_emission_year,trim(industry_emission_num),trim(industry_emission_comp_str),industry_emission_comp_val,trim(industry_emission_unit)
 
             !Find index for the industry

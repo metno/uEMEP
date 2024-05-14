@@ -443,7 +443,7 @@ contains
 
         implicit none
         real, intent(in) :: sig_norm,h_norm,n_array
-        real, intent(out) :: zc_array(n_array)
+        real, intent(out) :: zc_array(int(n_array))
         real z_loop(5)
         real H_c
         real z_c
@@ -474,7 +474,7 @@ contains
         !Remove this after finished testing
         i_loop=5
 
-        do k=1,n_array
+        do k=1, int(n_array)
 
             z_c=0.
 

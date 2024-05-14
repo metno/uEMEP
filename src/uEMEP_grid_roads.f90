@@ -206,7 +206,7 @@ contains
                                         tunnel_ratio=0
                                     endif
                                     !Converts from g/km/hr (NORTRIP) to ug/sec (uEMEP)
-                                    emission_subgrid(i,j,t,source_index,i_pollutant)=emission_subgrid(i,j,t,source_index,i_pollutant)+ &
+                                    emission_subgrid(i,j,t,source_index,i_pollutant)=emission_subgrid(i,j,t,source_index,i_pollutant) &
                                         +inputdata_rl(ro,length_rl_index)*f_subgrid(ro)*inputdata_rl_emissions(major_ro,ttt,i_roadlink_emission_compound(i_pollutant)) &
                                         *1.e6/1.e3/3600.*tunnel_ratio
                                 enddo

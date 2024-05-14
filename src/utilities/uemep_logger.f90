@@ -75,7 +75,7 @@ contains
         logical, intent(in), optional :: upper_space, lower_space
 
         ! Local variables
-        integer :: u_space, l_space
+        logical :: u_space, l_space
 
         if (present(upper_space)) then
             u_space = upper_space

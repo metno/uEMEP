@@ -97,6 +97,8 @@ contains
         real search_delta(n_search)
         integer temp_search
 
+        integer :: io
+
         data search_str /'1000m','500m','250m','100m','50m'/
         data search_delta /1000.,500.,250.,100.,50./
 
@@ -242,10 +244,11 @@ contains
         read(unit_in,'(A)') temp_str
         write(unit_logfile,'(A)') 'Header: '//trim(temp_str)
         count=0
-        do while(.not.eof(unit_in))
+        do
             ssb_id=0;municipality_id=0
             !Read in file string
-            read(unit_in,'(A)') temp_str
+            read(unit_in,'(A)',iostat=io) temp_str
+            if (io /= 0) exit
             index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) ssb_id
             read(temp_str,*) municipality_id
             count=count+1
@@ -791,6 +794,7 @@ contains
         character(16) search_str(n_search)
         real search_delta(n_search)
         integer temp_search
+        integer :: io
 
         data search_str /'_1000m','_500m','_250m','_100m','_50m'/
         data search_delta /1000.,500.,250.,100.,50./
@@ -924,10 +928,11 @@ contains
         read(unit_in,'(A)') temp_str
         write(unit_logfile,'(A)') 'Header: '//trim(temp_str)
         count=0
-        do while(.not.eof(unit_in))
+        do
             ssb_id=0;municipality_id=0
             !Read in file string
-            read(unit_in,'(A)') temp_str
+            read(unit_in,'(A)',iostat=io) temp_str
+            if (io /= 0) exit
             index_val=index(temp_str,';',back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:);if (index_val.gt.1) read(temp_str1,*) ssb_id
             read(temp_str,*) municipality_id
             count=count+1
@@ -963,9 +968,10 @@ contains
         read(unit_in,'(A)') temp_str
         write(unit_logfile,'(A)') 'Header: '//trim(temp_str)
         count=0
-        do while(.not.eof(unit_in))
+        do
             count=count+1
-            read(unit_in,*) internal_region_index(count),internal_region_id(count),internal_region_name(count)
+            read(unit_in,*,iostat=io) internal_region_index(count),internal_region_id(count),internal_region_name(count)
+            if (io /= 0) exit
         enddo
         n_region_tiles=count
         close(unit_in)
