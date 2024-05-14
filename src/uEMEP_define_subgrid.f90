@@ -440,7 +440,7 @@ contains
 
         use_subgrid=.true.
         use_subgrid_val=1
-        use_subgrid_region=.false.
+        if (allocated(use_subgrid_region)) use_subgrid_region=.false.
 
         !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
         if (allocated(proxy_emission_subgrid)) deallocate (proxy_emission_subgrid)
