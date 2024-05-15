@@ -1,5 +1,7 @@
 module kz_functions
 
+    use uemep_constants, only: epsilon0
+
     implicit none
     private
 
@@ -48,7 +50,7 @@ contains
         !if (abs(invL).gt.1./L) L=1./invL
         L=1./invL
         !Why does it not explode? when invL=0?
-        if (invL.eq.0) L=1.e6
+        if (abs(invL) < epsilon0) L = 1.0e6
 
         z0=exp(logz0)
         min_xy=(subgrid_delta(1)+subgrid_delta(2))/4.
@@ -309,19 +311,16 @@ contains
 
         real, intent(in) :: z,L,u_val,z_val_in,z_pbl,z0
         real, intent(out) :: u,u_star0,u_pbl
-        real a,b,p,q,kappa,pi
-        parameter (a=16.,b=5.,p=-0.25,q=-0.5,kappa=0.4,pi=3.141592653589793)
+        real a,b,p,kappa
+        parameter (a=16.,b=5.,p=-0.25,kappa=0.4)
         real z_l,z_val
         real phim,phim_i
         real phim_val,phim_i_val
         !real phim_pbl,phih_pbl,phim_i_pbl,phih_i_pbl
 
         !If the input height is above the boundary layer then set the height to pbl height and calculate
-        if (z_val.ge.z_pbl) then
-            z_val=z_pbl
-        else
-            z_val=z_val_in
-        endif
+        z_val = z_val_in
+        if (z_val.ge.z_pbl) z_val = z_pbl
 
         z_l=0.4*z_pbl
 
@@ -354,8 +353,8 @@ contains
 
         real, intent(in) :: z,u_val,z_val_in,z_pbl,z0
         real, intent(out) :: u,u_star0
-        real kappa,pi
-        parameter (kappa=0.4,pi=3.141592653589793)
+        real kappa
+        parameter (kappa=0.4)
         real z_l,z_val
 
         !If the input height is above the boundary layer then set the height to pbl height and calculate
@@ -400,8 +399,8 @@ contains
 
         real, intent(in) :: z,L
         real, intent(out) :: phim,phim_i
-        real a,b,p,q,pi
-        parameter (a=16.,b=5.,p=-0.25,q=-0.5,pi=3.141592653589793)
+        real a,b,p,pi
+        parameter (a=16.,b=5.,p=-0.25,pi=3.141592653589793)
         real eps
 
         eps=z/L
@@ -422,8 +421,8 @@ contains
 
         real, intent(in) :: z,L
         real, intent(out) :: phih,phih_i
-        real a,b,p,q,pi
-        parameter (a=16.,b=5.,p=-0.25,q=-0.5,pi=3.141592653589793)
+        real a,b,q
+        parameter (a=16.,b=5.,q=-0.5)
         real eps
 
         eps=z/L

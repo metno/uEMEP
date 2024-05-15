@@ -14,6 +14,7 @@ module uemep_constants
 
     ! Other constants
     real, parameter :: NODATA_value = -128.0
+    real, parameter :: epsilon0 = 1.0e-6
 
 
 end module uemep_constants

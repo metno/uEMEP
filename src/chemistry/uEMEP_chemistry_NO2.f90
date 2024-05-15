@@ -1,6 +1,6 @@
 module chemistry_no2
 
-    use uemep_constants, only: pi
+    use uemep_constants, only: pi, epsilon0
     use uemep_configuration
     use uEMEP_definitions
     use time_functions, only: get_sun_angles
@@ -220,7 +220,7 @@ contains
                                 end do
                             end if
                         end do
-                        if (nox_loc .ne. 0.0) then
+                        if (abs(nox_loc) > epsilon0) then
                             f_no2_loc = f_no2_loc/nox_loc
                         else
                             f_no2_loc = 0.0
@@ -427,7 +427,7 @@ contains
                                     end if
                                 end do
 
-                                if (nox_loc .ne. 0.0) then
+                                if (abs(nox_loc) > epsilon0) then
                                     f_no2_loc = f_no2_loc/nox_loc
                                 else
                                     f_no2_loc = 0.0
@@ -501,14 +501,14 @@ contains
                     do i_source = 1, n_source_index
                         if (calculate_source(i_source) .or. (calculate_emep_source(i_source) .and. .not. calculate_source(i_source))) then
                             ! Adjust for the background and normalise
-                            if (sum_no2_source_subgrid .ne. 0) then
+                            if (abs(sum_no2_source_subgrid) > epsilon0) then
                                 comp_source_subgrid(i,j,t,no2_index,i_source) = comp_source_subgrid(i,j,t,no2_index,i_source)/sum_no2_source_subgrid &
                                     *(comp_subgrid(i,j,t,no2_index) - comp_source_EMEP_subgrid(i,j,t,no2_index,allsource_index))
                             else
                                 comp_source_subgrid(i,j,t,no2_index,i_source) = 0
                             end if
                             
-                            if (sum_o3_source_subgrid .ne. 0) then
+                            if (abs(sum_o3_source_subgrid) > epsilon0) then
                                 comp_source_subgrid(i,j,t,o3_index,i_source) = comp_source_subgrid(i,j,t,o3_index,i_source)/sum_o3_source_subgrid &
                                     *(comp_subgrid(i,j,t,o3_index) - comp_source_EMEP_subgrid(i,j,t,o3_index,allsource_index))
                             else
@@ -574,7 +574,7 @@ contains
         mol(no_i) = max(0.0, mol(nox_i) - mol(no2_i))
         
         ! Test the photostationary state for the bg input data
-        if (J_photo .ne. 0 .and. mol(no_i) .ne. 0. .and. mol(o3_i) .ne. 0.0) then
+        if (abs(J_photo) > epsilon0 .and. abs(mol(no_i)) > epsilon0 .and. abs(mol(o3_i)) > epsilon0) then
             p_bg_out = J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
         else
             p_bg_out = mol(no2_i)/(mol(ox_i) + mol(nox_i) - abs(mol(ox_i) - mol(nox_i)))*2.0
@@ -593,7 +593,7 @@ contains
         f_ox = mol(ox_i)/mol(nox_i)
 
         ! Test the photostationary state for the input data. Will not be in equilibrium
-        if (J_photo .ne. 0 .and. mol(no_i) .ne. 0. .and. mol(o3_i) .ne. 0.0) then
+        if (abs(J_photo) > epsilon0 .and. abs(mol(no_i)) > epsilon0 .and. abs(mol(o3_i)) > epsilon0) then
             p_out = J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
         else
             p_out = mol(no2_i)/(mol(ox_i)+mol(nox_i) - abs(mol(ox_i) - mol(nox_i)))*2.0
@@ -616,7 +616,7 @@ contains
         o3_out = mass(o3_i)
 
         ! Check output
-        if (J_photo .ne. 0 .and. mol(no_i) .ne. 0.0 .and. mol(o3_i) .ne. 0.0) then
+        if (abs(J_photo) > epsilon0 .and. abs(mol(no_i)) > epsilon0 .and. abs(mol(o3_i)) > epsilon0) then
             p_out = J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
         else
             p_out = mol(no2_i)/(mol(ox_i) + mol(nox_i) - abs(mol(ox_i) - mol(nox_i)))*2.0
@@ -673,7 +673,7 @@ contains
         p_bg_out = f_no2_bg/f_no2_bg_ps
 
         ! Check input
-        if (J_photo .ne. 0 .and. mol(no_i) .ne. 0. .and. mol(o3_i) .ne. 0.0) then
+        if (abs(J_photo) > epsilon0 .and. abs(mol(no_i)) > epsilon0 .and. abs(mol(o3_i)) > epsilon0) then
             p_bg_out = J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
         else
             p_bg_out = mol(no2_i)/(mol(ox_i) + mol(nox_i) - abs(mol(ox_i) - mol(nox_i)))*2.0
@@ -730,7 +730,7 @@ contains
         end if
 
         ! Check output
-        if (J_photo .ne. 0 .and. mol(no_i) .ne. 0.0 .and. mol(o3_i) .ne. 0.0) then
+        if (abs(J_photo) > epsilon0 .and. abs(mol(no_i)) > epsilon0 .and. abs(mol(o3_i)) > epsilon0) then
             p_out = J_photo*mol(no2_i)/k1/mol(o3_i)/mol(no_i)
         else
             p_out = mol(no2_i)/(mol(ox_i) + mol(nox_i) - abs(mol(ox_i) - mol(nox_i)))*2.0
@@ -759,7 +759,7 @@ contains
         real :: ox_init, no2_init, no2_equ
         
         ! If available, use custom parameter values
-        if (romberg_params(1) .ne. 0) then
+        if (abs(romberg_params(1)) > epsilon0) then
             a_rom = romberg_params(1)
             b_rom = romberg_params(2)
             c_rom = romberg_params(3)
@@ -800,7 +800,7 @@ contains
         real :: ox_init, no2_init
 
         ! If available, use custom parameter values
-        if (SRM_params(1) .ne. 0) then
+        if (abs(SRM_params(1)) > epsilon0) then
             beta = SRM_params(1)
             K = SRM_params(2)
             F = SRM_params(3)
@@ -881,7 +881,7 @@ contains
         p_bg_out = mol_o3_bg*mol_no_bg/mol_no2_bg
 
         ! Check output
-        if (J_photo .ne. 0 .and. mol_no_out .ne. 0. .and. mol_o3_out .ne. 0.0) then
+        if (abs(J_photo) > epsilon0 .and. abs(mol_no_out) > epsilon0 .and. abs(mol_o3_out) > epsilon0) then
             p_out = J_photo*mol_no2_out/k1/mol_o3_out/mol_no_out/Na_fac
             p_emep_out = J_photo*mol_no2_emep/k1/mol_o3_emep/mol_no_emep/Na_fac
             p_bg_out = J_photo*mol_no2_bg/k1/mol_o3_bg/mol_no_bg/Na_fac
@@ -1042,10 +1042,10 @@ contains
         real :: mol_no2_out, mol_o3_out
         real :: Na, Na_fac, k1
         integer, parameter :: no2_i = 1
-        integer, parameter :: no_i = 2
+        !integer, parameter :: no_i = 2
         integer, parameter :: nox_i = 3
         integer, parameter :: o3_i = 4
-        integer, parameter :: ox_i = 5
+        !integer, parameter :: ox_i = 5
         integer, parameter :: n_i = 5
         real :: mmass(n_i) = [46.0, 30.0, 46.0, 48.0, 47.0]
         real :: log10_bin_max, log10_bin_min
@@ -1081,7 +1081,7 @@ contains
         !Create the bins for the pdf in (mol/cm3). ox, nox and J
         log10_bin_max = log10(bin_max)
         log10_bin_min = log10(bin_min)
-        n_bin = (log10_bin_max - log10_bin_min)/delta_log10_bin + 1
+        n_bin = int((log10_bin_max - log10_bin_min)/delta_log10_bin) + 1
         ! Creates 80 bins with these settings
 
         allocate (log10_bin(n_bin))
@@ -1100,8 +1100,8 @@ contains
         ! Minimum needed to avoid NaNs in the calculation
         nox_sigma_ratio = 1.14
         ox_sigma_ratio = 0.21
-        if (nox_sigma_ratio_in .ne. 0) nox_sigma_ratio = max(nox_sigma_ratio_in, min_sigma_ratio)
-        if (ox_sigma_ratio_in .ne. 0) ox_sigma_ratio = max(ox_sigma_ratio_in, min_sigma_ratio)
+        if (abs(nox_sigma_ratio_in) > epsilon0) nox_sigma_ratio = max(nox_sigma_ratio_in, min_sigma_ratio)
+        if (abs(ox_sigma_ratio_in) > epsilon0) ox_sigma_ratio = max(ox_sigma_ratio_in, min_sigma_ratio)
 
         ox_sigma = mol_ox*ox_sigma_ratio
         ox_sig_sqr = log(1.0 + ox_sigma**2.0/mol_ox**2.0)
