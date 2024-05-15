@@ -16,7 +16,7 @@ contains
         !! Checks that a suitable number of command line arguments has been supplied
         !! and handles some special cases of command line inputs
         !!
-        !! 'check_command_line() will write to stdout instead of the log file
+        !! 'check_command_line' will write to stdout instead of the log file
         !! to give direct feedback to the user
 
         ! Local variables
