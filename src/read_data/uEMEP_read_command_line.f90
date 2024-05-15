@@ -2,54 +2,114 @@ module read_command_line
     !! Routines for interacting with the command line
 
     use uemep_configuration, only: name_config_file, config_date_str, n_config_files, n_max_config_files
+    use uEMEP_definitions, only: model_version_str
     use uemep_logger
 
     implicit none
     private
 
-    public :: uEMEP_read_command_line
+    public :: uEMEP_read_command_line, check_command_line
 
 contains
 
-    subroutine uEMEP_read_command_line()
-        !! Assign the configuration file name and substitution date_str from the command line
+    subroutine check_command_line()
+        !! Checks that a suitable number of command line arguments has been supplied
+        !! and handles some special cases of command line inputs
         !!
-        !! Can have up to 10 config files, limitted by the array definition
-        !! Last command line string is always the date string
-        
-        ! Local variables
-        integer n_commandline_inputs
-        integer i_config
+        !! 'check_command_line() will write to stdout instead of the log file
+        !! to give direct feedback to the user
 
-        name_config_file = ''
-        config_date_str = ''
+        ! Local variables
+        integer :: n_args, i
+        character(len=256) :: arg
+
+        ! Check if no arguments are found
+        n_args = command_argument_count()
+        if (n_args <= 0) then
+            write(*,"(a)") " Insufficient number of command line arguments"
+            write(*,"(a)") " Try 'uemep --help' for more information"
+            stop
+        end if
+
+        ! Loop over input arguments to handle special cases
+        do i = 1, n_args
+            call get_command_argument(i, arg)
+            select case(adjustl(arg))
+            case("--help")
+                call print_help_page()
+                stop
+            case("--version")
+                call print_version()
+                stop
+            end select
+        end do
+
+        ! After checking that no special cases are found, check if the number of 
+        ! arguments are within acceptable bounds (2:n_max_config_files+1)
+        if (n_args < 2) then
+            write(*,"(a)") " Insufficient number of command line arguments"
+            write(*,"(a)") " Try 'uemep --help' for more information"
+            stop
+        else if (n_args > n_max_config_files + 1) then
+            write(*,"(a)") " Too many command line arguments"
+            write(*,"(a)") " Try 'uemep --help' for more information"
+            stop
+        end if
+    end subroutine check_command_line
+
+    subroutine uEMEP_read_command_line()
+        !! Assigns the configuration file name(s) and substitution date_str from the command line
+
+        ! Local variables
+        integer :: n_args, i
 
         ! Get number of command line arguments
-        n_commandline_inputs = command_argument_count ()
+        n_args = command_argument_count()
+        n_config_files = n_args - 1
 
-        if (n_commandline_inputs .gt. n_max_config_files+1) then
-            ! Note: Output goes to stdout instead of log file
-            write(*,'(a,i2,a)') 'ERROR: Too many command line inputs. Maximum is ', n_max_config_files, ' configuration files plus one date_str. Stopping uEMEP'
-            stop 1
-        end if
-
-        if (n_commandline_inputs .ge. 2) then
-            n_config_files = n_commandline_inputs - 1
-            do i_config = 1, n_config_files
-                call get_command_argument(i_config, name_config_file(i_config))
-                write(log_msg,'(a,i1,2a)') 'name_config_file(',i_config,') = ',trim(name_config_file(i_config))
-                call log_message(log_msg, INFO)
-            end do
-            call get_command_argument(n_commandline_inputs, config_date_str)
-            write(log_msg,'(2a)') 'config_date_str = ', trim(config_date_str)
+        ! Read file names
+        do i = 1, n_config_files
+            call get_command_argument(i, name_config_file(i))
+            write(log_msg,"(a,i0,2a)"), "name_config_file(", i, ") = ", trim(name_config_file(i))
             call log_message(log_msg, INFO)
-        else
-            ! Note: Output goes to stdout instead of log file
-            write(*,*) 'ERROR: Insufficient number of command line inputs. Stopping uEMEP'
-            stop 1
-        end if
+        end do
 
+        ! Read date string
+        call get_command_argument(n_args, config_date_str)
+        write(log_msg,"(2a)") "config_date_str = ", trim(config_date_str)
+        call log_message(log_msg, INFO)
     end subroutine uEMEP_read_command_line
+
+    subroutine print_help_page()
+        !! Prints a help message to the terminal console
+        write(*,"(a)") " uEMEP: Air quality dispersion model for high resolution downscaling of EMEP MSC-W"
+        write(*,"(a)") " "
+        write(*,"(a)") " To run the uEMEP model:"
+        write(*,"(a)") " "
+        write(*,"(a)") " ./uemep config_file_1 config_file_2 ... config_file_10 date_string"
+        write(*,"(a)") " "
+        write(*,"(a)") " Where config_file_n is the name of the configuration file(s) which specify"
+        write(*,"(a)") " the model calculations and with a maximum number of 10 config files, and"
+        write(*,"(a)") " the date_string, required, takes the form 'yyyymmdd'."
+        write(*,"(a)") " "
+        write(*,"(a)") " Please read the manual on how to configure uEMEP at: <URL>."
+        write(*,"(a)") " "
+        write(*,"(a)") " --help                     displays this help message and exits"
+        write(*,"(a)") " --version                  outputs the uEMEP version and exits"
+    end subroutine print_help_page
+
+    subroutine print_version()
+        !! Prints the program version to the terminal console
+        write(*,"(a)") " uEMEP: Air quality dispersion model for high resolution downscaling of EMEP MSC-W"
+        write(*,"(a)") " "
+        write(*,"(2a)") " Version: ", trim(model_version_str)
+        write(*,"(a)") " Copyright (C) 2007 Free Software Foundation."
+        write(*,"(a)") " License GNU LGPL-3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>."
+        write(*,"(a)") " This is free software: you are free to change and redistribute it."
+        write(*,"(a)") " "
+        write(*,"(a)") " Developed and maintained at the Norwegian Meteorological Institute."
+        write(*,"(a)") " Contribute at: <https://github.com/metno/uEMEP>"
+    end subroutine print_version
 
 end module read_command_line
 
