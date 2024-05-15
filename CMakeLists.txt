@@ -7,8 +7,8 @@ project(uemep)
 enable_testing()
 
 # Hardcode ifort as the Fortran compiler (gfortran currently does not work)
-#set(CMAKE_Fortran_COMPILER "ifort")
-set(CMAKE_Fortran_COMPILER "gfortran")
+set(CMAKE_Fortran_COMPILER "ifort")
+#set(CMAKE_Fortran_COMPILER "gfortran")
 enable_language(Fortran)
 
 # Append additional cmake modules
