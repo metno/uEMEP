@@ -21,7 +21,7 @@ program uEMEP_v6
     
     use uemep_configuration
     use uEMEP_definitions
-    use read_command_line, only: uEMEP_read_command_line
+    use read_command_line, only: uEMEP_read_command_line, check_command_line
     use set_constants, only: uEMEP_set_constants, uEMEP_set_pollutant_loop, &
         uEMEP_reset_constants, uEMEP_set_species_loop
     use read_config, only: uEMEP_read_config
@@ -75,14 +75,18 @@ program uEMEP_v6
     logical :: have_read_emep = .false.
     character(len=64) :: logfile_name = "logfile.txt", program_name
 
-    ! Open new log file
+    ! Start timer
+    call cpu_Time(start_time_cpu)
+
+    ! Check command line arguments and handle special cases that have to be printed to stdout
+    call check_command_line()
+
+    ! Open new log file and set log level
     call open_log_file(logfile_name)
     call set_log_level(INFO)
 
     ! Set model version
     model_version_str='uEMEP_v6.3'
-
-    call cpu_Time(start_time_cpu)
 
     ! Test of new logger module
     write(log_msg,"(2a)") "Starting program " // trim(model_version_str)
