@@ -113,11 +113,26 @@ contains
                     i=0
                     do
                         read(unit_in,*,iostat=io) temp_real,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
-                        if (io /= 0) exit
+                        if (io < 0) then
+                            exit
+                        else if (io > 0) then
+                            write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                            stop 1
+                        end if
                         read(unit_in,*,iostat=io) sub_nodes_x(1) !Read x nodes
-                        if (io /= 0) exit
+                        if (io < 0) then
+                            exit
+                        else if (io > 0) then
+                            write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                            stop 1
+                        end if
                         read(unit_in,*,iostat=io) sub_nodes_y(1) !Read y nodes
-                        if (io /= 0) exit
+                        if (io < 0) then
+                            exit
+                        else if (io > 0) then
+                            write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                            stop 1
+                        end if
                         if (temp_real.gt.0) then
                             i=i+1
                             n_roadlinks=n_roadlinks+n_subnodes-1
@@ -127,12 +142,6 @@ contains
                             stop
                         endif
                     enddo
-
-                    ! Check for any errors during reading
-                    if (io > 0) then
-                        write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
-                        stop 1
-                    end if
 
                     n_roadlinks_major=i
                     !n_roadlinks=0
@@ -150,22 +159,31 @@ contains
                     i=0
                     do
                         read(unit_in,*,iostat=io) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes up to n_subnodes
-                        if (io /= 0) exit
+                        if (io < 0) then
+                            exit
+                        else if (io > 0) then
+                            write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                            stop 1
+                        end if
                         read(unit_in,*,iostat=io) sub_nodes_x(1) !Read x nodes
-                        if (io /= 0) exit
+                        if (io < 0) then
+                            exit
+                        else if (io > 0) then
+                            write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                            stop 1
+                        end if
                         read(unit_in,*,iostat=io) sub_nodes_y(1) !Read y nodes
-                        if (io /= 0) exit
+                        if (io < 0) then
+                            exit
+                        else if (io > 0) then
+                            write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                            stop 1
+                        end if
                         if (temp_id.gt.0) then
                             i=i+1
                             n_roadlinks=n_roadlinks+n_subnodes-1
                         endif
                     enddo
-
-                    ! Check for any errors during reading
-                    if (io > 0) then
-                        write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
-                        stop 1
-                    end if
 
                     !Have commented out this in the cases where the number of links are not as written. Can happen with OSM data
                     !n_roadlinks_major=i
@@ -292,11 +310,26 @@ contains
                 i=0
                 do
                     read(unit_in,*,iostat=io) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes
-                    if (io /= 0) exit
+                    if (io < 0) then
+                        exit
+                    else if (io > 0) then
+                        write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                        stop 1
+                    end if
                     read(unit_in,*,iostat=io) sub_nodes_x(1) !Read x nodes
-                    if (io /= 0) exit
+                    if (io < 0) then
+                        exit
+                    else if (io > 0) then
+                        write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                        stop 1
+                    end if
                     read(unit_in,*,iostat=io) sub_nodes_y(1) !Read y nodes
-                    if (io /= 0) exit
+                    if (io < 0) then
+                        exit
+                    else if (io > 0) then
+                        write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                        stop 1
+                    end if
                     if (temp_id.gt.0) then
                         i=i+1
                     endif
@@ -309,12 +342,6 @@ contains
                 read(unit_in,*,ERR=20) n_roadlinks_major,n_roadlinks
             endif
 
-            ! Check for any errors during reading
-            if (io > 0) then
-                write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
-                stop 1
-            end if
-
             if (n_roadlinks.eq.0.and..not.reduce_roadlink_region_flag) then
                 write(unit_logfile,'(a)') ' Reading road link file(ascii) with header but without subnode counts: '//trim(pathfilename_rl(1))
                 rewind(unit_in)
@@ -323,11 +350,26 @@ contains
                 i=0
                 do
                     read(unit_in,*,iostat=io) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes !Read attributes
-                    if (io /= 0) exit
+                    if (io < 0) then
+                        exit
+                    else if (io > 0) then
+                        write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                        stop 1
+                    end if
                     read(unit_in,*,iostat=io) sub_nodes_x(1) !Read x nodes
-                    if (io /= 0) exit
+                    if (io < 0) then
+                        exit
+                    else if (io > 0) then
+                        write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                        stop 1
+                    end if
                     read(unit_in,*,iostat=io) sub_nodes_y(1) !Read y nodes
-                    if (io /= 0) exit
+                    if (io < 0) then
+                        exit
+                    else if (io > 0) then
+                        write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                        stop 1
+                    end if
                     !write(*,*) temp_id
                     if (temp_id.gt.0) then
                         i=i+1
@@ -338,12 +380,6 @@ contains
                 rewind(unit_in)
                 call nxtdat(unit_in, nxtdat_flag)
             endif
-
-            ! Check for any errors during reading
-            if (io > 0) then
-                write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
-                stop 1
-            end if
 
             write(unit_logfile,'(a,i)') ' Number of major road links= ', n_roadlinks_major
             write(unit_logfile,'(a,i)') ' Number of sub road links= ', n_roadlinks
@@ -392,22 +428,32 @@ contains
                 if (read_OSM_roadlink_data_flag) then
                     !ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS
                     read(unit_in,*,iostat=io) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes
+                    if (io /= 0) then
+                        write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                        stop 1
+                    end if
                     temp_category=0;temp_length=0;temp_structure_type=0;temp_region_id=0;temp_surface_id=0;temp_tunnel_length=0;temp_route_id=0
                 else
                     !ID ADT HDV ROAD_ACTIVITY_TYPE SPEED ROAD_WIDTH N_LANES N_SUBNODES ROAD_CATEGORY ROAD_LENGTH ROAD_STRUCTURE_TYPE REGION_ID ROAD_SURFACE_ID TUNNEL_LENGTH ROUTE_ID
                     read(unit_in,*,iostat=io) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes &
                         ,temp_category,temp_length,temp_structure_type,temp_region_id,temp_surface_id,temp_tunnel_length,temp_route_id
+                    if (io /= 0) then
+                        write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                        stop 1
+                    end if
                 endif
-
-                ! Check for any errors during reading
-                if (io > 0) then
-                    write(unit_logfile,'(2A)') 'ERROR reading road link file: ',trim(pathfilename_rl(2))
-                    stop 1
-                end if
 
                 !write(*,*) i,temp_id,temp_adt,n_subnodes
                 read(unit_in,*,iostat=io) sub_nodes_x(1:n_subnodes)
+                if (io /= 0) then
+                    write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                    stop 1
+                end if
                 read(unit_in,*,iostat=io) sub_nodes_y(1:n_subnodes)
+                if (io /= 0) then
+                    write(unit_logfile,"(2a)") "ERROR reading road link file: ", trim(pathfilename_rl(1))
+                    stop 1
+                end if
                 !write(*,*) sub_nodes_x(1:n_subnodes),sub_nodes_y(1:n_subnodes)
                 !put in the road link data
 
@@ -991,7 +1037,12 @@ contains
             found_country=.false.
             do
                 read(unit_in,*,iostat=io) i,CNTR_ID,OSM_country,min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,Long_name
-                if (io /= 0) exit
+                if (io < 0) then
+                    exit
+                else if (io > 0) then
+                    write(unit_logfile,"(2a)") "ERROR reading file: ", trim(pathfilename_boundingbox)
+                    stop 1
+                end if
                 !write(*,*) i,trim(CNTR_ID),trim(OSM_country),min_lon,min_lat,max_lon,max_lat,min_x_3035,min_y_3035,max_x_3035,max_y_3035,trim(Long_name)
 
                 if (index(trim(select_country_by_name),trim(CNTR_ID)).gt.0) then
