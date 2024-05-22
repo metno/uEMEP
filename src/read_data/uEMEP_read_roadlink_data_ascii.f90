@@ -741,7 +741,7 @@ contains
         integer date_array_temp(6)
         integer n_roadlink_emission_selected
         character(256) format_temp
-        character(len=:), allocatable :: fmt
+        character(len=32) :: fmt
 
         double precision emission_date_number_start,emission_date_number
 
@@ -774,7 +774,7 @@ contains
         write(unit_logfile,'(a,i)') ' Number of road link emission compounds= ', n_roadlink_emission_compound
         call nxtdat(unit_in, nxtdat_flag)
         read(unit_in,*,ERR=20) n_roadlink_emission_compound_str(1:n_roadlink_emission_compound)
-        write(fmt,'(A,I0,A)') '(', n_roadlink_emission_compound, 'a16)'
+        write(fmt,'(a,i0,a)') '(a,', n_roadlink_emission_compound, 'a16)'
         write(unit_logfile,fmt) ' Road link emission compounds= ', n_roadlink_emission_compound_str(1:n_roadlink_emission_compound)
         call nxtdat(unit_in, nxtdat_flag)
         read(unit_in,*,ERR=20) n_roadlink_emission_unit_str

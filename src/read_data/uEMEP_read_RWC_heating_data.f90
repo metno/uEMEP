@@ -148,7 +148,10 @@ contains
                 do
                     count=count+1
                     read(unit_in,*,iostat=io) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_grid_height(count,1),RWC_grid_height(count,2),RWC_region_id(count)
-                    if (io /= 0) exit
+                    if (io /= 0) then
+                        count = count - 1 
+                        exit
+                    end if
                     !write(*,'(i,9es,i)') RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_grid_height(count,1),RWC_grid_height(count,2),RWC_region_id(count)
                 enddo
             elseif (read_RWC_file_with_extra_HDD) then
@@ -156,7 +159,10 @@ contains
                 do                
                     count=count+1
                     read(unit_in,*,iostat=io) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
-                    if (io /= 0) exit
+                    if (io /= 0) then
+                        count = count - 1
+                        exit
+                    end if
                     !write(*,'(i,5es,i)') RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
                 enddo
             elseif (read_file_with_nox_and_kommune_number) then
@@ -164,7 +170,10 @@ contains
                 do
                     count=count+1
                     read(unit_in,*,iostat=io) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
-                    if (io /= 0) exit
+                    if (io /= 0) then
+                        count = count - 1
+                        exit
+                    end if
                     !write(*,'(i,5es,i)') RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_region_id(count)
                 enddo
             else
@@ -173,7 +182,10 @@ contains
                     count=count+1
                     !read(unit_in,'(i,4es)') RWC_grid_id(count),RWC_grid_val(count,1:4)
                     read(unit_in,*) RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index)
-                    if (io /= 0) exit
+                    if (io /= 0) then
+                        count = count - 1
+                        exit
+                    end if
                     !write(*,'(2i,4es)') count,RWC_grid_id(count),RWC_grid_val(count,1:4)
                     RWC_grid_emission(count,RWC_nox_index)=RWC_grid_emission(count,RWC_pm25_index)*emission_scaling(RWC_nox_index)
                     RWC_region_id(count)=1
@@ -284,7 +296,7 @@ contains
 
             k=region_scaling_id_back_index(RWC_region_id(count))
             if (k.lt.1.or.k.gt.n_region) then
-                write(unit_logfile,'(A,3i)') ' ERROR: Region index out of bounds, stopping: ',count,RWC_region_id(count),k
+                write(unit_logfile,'(A,4i)') ' ERROR: Region index out of bounds, stopping: ',count,RWC_region_id(count),k, n_region
                 stop
             endif
 
