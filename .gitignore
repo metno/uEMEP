@@ -9,10 +9,11 @@ NILU/Not_used
 uEMEPv*
 ford*
 
-# Build directories
+# Build directories and files
 debug/
 build/
 release/
+build*
 
 # Other directories
 mod/
