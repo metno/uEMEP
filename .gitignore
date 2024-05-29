@@ -14,9 +14,11 @@ debug/
 build/
 release/
 build*
+_build*
 
 # Other directories
 mod/
 .mod/
 doc/
 .vscode/
+.venv/
