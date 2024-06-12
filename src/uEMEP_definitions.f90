@@ -859,5 +859,27 @@ module uEMEP_definitions
     logical :: save_emep_region_mask = .false.
     logical :: wind_vectors_10m_available = .false.
 
+    ! New definitions needed for the adjusted non-local from-in-region (nlreg) methodology
+
+    ! nlreg_subgrid_region_id will contain the region ID of each uEMEP target subgrid
+    integer, allocatable :: nlreg_subgrid_region_id(:, :)
+    ! nlreg_EMEP_subsample_region_id will contain the region ID of each subsample of each EMEP grid
+    integer, allocatable :: nlreg_EMEP_subsample_region_id(:, :, :, :)
+    ! nlreg_regionfraction_per_EMEP_grid will give the fraction of each EMEP grid that is within each region
+    real, allocatable :: nlreg_regionfraction_per_EMEP_grid(:, :, :)
+    ! nlreg_region_ids specifies the region IDs along the region dimension and will get length nlreg_n_regions
+    integer, allocatable :: nlreg_region_ids(:)
+    ! nlreg_n_regions is the number of regions. Will be set after reading region mask file
+    integer :: nlreg_n_regions = -1
+    ! nlreg_n_subsamples_per_EMEP_grid specifies how many subsamples to use along each spatial dimension of an EMEP grid when creating a region mask for each grid
+    integer :: nlreg_n_subsamples_per_EMEP_grid = 20
+
+    ! The following arrays will contain the contributions from outside moving window but within region for each uEMEP target subgrid (x,y,t,source,pollutant)
+    ! - from the small (1x1) LF grid data
+    real, allocatable :: nlreg_subgrid_nonlocal_from_in_region(:, :, :, :, :)
+    ! - from the big (additional) LF grid data, only the part outside the 1x1 LF domain
+    ! (i.e. this array contains only the contribution NOT covered in the above array, so they can be added)
+    real, allocatable :: nlreg_subgrid_nonlocal_from_in_region_additional_increment(:, :, :, :, :)
+
 end module uEMEP_definitions
 

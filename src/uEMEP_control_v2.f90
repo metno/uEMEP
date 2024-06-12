@@ -341,6 +341,11 @@ program uEMEP_v6
                         call uEMEP_region_mask()
                     end if
 
+                    ! New subroutine for reading region mask and region fraction
+                    if (trace_emissions_from_in_region) then
+                        call nlreg_uEMEP_region_mask_new()
+                    endif
+
                     ! Determine the fraction of an EMEP grid within the one defined region
                     if (trace_emissions_from_in_region) then
                         call uEMEP_assign_region_coverage_to_EMEP()

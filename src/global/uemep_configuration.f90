@@ -330,4 +330,9 @@ module uemep_configuration
     double precision :: projection_attributes(10)
     double precision :: EMEP_projection_attributes(10)
 
+    ! Configurations needed for new way to read region mask
+    character(256) :: pathname_region_mask = ''
+    character(256) :: filename_region_mask = ''
+    character(256) :: var_name_region_mask = 'region_id'
+
 end module uemep_configuration
