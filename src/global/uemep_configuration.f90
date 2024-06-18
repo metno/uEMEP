@@ -93,6 +93,10 @@ module uemep_configuration
     character(256) :: finished_filename = ''
     character(256) :: finished_subpath = 'finished/'
     character(256) :: var_name_landuse_nc(num_var_landuse_nc)
+    ! Configurations needed for new way to read region mask
+    character(256) :: nlreg_pathname_region_mask = ''
+    character(256) :: nlreg_filename_region_mask = ''
+    character(256) :: nlreg_varname_region_mask = 'region_id'
 
 
     logical :: hourly_calculations = .false.
@@ -329,10 +333,5 @@ module uemep_configuration
 
     double precision :: projection_attributes(10)
     double precision :: EMEP_projection_attributes(10)
-
-    ! Configurations needed for new way to read region mask
-    character(256) :: pathname_region_mask = ''
-    character(256) :: filename_region_mask = ''
-    character(256) :: var_name_region_mask = 'region_id'
 
 end module uemep_configuration

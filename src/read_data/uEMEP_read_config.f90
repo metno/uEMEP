@@ -886,6 +886,11 @@ contains
 
             save_emep_OP_species=read_name_logical('save_emep_OP_species',save_emep_OP_species,unit_in,unit_logfile)
 
+            ! Read configs added for the nonlocal from-in-region method
+            nlreg_pathname_region_mask=read_name_char('nlreg_pathname_region_mask',nlreg_pathname_region_mask,unit_in,unit_logfile)
+            nlreg_filename_region_mask=read_name_char('nlreg_filename_region_mask',nlreg_filename_region_mask,unit_in,unit_logfile)
+            nlreg_varname_region_mask=read_name_char('nlreg_varname_region_mask',nlreg_varname_region_mask,unit_in,unit_logfile)
+
             close (unit_in)
 
         enddo !End configuration file number loop

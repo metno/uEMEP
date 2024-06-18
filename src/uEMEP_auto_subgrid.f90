@@ -3,7 +3,7 @@ module auto_subgrid
     use uemep_configuration
     use uEMEP_definitions
     use mod_area_interpolation, only: area_weighted_interpolation_function
-    use mod_lambert_projection, only: LL2PROJ,PROJ2LL
+    use mod_lambert_projection, only: LL2PROJ, PROJ2LL
 
     implicit none
     private
@@ -495,6 +495,10 @@ contains
 
     subroutine nlreg_uEMEP_region_mask_new()
 
+        use netcdf
+
+        implicit none
+
         ! Reading the region mask netcdf file
         ! help-parameters for reading the file
         character(256) pathfilename_region_mask
@@ -540,6 +544,8 @@ contains
         integer current_region_id,previous_region_id
         integer list_allocated_size
         logical current_region_already_found
+        ! number of elements in list of unique regions to make space for at a time
+        integer, parameter :: n_regions_allocate = 20
 
 
         write(unit_logfile,'(A)') ''
@@ -564,7 +570,7 @@ contains
         ! Read the region mask netcdf file (implementation based on uEMEP_read_EMEP)
 
         ! determine full filename
-        pathfilename_region_mask = trim(pathname_region_mask)//trim(filename_region_mask)
+        pathfilename_region_mask = trim(nlreg_pathname_region_mask)//trim(nlreg_filename_region_mask)
 
         !Test existence of the region mask file. If does not exist then stop
         inquire(file=trim(pathfilename_region_mask),exist=exists)
@@ -621,10 +627,10 @@ contains
             write(unit_logfile,'(A,I0)') 'Reading of y dimension failed with status: ',status_nc
             stop
         endif
-        write(unit_logfile,'(A,2I0)') ' Size of dimensions (x,y): ',nx_regionmask,ny_regionmask
+        write(unit_logfile,'(A,I0,A,I0)') ' Size of dimensions (x,y): ',nx_regionmask,' ',ny_regionmask
 
         ! Verify the dimensions are at least 2x2
-        if .not. (nx_regionmask .gt. 1 .and. ny_regionmask .gt. 1) then
+        if (.not. (nx_regionmask .gt. 1 .and. ny_regionmask .gt. 1)) then
             write(unit_logfile, '(A)') 'Dimensions of regionmask is not at least 2x2'
             stop
         endif
@@ -633,6 +639,8 @@ contains
         allocate (region_mask(nx_regionmask, ny_regionmask))
         allocate (x_values_regionmask(nx_regionmask))
         allocate (y_values_regionmask(ny_regionmask))
+        write(unit_logfile,'(A)') 'Allocation done.'
+        ! NB: should I set these arrays to 0 before they are read from file?
 
         ! Read coordinate values
         ! x
@@ -652,6 +660,8 @@ contains
             stop
         endif
 
+        write(unit_logfile,'(A)') 'Reading x and y values done.'
+
         ! Determine grid spacing and verify it is constant
         ! NB: could these tests fail due to round-off errors in the netcdf file?
         dx_regionmask = x_values_regionmask(2) - x_values_regionmask(1)
@@ -669,12 +679,18 @@ contains
             endif
         enddo
 
+        write(unit_logfile,'(A)') 'Reading mask itself'
+
         ! Read the mask itself
-        status_nc = NF90_INQ_VARID (id_nc, trim(var_name_region_mask), var_id_nc)
+        status_nc = NF90_INQ_VARID (id_nc, trim(nlreg_varname_region_mask), var_id_nc)
         if (status_nc.eq.NF90_NOERR) then
             status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
-            status_nc = NF90_GET_VAR (id_nc, var_id_nc, region_mask)  ! do I get the right dimension order???
-            write(unit_logfile,'(A,i3,A,2A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_region_mask),' (min, max): ',minval(region_mask),maxval(region_mask)
+            write(unit_logfile,'(A)') 'AA'
+            status_nc = NF90_GET_VAR (id_nc, var_id_nc, region_mask)
+            write(unit_logfile,'(A)') 'BB'
+            !write(unit_logfile, '(A,I0)') 'region_mask(1,1)= ',region_mask(1,1)
+            !write(unit_logfile, '(A,I0)') 'region_mask(nx,ny)= ',region_mask(nx_regionmask,ny_regionmask)
+            write(unit_logfile,'(A,i3,A,2A,2i16)') ' Reading: ',temp_num_dims,' ',trim(nlreg_varname_region_mask),' (min, max): ',minval(region_mask),maxval(region_mask)
         else
             write(unit_logfile,'(A)') 'Could not read region mask values from file'
             stop
@@ -685,38 +701,56 @@ contains
 
         ! Allocate arrays for region masks on EMEP and uEMEP grids
         allocate (nlreg_subgrid_region_id(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
-        allocate (nlreg_EMEP_subsample_region_id(nlreg_n_subsamples_per_EMEP_grid,nlreg_n_subsamples_per_EMEP_grid,dim_length_nc(x_nc_index), dim_length_nc(y_nc_index)))
+        allocate (nlreg_EMEP_subsample_region_id(nlreg_n_subsamples_per_EMEP_grid,nlreg_n_subsamples_per_EMEP_grid,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index)))
+        ! initalize to -1 (no-region).
+        ! All -1 values will be replaced with positive values for the subgrid, but not necessarily for the EMEP subsamples
+        nlreg_subgrid_region_id = -1
+        nlreg_EMEP_subsample_region_id = -1
+
+        write(unit_logfile, '(A)') 'Calculating region mask for the target grid'
 
         ! Set region ID of each target subgrid
-        do i in 1, subgrid_dim(x_dim_index)
-            do j in 1, subgrid_dim(y_dim_index)
+        do i = 1, subgrid_dim(x_dim_index)
+            do j = 1, subgrid_dim(y_dim_index)
                 ! calculate x- and y- position in the region mask projection
-                LL2PROJ(lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,region_mask_projection_attributes,region_mask_projection_type)
+                call LL2PROJ(lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,region_mask_projection_attributes,region_mask_projection_type)
                 ! Determine index in the region mask grid for this location
                 x_index = nint(1+(x_location-x_values_regionmask(1))/dx_regionmask)
                 y_index = nint(1+(y_location-y_values_regionmask(1))/dy_regionmask)
+                
                 ! Check if this location is inside the region mask grid
                 if (x_index .ge. 1 .and. x_index .le. nx_regionmask .and. y_index .ge. 1 .and. y_index .le. ny_regionmask) then
                     nlreg_subgrid_region_id(i,j) = region_mask(x_index,y_index)
+                    ! verify that the region ID is positive
+                    if (.not. (nlreg_subgrid_region_id(i,j) .gt. 0)) then
+                        write(unit_logfile, '(A)') 'ERROR: Non-positive region ID found at a subgrid. This is not allowed'
+                        stop
+                    endif
                 else
-                    write(unit_logfile, '(A)') 'ERROR: The target subgrid extends outside the given region mask'
+                    ! this receptor location is not within the region mask grid
+                    write(unit_logfile, '(A)') 'ERROR: The target subgrid extends outside the given region mask. This is not allowed'
                     stop
                 endif
+                !write(unit_logfile,'(A,2i12,2f12.4,2f12.2,2i12,i4)') 'i,j,lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,x_index,y_index,region_id = ',i,j,lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,x_index,y_index,nlreg_subgrid_region_id(i,j)
             enddo
         enddo
 
         ! Set region ID of each subsample of the EMEP grid
 
+        write(unit_logfile,'(A)') 'Calculating region mask for the EMEP grid'
+
         ! determine spacing in EMEP grid (NB: maybe this is alredy availabe somewhere?)
         ! NB: I will not verify it is constant, but I assume it is
         dx_emep = var1d_nc(2,x_dim_nc_index) - var1d_nc(1,x_dim_nc_index)
         dy_emep = var1d_nc(2,y_dim_nc_index) - var1d_nc(1,y_dim_nc_index)
+        !write(unit_logfile, '(A,2I12,2f12.2)') 'EMEP nx,ny,dx,dy = ',dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dx_emep,dy_emep
         ! loop over all EMEP grid cells
         do ii = 1, dim_length_nc(x_dim_nc_index)
             do jj = 1, dim_length_nc(y_dim_nc_index)
                 ! EMEP projection coordinate values at centre of this EMEP grid
                 x_emepmid = var1d_nc(ii,x_dim_nc_index)
                 y_emepmid = var1d_nc(jj,y_dim_nc_index)
+                !write(unit_logfile,'(A,2i12,2f12.2)') 'ii,jj,x_emepmid,yemepmid = ',ii,jj,x_emepmid,y_emepmid
                 ! go through all subsamples of this EMEP grid
                 do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
                     do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
@@ -724,59 +758,69 @@ contains
                         x_emepsub = x_emepmid - dx_emep/2 + (i_sub-0.5)*dx_emep/nlreg_n_subsamples_per_EMEP_grid
                         y_emepsub = y_emepmid - dy_emep/2 + (j_sub-0.5)*dy_emep/nlreg_n_subsamples_per_EMEP_grid
                         ! calculate longitude and latitude from the EMEP projection
-                        PROJ2LL(x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,EMEP_projection_attributes,EMEP_projection_type)
+                        call PROJ2LL(x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,EMEP_projection_attributes,EMEP_projection_type)
                         ! calculate projection coordinates in the region mask grid
-                        LL2PROJ(lon_emepsub,lat_emepsub,x_location,y_location,region_mask_projection_attributes,region_mask_projection_type)
+                        call LL2PROJ(lon_emepsub,lat_emepsub,x_location,y_location,region_mask_projection_attributes,region_mask_projection_type)
                         ! Determine index in the region mask grid for this location
                         x_index = nint(1+(x_location-x_values_regionmask(1))/dx_regionmask)
                         y_index = nint(1+(y_location-y_values_regionmask(1))/dy_regionmask)
                         ! Check if this location is inside the region mask grid
                         if (x_index .ge. 1 .and. x_index .le. nx_regionmask .and. y_index .ge. 1 .and. y_index .le. ny_regionmask) then
                             nlreg_EMEP_subsample_region_id(i_sub,j_sub,ii,jj) = region_mask(x_index,y_index)
-                        else
-                            write(unit_logfile, '(A)') 'ERROR: The EMEP grid extends outside the given region mask'
-                            stop
                         endif
+                        ! NB: if it is outside the region ID, the 'no-region' value -1 is kept
+
+                        !if (ii .gt. 1 .and. ii .lt. 4 .and. jj .gt. 3 .and. jj .lt. 6) !then
+                        !    write(unit_logfile,'(A,4i4,2f12.2,2f12.4,2f12.2,2i12,i12)') 'ii,jj,i_sub,j_sub,x_sub,y_sub,lon_sub,lat_sub,x_loc,y_loc,x_ind,y_ind,reg = ',ii,jj,i_sub,j_sub,x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,x_location,y_location,x_index,y_index,nlreg_EMEP_subsample_region_id(i_sub,j_sub,ii,jj)
+                        !endif
                     enddo
                 enddo
             enddo
         enddo
 
+        write(unit_logfile,'(A)') 'Finding the regions occurring in the target grid'
+
         ! Determine which regions occur in the target grid
         ! (NB: We don't really need to worry about regions occurring only in the EMEP grid!)
-        ! make room for 100 regions in the list initially (should maybe set it lower to properly test...)
-        allocate (temp_region_ids(100))
-        list_allocated_size = size(temp_region_ids)  ! =100 initially
+        ! make room for 'n_regions_allocate' regions in the list initially
+        allocate (temp_region_ids(n_regions_allocate))
+        temp_region_ids = -1
+        !write(unit_logfile,'(20i4)') temp_region_ids
+        list_allocated_size = size(temp_region_ids)
         counter = 0
         previous_region_id = -1
         do i = 1, subgrid_dim(x_dim_index)
             do j = 1, subgrid_dim(y_dim_index)
                 current_region_id = nlreg_subgrid_region_id(i,j)
-                if (current_region_id .gt. 0 and .not. current_region_id .eq. previous_region_id) then
+                !write(unit_logfile,'(A,4i4)') 'i,j,cur,prev,counter = ',i,j,current_region_id,previous_region_id,counter
+                if (current_region_id .gt. 0 .and. .not. current_region_id .eq. previous_region_id) then
                     ! Region ID is different from previous subgrid: check if we already found it before
                     current_region_already_found = .false.
                     do region_index = 1, counter
                         ! NB: What happens if counter=0 ??????????????????????????????
-                        if (temp_region_ids(region_idex) .eq. current_region_id) then
+                        if (temp_region_ids(region_index) .eq. current_region_id) then
                             current_region_already_found = .true.
                             exit
                         endif
                     enddo
+                    !write(unit_logfile,'(A,l)') 'already_found? ',current_region_already_found
                     if (.not. current_region_already_found) then
                         ! new region ID found
                         ! NB: region_id <= 0 is ignored!
                         if (counter .eq. list_allocated_size) then
                             ! We need to allocate more space in the list of regions
+                            !write(unit_logfile,'(A)') 'We need to allocate more!'
                             allocate (temp_region_ids_dummy(list_allocated_size))
                             temp_region_ids_dummy = temp_region_ids
                             deallocate (temp_region_ids)
-                            allocate (temp_region_ids(list_allocated_size+100))
+                            allocate (temp_region_ids(list_allocated_size+n_regions_allocate))
                             temp_region_ids(1:list_allocated_size) = temp_region_ids_dummy
                             deallocate (temp_region_ids_dummy)
                             list_allocated_size = size(temp_region_ids)
                         endif
                         counter = counter + 1
                         temp_region_ids(counter) = current_region_id
+                        !write(unit_logfile,'(20i4)') temp_region_ids
                     endif
                     previous_region_id = current_region_id
                 endif
@@ -786,7 +830,11 @@ contains
         allocate (nlreg_region_ids(nlreg_n_regions))
         nlreg_region_ids = temp_region_ids(1:nlreg_n_regions)
         deallocate (temp_region_ids)
+        write(unit_logfile,'(A,I0)') 'Number of regions within target grid: ',nlreg_n_regions
+        write(unit_logfile,'(A,100I5)') 'ID of these regions are (printing max 100): ', nlreg_region_ids
         
+        write(unit_logfile,'(A)') 'Calculating fraction of each EMEP cell in each region'
+
         ! Calculate fraction of each EMEP grid that is within each region, by counting the subsamples
         allocate (nlreg_regionfraction_per_EMEP_grid(dim_length_nc(x_dim_nc_index), dim_length_nc(y_dim_nc_index),nlreg_n_regions))
         do ii = 1, dim_length_nc(x_dim_nc_index)
@@ -802,6 +850,7 @@ contains
                         enddo
                     enddo
                     nlreg_regionfraction_per_EMEP_grid(ii,jj,region_index) = counter*1.0/nlreg_n_subsamples_per_EMEP_grid**2
+                    !write(unit_logfile,'(A,6i5,f12.4)') 'ii,jj,region_index,region_id,counter,nsubsamples,fraction =',ii,jj,region_index,current_region_id,counter,nlreg_n_subsamples_per_EMEP_grid,nlreg_regionfraction_per_EMEP_grid(ii,jj,region_index)
                 enddo
             enddo
         enddo

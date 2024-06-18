@@ -10,7 +10,7 @@ module mod_lambert_projection
     private
 
     public :: lb2lambert2_uEMEP, LL2PS_spherical, PROJ2LL, LL2LAEA, lambert2lb2_uEMEP, &
-        lb2lambert_uEMEP
+        lb2lambert_uEMEP, LL2PROJ
 
 contains
 
@@ -418,7 +418,7 @@ contains
             x_out = lon_in
             y_out = lat_in
         else
-            write(unit_logfile, '(A,I0)') 'ERROR: This projection type index is not implemented:', projection_type_in
+            write(unit_logfile, '(A,I0)') 'ERROR: This projection type index is not implemented:', projection_type_out
             stop
         end if
     end subroutine LL2PROJ

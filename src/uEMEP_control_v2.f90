@@ -53,7 +53,7 @@ program uEMEP_v6
     use subgrid_dispersion, only: uEMEP_subgrid_dispersion
     use set_emission_factors, only: uEMEP_set_emission_factors, uEMEP_convert_proxy_to_emissions, &
         uEMEP_nox_emission_temperature
-    use subgrid_emep, only: uEMEP_subgrid_EMEP
+    use subgrid_emep, only: uEMEP_subgrid_EMEP, nlreg_uEMEP_calculate_nonlocal_from_in_region
     use subgrid_deposition_emep, only: uEMEP_set_deposition_velocities, &
         uEMEP_subgrid_deposition_EMEP, uEMEP_calculate_deposition
     use subgrid_emission_emep, only: uEMEP_subgrid_emission_EMEP
@@ -64,7 +64,7 @@ program uEMEP_v6
     use grid_roads, only: uEMEP_grid_roads
     use define_subgrid, only: uEMEP_define_subgrid_extent, uEMEP_define_subgrid
     use calculate_exposure, only: uEMEP_calculate_exposure
-    use auto_subgrid, only: uEMEP_auto_subgrid, uEMEP_region_mask, uEMEP_interpolate_auto_subgrid
+    use auto_subgrid, only: uEMEP_auto_subgrid, uEMEP_region_mask, uEMEP_interpolate_auto_subgrid, nlreg_uEMEP_region_mask_new
 
     use uemep_logger
 
@@ -429,6 +429,11 @@ program uEMEP_v6
 
                 ! Put EMEP data into subgrids for all sources
                 call uEMEP_subgrid_EMEP()
+
+                ! Call the new subroutine for calculating more precise estimates of the contributions from outside moving window but within region
+                if (trace_emissions_from_in_region .and. EMEP_grid_interpolation_flag .eq. 6) then
+                    call nlreg_uEMEP_calculate_nonlocal_from_in_region()
+                endif
 
                 if (calculate_deposition_flag) then
                     call uEMEP_subgrid_deposition_EMEP()
