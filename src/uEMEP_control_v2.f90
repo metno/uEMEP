@@ -431,9 +431,12 @@ program uEMEP_v6
                 call uEMEP_subgrid_EMEP()
 
                 ! Call the new subroutine for calculating more precise estimates of the contributions from outside moving window but within region
-                if (trace_emissions_from_in_region .and. EMEP_grid_interpolation_flag .eq. 6) then
-                    call nlreg_uEMEP_calculate_nonlocal_from_in_region()
-                endif
+                if (trace_emissions_from_in_region) then
+                    if (EMEP_grid_interpolation_flag == 0 .or. EMEP_grid_interpolation_flag == 6) then
+                        call nlreg_uEMEP_calculate_nonlocal_from_in_region()
+                    end if
+                    ! NB: Only implemented to be consistent with interpolation flag 0 and 6
+                end if
 
                 if (calculate_deposition_flag) then
                     call uEMEP_subgrid_deposition_EMEP()
