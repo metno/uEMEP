@@ -1009,7 +1009,79 @@ contains
 
         endif
 
-!Save the EMEP data interpolated to the subgrid. These are based on the gridded concentrations
+        ! Save region mask at target subgrid
+        if (trace_emissions_from_in_region) then  !! .or. use_region_select_and_mask_flag ??
+            write(unit_logfile,'(A)') '-------------------------------'
+            write(unit_logfile,'(A)') 'Saving region mask'
+            write(unit_logfile,'(A)') '-------------------------------'
+
+            variable_type = 'short'
+            var_name_temp = 'region_id'
+            unit_str='1'  !!!!!!! what to write here???
+            temp_subgrid = 0.
+            do tt = 1,subgrid_dim(t_dim_index)
+                ! add 0.1 to all values to avoid them being rounded down to 1 less than original value
+                temp_subgrid(:,:,tt) = nlreg_subgrid_region_id + 0.1
+            end do
+            if (save_netcdf_file_flag) then
+                write(unit_logfile,'(a)')'Writing netcdf variable: '//trim(var_name_temp)
+                ! NB: hard-coding scale_factor=1 since it does not make sense to have scale_factor for an ID variable!
+                call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                    ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                    ,unit_str,title_str,create_file,valid_min,variable_type,1.)
+            endif
+            if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                write(unit_logfile,'(A)') 'Saving receptor version of region mask is not yet implemented!'
+                stop
+            endif
+        end if
+
+        ! Save contributions from nonlocal in-region
+        if (save_emep_source_contributions .and. trace_emissions_from_in_region) then
+            write(unit_logfile,'(A)') '-------------------------------'
+            write(unit_logfile,'(A)') 'Saving EMEP nonlocal contributions from-in-region'
+            write(unit_logfile,'(A)') '-------------------------------'
+
+            filename_append = '_from_in_region'
+            do i_pollutant = 1,n_emep_pollutant_loop
+                do i_source = 1,n_source_index
+                    if (calculate_source(i_source).or.save_EMEP_source(i_source).or.i_source.eq.allsource_index) then
+                        !Do not save for the additional GNFR sources
+                        if (i_source == traffic_gasoline_nc_index .or. i_source == traffic_diesel_nc_index .or. i_source == traffic_gas_nc_index .or. i_source == publicpower_point_nc_index .or. i_source == publicpower_area_nc_index) cycle
+                        !Do not save nonexhaust for nox
+                        if (i_source == traffic_nonexhaust_index .and. (pollutant_loop_index(i_pollutant) == nox_index .or. pollutant_loop_index(i_pollutant) == no2_index)) cycle
+                        ! loop over normal and additional version of the nonlocal in-region
+                        do i_loop = 1,2
+                            if (i_loop == 1) then
+                                ! small domain
+                                temp_subgrid = nlreg_subgrid_nonlocal_from_in_region(:,:,:,i_source,i_pollutant)
+                                i_file = emep_subgrid_semilocal_file_index(i_source)
+                            else
+                                ! additional domain: add the additional increment
+                                if (.not. (EMEP_additional_grid_interpolation_size > 0)) cycle
+                                temp_subgrid = nlreg_subgrid_nonlocal_from_in_region(:,:,:,i_source,i_pollutant) + nlreg_subgrid_nonlocal_from_in_region_additional_increment(:,:,:,i_source,i_pollutant)
+                                i_file = emep_additional_subgrid_semilocal_file_index(i_source)
+                            end if
+                            variable_type='float'
+                            unit_str='ug/m3'
+                            var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//trim(filename_append)
+                            if (save_netcdf_file_flag) then
+                                write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+                                call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                                    ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                                    ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+                            endif
+                            if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                                write(unit_logfile,'(A)') 'Saving receptor version of semilocal not yet implemented!'
+                                stop
+                            endif
+                        end do
+                    end if
+                end do
+            end do
+        end if
+
+        !Save the EMEP data interpolated to the subgrid. These are based on the gridded concentrations
         if (save_emep_source_contributions) then
 
             if (trace_emissions_from_in_region) then
