@@ -482,42 +482,42 @@ contains
                                 end if
                             end if
                         end do
+
+                        !Normalise the contributions
+                        !Calculate the sum
+                        sum_no2_source_subgrid = 0.0
+                        sum_o3_source_subgrid = 0.0
+                        do i_source = 1, n_source_index
+                            if (calculate_source(i_source) .or. (calculate_emep_source(i_source) .and. .not. calculate_source(i_source))) then
+                                sum_no2_source_subgrid = sum_no2_source_subgrid + comp_source_subgrid(i,j,t,no2_index,i_source)
+                                sum_o3_source_subgrid = sum_o3_source_subgrid + comp_source_subgrid(i,j,t,o3_index,i_source)
+                            end if
+                        end do
+
+                        ! Set the background fractions so they will not be adjusted with normalisation
+                        do i_source = 1, n_source_index
+                            if (calculate_source(i_source) .or. (calculate_emep_source(i_source) .and. .not. calculate_source(i_source))) then
+                                ! Adjust for the background and normalise
+                                if (abs(sum_no2_source_subgrid) > epsilon0) then
+                                    comp_source_subgrid(i,j,t,no2_index,i_source) = comp_source_subgrid(i,j,t,no2_index,i_source)/sum_no2_source_subgrid &
+                                        *(comp_subgrid(i,j,t,no2_index) - comp_source_EMEP_subgrid(i,j,t,no2_index,allsource_index))
+                                else
+                                    comp_source_subgrid(i,j,t,no2_index,i_source) = 0
+                                end if
+                                
+                                if (abs(sum_o3_source_subgrid) > epsilon0) then
+                                    comp_source_subgrid(i,j,t,o3_index,i_source) = comp_source_subgrid(i,j,t,o3_index,i_source)/sum_o3_source_subgrid &
+                                        *(comp_subgrid(i,j,t,o3_index) - comp_source_EMEP_subgrid(i,j,t,o3_index,allsource_index))
+                                else
+                                    comp_source_subgrid(i,j,t,o3_index,i_source) = 0
+                                end if
+                                if (comp_subgrid(i,j,t,no2_index) .le. 0) comp_source_subgrid(i,j,t,no2_index,i_source) = 0
+                                if (comp_subgrid(i,j,t,o3_index) .le. 0) comp_source_subgrid(i,j,t,o3_index,i_source) = 0
+                            end if
+                        end do
                     else
                         comp_source_subgrid(i,j,t,:,:) = NODATA_value
                     end if
-
-                    !Normalise the contributions
-                    !Calculate the sum
-                    sum_no2_source_subgrid = 0.0
-                    sum_o3_source_subgrid = 0.0
-                    do i_source = 1, n_source_index
-                        if (calculate_source(i_source) .or. (calculate_emep_source(i_source) .and. .not. calculate_source(i_source))) then
-                            sum_no2_source_subgrid = sum_no2_source_subgrid + comp_source_subgrid(i,j,t,no2_index,i_source)
-                            sum_o3_source_subgrid = sum_o3_source_subgrid + comp_source_subgrid(i,j,t,o3_index,i_source)
-                        end if
-                    end do
-
-                    ! Set the background fractions so they will not be adjusted with normalisation
-                    do i_source = 1, n_source_index
-                        if (calculate_source(i_source) .or. (calculate_emep_source(i_source) .and. .not. calculate_source(i_source))) then
-                            ! Adjust for the background and normalise
-                            if (abs(sum_no2_source_subgrid) > epsilon0) then
-                                comp_source_subgrid(i,j,t,no2_index,i_source) = comp_source_subgrid(i,j,t,no2_index,i_source)/sum_no2_source_subgrid &
-                                    *(comp_subgrid(i,j,t,no2_index) - comp_source_EMEP_subgrid(i,j,t,no2_index,allsource_index))
-                            else
-                                comp_source_subgrid(i,j,t,no2_index,i_source) = 0
-                            end if
-                            
-                            if (abs(sum_o3_source_subgrid) > epsilon0) then
-                                comp_source_subgrid(i,j,t,o3_index,i_source) = comp_source_subgrid(i,j,t,o3_index,i_source)/sum_o3_source_subgrid &
-                                    *(comp_subgrid(i,j,t,o3_index) - comp_source_EMEP_subgrid(i,j,t,o3_index,allsource_index))
-                            else
-                                comp_source_subgrid(i,j,t,o3_index,i_source) = 0
-                            end if
-                            if (comp_subgrid(i,j,t,no2_index) .le. 0) comp_source_subgrid(i,j,t,no2_index,i_source) = 0
-                            if (comp_subgrid(i,j,t,o3_index) .le. 0) comp_source_subgrid(i,j,t,o3_index,i_source) = 0
-                        end if
-                    end do
                 end do
             end do
         end do
