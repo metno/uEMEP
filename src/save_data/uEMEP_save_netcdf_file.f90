@@ -52,14 +52,16 @@ contains
         integer i_sp,ii_sp
 
         real, allocatable :: subgrid_dummy(:,:,:,:,:,:)
-        real, allocatable :: comp_subgrid_dummy(:,:,:,:)
+        ! real, allocatable :: comp_subgrid_dummy(:,:,:,:)  ! THIS IS NO LONGER NEEDED, SINCE WE NO LONGER USE REGION LOOP FOR NO2 AND O3 CONTRIBUTION NOR SAVE IN-REGION VERSION OF TOTAL CONCENTRATIONS
         character(256) filename_append
+        character(256),parameter :: inregion_suffix = '_from_in_region'   ! same function as filename_append, but does not change with in_region_loop
         integer in_region_loop, n_in_region_loop
         logical save_netcdf_fraction_as_contribution_flag_dummy
 
-        real, allocatable :: comp_source_subgrid_dummy(:,:,:,:,:)
-        real, allocatable :: comp_source_EMEP_subgrid_dummy(:,:,:,:,:)
-        real, allocatable :: comp_source_EMEP_additional_subgrid_dummy(:,:,:,:,:)
+        ! THIS IS NO LONGER NEEDED, SINCE WE NO LONGER USE REGION LOOP FOR NO2 AND O3 CONTRIBUTION
+        ! real, allocatable :: comp_source_subgrid_dummy(:,:,:,:,:)
+        ! real, allocatable :: comp_source_EMEP_subgrid_dummy(:,:,:,:,:)
+        ! real, allocatable :: comp_source_EMEP_additional_subgrid_dummy(:,:,:,:,:)
 
         if (include_o3_in_aqi_index) then
             n_save_aqi_pollutant_index=n_aqi_pollutant_index
@@ -200,8 +202,10 @@ contains
 
             !Loop over the normal subgrid and the in region subgrid by saving  to a dummy variable and putting back when finished
             if (trace_emissions_from_in_region) then
-                n_in_region_loop=2
-                if (.not.allocated(comp_subgrid_dummy))allocate (comp_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
+                !original: n_in_region_loop=2
+                ! NO LONGER INCLUDE SEPARATE TOTAL CONCENTRATION FOR FROM-IN-REGION. LATER REMOVE THE in_region_loop
+                n_in_region_loop=1
+                ! if (.not.allocated(comp_subgrid_dummy))allocate (comp_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
             else
                 n_in_region_loop=1
             endif
@@ -213,14 +217,15 @@ contains
                 if (in_region_loop.eq.2) write(unit_logfile,'(a)')'Saving only regional compounds'
                 write(unit_logfile,'(a)')'--------------------------'
 
-                !Loop over the normal subgrid and the in region subgrid by saving  to a dummy variable and pputting back when finished
-                if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
-                    filename_append='_from_in_region'
-                    comp_subgrid_dummy=comp_subgrid
-                    comp_subgrid=comp_subgrid_from_in_region
-                else
-                    filename_append=''
-                endif
+                ! THIS IS NO LONGER NEEDED, SINCE WE NO LONGER SAVE IN_REGION VERSION OF TOTAL CONCENTRATIONS
+                ! !Loop over the normal subgrid and the in region subgrid by saving  to a dummy variable and pputting back when finished
+                ! if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+                !     filename_append='_from_in_region'
+                !     comp_subgrid_dummy=comp_subgrid
+                !     comp_subgrid=comp_subgrid_from_in_region
+                ! else
+                !     filename_append=''
+                ! endif
 
 
                 variable_type='float'
@@ -288,18 +293,20 @@ contains
                     endif
                 enddo
 
-                if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
-                    comp_subgrid_from_in_region=comp_subgrid
-                    comp_subgrid=comp_subgrid_dummy
-                endif
+                ! THIS IS NO LONGER NEEDED, SINCE WE NO LONGER SAVE IN_REGION VERSION OF TOTAL CONCENTRATIONS
+                ! if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+                !     comp_subgrid_from_in_region=comp_subgrid
+                !     comp_subgrid=comp_subgrid_dummy
+                ! endif
 
             enddo !in region loop
         endif
 
 
-        if (trace_emissions_from_in_region) then
-            if (allocated(comp_subgrid_dummy)) deallocate (comp_subgrid_dummy)
-        endif
+        ! THIS IS NO LONGER NEEDED, SINCE WE NO LONGER SAVE IN_REGION VERSION OF TOTAL CONCENTRATIONS
+        ! if (trace_emissions_from_in_region) then
+        !     if (allocated(comp_subgrid_dummy)) deallocate (comp_subgrid_dummy)
+        ! endif
 
         create_file=.false.
         create_file_rec=.false.
@@ -313,20 +320,21 @@ contains
             n_in_region_loop=1
         endif
 
-        if (trace_emissions_from_in_region.and.(save_no2_source_contributions.or.save_o3_source_contributions)) then
-            if (.not.allocated(comp_subgrid_dummy))allocate (comp_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
-            subgrid_dummy=0
-            comp_subgrid_dummy=0
-            if (.not.allocated(comp_source_subgrid_dummy)) allocate(comp_source_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-            if (.not.allocated(comp_source_EMEP_subgrid_dummy)) allocate(comp_source_EMEP_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-            if (.not.allocated(comp_source_EMEP_additional_subgrid_dummy)) allocate(comp_source_EMEP_additional_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-            comp_source_subgrid_dummy=0
-            comp_source_EMEP_subgrid_dummy=0
-            comp_source_EMEP_additional_subgrid_dummy=0
+        ! THIS IS NO LONGER NEEDED, SINCE WE NO LONGER USE REGION LOOP FOR NO2 AND O3 CONTRIBUTION
+        ! if (trace_emissions_from_in_region.and.(save_no2_source_contributions.or.save_o3_source_contributions)) then
+        !     if (.not.allocated(comp_subgrid_dummy))allocate (comp_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
+        !     subgrid_dummy=0
+        !     comp_subgrid_dummy=0
+        !     if (.not.allocated(comp_source_subgrid_dummy)) allocate(comp_source_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        !     if (.not.allocated(comp_source_EMEP_subgrid_dummy)) allocate(comp_source_EMEP_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        !     if (.not.allocated(comp_source_EMEP_additional_subgrid_dummy)) allocate(comp_source_EMEP_additional_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+        !     comp_source_subgrid_dummy=0
+        !     comp_source_EMEP_subgrid_dummy=0
+        !     comp_source_EMEP_additional_subgrid_dummy=0
 
-        else
-            n_in_region_loop=1
-        endif
+        ! else
+        !     n_in_region_loop=1
+        ! endif
 
         do in_region_loop=1,n_in_region_loop
 
@@ -572,18 +580,28 @@ contains
                 enddo
             endif
 
-            if (save_no2_source_contributions.or.save_o3_source_contributions) then
+            ! Save NO2 and O3 source contributions
+            ! NB: This is no longer repeated in the second iteration of the in-region loop because
+            ! the subroutine "uEMEP_source_fraction_chemistry" now calculates both normal and in_region contributions
+            ! to NO2 and O3 in a single call. Note that in_region contributions are no longer defined for nonlocal
+            ! nor for the additional domain
+            if (in_region_loop == 1 .and. (save_no2_source_contributions.or.save_o3_source_contributions)) then
 
-                if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
-                    !Save the normal variables in a dummy array
-                    comp_source_subgrid_dummy=comp_source_subgrid
-                    comp_source_EMEP_subgrid_dummy=comp_source_EMEP_subgrid
-                    comp_source_EMEP_additional_subgrid_dummy=comp_source_EMEP_additional_subgrid
-                    !Set in the in region variables
-                    comp_source_subgrid=comp_source_subgrid_from_in_region
-                    comp_source_EMEP_subgrid=comp_source_EMEP_subgrid_from_in_region
-                    comp_source_EMEP_additional_subgrid=comp_source_EMEP_additional_subgrid_from_in_region
-                endif
+                write(unit_logfile,'(A)') '-------------------------------'
+                write(unit_logfile,'(A)') 'Saving NO2 and O3 contributions'
+                write(unit_logfile,'(A)') '-------------------------------'
+
+                ! THIS IS NO LONGER NEEDED, SINCE WE NO LONGER USE REGION LOOP FOR NO2 AND O3 CONTRIBUTION
+                ! if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+                !     !Save the normal variables in a dummy array
+                !     comp_source_subgrid_dummy=comp_source_subgrid
+                !     comp_source_EMEP_subgrid_dummy=comp_source_EMEP_subgrid
+                !     comp_source_EMEP_additional_subgrid_dummy=comp_source_EMEP_additional_subgrid
+                !     !Set in the in region variables
+                !     comp_source_subgrid=comp_source_subgrid_from_in_region
+                !     comp_source_EMEP_subgrid=comp_source_EMEP_subgrid_from_in_region
+                !     comp_source_EMEP_additional_subgrid=comp_source_EMEP_additional_subgrid_from_in_region
+                ! endif
 
                 if (EMEP_additional_grid_interpolation_size.gt.0) then
                     calculate_EMEP_additional_grid_flag=.true.
@@ -697,9 +715,70 @@ contains
                         endif
                     enddo
 
+                    ! Save in-region version of NO2 concentration for all sources, except for non-local (i.e. allsource_index is NOT included)
+                    ! ********************************************************************************************************
+                    if (trace_emissions_from_in_region) then
+                        if (save_netcdf_fraction_as_contribution_from_in_region_flag) then
+                            variable_type='float'
+                            unit_str="ug/m3"
+                        else
+                            variable_type='byte'
+                            unit_str="%"
+                        endif
+
+                        do i_source=1,n_source_index
+                            ! Skip sources not to be calculated in uEMEP or EMEP (NB: also explicitly skip allsource)
+                            if (i_source == allsource_index .or. .not. (calculate_source(i_source) .or. calculate_emep_source(i_source))) then
+                                cycle
+                            end if
+                            !Save all EMEP NO2 contributions
+                            !if (calculate_source(i_source).or.i_source.eq.allsource_index.or.calculate_emep_source(i_source)) then
+                            if (i_source.eq.traffic_nonexhaust_index) then
+                                !Do not save nonexhaust for exhaust gas emissions
+                                cycle
+                            end if
+                            i_file=subgrid_local_file_index(i_source)
+                            if ((calculate_emep_source(i_source) .and. .not. calculate_source(i_source))) then
+                                ! NB: skipping check that save_emep_source_contributions==.true.
+                                i_file=emep_subgrid_local_file_index(i_source)
+                            end if
+
+                            if (i_source.eq.traffic_index) then
+                                var_name_temp=trim(var_name_nc(conc_nc_index,no2_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))//'_exhaust'//trim(inregion_suffix)
+                            else
+                                var_name_temp=trim(var_name_nc(conc_nc_index,no2_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))//trim(inregion_suffix)
+                            end if
+                            if (save_netcdf_fraction_as_contribution_flag) then
+                                temp_subgrid=comp_source_subgrid_from_in_region(:,:,:,no2_index,i_source)
+                            else
+                                ! NB: normalizing with the total concentration, taken from 'comp_subgrid', not the in-region array
+                                temp_subgrid=comp_source_subgrid_from_in_region(:,:,:,no2_index,i_source)/comp_subgrid(:,:,:,no2_index)*100.
+                            end if
+
+                            if (save_netcdf_file_flag) then
+                                write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), mean_mask(temp_subgrid,use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
+                                call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                                    ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                                    ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+                            end if
+                            if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                                write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+                                call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                                    ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                                    ,unit_str,title_str_rec,create_file_rec,valid_min &
+                                    ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                                    ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                                    ,z_rec(allsource_index,1) &
+                                    ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)
+                            end if
+                        end do
+                    end if
+                    ! **************************************************
+                    ! Done saving in-region version of NO2 contributions
+
                     valid_min=0.
 
-                endif
+                endif  !save_no2_source_contributions
 
                 if (save_o3_source_contributions) then
 
@@ -818,22 +897,73 @@ contains
                         endif
                     enddo
 
+                    ! Save in-region version of O3 concentration for all sources, except for non-local (i.e. allsource_index is NOT included)
+                    ! ********************************************************************************************************
+                    if (trace_emissions_from_in_region .and. save_netcdf_fraction_as_contribution_from_in_region_flag) then
+                        ! NB: Not implementing the case of fraction-as-contribution, as is implemented but not used for the normal O3 source contributions above
+                        variable_type='float'
+                        unit_str="ug/m3"
+                        valid_min=-1000.
+                        do i_source=1,n_source_index
+                            ! Skip sources not to be calculated in uEMEP or EMEP (NB: also explicitly skip allsource)
+                            if (i_source == allsource_index .or. .not. (calculate_source(i_source) .or. calculate_emep_source(i_source))) then
+                                cycle
+                            end if
+                            if (i_source.eq.traffic_nonexhaust_nc_index) then
+                                !Do not save nonexhaust for exhaust gas emissions
+                                cycle
+                            end if
+                            if (i_source.eq.allsource_index) then
+                                i_file=emep_subgrid_nonlocal_file_index(i_source)
+                            else
+                                i_file=subgrid_local_file_index(i_source)
+                            endif
+                            if (calculate_emep_source(i_source) .and. .not. calculate_source(i_source)) then
+                                ! NB: skipping check that save_emep_source_contributions==.true.
+                                i_file=emep_subgrid_local_file_index(i_source)
+                            endif
+
+                            var_name_temp=trim(var_name_nc(conc_nc_index,o3_nc_index,allsource_nc_index))//'_'//trim(filename_grid(i_file))//trim(inregion_suffix)
+                            temp_subgrid=comp_source_subgrid_from_in_region(:,:,:,o3_index,i_source)
+
+                            if (save_netcdf_file_flag) then
+                                write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), mean_mask(temp_subgrid,use_subgrid(:,:,allsource_index),size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
+                                call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                                    ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                                    ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+                            endif
+                            if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                                write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+                                call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                                    ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                                    ,unit_str,title_str_rec,create_file_rec,valid_min &
+                                    ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                                    ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                                    ,z_rec(allsource_index,1) &
+                                    ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)
+                            endif
+                        enddo
+                    end if
+                    ! **************************************************
+                    ! Done saving in-region version of O3 contributions
+
                     valid_min=0.
 
-                endif
+                endif  !save_o3_source_contributions
 
-                if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
-                    !Save the in region variables
-                    comp_source_subgrid_from_in_region=comp_source_subgrid
-                    comp_source_EMEP_subgrid_from_in_region=comp_source_EMEP_subgrid
-                    comp_source_EMEP_additional_subgrid_from_in_region=comp_source_EMEP_additional_subgrid
-                    !Restore the normal variables from the dummy array
-                    comp_source_subgrid=comp_source_subgrid_dummy
-                    comp_source_EMEP_subgrid=comp_source_EMEP_subgrid_dummy
-                    comp_source_EMEP_additional_subgrid=comp_source_EMEP_additional_subgrid_dummy
-                endif
+                ! THIS IS NO LONGER NEEDED, SINCE WE NO LONGER USE REGION LOOP FOR NO2 AND O3 CONTRIBUTION
+                ! if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
+                !     !Save the in region variables
+                !     comp_source_subgrid_from_in_region=comp_source_subgrid
+                !     comp_source_EMEP_subgrid_from_in_region=comp_source_EMEP_subgrid
+                !     comp_source_EMEP_additional_subgrid_from_in_region=comp_source_EMEP_additional_subgrid
+                !     !Restore the normal variables from the dummy array
+                !     comp_source_subgrid=comp_source_subgrid_dummy
+                !     comp_source_EMEP_subgrid=comp_source_EMEP_subgrid_dummy
+                !     comp_source_EMEP_additional_subgrid=comp_source_EMEP_additional_subgrid_dummy
+                ! endif
 
-            endif
+            endif  !(in_region_loop == 1 .and. (save_no2_source_contributions.or.save_o3_source_contributions))
 
             if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
                 subgrid_from_in_region=subgrid
@@ -845,10 +975,12 @@ contains
 
         if (trace_emissions_from_in_region) then
             if (allocated(subgrid_dummy)) deallocate (subgrid_dummy)
-            if (allocated(comp_subgrid_dummy)) deallocate (comp_subgrid_dummy)
-            if (allocated(comp_source_subgrid_dummy)) deallocate(comp_source_subgrid_dummy)
-            if (allocated(comp_source_EMEP_subgrid_dummy)) deallocate(comp_source_EMEP_subgrid_dummy)
-            if (allocated(comp_source_EMEP_additional_subgrid_dummy)) deallocate(comp_source_EMEP_additional_subgrid_dummy)
+
+            ! THIS IS NO LONGER NEEDED, SINCE WE NO LONGER USE REGION LOOP FOR NO2 AND O3 CONTRIBUTION
+            ! if (allocated(comp_subgrid_dummy)) deallocate (comp_subgrid_dummy)
+            ! if (allocated(comp_source_subgrid_dummy)) deallocate(comp_source_subgrid_dummy)
+            ! if (allocated(comp_source_EMEP_subgrid_dummy)) deallocate(comp_source_EMEP_subgrid_dummy)
+            ! if (allocated(comp_source_EMEP_additional_subgrid_dummy)) deallocate(comp_source_EMEP_additional_subgrid_dummy)
         endif
 
 
@@ -1039,7 +1171,7 @@ contains
         ! Save contributions from nonlocal in-region
         if (save_emep_source_contributions .and. trace_emissions_from_in_region) then
             write(unit_logfile,'(A)') '-------------------------------'
-            write(unit_logfile,'(A)') 'Saving EMEP nonlocal contributions from-in-region'
+            write(unit_logfile,'(A)') 'Saving EMEP semilocal contributions from-in-region'
             write(unit_logfile,'(A)') '-------------------------------'
 
             filename_append = '_from_in_region'
