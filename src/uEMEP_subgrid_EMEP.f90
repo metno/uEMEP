@@ -1806,6 +1806,10 @@ contains
         integer max_x_dist,max_y_dist
         ! indexers for the location of a 1x1 LF grid cell in the EMEP grid
         integer iiii_nc,jjjj_nc
+        ! indexers for the location of a 1x1 LF grid cell in the extended EMEP grid
+        integer iiii_extended,jjjj_extended
+        ! dimensions of the extended EMEP grid
+        integer nx_extended,ny_extended
         ! indexers for finding local contributions in LF array
         integer lc_index,lc_additional_index
         ! grid counter
@@ -1828,7 +1832,6 @@ contains
         ! For testing
         !logical printout
         !integer i_source
-        !real longitude,latitude
 
         write(unit_logfile,'(A)') ''
         write(unit_logfile,'(A)') '=============================================================================='
@@ -1858,6 +1861,10 @@ contains
             ! Deduce the max distance (+/-) we have LF data for
             max_x_dist = (dim_length_nc(xdist_dim_nc_index)-1)/2
             max_y_dist = (dim_length_nc(ydist_dim_nc_index)-1)/2
+
+            ! Dimensions of the extended region mask grid
+            nx_extended = dim_length_nc(x_dim_nc_index) + 2*nlreg_ngrid_extended_margin
+            ny_extended = dim_length_nc(y_dim_nc_index) + 2*nlreg_ngrid_extended_margin
 
             ! Indices in lc_var3d_nc to find the local contributions
             lc_index=lc_local_nc_loop_index(local_fraction_grid_for_EMEP_grid_interpolation)
@@ -1936,26 +1943,27 @@ contains
                                     !    write(unit_logfile,'(A,6I5)') '    iiii,jjjj,xdist_small,ydist_small,idist_small,jdist_small = ',iiii,jjjj,xdist_small,ydist_small,idist_small,jdist_small
                                     !end if
                                     if (abs(xdist_small) > max_x_dist .or. abs(ydist_small) > max_y_dist) then
-                                        ! This grid is NOT covered by 1x1 LF data
-                                        ! -> add its region coverage to the weight
+                                        ! This grid is NOT covered by 1x1 LF data, so add its region coverage to the weight
+                                        ! find index in the normal EMEP grid
                                         iiii_nc = ii + xdist_small
                                         jjjj_nc = jj + ydist_small
-                                        !if (printout) write(unit_logfile,'(A,2I5)') '      NOT covered by 1x1: iiii_nc,jjjj_nc = ',iiii_nc,jjjj_nc
-                                        ! check if this is within the EMEP grid
-                                        if (iiii_nc >= 1 .and. iiii_nc <= dim_length_nc(x_dim_nc_index) .and. jjjj_nc >= 1 .and. jjjj_nc <= dim_length_nc(y_dim_nc_index)) then
-                                            weights_EMEP_additional_increment_current_lfgrid = weights_EMEP_additional_increment_current_lfgrid + nlreg_regionfraction_per_EMEP_grid(iiii_nc, jjjj_nc, :)
+                                        ! find corresponding index in the extended EMEP grid of region fractions
+                                        iiii_extended = iiii_nc + nlreg_ngrid_extended_margin
+                                        jjjj_extended = jjjj_nc + nlreg_ngrid_extended_margin
+                                        !if (printout) write(unit_logfile,'(A,4I5)') '      NOT covered by 1x1: iiii_nc,jjjj_nc,iiii_extended,jjjj_extended = ',iiii_nc,jjjj_nc,iiii_extended,jjjj_extended
+                                        ! check if this is within the extended region mask grid
+                                        if (iiii_extended >= 1 .and. iiii_extended <= nx_extended .and. jjjj_extended >= 1 .and. jjjj_extended <= ny_extended) then
+                                            weights_EMEP_additional_increment_current_lfgrid = weights_EMEP_additional_increment_current_lfgrid + nlreg_regionfraction_per_EMEP_extended_grid(iiii_extended, jjjj_extended, :)
                                             !if (printout) then
-                                            !    call PROJ2LL(var1d_nc(ii+xdist_small,x_dim_nc_index),var1d_nc(jj+ydist_small,y_dim_nc_index),longitude,latitude,EMEP_projection_attributes,EMEP_projection_type)
-                                            !    write(unit_logfile,'(A,2f12.4)') '      IS within EMEP grid: lon,lat = ',longitude,latitude
                                             !    write(unit_logfile,'(A)') '      weight increased by region coverage, which is:'
                                             !    do region_index = 1, nlreg_n_regions
-                                            !        write(unit_logfile,'(A,2I5,f8.4)') '        region_index,region_id,regionfraction =',region_index,nlreg_region_ids(region_index),nlreg_regionfraction_per_EMEP_grid(iiii_nc,jjjj_nc,region_index)
+                                            !        write(unit_logfile,'(A,2I5,f8.4)') '        region_index,region_id,regionfraction =',region_index,nlreg_region_ids(region_index),nlreg_regionfraction_per_EMEP_extended_grid(iiii_extended,jjjj_extended,region_index)
                                             !    end do
                                             !end if
                                         !else if (printout) then
-                                        !    write(unit_logfile,'(A)') '      NOT within EMEP grid. Weights not increased!'
+                                        !    write(unit_logfile,'(A)') '      NOT within extended region mask grid. Weights not increased!'
                                         end if
-                                        ! NB: If the cell is is outside the EMEP grid, it is as if it is also outside all the regions. However, this means we miss out on contributions from the parts of the regions outside the EMEP grid, which is not good. I may have to create a separate, larger grid to use for nlreg_regionfraction_per_EMEP_grid
+                                        ! NB: If the cell is is outside the extended EMEP grid, it is considered to be outside all the regions. If the extended grid size is set properly, this should never be the case for the receptor EMEP grids (ii,jj) that overlap with the target grid.
                                         counter = counter + 1
                                     else
                                         ! The grid is covered by 1x1 LF data: subtract the 1x1 LF from the additional increment
@@ -1971,7 +1979,6 @@ contains
                                 end do
                             end do
                             ! ensure the additional increment is not smaller than zero
-                            ! (NB: unsure if this is correct syntax, should ask Erik)
                             where (EMEP_additional_increment_current_lfgrid < 0) EMEP_additional_increment_current_lfgrid = 0
                             
                             !if (printout) then
@@ -2010,6 +2017,8 @@ contains
                     !do region_index = 1, nlreg_n_regions
                     !    write(unit_logfile,'(A,2i5,f8.4,i5,f8.4)'),'  region_index,region_id,value =',region_index,nlreg_region_ids(region_index),temp_EMEP_additional_increment_from_in_region(region_index,1,1,1)
                     !end do
+                    ! write additional increment from first 10 regions
+                    !write(unit_logfile,'(A,2I6,10f12.4f)') 'ii,jj,add_incs(1,1,1) =',ii,jj,temp_EMEP_additional_increment_from_in_region(:,1,1,1)
 
                 end do
             end do

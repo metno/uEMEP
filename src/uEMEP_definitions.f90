@@ -871,10 +871,17 @@ module uEMEP_definitions
     real, allocatable :: nlreg_regionfraction_per_EMEP_grid(:, :, :)
     ! nlreg_region_ids specifies the region IDs along the region dimension and will get length nlreg_n_regions
     integer, allocatable :: nlreg_region_ids(:)
-    ! nlreg_n_regions is the number of regions. Will be set after reading region mask file
+    ! nlreg_n_regions is the number of regions occurring in the target grid. Will be set after reading region mask file
     integer :: nlreg_n_regions = -1
     ! nlreg_n_subsamples_per_EMEP_grid specifies how many subsamples to use along each spatial dimension of an EMEP grid when creating a region mask for each grid
     integer :: nlreg_n_subsamples_per_EMEP_grid = 20
+
+    ! Extended array of regionfraction, needed to cover the big (additional) local fraction sources to the target grid (x,y,region)
+    ! We don't need subsample array for the extended version, since the "normal" (non-additional) local fraction grid should always be completely covered by the reduced EMEP grid. So the subsample grid is only defined locally in the subroutine where the region fraction is calculated
+    real, allocatable :: nlreg_regionfraction_per_EMEP_extended_grid(:, :, :)
+    ! number of extra EMEP grids in each direction in the extended array
+    ! initialized to zero, but will be set higher if used
+    integer :: nlreg_ngrid_extended_margin = 0
 
     ! The following arrays will contain the contributions from outside moving window but within region for each uEMEP target subgrid (x,y,t,source,pollutant)
     ! - from the small (1x1) LF grid data

@@ -520,6 +520,14 @@ contains
         ! grid dimension looping indices
         integer i,j,ii,jj,i_sub,j_sub
 
+        ! The region ID of each subsample of the extended EMEP grid,
+        ! used for calculating the region fractions of the extended grid
+        integer, allocatable :: EMEP_subsample_region_id_extended(:, :, :, :)
+        ! variables used for defining the extended EMEP grid
+        integer max_lf_distance
+        integer ii_nc,jj_nc
+        integer nx_extended, ny_extended
+
         ! Variables used when applying the region mask to the EMEP and uEMEP grids
         ! x and y value of current location in the region mask projection
         real x_location,y_location
@@ -562,6 +570,9 @@ contains
         end if
         if (allocated(nlreg_region_ids)) then
             deallocate(nlreg_region_ids)
+        end if
+        if (allocated(nlreg_regionfraction_per_EMEP_extended_grid)) then
+            deallocate(nlreg_regionfraction_per_EMEP_extended_grid)
         end if
 
         ! Read the region mask netcdf file (implementation based on uEMEP_read_EMEP)
@@ -730,54 +741,6 @@ contains
             end do
         end do
 
-        ! Set region ID of each subsample of the EMEP grid
-
-        write(unit_logfile,'(A)') 'Calculating region mask for the EMEP grid'
-
-        ! determine spacing in EMEP grid (NB: maybe this is alredy availabe somewhere?)
-        ! NB: I will not verify it is constant, but I assume it is
-        dx_emep = var1d_nc(2,x_dim_nc_index) - var1d_nc(1,x_dim_nc_index)
-        dy_emep = var1d_nc(2,y_dim_nc_index) - var1d_nc(1,y_dim_nc_index)
-        !write(unit_logfile, '(A,2I12,2f12.2)') 'EMEP nx,ny,dx,dy = ',dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dx_emep,dy_emep
-        ! loop over all EMEP grid cells
-        do ii = 1, dim_length_nc(x_dim_nc_index)
-            do jj = 1, dim_length_nc(y_dim_nc_index)
-                ! EMEP projection coordinate values at centre of this EMEP grid
-                x_emepmid = var1d_nc(ii,x_dim_nc_index)
-                y_emepmid = var1d_nc(jj,y_dim_nc_index)
-                !write(unit_logfile,'(A,2i12,2f12.2)') 'ii,jj,x_emepmid,yemepmid = ',ii,jj,x_emepmid,y_emepmid
-                ! go through all subsamples of this EMEP grid
-                do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
-                    do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
-                        ! EMEP projection coordinate value at this subsample of the EMEP grid
-                        x_emepsub = x_emepmid - dx_emep/2 + (i_sub-0.5)*dx_emep/nlreg_n_subsamples_per_EMEP_grid
-                        y_emepsub = y_emepmid - dy_emep/2 + (j_sub-0.5)*dy_emep/nlreg_n_subsamples_per_EMEP_grid
-                        ! calculate longitude and latitude from the EMEP projection
-                        call PROJ2LL(x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,EMEP_projection_attributes,EMEP_projection_type)
-                        ! calculate projection coordinates in the region mask grid
-                        call LL2PROJ(lon_emepsub,lat_emepsub,x_location,y_location,region_mask_projection_attributes,region_mask_projection_type)
-                        ! Determine index in the region mask grid for this location
-                        x_index = nint(1+(x_location-x_values_regionmask(1))/dx_regionmask)
-                        y_index = nint(1+(y_location-y_values_regionmask(1))/dy_regionmask)
-                        ! Check if this location is inside the region mask grid
-                        if (x_index >= 1 .and. x_index <= nx_regionmask .and. y_index >= 1 .and. y_index <= ny_regionmask) then
-                            nlreg_EMEP_subsample_region_id(i_sub,j_sub,ii,jj) = region_mask(x_index,y_index)
-                        end if
-                        ! NB: if it is outside the region ID, the 'no-region' value -1 is kept
-
-                        !if (ii > 1 .and. ii < 4 .and. jj > 3 .and. jj < 6) !then
-                        !    write(unit_logfile,'(A,4i4,2f12.2,2f12.4,2f12.2,2i12,i12)') 'ii,jj,i_sub,j_sub,x_sub,y_sub,lon_sub,lat_sub,x_loc,y_loc,x_ind,y_ind,reg = ',ii,jj,i_sub,j_sub,x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,x_location,y_location,x_index,y_index,nlreg_EMEP_subsample_region_id(i_sub,j_sub,ii,jj)
-                        !end if
-                    end do
-                end do
-            end do
-        end do
-
-        ! Deallocate the region mask
-        deallocate(region_mask)
-        deallocate(x_values_regionmask)
-        deallocate(y_values_regionmask)
-
         write(unit_logfile,'(A)') 'Finding the regions occurring in the target grid'
 
         ! Determine which regions occur in the target grid
@@ -832,7 +795,125 @@ contains
         deallocate(temp_region_ids)
         write(unit_logfile,'(A,I0)') 'Number of regions within target grid: ',nlreg_n_regions
         write(unit_logfile,'(A,100I5)') 'ID of these regions are (printing max 100): ', nlreg_region_ids
-        
+
+        ! Set region ID of each subsample of the EMEP grid
+
+        write(unit_logfile,'(A)') 'Calculating region mask for the EMEP grid'
+
+        ! determine spacing in EMEP grid (NB: maybe this is alredy availabe somewhere?)
+        ! NB: I will not verify it is constant, but I assume it is
+        dx_emep = var1d_nc(2,x_dim_nc_index) - var1d_nc(1,x_dim_nc_index)
+        dy_emep = var1d_nc(2,y_dim_nc_index) - var1d_nc(1,y_dim_nc_index)
+        !write(unit_logfile, '(A,2I12,2f12.2)') 'EMEP nx,ny,dx,dy = ',dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dx_emep,dy_emep
+        ! loop over all EMEP grid cells
+        do ii = 1, dim_length_nc(x_dim_nc_index)
+            do jj = 1, dim_length_nc(y_dim_nc_index)
+                ! EMEP projection coordinate values at centre of this EMEP grid
+                x_emepmid = var1d_nc(ii,x_dim_nc_index)
+                y_emepmid = var1d_nc(jj,y_dim_nc_index)
+                !write(unit_logfile,'(A,2i12,2f12.2)') 'ii,jj,x_emepmid,yemepmid = ',ii,jj,x_emepmid,y_emepmid
+                ! go through all subsamples of this EMEP grid
+                do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
+                    do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
+                        ! EMEP projection coordinate value at this subsample of the EMEP grid
+                        x_emepsub = x_emepmid - dx_emep/2 + (i_sub-0.5)*dx_emep/nlreg_n_subsamples_per_EMEP_grid
+                        y_emepsub = y_emepmid - dy_emep/2 + (j_sub-0.5)*dy_emep/nlreg_n_subsamples_per_EMEP_grid
+                        ! calculate longitude and latitude from the EMEP projection
+                        call PROJ2LL(x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,EMEP_projection_attributes,EMEP_projection_type)
+                        ! calculate projection coordinates in the region mask grid
+                        call LL2PROJ(lon_emepsub,lat_emepsub,x_location,y_location,region_mask_projection_attributes,region_mask_projection_type)
+                        ! Determine index in the region mask grid for this location
+                        x_index = nint(1+(x_location-x_values_regionmask(1))/dx_regionmask)
+                        y_index = nint(1+(y_location-y_values_regionmask(1))/dy_regionmask)
+                        ! Check if this location is inside the region mask grid
+                        if (x_index >= 1 .and. x_index <= nx_regionmask .and. y_index >= 1 .and. y_index <= ny_regionmask) then
+                            nlreg_EMEP_subsample_region_id(i_sub,j_sub,ii,jj) = region_mask(x_index,y_index)
+                        end if
+                        ! NB: if it is outside the region mask grid, the 'no-region' value -1 is kept
+
+                        !if (ii > 1 .and. ii < 4 .and. jj > 3 .and. jj < 6) !then
+                        !    write(unit_logfile,'(A,4i4,2f12.2,2f12.4,2f12.2,2i12,i12)') 'ii,jj,i_sub,j_sub,x_sub,y_sub,lon_sub,lat_sub,x_loc,y_loc,x_ind,y_ind,reg = ',ii,jj,i_sub,j_sub,x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,x_location,y_location,x_index,y_index,nlreg_EMEP_subsample_region_id(i_sub,j_sub,ii,jj)
+                        !end if
+                    end do
+                end do
+            end do
+        end do
+
+        ! Repeat for the extended EMEP grid
+        if (EMEP_additional_grid_interpolation_size > 0.0) then
+
+            write(unit_logfile,'(A)') 'Calculating region mask for extended grid'
+
+            ! Estimate how large the extended EMEP grid must be to cover region fraction data for additional LF contributions
+            ! We assume the reduced EMEP grid is just big enough to cover the 'normal' LF contributions
+            ! - max nr of LF cells that the source can be away from edge of target grid
+            max_lf_distance = 1 + int(max(dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index))/2)
+            ! - assuming reduced EMEP grid already covers the small local fraction domain, this is the number of EMEP grid-cells we need to add to all sides in the extended grid
+            nlreg_ngrid_extended_margin = (local_fraction_grid_size(2) - local_fraction_grid_size(1))*max_lf_distance
+
+            write(unit_logfile,'(A,2I6)') "max_lf_distance, nlreg_ngrid_extended_margin =",max_lf_distance, nlreg_ngrid_extended_margin
+
+            ! Allocate the extended array and fill with values, assuming equidistant EMEP grid
+            nx_extended = dim_length_nc(x_dim_nc_index) + 2*nlreg_ngrid_extended_margin
+            ny_extended = dim_length_nc(y_dim_nc_index) + 2*nlreg_ngrid_extended_margin
+            write(unit_logfile,'(A,2I6)') 'Extended grid: nx,ny =', nx_extended,ny_extended
+            allocate(EMEP_subsample_region_id_extended(nlreg_n_subsamples_per_EMEP_grid,nlreg_n_subsamples_per_EMEP_grid,nx_extended,ny_extended))
+            
+            ! loop over all EMEP cells in the extended grid and fill subsample region ID
+            do ii = 1, nx_extended
+                do jj = 1, ny_extended
+                    ! calculate the corresponding index in the normal EMEP grid
+                    ii_nc = ii - nlreg_ngrid_extended_margin
+                    jj_nc = jj - nlreg_ngrid_extended_margin
+                    !write(unit_logfile,'(A,4I6)') 'ii,jj,ii_nc,jj_nc =', ii,jj,ii_nc,jj_nc
+                    if (ii_nc >= 1 .and. ii_nc <= dim_length_nc(x_dim_nc_index) .and. jj_nc >= 1 .and. jj_nc <= dim_length_nc(y_dim_index)) then
+                        ! this grid is inside the normal EMEP grid, so we can reuse the values calculated above
+                        !write(unit_logfile,'(A)') '  INSIDE'
+                        EMEP_subsample_region_id_extended(:,:,ii,jj) = nlreg_EMEP_subsample_region_id(:,:,ii_nc,jj_nc)
+                    else
+                        ! we are in the extension area:
+                        ! EMEP projection coordinate values at centre of this EMEP grid
+                        ! (Maybe we don't need to use the arrays????)
+                        !   x_emepmid = x_values_emep_extended(ii)
+                        !   y_emepmid = y_values_emep_extended(jj)
+                        x_emepmid = var1d_nc(1,x_dim_nc_index) + dx_emep*(ii_nc - 1)
+                        y_emepmid = var1d_nc(1,y_dim_nc_index) + dy_emep*(jj_nc - 1)
+                        !write(unit_logfile,'(A,4f12.2)') ' OUTSIDE: xcoord[1],ycoord[1],x_emepmid,yemepmid = ',var1d_nc(1,x_dim_nc_index),var1d_nc(1,y_dim_nc_index),x_emepmid,y_emepmid
+                        ! go through all subsamples of this EMEP grid
+                        do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
+                            do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
+                                ! EMEP projection coordinate value at this subsample of the EMEP grid
+                                x_emepsub = x_emepmid - dx_emep/2 + (i_sub-0.5)*dx_emep/nlreg_n_subsamples_per_EMEP_grid
+                                y_emepsub = y_emepmid - dy_emep/2 + (j_sub-0.5)*dy_emep/nlreg_n_subsamples_per_EMEP_grid
+                                ! calculate longitude and latitude from the EMEP projection
+                                call PROJ2LL(x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,EMEP_projection_attributes,EMEP_projection_type)
+                                ! calculate projection coordinates in the region mask grid
+                                call LL2PROJ(lon_emepsub,lat_emepsub,x_location,y_location,region_mask_projection_attributes,region_mask_projection_type)
+                                ! Determine index in the region mask grid for this location
+                                x_index = nint(1+(x_location-x_values_regionmask(1))/dx_regionmask)
+                                y_index = nint(1+(y_location-y_values_regionmask(1))/dy_regionmask)
+                                ! Check if this location is inside the region mask grid
+                                if (x_index >= 1 .and. x_index <= nx_regionmask .and. y_index >= 1 .and. y_index <= ny_regionmask) then
+                                    EMEP_subsample_region_id_extended(i_sub,j_sub,ii,jj) = region_mask(x_index,y_index)
+                                end if
+                                ! NB: if it is outside the region mask grid, the 'no-region' value -1 is kept
+
+                                !if (ii > 1 .and. ii < 4 .and. jj > 3 .and. jj < 6) !then
+                                    !write(unit_logfile,'(A,4i4,2f12.2,2f12.4,2f12.2,2i12,i12)') 'ii,jj,i_sub,j_sub,x_sub,y_sub,lon_sub,lat_sub,x_loc,y_loc,x_ind,y_ind,reg = ',ii,jj,i_sub,j_sub,x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,x_location,y_location,x_index,y_index,EMEP_subsample_region_id_extended(i_sub,j_sub,ii,jj)
+                                !end if
+                            end do
+                        end do
+                        !write(unit_logfile,'(A)') 'Stopping after first subsample outside.'
+                    end if
+                end do
+            end do
+        end if
+
+        ! Deallocate the region mask
+        deallocate(region_mask)
+        deallocate(x_values_regionmask)
+        deallocate(y_values_regionmask)
+
         write(unit_logfile,'(A)') 'Calculating fraction of each EMEP cell in each region'
 
         ! Calculate fraction of each EMEP grid that is within each region, by counting the subsamples
@@ -854,6 +935,31 @@ contains
                 end do
             end do
         end do
+
+        ! Repeat for the extended EMEP grid
+        if (EMEP_additional_grid_interpolation_size > 0.0) then
+            write(unit_logfile,'(A)') 'Calculating fraction of each EMEP cell in each region for the extended grid'
+            allocate(nlreg_regionfraction_per_EMEP_extended_grid(nx_extended, ny_extended, nlreg_n_regions))
+            do ii = 1, nx_extended
+                do jj = 1, ny_extended
+                    do region_index = 1, nlreg_n_regions
+                        current_region_id = nlreg_region_ids(region_index)
+                        counter = 0
+                        do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
+                            do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
+                                if (EMEP_subsample_region_id_extended(i_sub,j_sub,ii,jj) == current_region_id) then
+                                    counter = counter + 1
+                                end if
+                            end do
+                        end do
+                        nlreg_regionfraction_per_EMEP_extended_grid(ii,jj,region_index) = counter*1.0/nlreg_n_subsamples_per_EMEP_grid**2
+                        !write(unit_logfile,'(A,6i5,f12.4)') 'ii,jj,region_index,region_id,counter,nsubsamples,fraction =',ii,jj,region_index,current_region_id,counter,nlreg_n_subsamples_per_EMEP_grid,nlreg_regionfraction_per_EMEP_extended_grid(ii,jj,region_index)
+                    end do
+                end do
+            end do
+            ! deallocate the subsample mask for the extended EMEP grid, which is no longer needed
+            deallocate(EMEP_subsample_region_id_extended)
+        end if
 
     end subroutine nlreg_uEMEP_region_mask_new
 
