@@ -542,7 +542,7 @@ contains
         real lon_emepsub,lat_emepsub
 
         ! Additional variables used for creating list of regions and calculating fraction of EMEP cells in each region
-        integer region_index
+        integer i_region
         integer, allocatable :: temp_region_ids(:)
         integer, allocatable :: temp_region_ids_dummy(:)
         integer counter
@@ -759,9 +759,9 @@ contains
                 if (current_region_id > 0 .and. .not. current_region_id == previous_region_id) then
                     ! Region ID is different from previous subgrid: check if we already found it before
                     current_region_already_found = .false.
-                    do region_index = 1, counter
+                    do i_region = 1, counter
                         ! NB: What happens if counter=0 ??????????????????????????????
-                        if (temp_region_ids(region_index) == current_region_id) then
+                        if (temp_region_ids(i_region) == current_region_id) then
                             current_region_already_found = .true.
                             exit
                         end if
@@ -920,8 +920,8 @@ contains
         allocate(nlreg_regionfraction_per_EMEP_grid(dim_length_nc(x_dim_nc_index), dim_length_nc(y_dim_nc_index),nlreg_n_regions))
         do ii = 1, dim_length_nc(x_dim_nc_index)
             do jj = 1, dim_length_nc(y_dim_nc_index)
-                do region_index = 1, nlreg_n_regions
-                    current_region_id = nlreg_region_ids(region_index)
+                do i_region = 1, nlreg_n_regions
+                    current_region_id = nlreg_region_ids(i_region)
                     counter = 0
                     do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
                         do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
@@ -930,8 +930,8 @@ contains
                             end if
                         end do
                     end do
-                    nlreg_regionfraction_per_EMEP_grid(ii,jj,region_index) = counter*1.0/nlreg_n_subsamples_per_EMEP_grid**2
-                    !write(unit_logfile,'(A,6i5,f12.4)') 'ii,jj,region_index,region_id,counter,nsubsamples,fraction =',ii,jj,region_index,current_region_id,counter,nlreg_n_subsamples_per_EMEP_grid,nlreg_regionfraction_per_EMEP_grid(ii,jj,region_index)
+                    nlreg_regionfraction_per_EMEP_grid(ii,jj,i_region) = counter*1.0/nlreg_n_subsamples_per_EMEP_grid**2
+                    !write(unit_logfile,'(A,6i5,f12.4)') 'ii,jj,i_region,region_id,counter,nsubsamples,fraction =',ii,jj,i_region,current_region_id,counter,nlreg_n_subsamples_per_EMEP_grid,nlreg_regionfraction_per_EMEP_grid(ii,jj,i_region)
                 end do
             end do
         end do
@@ -942,8 +942,8 @@ contains
             allocate(nlreg_regionfraction_per_EMEP_extended_grid(nx_extended, ny_extended, nlreg_n_regions))
             do ii = 1, nx_extended
                 do jj = 1, ny_extended
-                    do region_index = 1, nlreg_n_regions
-                        current_region_id = nlreg_region_ids(region_index)
+                    do i_region = 1, nlreg_n_regions
+                        current_region_id = nlreg_region_ids(i_region)
                         counter = 0
                         do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
                             do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
@@ -952,8 +952,8 @@ contains
                                 end if
                             end do
                         end do
-                        nlreg_regionfraction_per_EMEP_extended_grid(ii,jj,region_index) = counter*1.0/nlreg_n_subsamples_per_EMEP_grid**2
-                        !write(unit_logfile,'(A,6i5,f12.4)') 'ii,jj,region_index,region_id,counter,nsubsamples,fraction =',ii,jj,region_index,current_region_id,counter,nlreg_n_subsamples_per_EMEP_grid,nlreg_regionfraction_per_EMEP_extended_grid(ii,jj,region_index)
+                        nlreg_regionfraction_per_EMEP_extended_grid(ii,jj,i_region) = counter*1.0/nlreg_n_subsamples_per_EMEP_grid**2
+                        !write(unit_logfile,'(A,6i5,f12.4)') 'ii,jj,i_region,region_id,counter,nsubsamples,fraction =',ii,jj,i_region,current_region_id,counter,nlreg_n_subsamples_per_EMEP_grid,nlreg_regionfraction_per_EMEP_extended_grid(ii,jj,i_region)
                     end do
                 end do
             end do

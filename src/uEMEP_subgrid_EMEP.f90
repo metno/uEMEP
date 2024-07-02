@@ -1815,9 +1815,9 @@ contains
         ! grid counter
         integer counter
         ! variables to hold an region index (index of nlreg_region_ids)
-        integer region_index,current_region_index
+        integer i_region,current_region_index
         ! variables to hold a region ID (i.e. element value of nlreg_region_ids)
-        integer region_id,current_region_id,new_region_id
+        integer current_region_id,new_region_id
         ! fractional position of uEMEP subgrid within an EMEP grid
         real ii_frac_target,jj_frac_target
         ! location of subgrid in EMEP's coordinate system
@@ -1956,8 +1956,8 @@ contains
                                             weights_EMEP_additional_increment_current_lfgrid = weights_EMEP_additional_increment_current_lfgrid + nlreg_regionfraction_per_EMEP_extended_grid(iiii_extended, jjjj_extended, :)
                                             !if (printout) then
                                             !    write(unit_logfile,'(A)') '      weight increased by region coverage, which is:'
-                                            !    do region_index = 1, nlreg_n_regions
-                                            !        write(unit_logfile,'(A,2I5,f8.4)') '        region_index,region_id,regionfraction =',region_index,nlreg_region_ids(region_index),nlreg_regionfraction_per_EMEP_extended_grid(iiii_extended,jjjj_extended,region_index)
+                                            !    do i_region = 1, nlreg_n_regions
+                                            !        write(unit_logfile,'(A,2I5,f8.4)') '        i_region,region_id,regionfraction =',i_region,nlreg_region_ids(i_region),nlreg_regionfraction_per_EMEP_extended_grid(iiii_extended,jjjj_extended,i_region)
                                             !    end do
                                             !end if
                                         !else if (printout) then
@@ -1988,8 +1988,8 @@ contains
                             !        write(unit_logfile,'(A,I0,A,6f12.6)') '  isource=',i_source,': ',EMEP_additional_increment_current_lfgrid(1,i_source,:)
                             !    end do
                             !    write(unit_logfile,'(A)') 'Resulting weighting for each region:'
-                            !    do region_index = 1, nlreg_n_regions
-                            !        write(unit_logfile,'(A,2i5,f8.4,i5,f8.4)'),'  region_index,region_id,weightsum,count,finalweight =',region_index,nlreg_region_ids(region_index),weights_EMEP_additional_increment_current_lfgrid(region_index),counter,weights_EMEP_additional_increment_current_lfgrid(region_index)/counter
+                            !    do i_region = 1, nlreg_n_regions
+                            !        write(unit_logfile,'(A,2i5,f8.4,i5,f8.4)'),'  i_region,region_id,weightsum,count,finalweight =',i_region,nlreg_region_ids(i_region),weights_EMEP_additional_increment_current_lfgrid(i_region),counter,weights_EMEP_additional_increment_current_lfgrid(i_region)/counter
                             !    end do
                             !end if
 
@@ -2000,13 +2000,13 @@ contains
                                 weights_EMEP_additional_increment_current_lfgrid = weights_EMEP_additional_increment_current_lfgrid/counter
                                 ! For each region, multiply the additional increment by the weight calculated for that region
                                 ! and accumulate this in the array for the total additional increment (to be accumulated over all the big LF cells)
-                                do region_index = 1, nlreg_n_regions
-                                    temp_EMEP_additional_increment_from_in_region(region_index,:,:,:)=temp_EMEP_additional_increment_from_in_region(region_index,:,:,:)+EMEP_additional_increment_current_lfgrid*weights_EMEP_additional_increment_current_lfgrid(region_index)
+                                do i_region = 1, nlreg_n_regions
+                                    temp_EMEP_additional_increment_from_in_region(i_region,:,:,:)=temp_EMEP_additional_increment_from_in_region(i_region,:,:,:)+EMEP_additional_increment_current_lfgrid*weights_EMEP_additional_increment_current_lfgrid(i_region)
                                 end do
                             end if
                             !write(unit_logfile,'(A)') 'Updated weighted additional increment (first time,source,pollutant):'
-                            !do region_index = 1, nlreg_n_regions
-                            !    write(unit_logfile,'(A,2i5,f8.4,i5,f8.4)'),'  region_index,region_id,value =',region_index,nlreg_region_ids(region_index),temp_EMEP_additional_increment_from_in_region(region_index,1,1,1)
+                            !do i_region = 1, nlreg_n_regions
+                            !    write(unit_logfile,'(A,2i5,f8.4,i5,f8.4)'),'  i_region,region_id,value =',i_region,nlreg_region_ids(i_region),temp_EMEP_additional_increment_from_in_region(i_region,1,1,1)
                             !end do
                         end do
                     end do
@@ -2014,8 +2014,8 @@ contains
                     ! So now it can be inserted into the main array
                     EMEP_additional_increment_from_in_region(ii,jj,:,:,:,:) = temp_EMEP_additional_increment_from_in_region
                     !write(unit_logfile,'(A)') 'Final additional increment at this EMEP grid cell for first time,source,pollutant:'
-                    !do region_index = 1, nlreg_n_regions
-                    !    write(unit_logfile,'(A,2i5,f8.4,i5,f8.4)'),'  region_index,region_id,value =',region_index,nlreg_region_ids(region_index),temp_EMEP_additional_increment_from_in_region(region_index,1,1,1)
+                    !do i_region = 1, nlreg_n_regions
+                    !    write(unit_logfile,'(A,2i5,f8.4,i5,f8.4)'),'  i_region,region_id,value =',i_region,nlreg_region_ids(i_region),temp_EMEP_additional_increment_from_in_region(i_region,1,1,1)
                     !end do
                     ! write additional increment from first 10 regions
                     !write(unit_logfile,'(A,2I6,10f12.4f)') 'ii,jj,add_incs(1,1,1) =',ii,jj,temp_EMEP_additional_increment_from_in_region(:,1,1,1)
@@ -2066,11 +2066,11 @@ contains
                 ! if the region ID is not the same as previous subgrid, find the index along the region dimension of the new region ID
                 if (current_region_id < 0 .or. current_region_id /= new_region_id) then
                     current_region_id = new_region_id
-                    do region_index = 1, nlreg_n_regions
-                        if (nlreg_region_ids(region_index) .eq. current_region_id) then
-                            current_region_index = region_index
+                    do i_region = 1, nlreg_n_regions
+                        if (nlreg_region_ids(i_region) .eq. current_region_id) then
+                            current_region_index = i_region
                             exit
-                        else if (region_index .eq. nlreg_n_regions) then
+                        else if (i_region .eq. nlreg_n_regions) then
                             ! region ID is not found in the array 'nlreg_region_ids'. This means that array has a bug, as it should include all region IDs occurring in the uEMEP target grid!
                             ! Is this corret way to handle error?
                             write(unit_logfile,'(A,I0)') ' ERROR: Region with the following ID was not found in previously defined array "nlreg_regions_ids": ', current_region_id
@@ -2204,7 +2204,7 @@ contains
                 if (EMEP_additional_grid_interpolation_size > 0.0) then
                     nlreg_subgrid_nonlocal_from_in_region_additional_increment(i,j,:,:,:) = EMEP_additional_increment_from_in_region(ii,jj,current_region_index,:,:,:)
                 end if
-                !write(unit_logfile,'(A,4i6,2f12.4,2i6,2f12.4)') 'RESULT: i,j,ii,jj,ii_frac,jj_frac,region_index,region_id,from-small(1,1,1),add-inc(1,1,1) =',i,j,ii,jj,ii_frac_target,jj_frac_target,current_region_index,nlreg_region_ids(current_region_index),nlreg_subgrid_nonlocal_from_in_region(i,j,1,1,1),nlreg_subgrid_nonlocal_from_in_region_additional_increment(i,j,1,1,1)
+                !write(unit_logfile,'(A,4i6,2f12.4,2i6,2f12.4)') 'RESULT: i,j,ii,jj,ii_frac,jj_frac,i_region,region_id,from-small(1,1,1),add-inc(1,1,1) =',i,j,ii,jj,ii_frac_target,jj_frac_target,current_region_index,nlreg_region_ids(current_region_index),nlreg_subgrid_nonlocal_from_in_region(i,j,1,1,1),nlreg_subgrid_nonlocal_from_in_region_additional_increment(i,j,1,1,1)
                 !write(unit_logfile,'(A)') 'Stopping after first target subgrid!'
                 !stop
             end do
