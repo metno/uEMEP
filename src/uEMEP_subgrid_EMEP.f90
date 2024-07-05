@@ -8,7 +8,7 @@ module subgrid_emep
     implicit none
     private
 
-    public :: uEMEP_subgrid_EMEP,nlreg_uEMEP_calculate_nonlocal_from_in_region
+    public :: uEMEP_subgrid_EMEP,nlreg_uEMEP_subgrid_EMEP_from_in_region
 
 contains
 
@@ -1774,11 +1774,15 @@ contains
 
     end subroutine uEMEP_subgrid_EMEP
 
-    subroutine nlreg_uEMEP_calculate_nonlocal_from_in_region
+    subroutine nlreg_uEMEP_subgrid_EMEP_from_in_region
 
-        ! temporary array for accumulating the nonlocal from in region contribution to one subgrid of uEMEP target grid
-        real, allocatable :: temp_subgrid_nonlocal_from_in_region(:, :, :)  ! (t,source,pollutant)
-        ! additional increment for all EMEP cells, for each region
+        ! contribution to centre of each EMEP cell from in-region, within MW and outside MW, for each region
+        real, allocatable :: EMEP_local_from_in_region(:, :, :, :, :, :) ! (x,y,region,t,source,pollutant)
+        real, allocatable :: EMEP_semilocal_from_in_region(:, :, :, :, :, :) ! (x,y,region,t,source,pollutant)
+        ! arrays for accumulating data for a single EMEP cell of the above arrays (is this actually faster than accumulating directly in the big arrays????)
+        real, allocatable :: temp_EMEP_local_from_in_region(:, :, :, :)
+        real, allocatable :: temp_EMEP_semilocal_from_in_region(:, :, :, :)
+        ! additional increment for the centre of each EMEP cell, for each region
         real, allocatable :: EMEP_additional_increment_from_in_region(:, :, :, :, :, :)  ! (x,y,region,t,source,pollutant)
         ! additional increment for a single EMEP cell, for each region, to be accumulated
         real, allocatable :: temp_EMEP_additional_increment_from_in_region(:, :, :, :)  ! (region,t,source,pollutant)
@@ -1786,8 +1790,8 @@ contains
         real, allocatable :: EMEP_additional_increment_current_lfgrid(:, :, :)  ! (t,source,pollutant)
         ! weighting of the additional increment, for each region
         real, allocatable :: weights_EMEP_additional_increment_current_lfgrid(:)  ! (region)
-        ! a single weight
-        real weighting_value
+        ! weighting of an LF cell for local and semilocal contribution
+        real weighting_value_local,weighting_value_semilocal
         ! indexers for looping
         integer i,j             ! target subgrids
         integer ii,jj           ! EMEP grids
@@ -1796,7 +1800,9 @@ contains
         integer i_sub,j_sub       ! subsamples of an EMEP grid
         ! indexers for determining positioning of additional LF grids
         integer ii_start,jj_start
+        ! additinoal indexers
         integer iii,jjj
+        integer iii_nc,jjj_nc
         ! displacement distances in LF grids (whole grids)
         integer x_dist,y_dist
         integer xdist_big,ydist_big
@@ -1808,12 +1814,10 @@ contains
         integer iiii_nc,jjjj_nc
         ! indexers for the location of a 1x1 LF grid cell in the extended EMEP grid
         integer iiii_extended,jjjj_extended
-        ! dimensions of the extended EMEP grid
-        integer nx_extended,ny_extended
         ! indexers for finding local contributions in LF array
         integer lc_index,lc_additional_index
-        ! grid counter
-        integer counter
+        ! counters
+        integer counter,counter_local,counter_semilocal
         ! variables to hold an region index (index of nlreg_region_ids)
         integer i_region,current_region_index
         ! variables to hold a region ID (i.e. element value of nlreg_region_ids)
@@ -1822,27 +1826,182 @@ contains
         real ii_frac_target,jj_frac_target
         ! location of subgrid in EMEP's coordinate system
         real x_temp,y_temp
-        ! distance between target subgrid and EMEP subsample location
-        real x_dist_sub,y_dist_sub
+        ! distance between target subgrid and an EMEP grid centre or EMEP subsample location
+        real x_dist_target,y_dist_target
         ! half-size of the moving window
         real n_EMEP_grids_to_edge_of_moving_window
         ! fraction of an EMEP grid that is in the correct region
         real current_EMEP_region_fraction
+        ! weighting for area interpolation
+        real weighting_val,weight_check
 
-        ! For testing
+        ! Only needed for test printouts
         !logical printout
-        !integer i_source
+        !integer i_source,i_pollutant
 
         write(unit_logfile,'(A)') ''
-        write(unit_logfile,'(A)') '=============================================================================='
-        write(unit_logfile,'(A)') 'Calculation nonlocal from-in-region contributions (nlreg_uEMEP_calculate_nonlocal_from_in_region)'
-        write(unit_logfile,'(A)') '=============================================================================='
+        write(unit_logfile,'(A)') '====================================================================================================='
+        write(unit_logfile,'(A)') 'Calculation local and semilocal from-in-region EMEP contributions to subgrids (nlreg_uEMEP_subgrid_EMEP_from_in_region)'
+        write(unit_logfile,'(A)') '====================================================================================================='
 
         write(unit_logfile,'(A,8I8)') 'dims: (x_emep,y_emep,reg,time,source,pollutant,xdist,ydist) = ',dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),nlreg_n_regions,subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop,dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index)
 
+        ! ************************************************
+        ! PART 1: Calculate contributions to the EMEP grid
+        ! ************************************************
+
         !write(unit_logfile,'(i6,i6,i6)') nlreg_n_subsamples_per_EMEP_grid,nlreg_n_subsamples_per_EMEP_grid*nlreg_n_subsamples_per_EMEP_grid,nlreg_n_subsamples_per_EMEP_grid**2
 
+        ! Indices in lc_var3d_nc to find the normal and additional local contributions
+        lc_index = lc_local_nc_loop_index(local_fraction_grid_for_EMEP_grid_interpolation)
+        lc_additional_index = lc_local_nc_loop_index(local_fraction_grid_for_EMEP_additional_grid_interpolation)
+
+        ! distance in x or y (EMEP grid) from receptor subgrid to edge of moving window, in units of EMEP grids
+        ! (normally whole number, but not if EMEP_grid_interpolation_size is odd number)
+        n_EMEP_grids_to_edge_of_moving_window = EMEP_grid_interpolation_size*0.5
+        write(unit_logfile,'(A,f8.1)') 'n_EMEP_grids_to_edge_of_moving_window=', n_EMEP_grids_to_edge_of_moving_window
+
+        ! Calculate local and semilocal contributions to centre of all EMEP grids
+        write(unit_logfile,'(A)') 'Allocating arrays for calculating in-region local and semilocal contribution to the EMEP grid'
+
+        ! Allocate arrays
+        allocate(EMEP_local_from_in_region(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),nlreg_n_regions,subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+        EMEP_local_from_in_region = 0.0
+        allocate(EMEP_semilocal_from_in_region(dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),nlreg_n_regions,subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+        EMEP_semilocal_from_in_region = 0.0
+        allocate(temp_EMEP_local_from_in_region(nlreg_n_regions,subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+        allocate(temp_EMEP_semilocal_from_in_region(nlreg_n_regions,subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+
+        ! Loop over all EMEP cells and calculate contributions within moving window when it is centered at the centre of the cell
+        do ii = 1, dim_length_nc(x_dim_nc_index)
+            do jj = 1, dim_length_nc(y_dim_nc_index)
+                temp_EMEP_local_from_in_region = 0.0
+                temp_EMEP_semilocal_from_in_region = 0.0
+                ! Loop over all (small) LF contribution cells to this EMEP cell
+                do i_dist = 1, dim_length_nc(xdist_dim_nc_index)
+                    do j_dist = 1, dim_length_nc(ydist_dim_nc_index)
+                        ! number of grids displaced relative to the receptor grid cell
+                        x_dist = i_dist - xdist_centre_nc
+                        y_dist = j_dist - ydist_centre_nc
+                        ! index in the netcdf file of this cell
+                        iiii_nc = ii + x_dist
+                        jjjj_nc = jj + y_dist
+                        ! index in the extended EMEP grid of this cell
+                        iiii_extended = iiii_nc + nlreg_ngrid_extended_margin
+                        jjjj_extended = jjjj_nc + nlreg_ngrid_extended_margin
+
+                        !write(unit_logfile,'(A,10i6)') 'ii,jj,i_dist,j_dist,x_dist,y_dist,iiii_nc,jjjj_nc,iiii_extended,jjjj_extended =',ii,jj,i_dist,j_dist,x_dist,y_dist,iiii_nc,jjjj_nc,iiii_extended,jjjj_extended
+
+                        ! Check if this cell is covered by the extended grid. If not, assume it is completely outside all regions
+                        if (.not. (iiii_extended >= 1 .and. iiii_extended <= nlreg_nx_EMEP_extended .and. jjjj_extended >= 1 .and. jjjj_extended <= nlreg_ny_EMEP_extended)) then
+                            cycle
+                        end if
+
+                        ! Loop over all regions
+                        do i_region = 1, nlreg_n_regions
+
+                            ! get fraction of the LF grid that is in the region
+                            current_region_id = nlreg_region_ids(i_region)
+                            current_EMEP_region_fraction = nlreg_regionfraction_per_EMEP_extended_grid(iiii_extended, jjjj_extended, i_region)
+
+                            !write(unit_logfile,'(A,2I6,f14.6)') '  i_region,region_id,regionfraction =',i_region,current_region_id,current_EMEP_region_fraction
+
+                            ! Determine the weights to use for this LF cell
+                            ! for local, the weight is the area fraction that is in the region and inside the moving window
+                            ! for semilocal, the weight is the area fraction that is in the region but outside the moving window
+                            if (current_EMEP_region_fraction <= 0) then
+                                ! No part of this EMEP grid is within the region
+                                !write(unit_logfile,'(A)') '    completely outside the region!'
+                                cycle
+                            else if (abs(x_dist) <= n_EMEP_grids_to_edge_of_moving_window-1 .and. abs(y_dist) <= n_EMEP_grids_to_edge_of_moving_window-1) then
+                                ! this LF grid is sure to be completely within the moving window
+                                weighting_value_local = current_EMEP_region_fraction
+                                weighting_value_semilocal = 0.0
+                                !write(unit_logfile,'(A)') '    completely within moving window!'
+                            else if (abs(x_dist) >= n_EMEP_grids_to_edge_of_moving_window+1 .or. abs(y_dist) >= n_EMEP_grids_to_edge_of_moving_window+1) then
+                                ! this LF grid is sure to be completely outside the moving window
+                                weighting_value_local = 0.0
+                                weighting_value_semilocal = current_EMEP_region_fraction
+                                !write(unit_logfile, '(A)') '    completely outside moving window!'
+                            else
+                                ! this LF grid might be partly covered by the moving window
+                                ! -> we must go through all subsamples of that grid to find the overlap between region and moving window
+                                counter_local = 0       ! count the subsample grids inside-moving-window & in-region
+                                counter_semilocal = 0   ! count the subsample grids outside-moving-window & in-region
+                                do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
+                                    do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
+                                        ! first check if this subsample is in the region
+                                        !write(unit_logfile,'(A,3i6)') '    i_sub,j_sub,region =',i_sub,j_sub,nlreg_EMEP_extended_subsample_region_id(i_sub,j_sub,iiii_extended,jjjj_extended)
+                                        if (nlreg_EMEP_extended_subsample_region_id(i_sub,j_sub,iiii_extended,jjjj_extended) == current_region_id) then
+                                            ! deduce x- and y-distance (in number of EMEP grids) from this subsample location to the midpoint of the receptor grid-cell
+                                            x_dist_target = x_dist + (i_sub-0.5)/nlreg_n_subsamples_per_EMEP_grid - 0.5
+                                            y_dist_target = y_dist + (j_sub-0.5)/nlreg_n_subsamples_per_EMEP_grid - 0.5
+                                            ! use these distances to determine whether the subsample is inside the moving window
+                                            !write(unit_logfile,'(A,2f12.4)') '      x_dist_target,y_dist_target =',x_dist_target,y_dist_target
+                                            if (abs(x_dist_target) <= n_EMEP_grids_to_edge_of_moving_window .and. abs(y_dist_target) <= n_EMEP_grids_to_edge_of_moving_window) then
+                                                ! this subsample is inside the moving window
+                                                counter_local = counter_local + 1
+                                                !write(unit_logfile,'(A,2i6)') '             subsample is INSIDE',counter_local,counter_semilocal
+                                            else
+                                                ! this subsample is outside the moving window
+                                                counter_semilocal = counter_semilocal + 1
+                                                !write(unit_logfile,'(A,2i6)') '             subsample is OUTSIDE',counter_local,counter_semilocal
+                                            end if
+                                        end if
+                                    end do
+                                end do
+                                ! Divide counters by total number of subsamples per EMEP grid to get the area fraction
+                                weighting_value_local = counter_local*1.0/nlreg_n_subsamples_per_EMEP_grid**2
+                                weighting_value_semilocal = counter_semilocal*1.0/nlreg_n_subsamples_per_EMEP_grid**2
+                                !write(unit_logfile,'(A,3i8,2f14.6)') '    may be partly covered by moving window: ngrid_reg&MW, ngrid_reg&!MW, ngrid_total, weight_local, weight_semilocal =',counter_local,counter_semilocal,nlreg_n_subsamples_per_EMEP_grid**2,weighting_value_local,weighting_value_semilocal
+                                !write(unit_logfile,'(A)') 'Stopping after first occurrence of partly within MW'
+                                !stop
+                            end if
+                            temp_EMEP_local_from_in_region(i_region,:,:,:) = temp_EMEP_local_from_in_region(i_region,:,:,:) + lc_var3d_nc(i_dist,j_dist,ii,jj,:,lc_index,:,:)*weighting_value_local
+                            temp_EMEP_semilocal_from_in_region(i_region,:,:,:) = temp_EMEP_semilocal_from_in_region(i_region,:,:,:) + lc_var3d_nc(i_dist,j_dist,ii,jj,:,lc_index,:,:)*weighting_value_semilocal
+
+                            ! TEST PRINTOUTS
+                            ! **************
+                            ! write(unit_logfile,'(A)') '    LF values at first time for each pollutant:'
+                            ! do i_source = 1,2
+                            !     write(unit_logfile,'(A,I0,A,6f12.8)') '      i_source=',i_source,': ',lc_var3d_nc(i_dist,j_dist,ii,jj,1,lc_index,i_source,:)
+                            ! end do
+                            ! write(unit_logfile,'(A)') '    LOCAL CONTRIBUTION:'
+                            ! write(unit_logfile,'(A)') '    After weighting:'
+                            ! do i_source = 1,2
+                            !     write(unit_logfile,'(A,I0,A,6f12.8)') '      i_source=',i_source,': ',lc_var3d_nc(i_dist,j_dist,ii,jj,1,lc_index,i_source,:)*weighting_value_local
+                            ! end do
+                            ! write(unit_logfile,'(A)') '    New accumulated totals:'
+                            ! do i_source = 1,2
+                            !     write(unit_logfile,'(A,I0,A,6f12.8)') '      i_source=',i_source,': ',temp_EMEP_local_from_in_region(i_region,1,i_source,:)
+                            ! end do
+                            ! write(unit_logfile,'(A)') '    SEMILOCAL CONTRIBUTION:'
+                            ! write(unit_logfile,'(A)') '    After weighting:'
+                            ! do i_source = 1,2
+                            !     write(unit_logfile,'(A,I0,A,6f12.8)') '      i_source=',i_source,': ',lc_var3d_nc(i_dist,j_dist,ii,jj,1,lc_index,i_source,:)*weighting_value_semilocal
+                            ! end do
+                            ! write(unit_logfile,'(A)') '    New accumulated totals:'
+                            ! do i_source = 1,2
+                            !     write(unit_logfile,'(A,I0,A,6f12.8)') '      i_source=',i_source,': ',temp_EMEP_semilocal_from_in_region(i_region,1,i_source,:)
+                            ! end do
+                            ! ******************
+                        end do ! i_region = 1, nlreg_n_regions
+                        
+                    end do
+                end do
+                EMEP_local_from_in_region(ii,jj,:,:,:,:) = temp_EMEP_local_from_in_region
+                EMEP_semilocal_from_in_region(ii,jj,:,:,:,:) = temp_EMEP_semilocal_from_in_region
+                !write(unit_logfile,'(A)') 'Stopping after first EMEP cell'
+                !stop
+            end do
+        end do
+
+        ! Deallocate temporary arrays
+        deallocate(temp_EMEP_local_from_in_region)
+        deallocate(temp_EMEP_semilocal_from_in_region)
+
         ! Calculate the additional incremental contribution to each EMEP grid for each region
+        ! NB: we let the interpolation domain extend to the very edge of the LF data, not limited by the set additional interpolation size
         if (EMEP_additional_grid_interpolation_size > 0.0) then
 
             write(unit_logfile,'(A)') 'Allocating arrays for additional increment calculation'
@@ -1861,14 +2020,6 @@ contains
             ! Deduce the max distance (+/-) we have LF data for
             max_x_dist = (dim_length_nc(xdist_dim_nc_index)-1)/2
             max_y_dist = (dim_length_nc(ydist_dim_nc_index)-1)/2
-
-            ! Dimensions of the extended region mask grid
-            nx_extended = dim_length_nc(x_dim_nc_index) + 2*nlreg_ngrid_extended_margin
-            ny_extended = dim_length_nc(y_dim_nc_index) + 2*nlreg_ngrid_extended_margin
-
-            ! Indices in lc_var3d_nc to find the local contributions
-            lc_index=lc_local_nc_loop_index(local_fraction_grid_for_EMEP_grid_interpolation)
-            lc_additional_index=lc_local_nc_loop_index(local_fraction_grid_for_EMEP_additional_grid_interpolation)
 
             !write(unit_logfile,'(A,6I8)') 'xdist_centre_nc,ydist_centre_nc,max_x_dist,max_y_dist,lc_index,lc_additional_index = ',xdist_centre_nc,ydist_centre_nc,max_x_dist,max_y_dist,lc_index,lc_additional_index
 
@@ -1952,7 +2103,7 @@ contains
                                         jjjj_extended = jjjj_nc + nlreg_ngrid_extended_margin
                                         !if (printout) write(unit_logfile,'(A,4I5)') '      NOT covered by 1x1: iiii_nc,jjjj_nc,iiii_extended,jjjj_extended = ',iiii_nc,jjjj_nc,iiii_extended,jjjj_extended
                                         ! check if this is within the extended region mask grid
-                                        if (iiii_extended >= 1 .and. iiii_extended <= nx_extended .and. jjjj_extended >= 1 .and. jjjj_extended <= ny_extended) then
+                                        if (iiii_extended >= 1 .and. iiii_extended <= nlreg_nx_EMEP_extended .and. jjjj_extended >= 1 .and. jjjj_extended <= nlreg_ny_EMEP_extended) then
                                             weights_EMEP_additional_increment_current_lfgrid = weights_EMEP_additional_increment_current_lfgrid + nlreg_regionfraction_per_EMEP_extended_grid(iiii_extended, jjjj_extended, :)
                                             !if (printout) then
                                             !    write(unit_logfile,'(A)') '      weight increased by region coverage, which is:'
@@ -1979,7 +2130,7 @@ contains
                                 end do
                             end do
                             ! ensure the additional increment is not smaller than zero
-                            where (EMEP_additional_increment_current_lfgrid < 0) EMEP_additional_increment_current_lfgrid = 0
+                            where (EMEP_additional_increment_current_lfgrid < 0.0) EMEP_additional_increment_current_lfgrid = 0.0
                             
                             !if (printout) then
                             !    write(unit_logfile,'(A)') 'Done looping over 1x1 cells.'
@@ -2029,37 +2180,34 @@ contains
 
         end if
 
-        write(unit_logfile,'(A)') 'Allocating arrays for calculating nonlocal from-in-region to target grid'
+        ! *****************************************
+        ! PART 2: Interpolate to the target subgrid
+        ! *****************************************
 
-        ! Reset the arrays for holding the results
-        if (allocated(nlreg_subgrid_nonlocal_from_in_region)) deallocate(nlreg_subgrid_nonlocal_from_in_region)
-        allocate(nlreg_subgrid_nonlocal_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+        write(unit_logfile,'(A)') 'Allocating arrays for in-region local and semilocal contribution to the target grid'
+
+        ! Allocate the arrays for holding the results and initialize them to zero
+        if (allocated(nlreg_subgrid_local_from_in_region)) deallocate(nlreg_subgrid_local_from_in_region)
+        allocate(nlreg_subgrid_local_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+        nlreg_subgrid_local_from_in_region = 0.0
+        if (allocated(nlreg_subgrid_semilocal_from_in_region)) deallocate(nlreg_subgrid_semilocal_from_in_region)
+        allocate(nlreg_subgrid_semilocal_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+        nlreg_subgrid_semilocal_from_in_region = 0.0
         if (EMEP_additional_grid_interpolation_size > 0.0) then
-            if (allocated(nlreg_subgrid_nonlocal_from_in_region_additional_increment)) deallocate(nlreg_subgrid_nonlocal_from_in_region_additional_increment)
-            allocate(nlreg_subgrid_nonlocal_from_in_region_additional_increment(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+            if (allocated(nlreg_subgrid_semilocal_from_in_region_additional_increment)) deallocate(nlreg_subgrid_semilocal_from_in_region_additional_increment)
+            allocate(nlreg_subgrid_semilocal_from_in_region_additional_increment(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+            nlreg_subgrid_semilocal_from_in_region_additional_increment = 0.0
         end if
-        !write(unit_logfile,'(A,6I10)'), size(nlreg_subgrid_nonlocal_from_in_region),subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop
 
-        allocate(temp_subgrid_nonlocal_from_in_region(subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
-        !write(unit_logfile,'(A,4I12)'), size(temp_subgrid_nonlocal_from_in_region),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop
-
-        write(unit_logfile,'(A)') 'Calculating nonlocal contribution from-in-region'
-
-        ! distance in x or y (EMEP grid) from receptor subgrid to edge of moving window, in units of EMEP grids
-        ! (normally whole number, but not if EMEP_grid_interpolation_size is odd number)
-        n_EMEP_grids_to_edge_of_moving_window = EMEP_grid_interpolation_size*0.5
-        write(unit_logfile,'(A,f8.1)') 'n_EMEP_grids_to_edge_of_moving_window=', n_EMEP_grids_to_edge_of_moving_window
+        write(unit_logfile,'(A)') 'Interpolating local and semilocal contribution from-in-region to the target subgrid'
 
         ! initialize current region ID and index to invalid values
         current_region_id = -1
         current_region_index = -1
 
-        ! go through all target subgrids
+        ! go through all target subgrids and interpolate the EMEP contributions calculated above
         do i = 1, subgrid_dim(x_dim_index)
             do j = 1, subgrid_dim(y_dim_index)
-
-                ! initialize the nlreg array for this subgrid to zero
-                temp_subgrid_nonlocal_from_in_region = 0.0
 
                 ! check region ID of this subgrid
                 new_region_id = nlreg_subgrid_region_id(i, j)
@@ -2083,139 +2231,90 @@ contains
                 ii=crossreference_target_to_emep_subgrid(i,j,x_dim_index)
                 jj=crossreference_target_to_emep_subgrid(i,j,y_dim_index)
 
-                ! Find out where in this EMEP grid we are: (ii_frac_target,jj_frac_target)
+                ! Find out where in this EMEP grid we are in EMEP grid coordinates
                 ! E.g. (0,0) for lower-left corner and (1,1) for upper right corner
                 call LL2PROJ(lon_subgrid(i,j),lat_subgrid(i,j),x_temp,y_temp,EMEP_projection_attributes,EMEP_projection_type)
-
-                ! Determine the centre of the moving window relative to the EMEP grid (lower-left corner is (0,0), upper-right corner is (1,1))
-                if (EMEP_grid_interpolation_flag == 0) then
-                    ! moving window is centered at the center of the EMEP grid
-                    ii_frac_target = 0.5
-                    jj_frac_target = 0.5
-                else if (EMEP_grid_interpolation_flag == 6) then
-                    ! moving window is centered at the subgrid location
-                    ! This expresion for the subgrid location is based on code from "uEMEP_crossreference_grids".
-                    ! But I use x_dim_nc_index/y_dim_nc_index instead of lon_nc_index/lat_nc_index when accessing var1d_nc
-                    ii_frac_target = (x_temp-var1d_nc(ii,x_dim_nc_index))/dgrid_nc(x_dim_nc_index) + 0.5
-                    jj_frac_target = (y_temp-var1d_nc(jj,y_dim_nc_index))/dgrid_nc(y_dim_nc_index) + 0.5
-                    ! MAYBE VERIFY WE ARE INSIDE 0-1??? at least during test phase
-                    if (ii_frac_target < 0.0 .or. ii_frac_target > 1.0 .or. jj_frac_target < 0.0 .or. jj_frac_target > 1.0) then
-                        write(unit_logfile,'(A,2I12)') 'Something went wrong with locating moving window!',ii_frac_target,jj_frac_target
-                        stop
-                    end if
-                else
-                    write(unit_logfile,'(A,I0)') 'ERROR: nlreg_uEMEP_calculate_nonlocal_from_in_region is not implemented for EMEP_grid_interpolation_flag =', EMEP_grid_interpolation_flag
+                ! fractional position inside the EMEP grid (center is (0,0), lower-left corner is (-0.5,-0.5), upper-right corner is (+0.5,+0.5))
+                ii_frac_target = (x_temp-var1d_nc(ii,x_dim_nc_index))/dgrid_nc(x_dim_nc_index)
+                jj_frac_target = (y_temp-var1d_nc(jj,y_dim_nc_index))/dgrid_nc(y_dim_nc_index)
+                ! verify that this is within 0-1 (if not, crossreference has gone wrong...)
+                if (ii_frac_target < -0.5 .or. ii_frac_target > 0.5 .or. jj_frac_target < -0.5 .or. jj_frac_target > 0.5) then
+                    write(unit_logfile,'(A,2I12)') 'Something went wrong with locating target subgrid within EMEP grid!',ii_frac_target,jj_frac_target
                     stop
                 end if
 
-                !write(unit_logfile,'(A)') ''
-                !write(unit_logfile,'(A,4i6,2f12.4,4i6)') 'i,j,ii,jj,ii_frac,jj_frac,new_region_id,current_region_id,current_region_index,selected id =',i,j,ii,jj,ii_frac_target,jj_frac_target,new_region_id,current_region_id,current_region_index,nlreg_region_ids(current_region_index)
+                !write(unit_logfile,'(A,4I5,2f12.4,2I5)') 'i,j,ii,jj,ii_frac_target,jj_frac_target,region_id =',i,j,ii,jj,ii_frac_target,jj_frac_target,current_region_index,current_region_id
 
-                ! Calculate contributions from 1x1 LF domain from OUTSIDE moving window
-                !write(unit_logfile,'(A)') 'SMALL at first time,source,pollutant (xdist increases down, ydist increases to the right):'
-                !do i_dist = 1, dim_length_nc(xdist_dim_nc_index)
-                !    write(unit_logfile,'(9f10.6)') lc_var3d_nc(i_dist,:,ii,jj,1,lc_index,1,1)
-                !end do
-                ! loop over all LF source grids (1x1) for this EMEP grid
-                do i_dist = 1, dim_length_nc(xdist_dim_nc_index)
-                    do j_dist = 1, dim_length_nc(ydist_dim_nc_index)
-                        ! number of grids displaced relative to the EMEP grid of the target subgrid
-                        x_dist = i_dist - xdist_centre_nc
-                        y_dist = j_dist - ydist_centre_nc
-                        ! index in the netcdf file of this grid
-                        iiii_nc = ii + x_dist
-                        jjjj_nc = jj + y_dist
-                        ! Verify that the EMEP grid covers this cell
-                        ! (NB: I could also just warn about it and ignore contributions from this grid cell...)
-                        if (.not. (iiii_nc >= 1 .and. iiii_nc <= dim_length_nc(x_dim_nc_index) .and. jjjj_nc >= 1 .and. jjjj_nc <= dim_length_nc(y_dim_nc_index))) then
-                            write(unit_logfile, '(A)') 'Error: Reduced EMEP grid does not cover all the 1x1 Local Fraction grid cells'
-                            stop   ! replace by 'cycle' to ignore contributions from such grid cells
-                        end if
-
-                        !write(unit_logfile,'(A,8i6)') 'i,j,i_dist,j_dist,x_dist,y_dist,iiii_nc,jjjj_nc =',i,j,i_dist,j_dist,x_dist,y_dist,iiii_nc,jjjj_nc
-
-                        ! get fraction of this LF grid that is in the same region as the target subgrid
-                        current_EMEP_region_fraction = nlreg_regionfraction_per_EMEP_grid(iiii_nc, jjjj_nc, current_region_index)
-
-                        !write(unit_logfile,'(A,f14.6)') '  Fraction of EMEP source cell in region =',current_EMEP_region_fraction
-
-                        ! Determine the weight to use for this LF cell
-                        ! the weight is the area fraction that is in the same region as the target subgrid but outside the moving window
-                        if (current_EMEP_region_fraction <= 0) then
-                            ! No part of this EMEP grid is within the region
-                            !write(unit_logfile,'(A)') '    completely outside the region!'
-                            cycle
-                        else if (abs(x_dist) <= n_EMEP_grids_to_edge_of_moving_window-1 .and. abs(y_dist) <= n_EMEP_grids_to_edge_of_moving_window-1) then
-                            ! this LF grid is sure to be completely within the moving window
-                            ! -> no part of nonlocal contribution
-                            !write(unit_logfile,'(A)') '    completely within moving window!'
-                            cycle
-                        else if (abs(x_dist) >= n_EMEP_grids_to_edge_of_moving_window+1 .or. abs(y_dist) >= n_EMEP_grids_to_edge_of_moving_window+1) then
-                            ! this LF grid is sure to be completely outside the moving window
-                            ! -> we can use the region fraction directly
-                            weighting_value = current_EMEP_region_fraction
-                            !write(unit_logfile, '(A,f14.6)') '    completely outside moving window. Using region fraction =', weighting_value
-                        else
-                            ! this LF grid might be partly covered by the moving window
-                            ! -> we must go through all subsamples of that grid to find how much of it is both in the region and outside the moving window
-                            counter = 0   ! count the subsample grids outside-moving-window & in-region
-                            do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
-                                do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
-                                    ! first check if this subsample is in the region
-                                    !write(unit_logfile,'(A,3i6)') '    i_sub,j_sub,region =',i_sub,j_sub,nlreg_EMEP_subsample_region_id(i_sub,j_sub,iiii_nc,jjjj_nc)
-                                    if (nlreg_EMEP_subsample_region_id(i_sub,j_sub,iiii_nc,jjjj_nc) .eq. current_region_id) then
-                                        ! deduce x- and y-distance (in number of EMEP grids) from target subgrid to this subsample location
-                                        x_dist_sub = (i_sub-0.5)/nlreg_n_subsamples_per_EMEP_grid + x_dist - ii_frac_target
-                                        y_dist_sub = (j_sub-0.5)/nlreg_n_subsamples_per_EMEP_grid + y_dist - jj_frac_target
-                                        ! use these distances to determine whether the subsample is outside the moving window
-                                        !write(unit_logfile,'(A,2f12.4)') '      x_dist_sub,y_dist_sub =',x_dist_sub,y_dist_sub
-                                        if (abs(x_dist_sub) > n_EMEP_grids_to_edge_of_moving_window .or. abs(y_dist_sub) > n_EMEP_grids_to_edge_of_moving_window) then
-                                            ! this subsample is outside the moving window
-                                            counter = counter + 1
-                                            !write(unit_logfile,'(A,i6)') '             YES',counter
-                                        end if
-                                    end if
-                                end do
-                            end do
-                            !write(unit_logfile,'(A,2i8,f14.6)') '    may be partly covered by moving window: ngrid_overlap,ngrid_total,weight =',counter,nlreg_n_subsamples_per_EMEP_grid**2,counter*1.0/nlreg_n_subsamples_per_EMEP_grid**2
-                            weighting_value = counter*1.0/nlreg_n_subsamples_per_EMEP_grid**2
-                            !write(unit_logfile,'(A)') 'Stopping after first cell partly within MW'
-                            !stop
-                        end if
-                        temp_subgrid_nonlocal_from_in_region=temp_subgrid_nonlocal_from_in_region+lc_var3d_nc(i_dist,j_dist,ii,jj,:,lc_index,:,:)*weighting_value
-                        !write(unit_logfile,'(A)') '    LF values at first time for each pollutant:'
-                        !do i_source = 1,2
-                        !    write(unit_logfile,'(A,I0,A,6f12.8)') '      i_source=',i_source,': ',lc_var3d_nc(i_dist,j_dist,ii,jj,1,lc_index,i_source,:)
-                        !end do
-                        !write(unit_logfile,'(A)') '    After weighting:'
-                        !do i_source = 1,2
-                        !    write(unit_logfile,'(A,I0,A,6f12.8)') '      i_source=',i_source,': ',lc_var3d_nc(i_dist,j_dist,ii,jj,1,lc_index,i_source,:)*weighting_value
-                        !end do
-                        !write(unit_logfile,'(A)') '    New accumulated totals:'
-                        !do i_source = 1,2
-                        !    write(unit_logfile,'(A,I0,A,6f12.8)') '      i_source=',i_source,': ',temp_subgrid_nonlocal_from_in_region(1,i_source,:)
-                        !end do
+                ! Interpolate to the target grid
+                if (EMEP_grid_interpolation_flag == 0) then
+                    ! No interpolation: just pick the value of the EMEP cell we are in
+                    nlreg_subgrid_local_from_in_region(i,j,:,:,:) = EMEP_local_from_in_region(ii,jj,current_region_index,:,:,:)
+                    nlreg_subgrid_semilocal_from_in_region(i,j,:,:,:) = EMEP_semilocal_from_in_region(ii,jj,current_region_index,:,:,:)
+                    if (EMEP_additional_grid_interpolation_size > 0.0) then
+                        nlreg_subgrid_semilocal_from_in_region_additional_increment(i,j,:,:,:) = EMEP_additional_increment_from_in_region(ii,jj,current_region_index,:,:,:)
+                    end if
+                else if (EMEP_grid_interpolation_flag == 6) then
+                    ! Use area-weighted interpolation
+                    weight_check = 0.0
+                    ! loop over a 3x3 EMEP cell domain centered at the closest EMEP cell to the target subgrid
+                    do iii = -1,1
+                        do jjj = -1,1
+                            iii_nc = ii + iii
+                            jjj_nc = jj + jjj
+                            !write(unit_logfile,'(A,4I5)') '  iii,jjj,iii_nc,jjj_nc =',iii,jjj,iii_nc,jjj_nc
+                            ! verify the EMEP grid covers this index
+                            if (.not. (iii_nc >= 1 .and. iii_nc <= dim_length_nc(x_dim_nc_index) .and. jjj_nc >= 1 .and. jjj_nc <= dim_length_nc(y_dim_nc_index))) then
+                                write(unit_logfile,'(A)') 'ERROR: EMEP grid did not go far enough out to allow area interpolation to the target grid!'
+                                stop
+                            end if
+                            ! calculate the weighting value as the area fraction of an EMEP cell centered at the target subgrid that falls within this EMEP cell
+                            x_dist_target = iii - ii_frac_target
+                            y_dist_target = jjj - jj_frac_target
+                            weighting_val = max(0.0, (1.0 - abs(x_dist_target))) * max(0.0, (1.0 - abs(y_dist_target)))
+                            weight_check = weight_check + weighting_val
+                            ! use this weighting for the data at this EMEP cell
+                            !write(unit_logfile,'(A,3f12.4)') 'x_dist_target,y_dist_target,weighting_val =',x_dist_target,y_dist_target,weighting_val
+                            if (weighting_val > 0) then
+                                nlreg_subgrid_local_from_in_region(i,j,:,:,:) = nlreg_subgrid_local_from_in_region(i,j,:,:,:) + EMEP_local_from_in_region(iii_nc,jjj_nc,current_region_index,:,:,:)*weighting_val
+                                nlreg_subgrid_semilocal_from_in_region(i,j,:,:,:) = nlreg_subgrid_semilocal_from_in_region(i,j,:,:,:) + EMEP_semilocal_from_in_region(iii_nc,jjj_nc,current_region_index,:,:,:)*weighting_val
+                                if (EMEP_additional_grid_interpolation_size > 0) then
+                                    nlreg_subgrid_semilocal_from_in_region_additional_increment(i,j,:,:,:) = nlreg_subgrid_semilocal_from_in_region_additional_increment(i,j,:,:,:) + EMEP_additional_increment_from_in_region(iii_nc,jjj_nc,current_region_index,:,:,:)*weighting_val
+                                end if
+                            end if
+                        end do
                     end do
-                end do
-                ! save the accumulated contribution to this subgrid in the main array
-                nlreg_subgrid_nonlocal_from_in_region(i,j,:,:,:) = temp_subgrid_nonlocal_from_in_region
-
-                ! Save the additional increment to this subgrid
-                if (EMEP_additional_grid_interpolation_size > 0.0) then
-                    nlreg_subgrid_nonlocal_from_in_region_additional_increment(i,j,:,:,:) = EMEP_additional_increment_from_in_region(ii,jj,current_region_index,:,:,:)
+                    !write(unit_logfile,'(A,f12.4)') 'weight_check=',weight_check
+                else
+                    write(unit_logfile,'(A,I0)') 'ERROR: nlreg_uEMEP_subgrid_EMEP_from_in_region is not implemented for EMEP_grid_interpolation_flag =', EMEP_grid_interpolation_flag
+                    stop
                 end if
-                !write(unit_logfile,'(A,4i6,2f12.4,2i6,2f12.4)') 'RESULT: i,j,ii,jj,ii_frac,jj_frac,i_region,region_id,from-small(1,1,1),add-inc(1,1,1) =',i,j,ii,jj,ii_frac_target,jj_frac_target,current_region_index,nlreg_region_ids(current_region_index),nlreg_subgrid_nonlocal_from_in_region(i,j,1,1,1),nlreg_subgrid_nonlocal_from_in_region_additional_increment(i,j,1,1,1)
-                !write(unit_logfile,'(A)') 'Stopping after first target subgrid!'
-                !stop
             end do
         end do
 
-        deallocate(temp_subgrid_nonlocal_from_in_region)
+        ! Compare original and new EMEP local contribution from-in-region (assuming 20x20 target grid)
+        ! do i_pollutant = 1,6
+        !     do i_source = 1,n_source_index
+        !         write(unit_logfile,'(A,I0,A,I0,A)') 'ORIGINAL at first time for source=',i_source,',pollutant=',i_pollutant,' (x increases down, y increases to the right):'
+        !         do i = 1, 20
+        !             write(unit_logfile,'(20f7.3)') subgrid_from_in_region(i,:,1,emep_local_subgrid_index,i_source,i_pollutant)
+        !         end do
+        !         write(unit_logfile,'(A,I0,A,I0,A)') 'NEW at first time for source=',i_source,',pollutant=',i_pollutant,' (x increases down, y increases to the right):'
+        !         do i = 1, 20
+        !             write(unit_logfile,'(20f7.3)') nlreg_subgrid_local_from_in_region(i,:,1,i_source,i_pollutant)
+        !         end do
+        !     end do
+        ! end do
+        
+        ! Replace the EMEP local from-in-region with my new calculation
+        subgrid_from_in_region(:,:,:,emep_local_subgrid_index,:,:) = nlreg_subgrid_local_from_in_region
+
+        deallocate(EMEP_local_from_in_region)
+        deallocate(EMEP_semilocal_from_in_region)
         if (EMEP_additional_grid_interpolation_size > 0.0) then
             deallocate(EMEP_additional_increment_from_in_region)
         end if
 
-    end subroutine nlreg_uEMEP_calculate_nonlocal_from_in_region
+    end subroutine nlreg_uEMEP_subgrid_EMEP_from_in_region
 
 end module subgrid_emep
 

@@ -890,6 +890,7 @@ contains
             nlreg_pathname_region_mask=read_name_char('nlreg_pathname_region_mask',nlreg_pathname_region_mask,unit_in,unit_logfile)
             nlreg_filename_region_mask=read_name_char('nlreg_filename_region_mask',nlreg_filename_region_mask,unit_in,unit_logfile)
             nlreg_varname_region_mask=read_name_char('nlreg_varname_region_mask',nlreg_varname_region_mask,unit_in,unit_logfile)
+            nlreg_region_mask_gives_region_index=read_name_logical('nlreg_region_mask_gives_region_index',nlreg_region_mask_gives_region_index,unit_in,unit_logfile)
 
             close (unit_in)
 

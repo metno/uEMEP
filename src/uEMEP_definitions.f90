@@ -865,30 +865,39 @@ module uEMEP_definitions
 
     ! nlreg_subgrid_region_id will contain the region ID of each uEMEP target subgrid
     integer, allocatable :: nlreg_subgrid_region_id(:, :)
-    ! nlreg_EMEP_subsample_region_id will contain the region ID of each subsample of each EMEP grid
-    integer, allocatable :: nlreg_EMEP_subsample_region_id(:, :, :, :)
-    ! nlreg_regionfraction_per_EMEP_grid will give the fraction of each EMEP grid that is within each region
-    real, allocatable :: nlreg_regionfraction_per_EMEP_grid(:, :, :)
-    ! nlreg_region_ids specifies the region IDs along the region dimension and will get length nlreg_n_regions
-    integer, allocatable :: nlreg_region_ids(:)
+    ! nlreg_emission_subgrid_region_id will contain the region ID of each uEMEP emission subgrid for each source
+    integer, allocatable :: nlreg_emission_subgrid_region_id(:, :, :)
     ! nlreg_n_regions is the number of regions occurring in the target grid. Will be set after reading region mask file
     integer :: nlreg_n_regions = -1
-    ! nlreg_n_subsamples_per_EMEP_grid specifies how many subsamples to use along each spatial dimension of an EMEP grid when creating a region mask for each grid
-    integer :: nlreg_n_subsamples_per_EMEP_grid = 20
+    ! nlreg_region_ids specifies the region IDs along the region dimension in arrays that have the region dimension, and will get length nlreg_n_regions
+    integer, allocatable :: nlreg_region_ids(:)
 
-    ! Extended array of regionfraction, needed to cover the big (additional) local fraction sources to the target grid (x,y,region)
-    ! We don't need subsample array for the extended version, since the "normal" (non-additional) local fraction grid should always be completely covered by the reduced EMEP grid. So the subsample grid is only defined locally in the subroutine where the region fraction is calculated
-    real, allocatable :: nlreg_regionfraction_per_EMEP_extended_grid(:, :, :)
+    ! Defining an extended EMEP grid on which to define region information
+
+    ! nlreg_EMEP_extended_subsample_region_id will contain the region ID of each subsample of each cell of the extended EMEP grid
     ! number of extra EMEP grids in each direction in the extended array
     ! initialized to zero, but will be set higher if used
     integer :: nlreg_ngrid_extended_margin = 0
+    ! dimensions of the extended EMEP grid use for region fraction arrays
+    ! (will be set to EMEP grid dimensions + 2*nlreg_ngrid_extended_margin)
+    integer :: nlreg_nx_EMEP_extended = 0
+    integer :: nlreg_ny_EMEP_extended = 0
+    ! nlreg_regionfraction_per_EMEP_grid will give the fraction of each EMEP grid that is within each region (x,y,region)
+    real, allocatable :: nlreg_regionfraction_per_EMEP_extended_grid(:, :, :)
+    ! Region ID of subsamples of the extended EMEP grid (xsub,ysub,x,y)
+    integer, allocatable :: nlreg_EMEP_extended_subsample_region_id(:, :, :, :)
+    ! nlreg_n_subsamples_per_EMEP_grid specifies how many subsamples to use along each spatial dimension of an EMEP grid in nlreg_EMEP_extended_subsample_region_id
+    integer :: nlreg_n_subsamples_per_EMEP_grid = 20
 
-    ! The following arrays will contain the contributions from outside moving window but within region for each uEMEP target subgrid (x,y,t,source,pollutant)
-    ! - from the small (1x1) LF grid data
-    real, allocatable :: nlreg_subgrid_nonlocal_from_in_region(:, :, :, :, :)
-    ! - from the big (additional) LF grid data, only the part outside the 1x1 LF domain
-    ! (i.e. this array contains only the contribution NOT covered in the above array, so they can be added)
-    real, allocatable :: nlreg_subgrid_nonlocal_from_in_region_additional_increment(:, :, :, :, :)
+    ! The following arrays will contain (non-overlapping) EMEP contributions from within the same region as the target subgrid is in
+    ! The grids are defined for dimensions (x,y,time,source,pollutant)
+    ! They can be added to find the total EMEP contribution from-in-region.
+    ! - In-region contribution from inside the moving window (can be replaced with downscaled in-region contributions)
+    real, allocatable :: nlreg_subgrid_local_from_in_region(:, :, :, :, :)
+    ! - In-region contribution from outside the moving window, out to the very edge of the small (1x1) LF grid domain
+    real, allocatable :: nlreg_subgrid_semilocal_from_in_region(:, :, :, :, :)
+    ! - In-region contribution from the big (additional) LF grid data, only the part outside the 1x1 LF domain
+    real, allocatable :: nlreg_subgrid_semilocal_from_in_region_additional_increment(:, :, :, :, :)
 
 end module uEMEP_definitions
 

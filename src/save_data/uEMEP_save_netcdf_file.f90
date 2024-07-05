@@ -1091,7 +1091,9 @@ contains
         endif
 
         !Save EMEP from in region distribution to the target grid
-        if (trace_emissions_from_in_region) save_emep_region_mask=.true.
+        !if (trace_emissions_from_in_region) save_emep_region_mask=.true.
+        ! NO LONGER SAVE THIS (the arrays are outdated)
+        save_emep_region_mask=.false.
         if (save_emep_region_mask) then
             variable_type='float'
             unit_str=""
@@ -1186,12 +1188,12 @@ contains
                         do i_loop = 1,2
                             if (i_loop == 1) then
                                 ! small domain
-                                temp_subgrid = nlreg_subgrid_nonlocal_from_in_region(:,:,:,i_source,i_pollutant)
+                                temp_subgrid = nlreg_subgrid_semilocal_from_in_region(:,:,:,i_source,i_pollutant)
                                 i_file = emep_subgrid_semilocal_file_index(i_source)
                             else
                                 ! additional domain: add the additional increment
                                 if (.not. (EMEP_additional_grid_interpolation_size > 0)) cycle
-                                temp_subgrid = nlreg_subgrid_nonlocal_from_in_region(:,:,:,i_source,i_pollutant) + nlreg_subgrid_nonlocal_from_in_region_additional_increment(:,:,:,i_source,i_pollutant)
+                                temp_subgrid = nlreg_subgrid_semilocal_from_in_region(:,:,:,i_source,i_pollutant) + nlreg_subgrid_semilocal_from_in_region_additional_increment(:,:,:,i_source,i_pollutant)
                                 i_file = emep_additional_subgrid_semilocal_file_index(i_source)
                             end if
                             variable_type='float'
@@ -1214,6 +1216,7 @@ contains
         end if
 
         !Save the EMEP data interpolated to the subgrid. These are based on the gridded concentrations
+        ! Do not save additional contributions from-in-region
         if (save_emep_source_contributions) then
 
             if (trace_emissions_from_in_region) then
@@ -1318,8 +1321,8 @@ contains
                                             ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)
                                     endif
 
-                                    !Save the additional EMEP source contributions here
-                                    if (EMEP_additional_grid_interpolation_size.gt.0) then
+                                    !Save the additional EMEP source contributions here (not for from-in-region)
+                                    if (EMEP_additional_grid_interpolation_size.gt.0 .and. in_region_loop == 1) then
 
                                         i_file=emep_additional_subgrid_local_file_index(i_source)
                                         var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//trim(filename_append)

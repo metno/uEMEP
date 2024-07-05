@@ -208,6 +208,8 @@ module uemep_configuration
     logical :: wind_level_zc_flag = .false. ! This will use the centre of mass wind no matter what type of wind_level_flag is used
     logical :: use_alternative_ppm_variable_for_lf = .false.
     logical :: save_emep_OP_species = .false.
+    ! whether the region mask values refer to the region_index (.true.) or region_id (.false.)
+    logical :: nlreg_region_mask_gives_region_index = .false.
 
 
     integer :: start_time_nc_index = 1
