@@ -13,6 +13,7 @@ ford*
 debug/
 build/
 release/
+develop/
 build*
 
 # Other directories
