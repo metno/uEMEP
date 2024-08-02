@@ -912,6 +912,25 @@ contains
                                                             temp_subgrid_from_in_region(i,j,:)=temp_subgrid_from_in_region(i,j,:) + temp_subgrid_rotated
                                                         endif
                                                     endif
+                                                    ! New version of in-region calculations: allowing target region to vary with the target grid
+                                                    ! ****************
+                                                    if (use_target_subgrid) then
+                                                        ! one temp_target_subgrid may contain multiple regions in the finer resolution, so we must store results in a per-region array
+                                                        ! -> add this contribution to the region ID that matches the current emission grid
+                                                        do i_region = 1,nlreg_n_regions
+                                                            if (nlreg_emission_subgrid_region_id(ii,jj,source_index) == nlreg_region_ids(i_region)) then
+                                                                nlreg_temp_target_subgrid_per_source_region(i,j,:,i_region) = nlreg_temp_target_subgrid_per_source_region(i,j,:,i_region) + temp_subgrid_rotated
+                                                                exit
+                                                            end if
+                                                        end do
+                                                    else
+                                                        ! dispersion calculation is done directly on the fine-resolution target grid, so there is only one target region
+                                                        ! -> we can directly check if the target subgrid region ID matches the current emission grid region ID
+                                                        if (nlreg_emission_subgrid_region_id(ii,jj,source_index) == nlreg_subgrid_region_id(i,j)) then
+                                                            nlreg_temp_subgrid_from_in_region_new(i,j,:) = nlreg_temp_subgrid_from_in_region_new(i,j,:) + temp_subgrid_rotated
+                                                        end if
+                                                    end if
+                                                    ! ************************
                                                 endif
 
                                                 !write(*,'(4i5,2es12.2,4f12.3)') i,j,ii,jj,temp_subgrid(i,j,:), &
