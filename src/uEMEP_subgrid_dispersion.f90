@@ -1134,14 +1134,6 @@ contains
                 subgrid(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid
 
                 if (trace_emissions_from_in_region) then
-                    !Comparison between original and new from-in-region contributions
-                    ! do i = 1, subgrid_dim(x_dim_index)
-                    !     do j = 1, subgrid_dim(y_dim_index)
-                    !         do i_pollutant = 1,4
-                    !             write(unit_logfile,'(A,2I4,2l,2I4,2f14.6f)') 'i,j,use_subgrid,use_subgrid_allsources,i_pollutant,region_id,inregion_proxy_old,inregion_proxy_new =',i,j,use_subgrid(i,j,source_index),use_subgrid(i,j,allsource_index),i_pollutant,nlreg_subgrid_region_id(i,j),temp_subgrid_from_in_region(i,j,i_pollutant),nlreg_temp_subgrid_from_in_region_new(i,j,i_pollutant)
-                    !         end do
-                    !     end do
-                    ! end do
                     if (use_new_in_region_version) then
                         subgrid_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=nlreg_temp_subgrid_from_in_region_new
                     else

@@ -547,9 +547,7 @@ contains
                         if (trace_emissions_from_in_region .and. .not. calculate_EMEP_additional_grid_flag) then
                             do remove_source = 1, n_source_index
                                 if (calculate_source(remove_source) .or. calculate_EMEP_source(remove_source)) then
-                                    !write(unit_logfile,'(A,I6)') 'Calculating in-region contributions for remove_source=',remove_source
                                     do k = 1,2 ! inregion and outregion
-                                        !write(unit_logfile,'(A,I0)') 'k=',k
                                         ! add up all local sources to NOx, except 'remove_source' from either inregion or outregion
                                         f_no2_loc = 0
                                         nox_loc = 0
@@ -562,12 +560,10 @@ contains
                                                         ! downscaled contribution
                                                         f_no2_isource = emission_factor(no2_index,i_source,i_subsource)/emission_factor(nox_index,i_source,i_subsource)
                                                         subgrid_var_index = local_subgrid_index
-                                                        !write(unit_logfile, '(A,I6)') '      uEMEP, subgrid_var_index=',subgrid_var_index
                                                     else ! i.e. calculate_EMEP_source(i_source) .and. .not. calculate_source(i_source)
                                                         ! EMEP contribution
                                                         f_no2_isource = f_no2_emep
                                                         subgrid_var_index = emep_local_subgrid_index
-                                                        !write(unit_logfile, '(A,I6)') '      EMEP, subgrid_var_index=',subgrid_var_index
                                                     end if
                                                     ! check if this source is the one we remove or not, to determine how to add it
                                                     if (i_source == remove_source) then
@@ -575,7 +571,6 @@ contains
                                                         if (k == inregion_index) then
                                                             ! in region: add only the local contribution from outside region
                                                             nox_isource = subgrid(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index)) - subgrid_from_in_region(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index))
-                                                            !write(unit_logfile,'(A,I0,A,3f14.8)') 'NOx from sector ',remove_source,': total,inregion,diff =',subgrid(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index)),subgrid_from_in_region(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index)),subgrid(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index))-subgrid_from_in_region(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index))
                                                         else if (k == outregion_index) then
                                                             ! out region: add only the local contribution from inside region
                                                             nox_isource = subgrid_from_in_region(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index))
@@ -589,7 +584,6 @@ contains
                                                     end if
                                                     f_no2_loc = f_no2_loc + f_no2_isource*nox_isource
                                                     nox_loc = nox_loc + nox_isource
-                                                    !write(unit_logfile,'(A,2I6,4f12.4)') '  i_source,i_subsource,f_no2_isource,nox_isource,f_no2_loc,nox_loc =',i_source,i_subsource,f_no2_isource,nox_isource,f_no2_loc,nox_loc
                                                 end do
                                             end if
                                         end do
@@ -599,18 +593,14 @@ contains
                                         else
                                             f_no2_loc = 0.0
                                         end if
-                                        !write(unit_logfile,'(A,f12.4)') 'After dividing by total NOx, f_no2_loc=',f_no2_loc
 
                                         ! Calculate background concentrations (following Bruce's approach above)
                                         no2_bg = comp_EMEP_subgrid(i,j,t,no2_index)*nox_bg/subgrid(i,j,t,emep_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
                                         o3_bg = max(0.0, comp_EMEP_subgrid(i,j,t,o3_index) + 48.0/46.0*(comp_EMEP_subgrid(i,j,t,no2_index) - no2_bg)) !Conserve Ox when removing NO2 in the background. Cannot be less than 0
 
-                                        !write(unit_logfile,'(A,2f12.4)') 'New values: no2_bg,o3_bg =',no2_bg,o3_bg
-
                                         ! Assume stationary state to derive no2 and o3 background. Overwrites the previous setting
                                         if (no2_background_chemistry_scheme_flag .eq. 1) then
                                             call uEMEP_nonlocal_NO2_O3(nox_bg, comp_EMEP_subgrid(i,j,t,nox_index), comp_EMEP_subgrid(i,j,t,no2_index), comp_EMEP_subgrid(i,j,t,o3_index), J_photo, temperature, f_no2_emep, no2_bg, o3_bg)
-                                            !write(unit_logfile,'(A,2f12.4)') 'After replacing with stationary state: no2_bg,o3_bg=',no2_bg,o3_bg
                                         end if
 
                                         ! Calculate NO2 and O3 with the chemistry scheme
@@ -629,22 +619,16 @@ contains
                                         else if (no2_chemistry_scheme_flag .eq. 5) then
                                             call uEMEP_During_NO2(nox_bg, no2_bg, nox_loc, o3_bg, f_no2_loc, comp_EMEP_subgrid(i,j,t,nox_index), comp_EMEP_subgrid(i,j,t,no2_index), comp_EMEP_subgrid(i,j,t,o3_index), J_photo, temperature, nox_out, no2_out, o3_out, p_bg_out, p_out)
                                         end if
-                                        !write(unit_logfile, '(A,3f12.4)') 'nox_bg,nox_loc,SUM=',nox_bg,nox_loc,nox_bg+nox_loc
-                                        !write(unit_logfile,'(A,3f12.4)') 'From chemistry scheme: nox_out,no2_out,o3_out =',nox_out,no2_out,o3_out
 
                                         !Avoid round off errors which can occur with small numbers
                                         no2_inandout_region(k) = max(0.0, comp_subgrid(i,j,t,no2_index) - no2_out)
                                         !Can be negative and can be greater than 1 so do not limit
                                         o3_inandout_region(k) = comp_subgrid(i,j,t,o3_index) - o3_out
-                                        !write(unit_logfile,'(A,4f14.8)') 'comp_subgridNO2,no2_out,comp_subgridO3,o3_out =',comp_subgrid(i,j,t,no2_index),no2_out,comp_subgrid(i,j,t,o3_index),o3_out
                                     end do ! k=1,2
 
                                     ! scale the contributions so the sum equals the total contribution from the source
                                     sum_no2_inregion_outregion = no2_inandout_region(inregion_index) + no2_inandout_region(outregion_index)
                                     sum_o3_inregion_outregion = o3_inandout_region(inregion_index) + o3_inandout_region(outregion_index)
-
-                                    !write(unit_logfile,'(A,4f14.8)') 'Before normalising: no2_inreg,no2_outreg,o3_inreg,o3_outreg =',no2_inandout_region(inregion_index),no2_inandout_region(outregion_index),o3_inandout_region(inregion_index),o3_inandout_region(outregion_index)
-                                    !write(unit_logfile,'(A,4f14.8)') 'no2_in+out, no2_all, o3_in+out, o3_all =',sum_no2_inregion_outregion,comp_source_subgrid(i,j,t,no2_index,remove_source),sum_o3_inregion_outregion,comp_source_subgrid(i,j,t,o3_index,remove_source)
 
                                     if (abs(sum_no2_inregion_outregion) > epsilon0) then
                                         comp_source_subgrid_from_in_region(i,j,t,no2_index,remove_source) = comp_source_subgrid(i,j,t,no2_index,remove_source) * no2_inandout_region(inregion_index) / sum_no2_inregion_outregion
@@ -658,8 +642,6 @@ contains
                                     end if
                                     if (comp_subgrid(i,j,t,no2_index) .le. 0) comp_source_subgrid_from_in_region(i,j,t,no2_index,remove_source) = 0
                                     if (comp_subgrid(i,j,t,o3_index) .le. 0) comp_source_subgrid_from_in_region(i,j,t,o3_index,remove_source) = 0
-
-                                    !write(unit_logfile,'(A,I0,A,4f14.8)') 'Source ',remove_source,': After normalising: no2_inreg,no2_outreg,o3_inreg,o3_outreg =',comp_source_subgrid_from_in_region(i,j,t,no2_index,remove_source),comp_source_subgrid(i,j,t,no2_index,remove_source)-comp_source_subgrid_from_in_region(i,j,t,no2_index,remove_source),comp_source_subgrid_from_in_region(i,j,t,o3_index,remove_source),comp_source_subgrid(i,j,t,o3_index,remove_source)-comp_source_subgrid_from_in_region(i,j,t,o3_index,remove_source)
 
                                 end if
                             end do ! remove_source = 1, n_source_index

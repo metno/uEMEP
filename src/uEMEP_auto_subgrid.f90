@@ -695,8 +695,6 @@ contains
             status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
             ! NB: the following line fails if region_mask is bigger than ca. 1 million elements when runnning interactively, but not as a qsub job (fix by increasing 'ulimit -s')
             status_nc = NF90_GET_VAR (id_nc, var_id_nc, region_mask)
-            !write(unit_logfile, '(A,I0)') 'region_mask(1,1)= ',region_mask(1,1)
-            !write(unit_logfile, '(A,I0)') 'region_mask(nx,ny)= ',region_mask(nx_regionmask,ny_regionmask)
             write(unit_logfile,'(A,i3,A,2A,2i16)') ' Reading: ',temp_num_dims,' ',trim(nlreg_varname_region_mask),' (min, max): ',minval(region_mask),maxval(region_mask)
         else
             write(unit_logfile,'(A)') 'Could not read region mask values from file'
@@ -745,31 +743,26 @@ contains
         ! make room for 'n_regions_allocate' regions in the list initially
         allocate(temp_region_ids(n_regions_allocate))
         temp_region_ids = -1
-        !write(unit_logfile,'(20i4)') temp_region_ids
         list_allocated_size = size(temp_region_ids)
         counter = 0
         previous_region_id = -1
         do i = 1, subgrid_dim(x_dim_index)
             do j = 1, subgrid_dim(y_dim_index)
                 current_region_id = nlreg_subgrid_region_id(i,j)
-                !write(unit_logfile,'(A,4i4)') 'i,j,cur,prev,counter = ',i,j,current_region_id,previous_region_id,counter
                 if (current_region_id > 0 .and. .not. current_region_id == previous_region_id) then
                     ! Region ID is different from previous subgrid: check if we already found it before
                     current_region_already_found = .false.
                     do i_region = 1, counter
-                        ! NB: What happens if counter=0 ??????????????????????????????
                         if (temp_region_ids(i_region) == current_region_id) then
                             current_region_already_found = .true.
                             exit
                         end if
                     end do
-                    !write(unit_logfile,'(A,l)') 'already_found? ',current_region_already_found
                     if (.not. current_region_already_found) then
                         ! new region ID found
                         ! NB: region_id <= 0 is ignored!
                         if (counter == list_allocated_size) then
                             ! We need to allocate more space in the list of regions
-                            !write(unit_logfile,'(A)') 'We need to allocate more!'
                             allocate(temp_region_ids_dummy(list_allocated_size))
                             temp_region_ids_dummy = temp_region_ids
                             deallocate(temp_region_ids)
@@ -780,7 +773,6 @@ contains
                         end if
                         counter = counter + 1
                         temp_region_ids(counter) = current_region_id
-                        !write(unit_logfile,'(20i4)') temp_region_ids
                     end if
                     previous_region_id = current_region_id
                 end if
@@ -845,9 +837,6 @@ contains
                                 nlreg_emission_subgrid_region_id(i,j,i_source) = region_mask(x_index,y_index)
                             end if
                             ! NB: contrary to the target grid, we will allow non-positive region ID in the emission subgrid, indicating "no-region", and we will also allow that the emision subgrid extends beyond the boundaries of the region mask file
-                            ! if (i_source == 3) then
-                            !     write(unit_logfile,'(A,3i4,2f12.1,2f12.4,2f12.1,2i10,i4)') 'i,j,i_source,x_emis,y_emis,lon_emis,lat_emis,x_location,y_location,x_index,y_index,region_id = ',i,j,i_source,x_emis,y_emis,lon_emis,lat_emis,x_location,y_location,x_index,y_index,nlreg_emission_subgrid_region_id(i,j,i_source)
-                            ! end if
                         end do
                     end do
                 end if
@@ -896,11 +885,9 @@ contains
                     ! calculate the corresponding index in the normal EMEP grid
                     ii_nc = ii - nlreg_ngrid_extended_margin
                     jj_nc = jj - nlreg_ngrid_extended_margin
-                    !write(unit_logfile,'(A,4I6)') 'ii,jj,ii_nc,jj_nc =', ii,jj,ii_nc,jj_nc
                     ! -> deduce EMEP projection coordinate values at centre of this EMEP grid
                     x_emepmid = var1d_nc(1,x_dim_nc_index) + dx_emep*(ii_nc - 1)
                     y_emepmid = var1d_nc(1,y_dim_nc_index) + dy_emep*(jj_nc - 1)
-                    !write(unit_logfile,'(A,4f12.2)') 'xcoord[1],ycoord[1],x_emepmid,yemepmid = ',var1d_nc(1,x_dim_nc_index),var1d_nc(1,y_dim_nc_index),x_emepmid,y_emepmid
                     ! go through all subsamples of this EMEP grid
                     do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
                         do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
@@ -919,10 +906,6 @@ contains
                                 nlreg_EMEP_extended_subsample_region_id(i_sub,j_sub,ii,jj) = region_mask(x_index,y_index)
                             end if
                             ! NB: if it is outside the region mask grid, the 'no-region' value -1 is kept
-
-                            !if (ii > 1 .and. ii < 4 .and. jj > 3 .and. jj < 6) !then
-                                !write(unit_logfile,'(A,4i4,2f12.2,2f12.4,2f12.2,2i12,i12)') 'ii,jj,i_sub,j_sub,x_sub,y_sub,lon_sub,lat_sub,x_loc,y_loc,x_ind,y_ind,reg = ',ii,jj,i_sub,j_sub,x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,x_location,y_location,x_index,y_index,nlreg_EMEP_extended_subsample_region_id(i_sub,j_sub,ii,jj)
-                            !end if
                         end do
                     end do
                 end do
@@ -945,7 +928,6 @@ contains
                             end do
                         end do
                         nlreg_regionfraction_per_EMEP_extended_grid(ii,jj,i_region) = counter*1.0/nlreg_n_subsamples_per_EMEP_grid**2
-                        !write(unit_logfile,'(A,6i5,f12.4)') 'ii,jj,i_region,region_id,counter,nsubsamples,fraction =',ii,jj,i_region,current_region_id,counter,nlreg_n_subsamples_per_EMEP_grid,nlreg_regionfraction_per_EMEP_extended_grid(ii,jj,i_region)
                     end do
                 end do
             end do
