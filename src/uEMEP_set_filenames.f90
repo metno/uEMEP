@@ -44,8 +44,8 @@ contains
             filename_grid(proxy_file_index(i)) = trim('proxy')//'_'//trim(source_file_str(i))
             filename_grid(proxy_integral_file_index(i)) = trim('proxy_integral')//'_'//trim(source_file_str(i))
             filename_grid(emep_subgrid_file_index(i)) = trim('EMEP')//'_'//trim(source_file_str(i))
-            filename_grid(emep_subgrid_semilocal_file_index(i)) = trim('EMEP_semilocal_contribution')//'_'//trim(source_file_str(i))
-            filename_grid(emep_additional_subgrid_semilocal_file_index(i)) = trim('EMEP_additional_semilocal_contribution')//'_'//trim(source_file_str(i))
+            filename_grid(nlreg_emep_subgrid_semilocal_file_index(i)) = trim('EMEP_semilocal_contribution')//'_'//trim(source_file_str(i))
+            filename_grid(nlreg_emep_additional_subgrid_semilocal_file_index(i)) = trim('EMEP_additional_semilocal_contribution')//'_'//trim(source_file_str(i))
             if (save_netcdf_fraction_as_contribution_flag) then
                 filename_grid(emep_subgrid_nonlocal_file_index(i)) = trim('EMEP_nonlocal_contribution')
                 filename_grid(emep_subgrid_local_file_index(i)) = trim('EMEP_local_contribution')//'_'//trim(source_file_str(i))

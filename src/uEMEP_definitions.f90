@@ -558,8 +558,8 @@ module uEMEP_definitions
     integer :: subgrid_total_file_index(n_source_index)
     integer :: emep_additional_subgrid_nonlocal_file_index(n_source_index)
     integer :: emep_additional_subgrid_local_file_index(n_source_index)
-    integer :: emep_subgrid_semilocal_file_index(n_source_index)
-    integer :: emep_additional_subgrid_semilocal_file_index(n_source_index)
+    integer :: nlreg_emep_subgrid_semilocal_file_index(n_source_index)
+    integer :: nlreg_emep_additional_subgrid_semilocal_file_index(n_source_index)
 
     ! Filename index for meteorological parameters
     integer :: subgrid_ugrid_file_index

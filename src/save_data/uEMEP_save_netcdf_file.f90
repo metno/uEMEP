@@ -1189,12 +1189,12 @@ contains
                             if (i_loop == 1) then
                                 ! small domain
                                 temp_subgrid = nlreg_subgrid_semilocal_from_in_region(:,:,:,i_source,i_pollutant)
-                                i_file = emep_subgrid_semilocal_file_index(i_source)
+                                i_file = nlreg_emep_subgrid_semilocal_file_index(i_source)
                             else
                                 ! additional domain: add the additional increment
                                 if (.not. (EMEP_additional_grid_interpolation_size > 0)) cycle
                                 temp_subgrid = nlreg_subgrid_semilocal_from_in_region(:,:,:,i_source,i_pollutant) + nlreg_subgrid_semilocal_from_in_region_additional_increment(:,:,:,i_source,i_pollutant)
-                                i_file = emep_additional_subgrid_semilocal_file_index(i_source)
+                                i_file = nlreg_emep_additional_subgrid_semilocal_file_index(i_source)
                             end if
                             variable_type='float'
                             unit_str='ug/m3'
