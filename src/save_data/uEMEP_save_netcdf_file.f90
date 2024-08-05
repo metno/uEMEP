@@ -1170,7 +1170,7 @@ contains
             endif
         end if
 
-        ! Save contributions from nonlocal in-region
+        ! Save semilocal contributions
         if (save_emep_source_contributions .and. trace_emissions_from_in_region) then
             write(unit_logfile,'(A)') '-------------------------------'
             write(unit_logfile,'(A)') 'Saving EMEP semilocal contributions from-in-region'
@@ -1184,7 +1184,7 @@ contains
                         if (i_source == traffic_gasoline_nc_index .or. i_source == traffic_diesel_nc_index .or. i_source == traffic_gas_nc_index .or. i_source == publicpower_point_nc_index .or. i_source == publicpower_area_nc_index) cycle
                         !Do not save nonexhaust for nox
                         if (i_source == traffic_nonexhaust_index .and. (pollutant_loop_index(i_pollutant) == nox_index .or. pollutant_loop_index(i_pollutant) == no2_index)) cycle
-                        ! loop over normal and additional version of the nonlocal in-region
+                        ! loop over normal and additional version of the semilocal contributions
                         do i_loop = 1,2
                             if (i_loop == 1) then
                                 ! small domain
