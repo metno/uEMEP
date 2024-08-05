@@ -518,8 +518,8 @@ contains
                         if (pollutant_loop_index(i_pollutant).ne.pmex_index &
                             .and.pollutant_loop_index(i_pollutant).ne.pm25_sand_index.and.pollutant_loop_index(i_pollutant).ne.pm10_sand_index &
                             .and.pollutant_loop_index(i_pollutant).ne.pm25_salt_index.and.pollutant_loop_index(i_pollutant).ne.pm10_salt_index) then
-                            !Save the total nonlocal part from EMEP
-                            if (i_source.eq.allsource_index) then
+                            !Save the total nonlocal part from EMEP (don't save it for in-region variables)
+                            if (i_source.eq.allsource_index .and. in_region_loop .eq. 1) then
 
                                 i_file=emep_subgrid_nonlocal_file_index(i_source)
                                 var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//trim(filename_append)
@@ -1253,7 +1253,7 @@ contains
                         if (calculate_source(i_source).or.save_EMEP_source(i_source).or.i_source.eq.allsource_index) then
 
                             !Only save the allsource value here 'EMEP_allsources'
-                            if (i_source.eq.allsource_index) then
+                            if (i_source.eq.allsource_index .and. in_region_loop .eq. 1) then
                                 variable_type='float'
                                 i_file=emep_subgrid_file_index(i_source)
                                 var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//trim(filename_append)
