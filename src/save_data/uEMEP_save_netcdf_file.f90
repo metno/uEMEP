@@ -226,6 +226,7 @@ contains
                 ! else
                 !     filename_append=''
                 ! endif
+                filename_append=''
 
 
                 variable_type='float'
