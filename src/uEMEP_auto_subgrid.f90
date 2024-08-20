@@ -539,7 +539,7 @@ contains
         ! current location in emission subgrid (x and y in uEMEP projection, longitude and latitude)
         real x_emis,y_emis,lon_emis,lat_emis
 
-        ! Additional variables used for creating list of regions, calculating fraction of EMEP cells in each region and setting the use_region and use_region_val arrays
+        ! Additional variables used for creating list of regions, calculating fraction of EMEP cells in each region and setting the use_subgrid and use_subgrid_val arrays
         integer i_region
         integer, allocatable :: temp_region_ids(:)
         integer, allocatable :: temp_region_ids_dummy(:)
