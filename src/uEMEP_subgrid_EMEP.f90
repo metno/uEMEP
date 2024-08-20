@@ -1937,8 +1937,8 @@ contains
                                 weighting_value_local = counter_local*1.0/nlreg_n_subsamples_per_EMEP_grid**2
                                 weighting_value_semilocal = counter_semilocal*1.0/nlreg_n_subsamples_per_EMEP_grid**2
                             end if
-                            temp_EMEP_local_from_in_region(i_region,:,:,:) = temp_EMEP_local_from_in_region(i_region,:,:,:) + lc_var3d_nc(i_dist,j_dist,ii,jj,:,lc_index,:,:)*weighting_value_local
-                            temp_EMEP_semilocal_from_in_region(i_region,:,:,:) = temp_EMEP_semilocal_from_in_region(i_region,:,:,:) + lc_var3d_nc(i_dist,j_dist,ii,jj,:,lc_index,:,:)*weighting_value_semilocal
+                            temp_EMEP_local_from_in_region(i_region,:,:,:) = temp_EMEP_local_from_in_region(i_region,:,:,:) + lc_var3d_nc(i_dist,j_dist,ii,jj,:,lc_index,1:n_source_index,:)*weighting_value_local
+                            temp_EMEP_semilocal_from_in_region(i_region,:,:,:) = temp_EMEP_semilocal_from_in_region(i_region,:,:,:) + lc_var3d_nc(i_dist,j_dist,ii,jj,:,lc_index,1:n_source_index,:)*weighting_value_semilocal
                         end do ! i_region = 1, nlreg_n_regions
 
                     end do
@@ -2024,7 +2024,7 @@ contains
                                         counter = counter + 1
                                     else
                                         ! The grid is covered by 1x1 LF data: subtract the 1x1 LF from the additional increment
-                                        EMEP_additional_increment_current_lfgrid=EMEP_additional_increment_current_lfgrid-lc_var3d_nc(idist_small,jdist_small,ii,jj,:,lc_index,:,:)
+                                        EMEP_additional_increment_current_lfgrid=EMEP_additional_increment_current_lfgrid-lc_var3d_nc(idist_small,jdist_small,ii,jj,:,lc_index,1:n_source_index,:)
                                     end if
                                 end do
                             end do

@@ -141,7 +141,7 @@ contains
         if (trace_emissions_from_in_region) then
             allocate (temp_subgrid_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_pollutant_loop))
             temp_subgrid_from_in_region=0.
-            allocate(nlreg_temp_subgrid_from_in_region_new(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_pollutant_loop))
+            allocate(nlreg_temp_subgrid_from_in_region_new(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_pollutant_loop))
             nlreg_temp_subgrid_from_in_region_new=0.
         endif
 
