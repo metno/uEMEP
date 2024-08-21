@@ -768,16 +768,16 @@ contains
         ! Local variables
         integer :: no2_i,no_i,nox_i,o3_i,ox_i,nox_bg_i,no2_bg_i
         integer, parameter :: n_i = 7
-        real :: Na, Na_fac, k1
-        real :: mass(n_i)
-        real :: mmass(n_i) = [46.0, 30.0, 46.0, 48.0, 47.0, 46.0, 46.0]
-        real :: mol(n_i)
-        real :: fac_sqrt
-        real :: f_no2,f_ox,Jd,Jd_bg
-        real :: min_nox=1.0e-6
-        real :: c, b, BB, td, f_no2_0, f_no2_ps
-        complex(4) :: AA
-        real :: p_tot_out, f_ox_bg, f_no2_bg_ps, f_no2_bg
+        double precision :: Na, Na_fac, k1
+        double precision :: mass(n_i)
+        double precision :: mmass(n_i) = [46.0, 30.0, 46.0, 48.0, 47.0, 46.0, 46.0]
+        double precision :: mol(n_i)
+        double precision :: fac_sqrt
+        double precision :: f_no2,f_ox,Jd,Jd_bg
+        double precision :: min_nox=1.0e-6
+        double precision :: c, b, BB, td, f_no2_0, f_no2_ps
+        complex(8) :: AA
+        double precision :: p_tot_out, f_ox_bg, f_no2_bg_ps, f_no2_bg
 
         no2_i = 1; no_i = 2; nox_i = 3; o3_i = 4; ox_i = 5; nox_bg_i = 6; no2_bg_i = 7
         Na = 6.022e23        ! (molecules/mol)
