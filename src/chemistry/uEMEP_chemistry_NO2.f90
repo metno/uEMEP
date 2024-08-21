@@ -537,8 +537,9 @@ contains
                                 else
                                     comp_source_subgrid(i,j,t,o3_index,i_source) = 0
                                 end if
-                                if (comp_subgrid(i,j,t,no2_index) .le. 0) comp_source_subgrid(i,j,t,no2_index,i_source) = 0
-                                if (comp_subgrid(i,j,t,o3_index) .le. 0) comp_source_subgrid(i,j,t,o3_index,i_source) = 0
+                                ! Setting local sources to 0 if total concentration is zero: No longer do this, because nonlocal might be non-zero even if total is zero
+                                !if (comp_subgrid(i,j,t,no2_index) .le. 0) comp_source_subgrid(i,j,t,no2_index,i_source) = 0
+                                !if (comp_subgrid(i,j,t,o3_index) .le. 0) comp_source_subgrid(i,j,t,o3_index,i_source) = 0
                             end if
                         end do
 
@@ -640,8 +641,6 @@ contains
                                     else
                                         comp_source_subgrid_from_in_region(i,j,t,o3_index,remove_source) = 0
                                     end if
-                                    if (comp_subgrid(i,j,t,no2_index) .le. 0) comp_source_subgrid_from_in_region(i,j,t,no2_index,remove_source) = 0
-                                    if (comp_subgrid(i,j,t,o3_index) .le. 0) comp_source_subgrid_from_in_region(i,j,t,o3_index,remove_source) = 0
 
                                 end if
                             end do ! remove_source = 1, n_source_index
