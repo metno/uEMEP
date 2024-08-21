@@ -153,6 +153,9 @@ contains
                         exit
                     end if
                     !write(*,'(i,9es,i)') RWC_grid_id(count),RWC_grid_emission(count,RWC_pm25_index),RWC_grid_emission(count,RWC_pm10_index),RWC_grid_emission(count,RWC_nox_index),RWC_grid_HDD(count,RWC_HDD5_index),RWC_grid_HDD(count,RWC_HDD8_index),RWC_grid_HDD(count,RWC_HDD11_index),RWC_grid_HDD(count,RWC_HDD15_index),RWC_grid_height(count,1),RWC_grid_height(count,2),RWC_region_id(count)
+                    if (count == n_RWC_grids) then
+                        exit
+                    end if
                 enddo
             elseif (read_RWC_file_with_extra_HDD) then
                 !Read new version
