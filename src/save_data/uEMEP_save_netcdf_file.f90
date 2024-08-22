@@ -2492,7 +2492,8 @@ contains
         !Mask the regions if required
         if (use_region_select_and_mask_flag) then
             do t=1,nt
-                where (use_subgrid_val(:,:,allsource_index).eq.outside_region_index) val_array(:,:,t)=NODATA_value
+                ! NB: Array subgrid_val is no longer allocated or used
+                !where (use_subgrid_val(:,:,allsource_index).eq.outside_region_index) val_array(:,:,t)=NODATA_value
                 where (.not.use_subgrid(:,:,allsource_index)) val_array(:,:,t)=NODATA_value
             enddo
         endif

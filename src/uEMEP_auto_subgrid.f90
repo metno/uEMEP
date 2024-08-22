@@ -539,7 +539,7 @@ contains
         ! current location in emission subgrid (x and y in uEMEP projection, longitude and latitude)
         real x_emis,y_emis,lon_emis,lat_emis
 
-        ! Additional variables used for creating list of regions, calculating fraction of EMEP cells in each region and setting the use_subgrid and use_subgrid_val arrays
+        ! Additional variables used for creating list of regions, calculating fraction of EMEP cells in each region and setting the use_subgrid array
         integer i_region
         integer, allocatable :: temp_region_ids(:)
         integer, allocatable :: temp_region_ids_dummy(:)
@@ -786,26 +786,23 @@ contains
         write(unit_logfile,'(A,100I5)') 'ID of these regions are (printing max 100): ', nlreg_region_ids
 
         ! Determine which subgrid cells are inside the selected region
-        ! and use this to set use_subgrid and use_subgrid_val
+        ! and use this to set use_subgrid
         if (use_region_select_and_mask_flag) then
-            ! Redefine 'use_subgrid' and 'use_subgrid_val'
-            ! NB: This will override previously set values for these arrays
+            ! Set 'use_subgrid'
+            ! NB: This will override previously set values for this array
             use_subgrid = .false.
-            use_subgrid_val = 0
             if (nlreg_region_mask_gives_region_index) then
                 region_select = region_index
             else
                 region_select = region_id
             end if
-            write(unit_logfile,'(A,I0)') 'Setting "use_subgrid" and "use_subgrid_val" based on where in the target grid region_id=',region_select
+            write(unit_logfile,'(A,I0)') 'Setting "use_subgrid" based on where in the target grid region_id=',region_select
             do i = 1, subgrid_dim(x_dim_index)
                 do j = 1, subgrid_dim(y_dim_index)
                     if (nlreg_subgrid_region_id(i,j) == region_select) then
                         use_subgrid(i,j,:) = .true.
-                        use_subgrid_val(i,j,:) = 1
                     else
                         use_subgrid(i,j,:) = .false.
-                        use_subgrid_val(i,j,:) = outside_region_index
                     end if
                 end do
             end do
