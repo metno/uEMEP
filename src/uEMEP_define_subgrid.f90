@@ -280,9 +280,6 @@ contains
         if (allocated(xproj_subgrid)) deallocate (xproj_subgrid)
         if (allocated(yproj_subgrid)) deallocate (yproj_subgrid)
         if (allocated(traveltime_subgrid)) deallocate (traveltime_subgrid)
-        if (trace_emissions_from_in_region) then
-            if (allocated(subgrid_from_in_region)) deallocate (subgrid_from_in_region)
-        endif
 
         !Define target grid
         if (.not.allocated(subgrid)) allocate (subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_pollutant_loop))
@@ -295,19 +292,22 @@ contains
         if (.not.allocated(traveltime_subgrid)) allocate (traveltime_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),3,n_pollutant_loop)) !Last index 1 for weighted time, 2 for sum of weights, 3 for final time
         traveltime_subgrid=0.
 
+        ! Allocate in-region arrays for downscaled in-region contributions
         if (trace_emissions_from_in_region) then
-            if (.not.allocated(subgrid_from_in_region)) allocate (subgrid_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_pollutant_loop))
-        endif
-
+            if (allocated(nlreg_subgrid_proxy_from_in_region)) deallocate(nlreg_subgrid_proxy_from_in_region)
+            if (allocated(nlreg_subgrid_local_from_in_region)) deallocate(nlreg_subgrid_local_from_in_region)
+    
+            allocate(nlreg_subgrid_proxy_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+            allocate(nlreg_subgrid_local_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+            nlreg_subgrid_proxy_from_in_region = 0.0
+            nlreg_subgrid_local_from_in_region = 0.0
+        end if
 
         !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
         if (allocated(comp_subgrid)) deallocate (comp_subgrid)
         if (allocated(comp_EMEP_subgrid)) deallocate (comp_EMEP_subgrid)
         if (allocated(orig_EMEP_subgrid)) deallocate (orig_EMEP_subgrid)
         if (allocated(species_EMEP_subgrid)) deallocate (species_EMEP_subgrid)
-        if (trace_emissions_from_in_region) then
-            if (allocated(comp_subgrid_from_in_region)) deallocate (comp_subgrid_from_in_region)
-        endif
 
         !Define compound subgrid. Same as target in dimensions
         if (.not.allocated(comp_subgrid)) then
@@ -325,12 +325,6 @@ contains
         if (.not.allocated(species_EMEP_subgrid).and.(save_emep_species.or.save_seasalt)) then
             allocate (species_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_pmxx_sp_index,n_species_loop_index))
             species_EMEP_subgrid=0.
-        endif
-        if (trace_emissions_from_in_region) then
-            if (.not.allocated(comp_subgrid_from_in_region)) then
-                allocate (comp_subgrid_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
-                comp_subgrid_from_in_region=0.
-            endif
         endif
 
 
@@ -428,19 +422,16 @@ contains
 
         !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
         if (allocated(use_subgrid)) deallocate (use_subgrid)
-        if (allocated(use_subgrid_val)) deallocate (use_subgrid_val)
+        !if (allocated(use_subgrid_val)) deallocate (use_subgrid_val)
         if (allocated(use_subgrid_interpolation_index)) deallocate (use_subgrid_interpolation_index)
 
         !Allocate the use_subgrid array and set to true for all subgrids
         if (.not.allocated(use_subgrid)) allocate (use_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_source_index))
-        if (.not.allocated(use_subgrid_val)) allocate (use_subgrid_val(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_source_index))
+        !if (.not.allocated(use_subgrid_val)) allocate (use_subgrid_val(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_source_index))
         if (.not.allocated(use_subgrid_interpolation_index)) allocate (use_subgrid_interpolation_index(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_source_index))
 
-        if (.not.allocated(use_subgrid_region).and.trace_emissions_from_in_region) allocate (use_subgrid_region(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_source_index))
-
         use_subgrid=.true.
-        use_subgrid_val=1
-        if (allocated(use_subgrid_region)) use_subgrid_region=.false.
+        !use_subgrid_val=1
 
         !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.
         if (allocated(proxy_emission_subgrid)) deallocate (proxy_emission_subgrid)

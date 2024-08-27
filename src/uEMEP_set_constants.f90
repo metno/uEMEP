@@ -476,7 +476,7 @@ contains
             j=j+1;emep_additional_subgrid_nonlocal_file_index(i)=j
             j=j+1;emep_additional_subgrid_local_file_index(i)=j
             j=j+1;nlreg_emep_subgrid_semilocal_file_index(i)=j
-            j=j+1;nlreg_emep_additional_subgrid_semilocal_file_index(i)=j
+            j=j+1;nlreg_subgrid_total_inregion_file_index(i)=j
             j=j+1;emep_subgrid_frac_file_index(i)=j
             j=j+1;subgrid_local_file_index(i)=j
             j=j+1;subgrid_total_file_index(i)=j

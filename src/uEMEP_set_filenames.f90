@@ -44,8 +44,6 @@ contains
             filename_grid(proxy_file_index(i)) = trim('proxy')//'_'//trim(source_file_str(i))
             filename_grid(proxy_integral_file_index(i)) = trim('proxy_integral')//'_'//trim(source_file_str(i))
             filename_grid(emep_subgrid_file_index(i)) = trim('EMEP')//'_'//trim(source_file_str(i))
-            filename_grid(nlreg_emep_subgrid_semilocal_file_index(i)) = trim('EMEP_semilocal_contribution')//'_'//trim(source_file_str(i))
-            filename_grid(nlreg_emep_additional_subgrid_semilocal_file_index(i)) = trim('EMEP_additional_semilocal_contribution')//'_'//trim(source_file_str(i))
             if (save_netcdf_fraction_as_contribution_flag) then
                 filename_grid(emep_subgrid_nonlocal_file_index(i)) = trim('EMEP_nonlocal_contribution')
                 filename_grid(emep_subgrid_local_file_index(i)) = trim('EMEP_local_contribution')//'_'//trim(source_file_str(i))
@@ -53,6 +51,8 @@ contains
                 filename_grid(emep_additional_subgrid_local_file_index(i)) = trim('EMEP_additional_local_contribution')//'_'//trim(source_file_str(i))
                 filename_grid(emep_subgrid_frac_file_index(i)) = trim('EMEP_contribution')//'_'//trim(source_file_str(i))
                 filename_grid(subgrid_local_file_index(i)) = trim('local_contribution')//'_'//trim(source_file_str(i))
+                filename_grid(nlreg_emep_subgrid_semilocal_file_index(i)) = trim('EMEP_semilocal_contribution')//'_'//trim(source_file_str(i))
+                filename_grid(nlreg_subgrid_total_inregion_file_index(i)) = trim('total_contribution')//'_'//trim(source_file_str(i))
             else
                 filename_grid(emep_subgrid_nonlocal_file_index(i)) = trim('EMEP_nonlocal_fraction')
                 filename_grid(emep_subgrid_local_file_index(i)) = trim('EMEP_local_fraction')//'_'//trim(source_file_str(i))
@@ -60,6 +60,8 @@ contains
                 filename_grid(emep_additional_subgrid_local_file_index(i)) = trim('EMEP_additional_local_fraction')//'_'//trim(source_file_str(i))
                 filename_grid(emep_subgrid_frac_file_index(i)) = trim('EMEP_fraction')//'_'//trim(source_file_str(i))
                 filename_grid(subgrid_local_file_index(i)) = trim('local_fraction')//'_'//trim(source_file_str(i))
+                filename_grid(nlreg_emep_subgrid_semilocal_file_index(i)) = trim('EMEP_semilocal_fraction')//'_'//trim(source_file_str(i))
+                filename_grid(nlreg_subgrid_total_inregion_file_index(i)) = trim('total_fraction')//'_'//trim(source_file_str(i))
             end if
             filename_grid(subgrid_total_file_index(i)) = trim('total')//'_'//trim(source_file_str(i))
             filename_grid(use_subgrid_file_index(i)) = trim('use_subgrid')//'_'//trim(source_file_str(i))

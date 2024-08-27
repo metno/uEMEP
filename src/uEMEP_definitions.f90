@@ -421,7 +421,7 @@ module uEMEP_definitions
     integer :: emission_subgrid_loop_index(2, n_source_index) ! Number of emission subgrids to loop through, limitted by the size of the EMEP grid
     integer :: init_emission_subgrid_loop_index(2, n_source_index) ! Number of emission subgrids to loop through, limitted by the size of the EMEP grid
     logical, allocatable :: use_subgrid(:, :, :) ! Specifies if calculations are to be made at a particular set of target subgrids or not
-    integer, allocatable :: use_subgrid_val(:, :, :) ! Same as use_subgrid but given a value to indicate if it is in the buffer zone of a region ore not
+    integer, allocatable :: use_subgrid_val(:, :, :) ! Same as use_subgrid but given a value to indicate if it is in the buffer zone of a region ore not (CURRENTLY DEACTIVATED)
     integer, allocatable :: use_subgrid_interpolation_index(:, :, :) ! Assigns the resolution level for auto gridding to the target grid
     integer :: n_use_subgrid_levels(n_source_index)
 
@@ -559,7 +559,7 @@ module uEMEP_definitions
     integer :: emep_additional_subgrid_nonlocal_file_index(n_source_index)
     integer :: emep_additional_subgrid_local_file_index(n_source_index)
     integer :: nlreg_emep_subgrid_semilocal_file_index(n_source_index)
-    integer :: nlreg_emep_additional_subgrid_semilocal_file_index(n_source_index)
+    integer :: nlreg_subgrid_total_inregion_file_index(n_source_index)
 
     ! Filename index for meteorological parameters
     integer :: subgrid_ugrid_file_index
@@ -658,9 +658,12 @@ module uEMEP_definitions
 
     ! Special source allocation for no2 based on leaving out the source in the chemistry calculation
     real, allocatable :: comp_source_subgrid(:, :, :, :, :)
+    real, allocatable :: comp_source_subgrid_from_in_region(:, :, :, :, :)
     real, allocatable :: comp_source_additional_subgrid(:, :, :, :, :)
     real, allocatable :: comp_source_EMEP_subgrid(:, :, :, :, :)
     real, allocatable :: comp_source_EMEP_additional_subgrid(:, :, :, :, :)
+    ! Semilocal contributions to no2 and o3 based on the background NO2/NOx ratio
+    real, allocatable :: nlreg_comp_semilocal_source_subgrid_from_in_region(:, :, :, :, :)
 
     ! Set the scaling factors for the auto gridding routine
     integer :: use_subgrid_step_delta(0:10)
@@ -843,34 +846,27 @@ module uEMEP_definitions
     real :: benzene_split_voc_in_GNFR_sectors(13) = &
         [0.0449, 0.0212, 0.0668, 0.0084, 0.0, 0.0266, 0.0226, 0.0214, 0.0223, 0.0362, 0.068, 0.0601, 0.068]
 
-    ! Definitions of the grid when saving emissions
-
-    real, allocatable :: subgrid_from_in_region(:, :, :, :, :, :)
-    real, allocatable :: EMEP_grid_fraction_in_region(:, :, :, :)
-    real, allocatable :: lf_EMEP_grid_fraction_in_region(:, :, :, :, :, :)
-    logical, allocatable :: use_subgrid_region(:, :, :) ! Specifies the region emissions will be carried from for subgrid_from_in_region
-    real, allocatable :: comp_subgrid_from_in_region(:, :, :, :)
-
-    real, allocatable :: comp_source_subgrid_from_in_region(:, :, :, :, :)
-    real, allocatable :: comp_source_additional_subgrid_from_in_region(:, :, :, :, :)
-    real, allocatable :: comp_source_EMEP_subgrid_from_in_region(:, :, :, :, :)
-    real, allocatable :: comp_source_EMEP_additional_subgrid_from_in_region(:, :, :, :, :)
 
     ! Setting this to true is for diagnostic puroses. Gived the integrated lowest grid average concentration instead of the receptor
 
-    logical :: save_emep_region_mask = .false.
     logical :: wind_vectors_10m_available = .false.
 
-    ! New definitions needed for the adjusted non-local from-in-region (nlreg) methodology
 
-    ! nlreg_subgrid_region_id will contain the region ID of each uEMEP target subgrid
-    integer, allocatable :: nlreg_subgrid_region_id(:, :)
-    ! nlreg_emission_subgrid_region_id will contain the region ID of each uEMEP emission subgrid for each source
-    integer, allocatable :: nlreg_emission_subgrid_region_id(:, :, :)
+    ! Arrays needed for tracking the region each grid cell belongs to
+
+    ! nlreg_subgrid_region_index will contain the region index of each uEMEP target subgrid (or 0 for cells not in a region)
+    integer, allocatable :: nlreg_subgrid_region_index(:, :)
+    ! nlreg_emission_subgrid_region_index will contain the region index of each uEMEP emission subgrid for each source (zero or negative number indicates 'no-region')
+    integer, allocatable :: nlreg_emission_subgrid_region_index(:, :, :)
     ! nlreg_n_regions is the number of regions occurring in the target grid. Will be set after reading region mask file
     integer :: nlreg_n_regions = -1
-    ! nlreg_region_ids specifies the region IDs along the region dimension in arrays that have the region dimension, and will get length nlreg_n_regions
-    integer, allocatable :: nlreg_region_ids(:)
+    ! highest allowed value of a region index
+    integer, parameter :: nlreg_maxvalue_region_index = 1000
+    ! nlreg_regionindex_loop_index specifies the region_index along the region dimension in arrays that have the region dimension, and will get length nlreg_n_regions
+    integer, allocatable :: nlreg_regionindex_loop_index(:)
+    ! input a region_index to get its positional index in nlreg_regionindex_loop_index. If the region_index is not in the taret grid, you get 0
+    integer :: nlreg_regionindex_loop_back_index(nlreg_maxvalue_region_index)
+
 
     ! Defining an extended EMEP grid on which to define region information
 
@@ -889,15 +885,18 @@ module uEMEP_definitions
     ! nlreg_n_subsamples_per_EMEP_grid specifies how many subsamples to use along each spatial dimension of an EMEP grid in nlreg_EMEP_extended_subsample_region_id
     integer :: nlreg_n_subsamples_per_EMEP_grid = 20
 
+    ! The following arrays will contain the part of the downscaled contributions that are from within the same region as the receptor
+    real, allocatable :: nlreg_subgrid_proxy_from_in_region(:, :, :, :, :)
+    real, allocatable :: nlreg_subgrid_local_from_in_region(:, :, :, :, :)
+
     ! The following arrays will contain (non-overlapping) EMEP contributions from within the same region as the target subgrid is in
     ! The grids are defined for dimensions (x,y,time,source,pollutant)
     ! They can be added to find the total EMEP contribution from-in-region.
     ! - In-region contribution from inside the moving window (can be replaced with downscaled in-region contributions)
-    real, allocatable :: nlreg_subgrid_local_from_in_region(:, :, :, :, :)
-    ! - In-region contribution from outside the moving window, out to the very edge of the small (1x1) LF grid domain
-    real, allocatable :: nlreg_subgrid_semilocal_from_in_region(:, :, :, :, :)
-    ! - In-region contribution from the big (additional) LF grid data, only the part outside the 1x1 LF domain
-    real, allocatable :: nlreg_subgrid_semilocal_from_in_region_additional_increment(:, :, :, :, :)
+    real, allocatable :: nlreg_subgrid_EMEP_local_from_in_region(:, :, :, :, :)
+    ! - In-region contribution from outside the moving window, out to the very edge of the LF grid domain
+    real, allocatable :: nlreg_subgrid_EMEP_semilocal_from_in_region(:, :, :, :, :)
+
 
 end module uEMEP_definitions
 

@@ -96,7 +96,7 @@ module uemep_configuration
     ! Configurations needed for new way to read region mask
     character(256) :: nlreg_pathname_region_mask = ''
     character(256) :: nlreg_filename_region_mask = ''
-    character(256) :: nlreg_varname_region_mask = 'region_id'
+    character(256) :: nlreg_varname_region_mask = 'region_index'
 
 
     logical :: hourly_calculations = .false.
@@ -129,7 +129,6 @@ module uemep_configuration
     logical :: save_netcdf_file_flag = .false.
     logical :: save_netcdf_receptor_flag = .false.
     logical :: save_netcdf_fraction_as_contribution_flag = .false.
-    logical :: save_netcdf_fraction_as_contribution_from_in_region_flag = .false.
     logical :: calculate_tiling_flag = .false.
     logical :: calculate_region_tiling_flag = .false.
     logical :: use_region_select_and_mask_flag = .false.
@@ -147,6 +146,7 @@ module uemep_configuration
     logical :: save_wind_vectors = .false. ! Output data saving flags
     logical :: save_other_meteo = .false. ! Output data saving flags
     logical :: save_emep_source_contributions = .false. ! Output data saving flags
+    logical :: nlreg_save_emep_additional_source_contributions = .false.
     logical :: save_emep_original = .true. ! Output data saving flags
     logical :: save_emissions = .false. ! Output data saving flags
     logical :: save_for_chemistry = .false. ! Output data saving flags
@@ -204,12 +204,13 @@ module uemep_configuration
     logical :: derive_SOA_from_other_species = .false.
     logical :: use_phi_for_invL = .false.
     logical :: trace_emissions_from_in_region = .false.
+    logical :: nlreg_save_local_source_contributions_from_in_region = .false.
+    logical :: nlreg_save_semilocal_source_contributions_from_in_region = .false.
+    logical :: nlreg_save_total_source_contributions_from_in_region = .false.
     logical :: calc_grid_vertical_average_concentration_annual_flag = .false.
     logical :: wind_level_zc_flag = .false. ! This will use the centre of mass wind no matter what type of wind_level_flag is used
     logical :: use_alternative_ppm_variable_for_lf = .false.
     logical :: save_emep_OP_species = .false.
-    ! whether the region mask values refer to the region_index (.true.) or region_id (.false.)
-    logical :: nlreg_region_mask_gives_region_index = .false.
 
 
     integer :: start_time_nc_index = 1

@@ -529,7 +529,6 @@ contains
             save_netcdf_file_flag=read_name_logical('save_netcdf_file_flag',save_netcdf_file_flag,unit_in,unit_logfile)
             save_netcdf_receptor_flag=read_name_logical('save_netcdf_receptor_flag',save_netcdf_receptor_flag,unit_in,unit_logfile)
             save_netcdf_fraction_as_contribution_flag=read_name_logical('save_netcdf_fraction_as_contribution_flag',save_netcdf_fraction_as_contribution_flag,unit_in,unit_logfile)
-            save_netcdf_fraction_as_contribution_from_in_region_flag=read_name_logical('save_netcdf_fraction_as_contribution_from_in_region_flag',save_netcdf_fraction_as_contribution_flag,unit_in,unit_logfile)
 
             calculate_tiling_flag=read_name_logical('calculate_tiling_flag',calculate_tiling_flag,unit_in,unit_logfile)
             calculate_region_tiling_flag=read_name_logical('calculate_region_tiling_flag',calculate_region_tiling_flag,unit_in,unit_logfile)
@@ -616,6 +615,7 @@ contains
             save_wind_vectors=read_name_logical('save_wind_vectors',save_wind_vectors,unit_in,unit_logfile)
             save_other_meteo=read_name_logical('save_other_meteo',save_other_meteo,unit_in,unit_logfile)
             save_emep_source_contributions=read_name_logical('save_emep_source_contributions',save_emep_source_contributions,unit_in,unit_logfile)
+            nlreg_save_emep_additional_source_contributions=read_name_logical('nlreg_save_emep_additional_source_contributions',nlreg_save_emep_additional_source_contributions,unit_in,unit_logfile)
             save_emep_original=read_name_logical('save_emep_original',save_emep_original,unit_in,unit_logfile)
             save_emissions=read_name_logical('save_emissions',save_emissions,unit_in,unit_logfile)
             save_for_chemistry=read_name_logical('save_for_chemistry',save_for_chemistry,unit_in,unit_logfile)
@@ -873,6 +873,9 @@ contains
             save_emission_subgrid_dim(y_dim_index)=read_name_integer('save_emission_subgrid_dim(y_dim_index)',save_emission_subgrid_dim(y_dim_index),unit_in,unit_logfile)
 
             trace_emissions_from_in_region=read_name_logical('trace_emissions_from_in_region',trace_emissions_from_in_region,unit_in,unit_logfile)
+            nlreg_save_local_source_contributions_from_in_region=read_name_logical('nlreg_save_local_source_contributions_from_in_region',nlreg_save_local_source_contributions_from_in_region,unit_in,unit_logfile)
+            nlreg_save_semilocal_source_contributions_from_in_region=read_name_logical('nlreg_save_semilocal_source_contributions_from_in_region',nlreg_save_semilocal_source_contributions_from_in_region,unit_in,unit_logfile)
+            nlreg_save_total_source_contributions_from_in_region=read_name_logical('nlreg_save_total_source_contributions_from_in_region',nlreg_save_total_source_contributions_from_in_region,unit_in,unit_logfile)
 
             calc_grid_vertical_average_concentration_annual_flag=read_name_logical('calc_grid_vertical_average_concentration_annual_flag',calc_grid_vertical_average_concentration_annual_flag,unit_in,unit_logfile)
 
@@ -890,7 +893,6 @@ contains
             nlreg_pathname_region_mask=read_name_char('nlreg_pathname_region_mask',nlreg_pathname_region_mask,unit_in,unit_logfile)
             nlreg_filename_region_mask=read_name_char('nlreg_filename_region_mask',nlreg_filename_region_mask,unit_in,unit_logfile)
             nlreg_varname_region_mask=read_name_char('nlreg_varname_region_mask',nlreg_varname_region_mask,unit_in,unit_logfile)
-            nlreg_region_mask_gives_region_index=read_name_logical('nlreg_region_mask_gives_region_index',nlreg_region_mask_gives_region_index,unit_in,unit_logfile)
 
             close (unit_in)
 
@@ -903,6 +905,10 @@ contains
             write (unit_logfile,'(A)') 'WARNING: No output path given in configuration file. Stopping'
             stop
         endif
+        if (local_subgrid_method_flag == 1 .and. trace_emissions_from_in_region) then
+            write(unit_logfile,'(A)') 'trace_emissions_from_in_region must be false when local_subgrid_method_flag is 1, since it is not possible to trace emission origin when EMEP concentrations are directly redistributed. Stopping'
+            stop
+        end if
 
         !Find the correct compound index based on the compound string
         do i=1,n_pollutant_nc_index

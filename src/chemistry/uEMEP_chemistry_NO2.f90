@@ -13,99 +13,6 @@ module chemistry_no2
 
 contains
 
-    ! THIS SUBROUTINE IS NO LONGER USED. uEMEP_chemistry IS CALLED DIRECTLY INSTEAD
-    subroutine uEMEP_chemistry_control()
-        real, allocatable :: subgrid_dummy(:,:,:,:,:,:)
-        real, allocatable :: comp_subgrid_dummy(:,:,:,:)
-        real, allocatable :: comp_source_subgrid_dummy(:,:,:,:,:)
-        real, allocatable :: comp_source_EMEP_subgrid_dummy(:,:,:,:,:)
-        real, allocatable :: comp_source_EMEP_additional_subgrid_dummy(:,:,:,:,:)
-
-        integer :: in_region_loop, n_in_region_loop
-
-        ! These are calculated in the Chemistry routine. Fist declared here. Are global variables
-        if ( .not. allocated(comp_source_subgrid)) then
-            allocate(comp_source_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-        end if
-        if ( .not. allocated(comp_source_EMEP_subgrid)) then
-            allocate(comp_source_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-        end if
-        if ( .not. allocated(comp_source_EMEP_additional_subgrid)) then
-            allocate(comp_source_EMEP_additional_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-        end if
-        if (trace_emissions_from_in_region) then
-            n_in_region_loop = 2
-            if ( .not. allocated(subgrid_dummy)) then
-                allocate (subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_subgrid_index,n_source_index,n_pollutant_loop))
-            end if
-            if ( .not. allocated(comp_subgrid_dummy)) then
-                allocate (comp_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
-            end if
-            subgrid_dummy = 0
-            comp_subgrid_dummy = 0
-            if ( .not. allocated(comp_source_subgrid_dummy)) then
-                allocate(comp_source_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-            end if
-            if ( .not. allocated(comp_source_EMEP_subgrid_dummy)) then
-                allocate(comp_source_EMEP_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-            end if
-            if ( .not. allocated(comp_source_EMEP_additional_subgrid_dummy)) then
-                allocate(comp_source_EMEP_additional_subgrid_dummy(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-            end if
-            comp_source_subgrid_dummy = 0
-            comp_source_EMEP_subgrid_dummy = 0
-            comp_source_EMEP_additional_subgrid_dummy = 0
-        else
-            n_in_region_loop = 1
-        end if
-
-        do in_region_loop = 1, n_in_region_loop
-            write(unit_logfile,'(a)')''
-            write(unit_logfile,'(a)')'--------------------------'
-            if (in_region_loop .eq. 1) write(unit_logfile,'(a)') 'Chemistry for all contributions'
-            if (in_region_loop .eq. 2) write(unit_logfile,'(a)') 'Chemistry only for inside regional contributions'
-            write(unit_logfile,'(a)')'--------------------------'
-
-            ! Loop over the normal subgrid and the in region subgrid by saving  to a dummy variable and pputting back when finished
-            if (trace_emissions_from_in_region.and.in_region_loop.eq.2) then
-                subgrid_dummy = subgrid
-                comp_subgrid_dummy = comp_subgrid
-                subgrid = subgrid_from_in_region
-                comp_subgrid = comp_subgrid_from_in_region
-
-                ! These are calculated in the chemistry routine
-                comp_source_subgrid_dummy = comp_source_subgrid
-                comp_source_EMEP_subgrid_dummy = comp_source_EMEP_subgrid
-                comp_source_EMEP_additional_subgrid_dummy = comp_source_EMEP_additional_subgrid
-            end if
-
-            call uEMEP_chemistry()
-
-            if (trace_emissions_from_in_region .and. in_region_loop .eq. 2) then
-                subgrid_from_in_region = subgrid
-                comp_subgrid_from_in_region = comp_subgrid
-                comp_source_subgrid_from_in_region = comp_source_subgrid
-                comp_source_EMEP_subgrid_from_in_region = comp_source_EMEP_subgrid
-                comp_source_EMEP_additional_subgrid_from_in_region = comp_source_EMEP_additional_subgrid
-
-                subgrid = subgrid_dummy
-                comp_subgrid = comp_subgrid_dummy
-                comp_source_subgrid = comp_source_subgrid_dummy
-                comp_source_EMEP_subgrid = comp_source_EMEP_subgrid_dummy
-                comp_source_EMEP_additional_subgrid = comp_source_EMEP_additional_subgrid_dummy
-            end if
-        end do ! from_in_region loop
-
-        if (trace_emissions_from_in_region) then
-            if (allocated(subgrid_dummy)) deallocate(subgrid_dummy)
-            if (allocated(comp_subgrid_dummy)) deallocate(comp_subgrid_dummy)
-            if (allocated(comp_source_subgrid_dummy)) deallocate(comp_source_subgrid_dummy)
-            if (allocated(comp_source_EMEP_subgrid_dummy)) deallocate(comp_source_EMEP_subgrid_dummy)
-            if (allocated(comp_source_EMEP_additional_subgrid_dummy)) deallocate(comp_source_EMEP_additional_subgrid_dummy)
-        end if
-
-    end subroutine uEMEP_chemistry_control
-
     subroutine uEMEP_chemistry()
         ! Routine for doing the chemistry calculations in uEMEP
         integer :: i, j
@@ -323,14 +230,17 @@ contains
         integer, parameter :: inregion_index = 1
         integer, parameter :: outregion_index = 2
         integer :: k
-        integer subgrid_var_index
-        real :: f_no2_isource, nox_isource
+        real :: f_no2_isource, nox_loc_isource_total, nox_loc_isource_from_in_region, nox_loc_isource
         real :: no2_inandout_region(2)
         real :: o3_inandout_region(2)
         real :: sum_no2_inregion_outregion, sum_o3_inregion_outregion
+        real :: nox_semiloc_isource, f_no2_bg
 
         if (trace_emissions_from_in_region .and. .not. calculate_EMEP_additional_grid_flag) then
             if (.not. allocated(comp_source_subgrid_from_in_region)) allocate(comp_source_subgrid_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+            comp_source_subgrid_from_in_region = 0.0
+            if (.not. allocated(nlreg_comp_semilocal_source_subgrid_from_in_region)) allocate(nlreg_comp_semilocal_source_subgrid_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+            nlreg_comp_semilocal_source_subgrid_from_in_region = 0.0
         end if
 
         ! Search for nox in the pollutants
@@ -361,7 +271,10 @@ contains
             comp_source_EMEP_subgrid = comp_source_EMEP_additional_subgrid
         end if
         
-        write(unit_logfile,'(A)') 'Calculating chemistry source contribution for NO2 (uEMEP_source_fraction_chemistry)'
+        write(unit_logfile,'(A)') '--------------------------------------------------------'
+        if (.not. calculate_EMEP_additional_grid_flag) write(unit_logfile,'(A)') 'Calculating chemistry source contributions for NO2 and O3 (uEMEP_source_fraction_chemistry)'
+        if (calculate_EMEP_additional_grid_flag) write(unit_logfile,'(A)') 'Calculating additional nonlocal for NO2 and O3 (uEMEP_source_fraction_chemistry)'
+        write(unit_logfile,'(A)') '--------------------------------------------------------'
         if (no2_chemistry_scheme_flag .eq. 0) then
             write(unit_logfile,'(A)') 'No chemistry used'
         else if (no2_chemistry_scheme_flag .eq. 1) then
@@ -546,6 +459,7 @@ contains
                         ! Calculate NO2 and O3 source contributions from-in-region
                         ! ********************************************************
                         if (trace_emissions_from_in_region .and. .not. calculate_EMEP_additional_grid_flag) then
+                            ! Calculate downscaled contributions from-in-region
                             do remove_source = 1, n_source_index
                                 if (calculate_source(remove_source) .or. calculate_EMEP_source(remove_source)) then
                                     do k = 1,2 ! inregion and outregion
@@ -560,31 +474,33 @@ contains
                                                     if (calculate_source(i_source)) then
                                                         ! downscaled contribution
                                                         f_no2_isource = emission_factor(no2_index,i_source,i_subsource)/emission_factor(nox_index,i_source,i_subsource)
-                                                        subgrid_var_index = local_subgrid_index
+                                                        nox_loc_isource_total = subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                                                        nox_loc_isource_from_in_region = nlreg_subgrid_local_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_nc_index))
                                                     else ! i.e. calculate_EMEP_source(i_source) .and. .not. calculate_source(i_source)
                                                         ! EMEP contribution
                                                         f_no2_isource = f_no2_emep
-                                                        subgrid_var_index = emep_local_subgrid_index
+                                                        nox_loc_isource_total = subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                                                        nox_loc_isource_from_in_region = nlreg_subgrid_EMEP_local_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_nc_index))
                                                     end if
                                                     ! check if this source is the one we remove or not, to determine how to add it
                                                     if (i_source == remove_source) then
                                                         ! for the source to remove: We should then treat the inregion and outregion differently
                                                         if (k == inregion_index) then
                                                             ! in region: add only the local contribution from outside region
-                                                            nox_isource = subgrid(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index)) - subgrid_from_in_region(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                                                            nox_loc_isource = nox_loc_isource_total - nox_loc_isource_from_in_region
                                                         else if (k == outregion_index) then
                                                             ! out region: add only the local contribution from inside region
-                                                            nox_isource = subgrid_from_in_region(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                                                            nox_loc_isource = nox_loc_isource_from_in_region
                                                         else
                                                             write(unit_logfile,'(A)') 'ERROR: value of k is not inregion_index or outregion_index'
                                                             stop
                                                         end if
                                                     else
                                                         ! for other sources, just add all the local contribution in both cases
-                                                        nox_isource = subgrid(i,j,t,subgrid_var_index,i_source,pollutant_loop_back_index(nox_nc_index))
+                                                        nox_loc_isource = nox_loc_isource_total
                                                     end if
-                                                    f_no2_loc = f_no2_loc + f_no2_isource*nox_isource
-                                                    nox_loc = nox_loc + nox_isource
+                                                    f_no2_loc = f_no2_loc + f_no2_isource*nox_loc_isource
+                                                    nox_loc = nox_loc + nox_loc_isource
                                                 end do
                                             end if
                                         end do
@@ -644,6 +560,30 @@ contains
 
                                 end if
                             end do ! remove_source = 1, n_source_index
+
+                            ! Calculate semilocal contributions to NO2 and O3
+                            ! This is approximated by assuming the same NO2/NOx ratio as for background as a whole
+                            nox_bg = subgrid(i,j,t,emep_nonlocal_subgrid_index,allsource_index,pollutant_loop_back_index(nox_nc_index))
+                            no2_bg = comp_source_EMEP_subgrid(i,j,t,no2_index,allsource_index)
+                            do i_source = 1,n_source_index
+                                if (calculate_source(i_source) .or. calculate_EMEP_source(i_source)) then
+                                    ! get initial NO2/NOx ratio of this source
+                                    if (calculate_source(i_source)) then
+                                        i_subsource = 1  !!!!! for now, just use no2/nox ratio of the first subsource
+                                        f_no2_isource = emission_factor(no2_index,i_source,i_subsource)/emission_factor(nox_index,i_source,i_subsource)
+                                    else
+                                        f_no2_isource = f_no2_emep
+                                    end if
+                                    ! calculate NO2/NOx ratio in the background
+                                    f_no2_bg = no2_bg / nox_bg
+                                    ! get semilocal contribution to NOx from this source
+                                    nox_semiloc_isource = nlreg_subgrid_EMEP_semilocal_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_index))
+                                    ! calculate NO2 and O3 semilocal contribution from the source, assuming the NO2/NOx ratio is the same as in background
+                                    nlreg_comp_semilocal_source_subgrid_from_in_region(i,j,t,no2_index,i_source) = f_no2_bg * nox_semiloc_isource
+                                    nlreg_comp_semilocal_source_subgrid_from_in_region(i,j,t,o3_index,i_source) = -48./46.*(f_no2_bg - f_no2_isource) * nox_semiloc_isource
+                                end if
+                            end do
+
                         end if !(trace_emissions_from_in_region .and. .not. calculate_EMEP_additional_grid_flag)
                         ! ***************************************************************
                         ! done calculating NO2 and O3 source contributions from-in-region

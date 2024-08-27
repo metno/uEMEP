@@ -331,10 +331,6 @@ contains
         character(16) :: search_str(n_search)
         real :: search_delta(n_search)
         integer :: temp_search
-        integer :: i_tile_region, j_tile_region
-        integer :: i_range_region, j_range_region
-        integer :: total_grids = 0
-        integer :: source_count = 0
         integer :: io
 
         search_str = ['_1000m', '_500m ', '_250m ', '_100m ', '_50m  ']
@@ -445,35 +441,6 @@ contains
                         end if
                     end do
                 end do
-
-                ! Specify the emissions grids that will be used for regional calculations
-                if (trace_emissions_from_in_region) then
-                    source_count = 0
-                    do i_source = 1, n_source_index
-                        if (calculate_source(i_source)) then
-                            i_tile_region = 1 + floor((x_ssb-emission_subgrid_min(x_dim_index,i_source))/emission_subgrid_delta(x_dim_index,i_source))
-                            j_tile_region = 1 + floor((y_ssb-emission_subgrid_min(y_dim_index,i_source))/emission_subgrid_delta(y_dim_index,i_source))
-                            i_range_region = ceiling(ssb_dx/emission_subgrid_delta(x_dim_index,i_source)/2.0) + 1
-                            j_range_region = ceiling(ssb_dy/emission_subgrid_delta(y_dim_index,i_source)/2.0) + 1
-
-                            do j = j_tile_region-j_range_region, j_tile_region+j_range_region
-                                do i = i_tile_region-i_range_region, i_tile_region+i_range_region
-                                    ! Make sure i and j are inside a valid range
-                                    if (i .ge. 1 .and. i .le. emission_subgrid_dim(x_dim_index,i_source) .and. j .ge. 1 .and. j .le. emission_subgrid_dim(y_dim_index,i_source)) then
-                                        ! Find the target subgrid within the ssb grid and the region
-                                        if (x_emission_subgrid(i,j,i_source) .ge. x_ssb-ssb_dx/2.0 .and. x_emission_subgrid(i,j,i_source) .lt. x_ssb+ssb_dx/2.0 .and. &
-                                            y_emission_subgrid(i,j,i_source) .ge. y_ssb-ssb_dy/2.0 .and. y_emission_subgrid(i,j,i_source) .lt. y_ssb+ssb_dy/2.0) then
-                                            ! Default is false
-                                            use_subgrid_region(i,j,i_source) = .true.
-                                            total_grids = total_grids + 1
-                                        end if
-                                    end if
-                                end do
-                            end do
-                            source_count = source_count + 1
-                        end if
-                    end do
-                end if
             end if
         end do
         close(unit_in)
@@ -541,14 +508,10 @@ contains
 
         ! Additional variables used for creating list of regions, calculating fraction of EMEP cells in each region and setting the use_subgrid array
         integer i_region
-        integer, allocatable :: temp_region_ids(:)
-        integer, allocatable :: temp_region_ids_dummy(:)
+        integer, allocatable :: temp_regionindex_loop_index(:)
         integer counter
-        integer current_region_id,previous_region_id,region_select
-        integer list_allocated_size
-        logical current_region_already_found
-        ! number of elements in list of unique regions to make space for at a time
-        integer, parameter :: n_regions_allocate = 20
+        integer current_region_index,previous_region_index,region_select
+        logical outofbounds_warning_has_been_printed
 
         if (.not. (trace_emissions_from_in_region .or. use_region_select_and_mask_flag)) then
             return
@@ -560,14 +523,14 @@ contains
         write(unit_logfile,'(A)') '================================================================'
 
         ! Ensure arrays are not already allocated
-        if (allocated(nlreg_subgrid_region_id)) then
-            deallocate(nlreg_subgrid_region_id)
+        if (allocated(nlreg_subgrid_region_index)) then
+            deallocate(nlreg_subgrid_region_index)
         end if
-        if (allocated(nlreg_region_ids)) then
-            deallocate(nlreg_region_ids)
+        if (allocated(nlreg_regionindex_loop_index)) then
+            deallocate(nlreg_regionindex_loop_index)
         end if
-        if (allocated(nlreg_emission_subgrid_region_id)) then
-            deallocate(nlreg_emission_subgrid_region_id)
+        if (allocated(nlreg_emission_subgrid_region_index)) then
+            deallocate(nlreg_emission_subgrid_region_index)
         end if
         if (allocated(nlreg_EMEP_extended_subsample_region_id)) then
             deallocate(nlreg_EMEP_extended_subsample_region_id)
@@ -700,6 +663,15 @@ contains
             write(unit_logfile,'(A)') 'Could not read region mask values from file'
             stop
         end if
+        ! verify that no region index values in the file are negative or higher than the max allowed value
+        if (minval(region_mask) < 0) then
+            write(unit_logfile,'(A)') 'Found negative values of region index in file'//trim(pathfilename_region_mask)//'. This is not allowed'
+            stop
+        end if
+        if (maxval(region_mask) > nlreg_maxvalue_region_index) then
+            write(unit_logfile,'(A,i0,A,i0)') 'Max value of region index in file '//trim(pathfilename_region_mask)//' is',maxval(region_mask),', which is higher than the max allowed value: nlreg_maxvalue_region_index=',nlreg_maxvalue_region_index
+            stop
+        end if
 
         ! Close the region mask netcdf file
         status_nc = NF90_CLOSE (id_nc)
@@ -708,11 +680,12 @@ contains
         ! Determine region ID of each cell of the uEMEP target subgrid
         write(unit_logfile, '(A)') 'Calculating region mask for the target grid'
 
-        ! Allocate array for region mask on uEMEP target subgrid and initialize to -1 (no region)
-        allocate(nlreg_subgrid_region_id(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
-        nlreg_subgrid_region_id = -1
+        ! Allocate array for region mask on uEMEP target subgrid and initialize to 0 (no region)
+        allocate(nlreg_subgrid_region_index(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
+        nlreg_subgrid_region_index = 0
 
         ! Set region ID of each target subgrid
+        outofbounds_warning_has_been_printed = .false.
         do i = 1, subgrid_dim(x_dim_index)
             do j = 1, subgrid_dim(y_dim_index)
                 ! calculate x- and y- position in the region mask projection
@@ -722,17 +695,15 @@ contains
                 y_index = nint(1+(y_location-y_values_regionmask(1))/dy_regionmask)
                 ! Verify that this index is inside the region mask grid and has a positive region ID
                 if (x_index >= 1 .and. x_index <= nx_regionmask .and. y_index >= 1 .and. y_index <= ny_regionmask) then
-                    nlreg_subgrid_region_id(i,j) = region_mask(x_index,y_index)
-                    if (.not. (nlreg_subgrid_region_id(i,j) > 0)) then
-                        write(unit_logfile, '(A)') 'ERROR: Non-positive region ID found at a subgrid. This is not allowed'
-                        stop
-                    end if
+                    nlreg_subgrid_region_index(i,j) = region_mask(x_index,y_index)
                 else
                     ! this receptor location is not within the region mask grid
-                    write(unit_logfile, '(A)') 'ERROR: The target subgrid extends outside the given region mask. This is not allowed'
-                    stop
+                    if (.not. outofbounds_warning_has_been_printed) then
+                        write(unit_logfile, '(A)') 'WARNING: The target subgrid extends outside the given region mask.'
+                        outofbounds_warning_has_been_printed = .true.
+                    end if
                 end if
-                !write(unit_logfile,'(A,2i12,2f12.4,2f12.2,2i12,i4)') 'i,j,lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,x_index,y_index,region_id = ',i,j,lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,x_index,y_index,nlreg_subgrid_region_id(i,j)
+                !write(unit_logfile,'(A,2i12,2f12.4,2f12.2,2i12,i4)') 'i,j,lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,x_index,y_index,region_index = ',i,j,lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,x_index,y_index,nlreg_subgrid_region_index(i,j)
             end do
         end do
 
@@ -740,50 +711,33 @@ contains
 
         ! Determine which regions occur in the target grid
         ! (NB: We don't care about regions occurring only in the EMEP grid but not in the target grid!)
-        ! make room for 'n_regions_allocate' regions in the list initially
-        allocate(temp_region_ids(n_regions_allocate))
-        temp_region_ids = -1
-        list_allocated_size = size(temp_region_ids)
+        allocate(temp_regionindex_loop_index(nlreg_maxvalue_region_index))
+        temp_regionindex_loop_index = 0
+        nlreg_regionindex_loop_back_index = 0
         counter = 0
-        previous_region_id = -1
+        previous_region_index = -1
         do i = 1, subgrid_dim(x_dim_index)
             do j = 1, subgrid_dim(y_dim_index)
-                current_region_id = nlreg_subgrid_region_id(i,j)
-                if (current_region_id > 0 .and. .not. current_region_id == previous_region_id) then
-                    ! Region ID is different from previous subgrid: check if we already found it before
-                    current_region_already_found = .false.
-                    do i_region = 1, counter
-                        if (temp_region_ids(i_region) == current_region_id) then
-                            current_region_already_found = .true.
-                            exit
-                        end if
-                    end do
-                    if (.not. current_region_already_found) then
+                current_region_index = nlreg_subgrid_region_index(i,j)
+                if (current_region_index > 0 .and. .not. current_region_index == previous_region_index) then
+                    ! Region index is different from previous subgrid
+                    ! check if we have not already found it before
+                    if (nlreg_regionindex_loop_back_index(current_region_index) == 0) then
                         ! new region ID found
-                        ! NB: region_id <= 0 is ignored!
-                        if (counter == list_allocated_size) then
-                            ! We need to allocate more space in the list of regions
-                            allocate(temp_region_ids_dummy(list_allocated_size))
-                            temp_region_ids_dummy = temp_region_ids
-                            deallocate(temp_region_ids)
-                            allocate(temp_region_ids(list_allocated_size+n_regions_allocate))
-                            temp_region_ids(1:list_allocated_size) = temp_region_ids_dummy
-                            deallocate(temp_region_ids_dummy)
-                            list_allocated_size = size(temp_region_ids)
-                        end if
                         counter = counter + 1
-                        temp_region_ids(counter) = current_region_id
+                        temp_regionindex_loop_index(counter) = current_region_index
+                        nlreg_regionindex_loop_back_index(current_region_index) = counter
                     end if
-                    previous_region_id = current_region_id
+                    previous_region_index = current_region_index
                 end if
             end do
         end do
         nlreg_n_regions = counter
-        allocate(nlreg_region_ids(nlreg_n_regions))
-        nlreg_region_ids = temp_region_ids(1:nlreg_n_regions)
-        deallocate(temp_region_ids)
+        allocate(nlreg_regionindex_loop_index(nlreg_n_regions))
+        nlreg_regionindex_loop_index = temp_regionindex_loop_index(1:nlreg_n_regions)
+        deallocate(temp_regionindex_loop_index)
         write(unit_logfile,'(A,I0)') 'Number of regions within target grid: ',nlreg_n_regions
-        write(unit_logfile,'(A,100I5)') 'ID of these regions are (printing max 100): ', nlreg_region_ids
+        write(unit_logfile,'(A,100I5)') 'index of these regions are (printing max 100): ', nlreg_regionindex_loop_index
 
         ! Determine which subgrid cells are inside the selected region
         ! and use this to set use_subgrid
@@ -791,15 +745,11 @@ contains
             ! Set 'use_subgrid'
             ! NB: This will override previously set values for this array
             use_subgrid = .false.
-            if (nlreg_region_mask_gives_region_index) then
-                region_select = region_index
-            else
-                region_select = region_id
-            end if
-            write(unit_logfile,'(A,I0)') 'Setting "use_subgrid" based on where in the target grid region_id=',region_select
+            region_select = region_index
+            write(unit_logfile,'(A,I0)') 'Setting "use_subgrid" based on where in the target grid the region index is',region_select
             do i = 1, subgrid_dim(x_dim_index)
                 do j = 1, subgrid_dim(y_dim_index)
-                    if (nlreg_subgrid_region_id(i,j) == region_select) then
+                    if (nlreg_subgrid_region_index(i,j) == region_select) then
                         use_subgrid(i,j,:) = .true.
                     else
                         use_subgrid(i,j,:) = .false.
@@ -814,8 +764,8 @@ contains
 
             write(unit_logfile,'(A)') 'Setting region ID of the emission subgrids'
             ! initialize to -1 ("no-region")
-            allocate(nlreg_emission_subgrid_region_id(emission_max_subgrid_dim(x_dim_index), emission_max_subgrid_dim(y_dim_index),n_source_index))
-            nlreg_emission_subgrid_region_id = -1
+            allocate(nlreg_emission_subgrid_region_index(emission_max_subgrid_dim(x_dim_index), emission_max_subgrid_dim(y_dim_index),n_source_index))
+            nlreg_emission_subgrid_region_index = 0
             do i_source = 1, n_source_index
                 if (calculate_source(i_source)) then
                     do i = 1, emission_subgrid_dim(x_dim_index, i_source)
@@ -831,7 +781,7 @@ contains
                             y_index = nint(1+(y_location-y_values_regionmask(1))/dy_regionmask)
                             ! Check if this location is inside the region mask grid
                             if (x_index >= 1 .and. x_index <= nx_regionmask .and. y_index >= 1 .and. y_index <= ny_regionmask) then
-                                nlreg_emission_subgrid_region_id(i,j,i_source) = region_mask(x_index,y_index)
+                                nlreg_emission_subgrid_region_index(i,j,i_source) = region_mask(x_index,y_index)
                             end if
                             ! NB: contrary to the target grid, we will allow non-positive region ID in the emission subgrid, indicating "no-region", and we will also allow that the emision subgrid extends beyond the boundaries of the region mask file
                         end do
@@ -915,11 +865,11 @@ contains
             do ii = 1, nlreg_nx_EMEP_extended
                 do jj = 1, nlreg_ny_EMEP_extended
                     do i_region = 1, nlreg_n_regions
-                        current_region_id = nlreg_region_ids(i_region)
+                        current_region_index = nlreg_regionindex_loop_index(i_region)
                         counter = 0
                         do i_sub = 1, nlreg_n_subsamples_per_EMEP_grid
                             do j_sub = 1, nlreg_n_subsamples_per_EMEP_grid
-                                if (nlreg_EMEP_extended_subsample_region_id(i_sub,j_sub,ii,jj) == current_region_id) then
+                                if (nlreg_EMEP_extended_subsample_region_id(i_sub,j_sub,ii,jj) == current_region_index) then
                                     counter = counter + 1
                                 end if
                             end do

@@ -60,11 +60,11 @@ program uEMEP_v6
     use subgrid_meteo_emep, only: uEMEP_subgrid_meteo_EMEP
     use tiling_routines, only: uEMEP_set_tile_grids, uEMEP_set_region_tile_grids
     use chemistry_no2, only: uEMEP_chemistry, correct_annual_mean_chemistry
-    use crossreference_grids, only: uEMEP_crossreference_grids, uEMEP_assign_region_coverage_to_EMEP
+    use crossreference_grids, only: uEMEP_crossreference_grids
     use grid_roads, only: uEMEP_grid_roads
     use define_subgrid, only: uEMEP_define_subgrid_extent, uEMEP_define_subgrid
     use calculate_exposure, only: uEMEP_calculate_exposure
-    use auto_subgrid, only: uEMEP_auto_subgrid, uEMEP_region_mask, uEMEP_interpolate_auto_subgrid, nlreg_uEMEP_region_mask_new
+    use auto_subgrid, only: nlreg_uEMEP_region_mask_new
 
     use uemep_logger
 
@@ -334,22 +334,20 @@ program uEMEP_v6
                     ! Autogrid setting for selecting which subgrids to calculate
                     if (use_emission_positions_for_auto_subgrid_flag(allsource_index)) then
                         call uEMEP_grid_roads()
-                        call uEMEP_auto_subgrid()
+                        write(unit_logfile,*) "'uEMEP_auto_subgrid' has been disabled, because array 'use_subgrid_val' is disabled"
+                        stop
+                        !call uEMEP_auto_subgrid()
                     end if
 
-                    if (use_region_select_and_mask_flag) then
-                        call uEMEP_region_mask()
-                    end if
+                    ! No longer call uEMEP_region_mask, as use_subgrid_val is deactivated and use_subgrid is set elsewhere
+                    !if (use_region_select_and_mask_flag) then
+                    !    call uEMEP_region_mask()
+                    !end if
 
                     ! New subroutine for reading region mask and region fraction
                     if (trace_emissions_from_in_region .or. use_region_select_and_mask_flag) then
                         call nlreg_uEMEP_region_mask_new()
                     endif
-
-                    ! Determine the fraction of an EMEP grid within the one defined region
-                    if (trace_emissions_from_in_region) then
-                        call uEMEP_assign_region_coverage_to_EMEP()
-                    end if
 
                     ! Specify the subgrids sizes to be calculated using use_receptor_region
                     call uEMEP_grid_receptor_data
@@ -411,7 +409,9 @@ program uEMEP_v6
 
                 ! Interpolate local_subgrid if necessary
                 if (interpolate_subgrids_flag) then
-                    call uEMEP_interpolate_auto_subgrid()
+                    write(unit_logfile,*) "'uEMEP_interpolate_auto_subgrid' has been disabled, because array 'use_subgrid_val' is disabled"
+                    stop
+                    !call uEMEP_interpolate_auto_subgrid()
                 end if
 
                 ! Old diagnostic for comparing EMEP and proxy data emissions. Working only on lat lon EMEP grids. Do not use
@@ -462,7 +462,6 @@ program uEMEP_v6
                 end if
 
                 ! Calculate chemistry for NO2 and O3
-                !original: call uEMEP_chemistry_control()
                 call uEMEP_chemistry()
 
                 ! Correct annual mean chemistry for pdf
