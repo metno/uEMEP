@@ -191,7 +191,7 @@ contains
         subgrid(:,:,:,scaling_factor_subgrid_index,source_index,:)=1.
         subgrid(:,:,:,local_subgrid_index,source_index,:)=subgrid(:,:,:,scaling_factor_subgrid_index,source_index,:)*subgrid(:,:,:,proxy_subgrid_index,source_index,:)
         if (trace_emissions_from_in_region) then
-            nlreg_subgrid_local_from_in_region(:,:,:,source_index,:)=subgrid(:,:,:,scaling_factor_subgrid_index,source_index,:)*nlreg_subgrid_proxy_from_in_region(:,:,:,source_index,:)
+            subgrid_local_from_in_region(:,:,:,source_index,:)=subgrid(:,:,:,scaling_factor_subgrid_index,source_index,:)*subgrid_proxy_from_in_region(:,:,:,source_index,:)
         end if
 
         !enddo !Subsource loop

@@ -615,7 +615,7 @@ contains
             save_wind_vectors=read_name_logical('save_wind_vectors',save_wind_vectors,unit_in,unit_logfile)
             save_other_meteo=read_name_logical('save_other_meteo',save_other_meteo,unit_in,unit_logfile)
             save_emep_source_contributions=read_name_logical('save_emep_source_contributions',save_emep_source_contributions,unit_in,unit_logfile)
-            nlreg_save_emep_additional_source_contributions=read_name_logical('nlreg_save_emep_additional_source_contributions',nlreg_save_emep_additional_source_contributions,unit_in,unit_logfile)
+            save_emep_additional_source_contributions=read_name_logical('save_emep_additional_source_contributions',save_emep_additional_source_contributions,unit_in,unit_logfile)
             save_emep_original=read_name_logical('save_emep_original',save_emep_original,unit_in,unit_logfile)
             save_emissions=read_name_logical('save_emissions',save_emissions,unit_in,unit_logfile)
             save_for_chemistry=read_name_logical('save_for_chemistry',save_for_chemistry,unit_in,unit_logfile)
@@ -873,9 +873,9 @@ contains
             save_emission_subgrid_dim(y_dim_index)=read_name_integer('save_emission_subgrid_dim(y_dim_index)',save_emission_subgrid_dim(y_dim_index),unit_in,unit_logfile)
 
             trace_emissions_from_in_region=read_name_logical('trace_emissions_from_in_region',trace_emissions_from_in_region,unit_in,unit_logfile)
-            nlreg_save_local_source_contributions_from_in_region=read_name_logical('nlreg_save_local_source_contributions_from_in_region',nlreg_save_local_source_contributions_from_in_region,unit_in,unit_logfile)
-            nlreg_save_semilocal_source_contributions_from_in_region=read_name_logical('nlreg_save_semilocal_source_contributions_from_in_region',nlreg_save_semilocal_source_contributions_from_in_region,unit_in,unit_logfile)
-            nlreg_save_total_source_contributions_from_in_region=read_name_logical('nlreg_save_total_source_contributions_from_in_region',nlreg_save_total_source_contributions_from_in_region,unit_in,unit_logfile)
+            save_local_source_contributions_from_in_region=read_name_logical('save_local_source_contributions_from_in_region',save_local_source_contributions_from_in_region,unit_in,unit_logfile)
+            save_semilocal_source_contributions_from_in_region=read_name_logical('save_semilocal_source_contributions_from_in_region',save_semilocal_source_contributions_from_in_region,unit_in,unit_logfile)
+            save_total_source_contributions_from_in_region=read_name_logical('save_total_source_contributions_from_in_region',save_total_source_contributions_from_in_region,unit_in,unit_logfile)
 
             calc_grid_vertical_average_concentration_annual_flag=read_name_logical('calc_grid_vertical_average_concentration_annual_flag',calc_grid_vertical_average_concentration_annual_flag,unit_in,unit_logfile)
 
@@ -890,9 +890,9 @@ contains
             save_emep_OP_species=read_name_logical('save_emep_OP_species',save_emep_OP_species,unit_in,unit_logfile)
 
             ! Read configs added for the nonlocal from-in-region method
-            nlreg_pathname_region_mask=read_name_char('nlreg_pathname_region_mask',nlreg_pathname_region_mask,unit_in,unit_logfile)
-            nlreg_filename_region_mask=read_name_char('nlreg_filename_region_mask',nlreg_filename_region_mask,unit_in,unit_logfile)
-            nlreg_varname_region_mask=read_name_char('nlreg_varname_region_mask',nlreg_varname_region_mask,unit_in,unit_logfile)
+            pathname_region_mask=read_name_char('pathname_region_mask',pathname_region_mask,unit_in,unit_logfile)
+            filename_region_mask=read_name_char('filename_region_mask',filename_region_mask,unit_in,unit_logfile)
+            varname_region_mask=read_name_char('varname_region_mask',varname_region_mask,unit_in,unit_logfile)
 
             close (unit_in)
 

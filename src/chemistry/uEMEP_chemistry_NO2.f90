@@ -239,8 +239,8 @@ contains
         if (trace_emissions_from_in_region .and. .not. calculate_EMEP_additional_grid_flag) then
             if (.not. allocated(comp_source_subgrid_from_in_region)) allocate(comp_source_subgrid_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
             comp_source_subgrid_from_in_region = 0.0
-            if (.not. allocated(nlreg_comp_semilocal_source_subgrid_from_in_region)) allocate(nlreg_comp_semilocal_source_subgrid_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
-            nlreg_comp_semilocal_source_subgrid_from_in_region = 0.0
+            if (.not. allocated(comp_semilocal_source_subgrid_from_in_region)) allocate(comp_semilocal_source_subgrid_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+            comp_semilocal_source_subgrid_from_in_region = 0.0
         end if
 
         ! Search for nox in the pollutants
@@ -475,12 +475,12 @@ contains
                                                         ! downscaled contribution
                                                         f_no2_isource = emission_factor(no2_index,i_source,i_subsource)/emission_factor(nox_index,i_source,i_subsource)
                                                         nox_loc_isource_total = subgrid(i,j,t,local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
-                                                        nox_loc_isource_from_in_region = nlreg_subgrid_local_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_nc_index))
+                                                        nox_loc_isource_from_in_region = subgrid_local_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_nc_index))
                                                     else ! i.e. calculate_EMEP_source(i_source) .and. .not. calculate_source(i_source)
                                                         ! EMEP contribution
                                                         f_no2_isource = f_no2_emep
                                                         nox_loc_isource_total = subgrid(i,j,t,emep_local_subgrid_index,i_source,pollutant_loop_back_index(nox_nc_index))
-                                                        nox_loc_isource_from_in_region = nlreg_subgrid_EMEP_local_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_nc_index))
+                                                        nox_loc_isource_from_in_region = subgrid_EMEP_local_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_nc_index))
                                                     end if
                                                     ! check if this source is the one we remove or not, to determine how to add it
                                                     if (i_source == remove_source) then
@@ -577,10 +577,10 @@ contains
                                     ! calculate NO2/NOx ratio in the background
                                     f_no2_bg = no2_bg / nox_bg
                                     ! get semilocal contribution to NOx from this source
-                                    nox_semiloc_isource = nlreg_subgrid_EMEP_semilocal_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_index))
+                                    nox_semiloc_isource = subgrid_EMEP_semilocal_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_index))
                                     ! calculate NO2 and O3 semilocal contribution from the source, assuming the NO2/NOx ratio is the same as in background
-                                    nlreg_comp_semilocal_source_subgrid_from_in_region(i,j,t,no2_index,i_source) = f_no2_bg * nox_semiloc_isource
-                                    nlreg_comp_semilocal_source_subgrid_from_in_region(i,j,t,o3_index,i_source) = -48./46.*(f_no2_bg - f_no2_isource) * nox_semiloc_isource
+                                    comp_semilocal_source_subgrid_from_in_region(i,j,t,no2_index,i_source) = f_no2_bg * nox_semiloc_isource
+                                    comp_semilocal_source_subgrid_from_in_region(i,j,t,o3_index,i_source) = -48./46.*(f_no2_bg - f_no2_isource) * nox_semiloc_isource
                                 end if
                             end do
 

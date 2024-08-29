@@ -294,13 +294,13 @@ contains
 
         ! Allocate in-region arrays for downscaled in-region contributions
         if (trace_emissions_from_in_region) then
-            if (allocated(nlreg_subgrid_proxy_from_in_region)) deallocate(nlreg_subgrid_proxy_from_in_region)
-            if (allocated(nlreg_subgrid_local_from_in_region)) deallocate(nlreg_subgrid_local_from_in_region)
+            if (allocated(subgrid_proxy_from_in_region)) deallocate(subgrid_proxy_from_in_region)
+            if (allocated(subgrid_local_from_in_region)) deallocate(subgrid_local_from_in_region)
     
-            allocate(nlreg_subgrid_proxy_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
-            allocate(nlreg_subgrid_local_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
-            nlreg_subgrid_proxy_from_in_region = 0.0
-            nlreg_subgrid_local_from_in_region = 0.0
+            allocate(subgrid_proxy_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+            allocate(subgrid_local_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_source_index,n_pollutant_loop))
+            subgrid_proxy_from_in_region = 0.0
+            subgrid_local_from_in_region = 0.0
         end if
 
         !Deallocate grids if they are already allocated. This will be in the case of the use_multiple_receptor_grids_flag=.true.

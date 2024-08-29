@@ -53,7 +53,7 @@ program uEMEP_v6
     use subgrid_dispersion, only: uEMEP_subgrid_dispersion
     use set_emission_factors, only: uEMEP_set_emission_factors, uEMEP_convert_proxy_to_emissions, &
         uEMEP_nox_emission_temperature
-    use subgrid_emep, only: uEMEP_subgrid_EMEP, nlreg_uEMEP_subgrid_EMEP_from_in_region
+    use subgrid_emep, only: uEMEP_subgrid_EMEP, uEMEP_subgrid_EMEP_from_in_region
     use subgrid_deposition_emep, only: uEMEP_set_deposition_velocities, &
         uEMEP_subgrid_deposition_EMEP, uEMEP_calculate_deposition
     use subgrid_emission_emep, only: uEMEP_subgrid_emission_EMEP
@@ -64,7 +64,7 @@ program uEMEP_v6
     use grid_roads, only: uEMEP_grid_roads
     use define_subgrid, only: uEMEP_define_subgrid_extent, uEMEP_define_subgrid
     use calculate_exposure, only: uEMEP_calculate_exposure
-    use auto_subgrid, only: nlreg_uEMEP_region_mask_new
+    use auto_subgrid, only: uEMEP_region_mask_new
 
     use uemep_logger
 
@@ -346,7 +346,7 @@ program uEMEP_v6
 
                     ! New subroutine for reading region mask and region fraction
                     if (trace_emissions_from_in_region .or. use_region_select_and_mask_flag) then
-                        call nlreg_uEMEP_region_mask_new()
+                        call uEMEP_region_mask_new()
                     endif
 
                     ! Specify the subgrids sizes to be calculated using use_receptor_region
@@ -433,7 +433,7 @@ program uEMEP_v6
                 ! Call the new subroutine for calculating more precise estimates of the contributions from outside moving window but within region
                 if (trace_emissions_from_in_region) then
                     if (EMEP_grid_interpolation_flag == 0 .or. EMEP_grid_interpolation_flag == 6) then
-                        call nlreg_uEMEP_subgrid_EMEP_from_in_region()
+                        call uEMEP_subgrid_EMEP_from_in_region()
                     end if
                     ! NB: Only implemented to be consistent with interpolation flag 0 and 6
                 end if
