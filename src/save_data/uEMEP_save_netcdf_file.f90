@@ -28,7 +28,6 @@ contains
         real :: valid_min=0.
         real, allocatable :: temp_subgrid(:,:,:)
         real, allocatable :: temp_integral_subgrid(:,:,:)
-        real, allocatable :: exhaust_subgrid(:,:,:)
         real, allocatable :: aqi_subgrid(:,:,:,:)
         integer, allocatable :: aqi_responsible_pollutant_index(:,:,:)
         real, allocatable :: temp_subgrid_ascii(:,:)
@@ -63,7 +62,6 @@ contains
 
         if (.not.allocated(temp_subgrid)) allocate(temp_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
         if (.not.allocated(temp_integral_subgrid)) allocate(temp_integral_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
-        if (.not.allocated(exhaust_subgrid)) allocate(exhaust_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
         if (.not.allocated(aqi_subgrid).and.save_aqi) allocate(aqi_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
         if (.not.allocated(aqi_responsible_pollutant_index).and.save_aqi) allocate(aqi_responsible_pollutant_index(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index)))
         if (.not.allocated(temp_subgrid_ascii).and.save_compounds_as_ascii) allocate(temp_subgrid_ascii(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index)))
@@ -266,21 +264,31 @@ contains
         create_file_rec=.false.
 
         ! Save downscaled source contributions for pollutants (not no2 or o3)
-        ! Loop 1 = normal source contributions, loop 2 = from_in_region
-        do source_domain_loop = 1,2
+        ! source_domain_loop 1: local source contributions
+        ! source_domain_loop 2: local source contributions cut down to from_in_region
+        ! source_domain_loop 3-4: not used here, but kept to be consistent with the other source_domain_loop loops
+        ! source_domain_loop 5: total in-region: local from_in_region + semilocal emep contribution
+        do source_domain_loop = 1,5
 
             ! Skip this round in the loop if this type of source contributions are not to be saved
             if (source_domain_loop == 1) then
                 if (.not. save_source_contributions) cycle
                 filename_append=''
-            else
+            else if (source_domain_loop == 2) then
                 if (.not. (trace_emissions_from_in_region .and. save_local_source_contributions_from_in_region)) cycle
                 filename_append='_from_in_region'
+            else if (source_domain_loop == 5) then
+                if (.not. (trace_emissions_from_in_region .and. save_total_source_contributions_from_in_region)) cycle
+                filename_append='_from_in_region'
+            else
+                ! skip rounds 3-4
+                cycle
             end if
 
             write(unit_logfile,'(a)')'--------------------------'
             if (source_domain_loop == 1) write(unit_logfile,'(a)')'Saving downscaled contributions'
             if (source_domain_loop == 2) write(unit_logfile,'(a)')'Saving downscaled contributions from-in-region'
+            if (source_domain_loop == 5) write(unit_logfile,'(a)')'Saving total contributions from-in-region'
             write(unit_logfile,'(a)')'--------------------------'
 
             if (save_netcdf_fraction_as_contribution_flag) then
@@ -293,14 +301,17 @@ contains
 
             do i_pollutant=1,n_pollutant_loop
                 do i_source=1,n_source_index
+                    if (source_domain_loop == 5) then
+                        i_file=subgrid_total_inregion_file_index(i_source)
+                    else  ! 1 or 2
+                        i_file=subgrid_local_file_index(i_source)
+                    end if
                     !if (calculate_source(i_source).or.i_source.eq.allsource_index) then
                     !Don't save any exhaust, sand or salt pollutant sources. Dealt with later
                     !(calculate_source(i_source).or.calculate_emep_source(i_source))
                     if (calculate_source(i_source).and.i_source.ne.allsource_index.and.pollutant_loop_index(i_pollutant).ne.pmex_index &
                         .and.pollutant_loop_index(i_pollutant).ne.pm25_sand_index.and.pollutant_loop_index(i_pollutant).ne.pm10_sand_index &
                         .and.pollutant_loop_index(i_pollutant).ne.pm25_salt_index.and.pollutant_loop_index(i_pollutant).ne.pm10_salt_index) then
-
-                        i_file=subgrid_local_file_index(i_source)
 
                         !Only save nonexhaust pm and all the other sources
                         if ((pollutant_loop_index(i_pollutant).eq.nox_index.and.i_source.eq.traffic_index)) then
@@ -309,28 +320,34 @@ contains
                             if (i_source.eq.traffic_index.and.(pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index)) then
                                 ! Special case for traffic pm: In some setups we need to subtract exhaust to get non-exhaust
                                 if (pollutant_index.eq.all_totals_nc_index.or.pollutant_index.eq.aaqd_totals_nc_index.or.pollutant_index.eq.gp_totals_nc_index.or.pollutant_index.eq.op_totals_nc_index) then
-                                    ! Traffic exhaust is not a separate pollutant
+                                    ! Traffic exhaust is not a separate pollutant, so just save total traffic
                                     var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//trim(filename_append)
                                     if (source_domain_loop == 1) then
                                         temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)
-                                    else
+                                    else if (source_domain_loop == 2) then
                                         temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,i_pollutant)
+                                    else ! source_domain_loop == 5
+                                        temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,i_pollutant)+subgrid_EMEP_semilocal_from_in_region(:,:,:,i_source,i_pollutant)
                                     endif
                                 else
                                     ! Calculate non-exhaust as difference between total traffic and exhaust
                                     var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//'_nonexhaust'//trim(filename_append)
                                     if (source_domain_loop == 1) then
                                         temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)-subgrid(:,:,:,local_subgrid_index,i_source,pollutant_loop_back_index(pmex_index))
-                                    else
+                                    else if (source_domain_loop == 2) then
                                         temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,i_pollutant)-subgrid_local_from_in_region(:,:,:,i_source,pollutant_loop_back_index(pmex_index))
+                                    else ! source_domain_loop == 5
+                                        temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,i_pollutant)-subgrid_local_from_in_region(:,:,:,i_source,pollutant_loop_back_index(pmex_index))+subgrid_EMEP_semilocal_from_in_region(:,:,:,traffic_nonexhaust_nc_index,i_pollutant)
                                     end if
                                 endif
                             else
                                 var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//trim(filename_append)
                                 if (source_domain_loop == 1) then
                                     temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)
-                                else
+                                else if (source_domain_loop == 2) then
                                     temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,i_pollutant)
+                                else ! source_domain_loop == 5
+                                    temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,i_pollutant)+subgrid_EMEP_semilocal_from_in_region(:,:,:,i_source,i_pollutant)
                                 endif
                             endif
                             ! Convert to fractions
@@ -372,25 +389,25 @@ contains
                             !If PM then exhaust output is exhaust
                             if (pollutant_loop_index(i_pollutant).eq.pm10_index.or.pollutant_loop_index(i_pollutant).eq.pm25_index) then
                                 if (source_domain_loop == 1) then
-                                    exhaust_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,pollutant_loop_back_index(pmex_index))
-                                else
-                                    exhaust_subgrid=subgrid_local_from_in_region(:,:,:,i_source,pollutant_loop_back_index(pmex_index))
+                                    temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,pollutant_loop_back_index(pmex_index))
+                                else if (source_domain_loop == 2) then
+                                    temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,pollutant_loop_back_index(pmex_index))
+                                else  ! source_domain_loop == 5
+                                    temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,pollutant_loop_back_index(pmex_index))+subgrid_EMEP_semilocal_from_in_region(:,:,:,traffic_exhaust_nc_index,i_pollutant)
                                 end if
                             else
                                 if (source_domain_loop == 1) then
-                                    exhaust_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)
-                                else
-                                    exhaust_subgrid=subgrid_local_from_in_region(:,:,:,i_source,i_pollutant)
+                                    temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)
+                                else if (source_domain_loop == 2) then
+                                    temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,i_pollutant)
+                                else  ! source_domain_loop == 5
+                                    temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,i_pollutant)+subgrid_EMEP_semilocal_from_in_region(:,:,:,i_source,i_pollutant)
                                 end if
                             endif
-
-                            if (save_netcdf_fraction_as_contribution_flag) then
-                                var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//'local_contribution_traffic_exhaust'//trim(filename_append)
-                                temp_subgrid=exhaust_subgrid
-                            else
-                                var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//'local_fraction_traffic_exhaust'//trim(filename_append)
-                                temp_subgrid=exhaust_subgrid/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
-                            endif
+                            var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//'_exhaust'//trim(filename_append)
+                            if (.not. save_netcdf_fraction_as_contribution_flag) then
+                                temp_subgrid=temp_subgrid/subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)*100.
+                            end if
                             where (subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant).eq.0) temp_subgrid=0
 
                             if (save_netcdf_file_flag) then
@@ -420,12 +437,11 @@ contains
                         .or.pollutant_loop_index(i_pollutant).eq.pm25_salt_index.or.pollutant_loop_index(i_pollutant).eq.pm10_salt_index) then
                         !Save the nonexhaust sand and salt
                         if (i_source.eq.traffic_index) then
-
-                            i_file=subgrid_local_file_index(i_source)
                             var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//trim(filename_append)
                             if (source_domain_loop == 1) then
                                 temp_subgrid=subgrid(:,:,:,local_subgrid_index,i_source,i_pollutant)
-                            else
+                            else  ! 2 or 5
+                                ! NB: sand and salt do not have EMEP contributions, so total is the same as local
                                 temp_subgrid=subgrid_local_from_in_region(:,:,:,i_source,i_pollutant)
                             end if
                             if (.not. save_netcdf_fraction_as_contribution_flag) then
@@ -899,9 +915,7 @@ contains
         ! 2 = As 1, but only the part of the moving window that is within the receptor region
         ! 3 = emep additional local contributions, extending further using larger LF grid
         ! 4 = Semilocal contribution, i.e. outside moving-window but inside the receptor region
-        ! 5 = Total in-region contribution:
-        !       - for downscaled sources: downscaled contribution in-region pluss semilocal(4)
-        !       - for not-downscaled sources: 2+4
+        ! 5 = 3+4, only for sources not downscaled
         do source_domain_loop=1,5
 
             ! check if this version of source contributions should be saved
@@ -970,19 +984,17 @@ contains
                             filename_append = '_from_in_region'
                             temp_subgrid = subgrid_EMEP_semilocal_from_in_region(:,:,:,i_source,i_pollutant)
                         else  ! source_domain_loop == 5
-                            ! combination of local and semilocal contribution, using downscaled for local where available
+                            ! sum of local and semilocal contribution: only for sources not downscaled
+                            if (i_source == allsource_index .or. calculate_source(i_source)) then
+                                cycle
+                            else if ((i_source == traffic_exhaust_nc_index .or. i_source == traffic_nonexhaust_nc_index) .and. calculate_source(traffic_index)) then
+                                ! if traffic is downscaled, then otal contributions to traffic exhaust and nonexhaust are saved earlier in the subroutine using downscaled local contributions
+                                cycle
+                            end if
                             i_file = subgrid_total_inregion_file_index(i_source)
                             filename_append = '_from_in_region'
-                            if (i_source == allsource_index) then
-                                ! cannot combine semilocal and local for allsources
-                                cycle
-                            else if (calculate_source(i_source)) then
-                                ! add downscaled local source contribution and semilocal contribution
-                                temp_subgrid = subgrid_local_from_in_region(:,:,:,i_source,i_pollutant) + subgrid_EMEP_semilocal_from_in_region(:,:,:,i_source,i_pollutant)
-                            else
-                                ! add EMEP local source contribution and semilocal contribution
-                                temp_subgrid = subgrid_EMEP_local_from_in_region(:,:,:,i_source,i_pollutant) + subgrid_EMEP_semilocal_from_in_region(:,:,:,i_source,i_pollutant)
-                            end if
+                            ! add EMEP local source contribution and semilocal contribution
+                            temp_subgrid = subgrid_EMEP_local_from_in_region(:,:,:,i_source,i_pollutant) + subgrid_EMEP_semilocal_from_in_region(:,:,:,i_source,i_pollutant)
                         end if
 
                         var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))//trim(filename_append)
