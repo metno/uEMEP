@@ -52,7 +52,8 @@ contains
                 filename_grid(emep_subgrid_frac_file_index(i)) = trim('EMEP_contribution')//'_'//trim(source_file_str(i))
                 filename_grid(subgrid_local_file_index(i)) = trim('local_contribution')//'_'//trim(source_file_str(i))
                 filename_grid(emep_subgrid_semilocal_file_index(i)) = trim('EMEP_semilocal_contribution')//'_'//trim(source_file_str(i))
-                filename_grid(subgrid_total_inregion_file_index(i)) = trim('total_contribution')//'_'//trim(source_file_str(i))
+                filename_grid(subgrid_sourcetotal_inregion_file_index(i)) = trim('total_contribution')//'_'//trim(source_file_str(i))
+                filename_grid(subgrid_sourcetotal_file_index(i)) = trim('total_contribution')//'_'//trim(source_file_str(i))
             else
                 filename_grid(emep_subgrid_nonlocal_file_index(i)) = trim('EMEP_nonlocal_fraction')
                 filename_grid(emep_subgrid_local_file_index(i)) = trim('EMEP_local_fraction')//'_'//trim(source_file_str(i))
@@ -61,7 +62,8 @@ contains
                 filename_grid(emep_subgrid_frac_file_index(i)) = trim('EMEP_fraction')//'_'//trim(source_file_str(i))
                 filename_grid(subgrid_local_file_index(i)) = trim('local_fraction')//'_'//trim(source_file_str(i))
                 filename_grid(emep_subgrid_semilocal_file_index(i)) = trim('EMEP_semilocal_fraction')//'_'//trim(source_file_str(i))
-                filename_grid(subgrid_total_inregion_file_index(i)) = trim('total_fraction')//'_'//trim(source_file_str(i))
+                filename_grid(subgrid_sourcetotal_inregion_file_index(i)) = trim('total_fraction')//'_'//trim(source_file_str(i))
+                filename_grid(subgrid_sourcetotal_file_index(i)) = trim('total_fraction')//'_'//trim(source_file_str(i))
             end if
             filename_grid(subgrid_total_file_index(i)) = trim('total')//'_'//trim(source_file_str(i))
             filename_grid(use_subgrid_file_index(i)) = trim('use_subgrid')//'_'//trim(source_file_str(i))
