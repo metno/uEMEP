@@ -480,10 +480,13 @@ contains
         integer, allocatable :: region_mask(:, :)
         ! assumed names for dimensions of the region mask file
         character(256) x_dim_name_regionmask,y_dim_name_regionmask,dimname_temp
-        ! length of dimensions of the region mask file
+        ! length of dimensions of the region mask
         integer nx_regionmask,ny_regionmask
-        ! resolution of the region mask file (to be verified is constant!)
+        ! grid spacing of the region mask (to be verified is constant!)
         real dx_regionmask,dy_regionmask
+        ! subset needed to read from the region mask file
+        real x_min,x_max,y_min,y_max
+        integer x_min_index,x_max_index,y_min_index,y_max_index
         ! grid dimension looping indices
         integer i,j,ii,jj,i_sub,j_sub,i_source
 
@@ -589,7 +592,7 @@ contains
         status_nc = NF90_INQ_DIMID (id_nc,x_dim_name_regionmask,x_dim_id_nc)
         status_nc = NF90_INQUIRE_DIMENSION (id_nc,x_dim_id_nc,dimname_temp,nx_regionmask)
         if (status_nc /= NF90_NOERR) then
-            write(unit_logfile,'(A,I0)') 'Reading of x dimension failed with status: ',status_nc
+            write(unit_logfile,'(A,I0)') 'ERROR: Reading of x dimension failed with status: ',status_nc
             stop
         end if
         ! y
@@ -599,19 +602,17 @@ contains
             write(unit_logfile,'(A,I0)') 'Reading of y dimension failed with status: ',status_nc
             stop
         end if
-        write(unit_logfile,'(A,I0,A,I0)') ' Size of dimensions (x,y): ',nx_regionmask,' ',ny_regionmask
+        write(unit_logfile,'(A,I0,A,I0)') ' Dimensions of full region mask (x,y): ',nx_regionmask,' ',ny_regionmask
 
         ! Verify the dimensions are at least 2x2
         if (.not. (nx_regionmask > 1 .and. ny_regionmask > 1)) then
-            write(unit_logfile, '(A)') 'Dimensions of regionmask is not at least 2x2'
+            write(unit_logfile, '(A)') 'ERROR: Dimensions of regionmask are not at least 2x2'
             stop
         end if
 
-        ! Allocate memory for the region mask and its coordinates
-        allocate(region_mask(nx_regionmask, ny_regionmask))
+        ! Allocate memory for the full coordinates of the region mask
         allocate(x_values_regionmask(nx_regionmask))
         allocate(y_values_regionmask(ny_regionmask))
-        write(unit_logfile,'(A)') 'Allocation done.'
         ! NB: should I set these arrays to 0 before they are read from file?
 
         ! Read coordinate values
@@ -632,8 +633,6 @@ contains
             stop
         end if
 
-        write(unit_logfile,'(A)') 'Reading x and y values done.'
-
         ! Determine grid spacing and verify it is constant
         dx_regionmask = x_values_regionmask(2) - x_values_regionmask(1)
         do i = 2, nx_regionmask
@@ -650,14 +649,145 @@ contains
             end if
         end do
 
-        write(unit_logfile,'(A)') 'Reading mask itself'
+        ! Determine required subset of region mask to read (in the projection coordinates of the target grid)
+        write(unit_logfile,'(A)') 'Determining the subset of the region mask needed'
 
+        ! First initialize both min and max value to the first value in the target subgrid
+        write(unit_logfile,'(A)') 'Checking target subgrid'
+        call LL2PROJ(lon_subgrid(1,1),lat_subgrid(1,1),x_min,y_min,region_mask_projection_attributes,region_mask_projection_type)
+        x_max = x_min
+        y_max = y_min
+        ! Go through the target grid cells to update the range of x and y values
+        do i = 1, subgrid_dim(x_dim_index)
+            do j = 1, subgrid_dim(y_dim_index)
+                call LL2PROJ(lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,region_mask_projection_attributes,region_mask_projection_type)
+                x_min = min(x_min, x_location)
+                x_max = max(x_max, x_location)
+                y_min = min(y_min, y_location)
+                y_max = max(y_max, y_location)
+            end do
+        end do
+        ! If tracing in-region contributions, go through all cells to be traced from and update required range of x and y values
+        if (trace_emissions_from_in_region) then
+            ! Emission subgrid
+            write(unit_logfile,'(A)') 'Checking emission subgrids'
+            do i_source = 1, n_source_index
+                if (calculate_source(i_source)) then
+                    do i = 1, emission_subgrid_dim(x_dim_index, i_source)
+                        do j = 1, emission_subgrid_dim(y_dim_index, i_source)
+                            ! get location in uEMEP projection of this emission subgrid
+                            x_emis = x_emission_subgrid(i,j,i_source)
+                            y_emis = y_emission_subgrid(i,j,i_source)
+                            ! transform to the region mask projection
+                            call PROJ2LL(x_emis,y_emis,lon_emis,lat_emis,projection_attributes,projection_type)
+                            call LL2PROJ(lon_emis,lat_emis,x_location,y_location,region_mask_projection_attributes,region_mask_projection_type)
+                            ! update min and max
+                            x_min = min(x_min, x_location)
+                            x_max = max(x_max, x_location)
+                            y_min = min(y_min, y_location)
+                            y_max = max(y_max, y_location)
+                        end do
+                    end do
+                end if
+            end do
+            ! Extended EMEP grid for region masking of the EMEP LF data
+            write(unit_logfile,'(A)') 'Checking extended EMEP grid'
+            ! Determine how large the extended EMEP grid must be
+            ! We assume the reduced EMEP grid is just big enough to cover the 'normal' LF contributions to the target grid
+            if (EMEP_additional_grid_interpolation_size > 0.0) then
+                ! We want to calculate additional. So we need to increase the grid to ensure it covers additial contributions to the target grid
+                ! First, calculate the max nr of LF cells that the source can be away from edge of target grid
+                max_lf_distance = 1 + int(max(dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index))/2)
+                ! - assuming reduced EMEP grid already covers the small local fraction domain, this is the number of EMEP grid-cells we need to add to all sides in the extended grid
+                ngrid_extended_margin = (local_fraction_grid_size(2) - local_fraction_grid_size(1))*max_lf_distance
+                write(unit_logfile,'(A,2I6)') '  reduced EMEP grid dimensions: nx,ny =',dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index)
+                write(unit_logfile,'(A,2I6)') "  max_lf_distance, ngrid_extended_margin =",max_lf_distance, ngrid_extended_margin
+                ! Size of extended EMEP grid
+                nx_EMEP_extended = dim_length_nc(x_dim_nc_index) + 2*ngrid_extended_margin
+                ny_EMEP_extended = dim_length_nc(y_dim_nc_index) + 2*ngrid_extended_margin
+                write(unit_logfile,'(A,2I6)') '  -> extended EMEP grid dimensions: nx,ny =', nx_EMEP_extended,ny_EMEP_extended
+            else
+                ! We don't calculate additional. Then the extended EMEP grid can be the same size as the reduced EMEP grid
+                ngrid_extended_margin = 0
+                nx_EMEP_extended = dim_length_nc(x_dim_nc_index)
+                ny_EMEP_extended = dim_length_nc(y_dim_nc_index)
+            end if
+            ! Determine spacing in EMEP grid (NB: maybe this is alredy available somewhere?)
+            ! NB: I will not verify it is constant, but I will assume it is
+            dx_emep = var1d_nc(2,x_dim_nc_index) - var1d_nc(1,x_dim_nc_index)
+            dy_emep = var1d_nc(2,y_dim_nc_index) - var1d_nc(1,y_dim_nc_index)
+            ! loop over the extended EMEP grid to update range of x and y values we need from region mask
+            do ii = 1, nx_EMEP_extended
+                do jj = 1, ny_EMEP_extended
+                    ! calculate the corresponding index in the normal EMEP grid
+                    ii_nc = ii - ngrid_extended_margin
+                    jj_nc = jj - ngrid_extended_margin
+                    ! -> deduce EMEP projection coordinate values at centre of this EMEP grid
+                    x_emepmid = var1d_nc(1,x_dim_nc_index) + dx_emep*(ii_nc - 1)
+                    y_emepmid = var1d_nc(1,y_dim_nc_index) + dy_emep*(jj_nc - 1)
+                    ! go through all subsamples of this EMEP grid
+                    do i_sub = 1, n_subsamples_per_EMEP_grid
+                        do j_sub = 1, n_subsamples_per_EMEP_grid
+                            ! EMEP projection coordinate value at this subsample of the EMEP grid
+                            x_emepsub = x_emepmid - dx_emep/2 + (i_sub-0.5)*dx_emep/n_subsamples_per_EMEP_grid
+                            y_emepsub = y_emepmid - dy_emep/2 + (j_sub-0.5)*dy_emep/n_subsamples_per_EMEP_grid
+                            ! calculate longitude and latitude from the EMEP projection
+                            call PROJ2LL(x_emepsub,y_emepsub,lon_emepsub,lat_emepsub,EMEP_projection_attributes,EMEP_projection_type)
+                            ! calculate projection coordinates in the region mask grid
+                            call LL2PROJ(lon_emepsub,lat_emepsub,x_location,y_location,region_mask_projection_attributes,region_mask_projection_type)
+                            ! update min and max
+                            x_min = min(x_min, x_location)
+                            x_max = max(x_max, x_location)
+                            y_min = min(y_min, y_location)
+                            y_max = max(y_max, y_location)
+                        end do
+                    end do
+                end do
+            end do
+        end if
+
+        ! Determine the subset of the region mask we need to read based on the range of x and y to use it for
+        x_min_index = nint((x_min-x_values_regionmask(1))/dx_regionmask)
+        x_max_index = nint(1+(x_max-x_values_regionmask(1))/dx_regionmask)
+        y_min_index = nint((y_min-y_values_regionmask(1))/dy_regionmask)
+        y_max_index = nint(1+(y_max-y_values_regionmask(1))/dy_regionmask)
+        ! Update region mask dimensions based on this subset
+        nx_regionmask = x_max_index - x_min_index + 1
+        ny_regionmask = y_max_index - y_min_index + 1
+
+        write(unit_logfile,'(A)') 'Required subset of region mask (in region mask projection):'
+        write(unit_logfile,'(A,2e12.4,2i5)') '  x_min, x_max, x_min_index, x_max_index =',x_min,x_max,x_min_index,x_max_index
+        write(unit_logfile,'(A,2e12.4,2i5)') '  y_min, y_max, y_min_index, x_max_index =',y_min,y_max,y_min_index,y_max_index
+        write(unit_logfile,'(A,2i5)') '-> Dimensions of subset of region mask to be read (x,y):',nx_regionmask,ny_regionmask
+
+        ! Read region mask coordinates again, selecting only the required subset
+        deallocate(x_values_regionmask)
+        deallocate(y_values_regionmask)
+        allocate(x_values_regionmask(nx_regionmask))
+        allocate(y_values_regionmask(ny_regionmask))
+        ! x
+        status_nc = NF90_INQ_VARID (id_nc, trim(x_dim_name_regionmask), var_id_nc)
+        if (status_nc == NF90_NOERR) then
+            status_nc = NF90_GET_VAR (id_nc,var_id_nc,x_values_regionmask,start=(/x_min_index/),count=(/nx_regionmask/))
+        else
+            write(unit_logfile,'(A)') 'Error while reading x values from region mask'
+            stop
+        end if
+        ! y
+        status_nc = NF90_INQ_VARID (id_nc, trim(y_dim_name_regionmask), var_id_nc)
+        if (status_nc == NF90_NOERR) then
+            status_nc = NF90_GET_VAR (id_nc,var_id_nc,y_values_regionmask,start=(/y_min_index/),count=(/ny_regionmask/))
+        else
+            write(unit_logfile,'(A)') 'Error while reading y values from region mask'
+            stop
+        end if
         ! Read the mask itself
+        allocate(region_mask(nx_regionmask,ny_regionmask))
         status_nc = NF90_INQ_VARID (id_nc, trim(varname_region_mask), var_id_nc)
         if (status_nc == NF90_NOERR) then
             status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
-            ! NB: the following line fails if region_mask is bigger than ca. 1 million elements when runnning interactively, but not as a qsub job (fix by increasing 'ulimit -s')
-            status_nc = NF90_GET_VAR (id_nc, var_id_nc, region_mask)
+            ! NB: the following line fails if the region_mask subset is bigger than ca. 1 million elements when runnning interactively, but not as a qsub job (fix by increasing 'ulimit -s', e.g. 'ulimit -s unlimited')
+            status_nc = NF90_GET_VAR (id_nc, var_id_nc, region_mask, start=(/x_min_index, y_min_index/), count=(/nx_regionmask,ny_regionmask/))
             write(unit_logfile,'(A,i3,A,2A,2i16)') ' Reading: ',temp_num_dims,' ',trim(varname_region_mask),' (min, max): ',minval(region_mask),maxval(region_mask)
         else
             write(unit_logfile,'(A)') 'Could not read region mask values from file'
@@ -675,7 +805,7 @@ contains
 
         ! Close the region mask netcdf file
         status_nc = NF90_CLOSE (id_nc)
-
+        write(unit_logfile,'(A)') 'Done reading region mask.'
 
         ! Determine region ID of each cell of the uEMEP target subgrid
         write(unit_logfile, '(A)') 'Calculating region mask for the target grid'
@@ -789,30 +919,6 @@ contains
                 end if
             end do
 
-            ! Define the extended EMEP grid for region masking of the Local Contributions
-
-            ! Determine how large the extended EMEP grid must be to cover region fraction data we need
-            ! We assume the reduced EMEP grid is just big enough to cover the 'normal' LF contributions to the target grid
-            if (EMEP_additional_grid_interpolation_size > 0.0) then
-                ! We want to calculate additional. So we need to increase the grid to ensure it covers additial contributions to the target grid
-                ! First, calculate the max nr of LF cells that the source can be away from edge of target grid
-                max_lf_distance = 1 + int(max(dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index))/2)
-                ! - assuming reduced EMEP grid already covers the small local fraction domain, this is the number of EMEP grid-cells we need to add to all sides in the extended grid
-                ngrid_extended_margin = (local_fraction_grid_size(2) - local_fraction_grid_size(1))*max_lf_distance
-
-                write(unit_logfile,'(A,2I6)') "max_lf_distance, ngrid_extended_margin =",max_lf_distance, ngrid_extended_margin
-
-                ! Allocate the extended array and fill with values, assuming equidistant EMEP grid
-                nx_EMEP_extended = dim_length_nc(x_dim_nc_index) + 2*ngrid_extended_margin
-                ny_EMEP_extended = dim_length_nc(y_dim_nc_index) + 2*ngrid_extended_margin
-                write(unit_logfile,'(A,2I6)') 'Extended grid: nx,ny =', nx_EMEP_extended,ny_EMEP_extended
-            else
-                ! We don't calculate additional. Then the extended EMEP grid can be the same size as the normal one
-                ngrid_extended_margin = 0
-                nx_EMEP_extended = dim_length_nc(x_dim_nc_index)
-                ny_EMEP_extended = dim_length_nc(y_dim_nc_index)
-            end if
-
             ! Set region ID of each subsample of the extended EMEP grid
 
             write(unit_logfile,'(A)') 'Calculating region mask for subsamples of the (extended) EMEP grid'
@@ -820,11 +926,6 @@ contains
             ! Allocate array for region subsamples and initialize to -1 (no region)
             allocate(EMEP_extended_subsample_region_id(n_subsamples_per_EMEP_grid,n_subsamples_per_EMEP_grid,nx_EMEP_extended,ny_EMEP_extended))
             EMEP_extended_subsample_region_id = -1
-
-            ! Determine spacing in EMEP grid (NB: maybe this is alredy available somewhere?)
-            ! NB: I will not verify it is constant, but I will assume it is
-            dx_emep = var1d_nc(2,x_dim_nc_index) - var1d_nc(1,x_dim_nc_index)
-            dy_emep = var1d_nc(2,y_dim_nc_index) - var1d_nc(1,y_dim_nc_index)
 
             ! loop over the extended EMEP grid and fill subsample region ID
             do ii = 1, nx_EMEP_extended
