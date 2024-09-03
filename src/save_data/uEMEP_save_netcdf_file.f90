@@ -874,8 +874,19 @@ contains
                     ,unit_str,title_str,create_file,valid_min,variable_type,1.)
             endif
             if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-                write(unit_logfile,'(A)') 'Saving receptor version of region mask is not implemented!'
-                stop
+                ! check if region is the same for the whole grid. If not, set to zero to avoid getting wrong ID when interpolating
+                if (.not. (minval(subgrid_region_index) == maxval(subgrid_region_index))) then
+                    write(unit_logfile,'(A)') 'Warning: Not the same region_index for the whole receptor grid. Setting to 0.'
+                    temp_subgrid = 0.
+                end if
+                write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
+                call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                    ,temp_subgrid(:,:,:),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                    ,unit_str,title_str_rec,create_file_rec,valid_min &
+                    ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                    ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                    ,z_rec(allsource_index,1) &
+                    ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,1.)
             endif
         end if
 

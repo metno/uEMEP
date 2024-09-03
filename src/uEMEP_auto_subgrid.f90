@@ -751,14 +751,19 @@ contains
         x_max_index = nint(1+(x_max-x_values_regionmask(1))/dx_regionmask)
         y_min_index = nint((y_min-y_values_regionmask(1))/dy_regionmask)
         y_max_index = nint(1+(y_max-y_values_regionmask(1))/dy_regionmask)
+        ! ensure we don't go outside the boundaries of the region mask
+        x_min_index = max(x_min_index, 1)
+        x_max_index = min(x_max_index, nx_regionmask)
+        y_min_index = max(y_min_index, 1)
+        y_max_index = min(y_max_index, ny_regionmask)
         ! Update region mask dimensions based on this subset
         nx_regionmask = x_max_index - x_min_index + 1
         ny_regionmask = y_max_index - y_min_index + 1
 
         write(unit_logfile,'(A)') 'Required subset of region mask (in region mask projection):'
-        write(unit_logfile,'(A,2e12.4,2i5)') '  x_min, x_max, x_min_index, x_max_index =',x_min,x_max,x_min_index,x_max_index
-        write(unit_logfile,'(A,2e12.4,2i5)') '  y_min, y_max, y_min_index, x_max_index =',y_min,y_max,y_min_index,y_max_index
-        write(unit_logfile,'(A,2i5)') '-> Dimensions of subset of region mask to be read (x,y):',nx_regionmask,ny_regionmask
+        write(unit_logfile,'(A,2e12.4,2i7)') '  x_min, x_max, x_min_index, x_max_index =',x_min,x_max,x_min_index,x_max_index
+        write(unit_logfile,'(A,2e12.4,2i7)') '  y_min, y_max, y_min_index, x_max_index =',y_min,y_max,y_min_index,y_max_index
+        write(unit_logfile,'(A,2i7)') '-> Dimensions of subset of region mask to be read (x,y):',nx_regionmask,ny_regionmask
 
         ! Read region mask coordinates again, selecting only the required subset
         deallocate(x_values_regionmask)
