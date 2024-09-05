@@ -93,6 +93,10 @@ module uemep_configuration
     character(256) :: finished_filename = ''
     character(256) :: finished_subpath = 'finished/'
     character(256) :: var_name_landuse_nc(num_var_landuse_nc)
+    ! Configurations needed for new way to read region mask
+    character(256) :: pathname_region_mask = ''
+    character(256) :: filename_region_mask = ''
+    character(256) :: varname_region_mask = 'region_index'
 
 
     logical :: hourly_calculations = .false.
@@ -125,7 +129,6 @@ module uemep_configuration
     logical :: save_netcdf_file_flag = .false.
     logical :: save_netcdf_receptor_flag = .false.
     logical :: save_netcdf_fraction_as_contribution_flag = .false.
-    logical :: save_netcdf_fraction_as_contribution_from_in_region_flag = .false.
     logical :: calculate_tiling_flag = .false.
     logical :: calculate_region_tiling_flag = .false.
     logical :: use_region_select_and_mask_flag = .false.
@@ -140,15 +143,20 @@ module uemep_configuration
     logical :: save_emissions_for_EMEP(n_source_index) = .false.
     logical :: save_compounds = .true. ! Output data saving flags
     logical :: save_source_contributions = .true. ! Output data saving flags
+    logical :: save_emep_source_contributions = .false. ! Output data saving flags
+    logical :: save_emep_additional_source_contributions = .false.
+    logical :: save_total_source_contributions = .false.
+    logical :: save_local_source_contributions_from_in_region = .false.
+    logical :: save_semilocal_source_contributions_from_in_region = .false.
+    logical :: save_total_source_contributions_from_in_region = .false.
+    logical :: save_no2_source_contributions = .true. ! Output data saving flags
+    logical :: save_o3_source_contributions = .true. ! Output data saving flags
     logical :: save_wind_vectors = .false. ! Output data saving flags
     logical :: save_other_meteo = .false. ! Output data saving flags
-    logical :: save_emep_source_contributions = .false. ! Output data saving flags
     logical :: save_emep_original = .true. ! Output data saving flags
     logical :: save_emissions = .false. ! Output data saving flags
     logical :: save_for_chemistry = .false. ! Output data saving flags
     logical :: save_population = .false. ! Output data saving flags
-    logical :: save_no2_source_contributions = .true. ! Output data saving flags
-    logical :: save_o3_source_contributions = .true. ! Output data saving flags
     logical :: save_aqi = .true. ! Output data saving flags
     logical :: save_emep_species = .false. ! Output data saving flags
     logical :: save_deposition = .false. ! Output data saving flags

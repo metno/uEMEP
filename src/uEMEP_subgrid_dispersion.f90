@@ -57,7 +57,7 @@ contains
         real            temp_subgrid_internal
         real            distance_emission_subgrid_min
         real            temp_sum_subgrid(n_pollutant_loop)
-        real            temp_sum_subgrid_from_in_region(n_pollutant_loop) !This declaration happens whether or not trace_emissions_from_in_region is specified. It is diagnostic
+        real            temp_sum_subgrid_from_in_region_new(n_pollutant_loop)
         integer         count
 
         real, allocatable :: temp_emission_subgrid(:,:,:)
@@ -110,8 +110,11 @@ contains
         !real gauss_plume_second_order_rotated_integral_func
         !real gauss_plume_cartesian_integral_func
 
-        real, allocatable :: temp_subgrid_from_in_region(:,:,:)
-        real, allocatable :: temp_target_subgrid_from_in_region(:,:,:)
+        ! Arrays for the new way to calculate from-in-region, by matching emission region with region in each subgrid of the target grid
+        real, allocatable :: subgrid_from_in_region_new(:,:,:)
+        real, allocatable :: temp_target_subgrid_per_source_region(:,:,:,:) !x,y,pollutant,region
+        integer i_region
+        integer emission_region_index
 
 
         write(unit_logfile,'(A)') ''
@@ -132,8 +135,8 @@ contains
         allocate (temp_FF_emission_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index)))
         allocate (angle_diff(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index)))
         if (trace_emissions_from_in_region) then
-            allocate (temp_subgrid_from_in_region(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_pollutant_loop))
-            temp_subgrid_from_in_region=0.
+            allocate(subgrid_from_in_region_new(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),n_pollutant_loop))
+            subgrid_from_in_region_new=0.
         endif
 
         temp_subgrid=0.
@@ -225,8 +228,8 @@ contains
                 y_target_subgrid(:,:)=y_emission_subgrid(:,:,source_index)
 
                 if (trace_emissions_from_in_region) then
-                    if (allocated(temp_target_subgrid_from_in_region)) deallocate (temp_target_subgrid_from_in_region)
-                    if (.not.allocated(temp_target_subgrid_from_in_region)) allocate (temp_target_subgrid_from_in_region(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_pollutant_loop))
+                    if (allocated(temp_target_subgrid_per_source_region)) deallocate(temp_target_subgrid_per_source_region)
+                    allocate(temp_target_subgrid_per_source_region(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),n_pollutant_loop,n_regions))
                 endif
 
 
@@ -243,8 +246,7 @@ contains
                 if (use_target_subgrid) temp_target_subgrid=0.
                 if (use_target_subgrid) traveltime_temp_target_subgrid=0.
                 if (trace_emissions_from_in_region) then
-                    subgrid_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=0.
-                    temp_target_subgrid_from_in_region=0.
+                    temp_target_subgrid_per_source_region=0.
                 endif
 
                 !Set a temporary emission array
@@ -253,7 +255,7 @@ contains
                 temp_FF_subgrid=0.
                 !diagnostic_subgrid=0.
                 if (trace_emissions_from_in_region) then
-                    temp_subgrid_from_in_region=0.
+                    subgrid_from_in_region_new=0.
                 endif
 
 
@@ -679,14 +681,26 @@ contains
                                                         endif
 
                                                         if (trace_emissions_from_in_region) then
-                                                            if (use_subgrid_region(ii,jj,source_index)) then
-                                                                if (use_target_subgrid) then
-                                                                    temp_target_subgrid_from_in_region(i,j,i_pollutant)=temp_target_subgrid_from_in_region(i,j,i_pollutant)+temp_subgrid_internal_pollutant(i_pollutant)
-                                                                else
-                                                                    temp_subgrid_from_in_region(i,j,i_pollutant)=temp_subgrid_from_in_region(i,j,i_pollutant)+temp_subgrid_internal_pollutant(i_pollutant)
-                                                                endif
-
-                                                            endif
+                                                            ! New version of in-region calculations: allowing target region to vary with the target grid
+                                                            ! ****************
+                                                            emission_region_index = emission_subgrid_region_index(ii,jj,source_index)
+                                                            if (use_target_subgrid) then
+                                                                ! one temp_target_subgrid may contain multiple regions in the finer resolution, so we must store results in a per-region array
+                                                                ! -> add this contribution to the region index that matches the current emission grid
+                                                                if (emission_region_index > 0) then
+                                                                    i_region = regionindex_loop_back_index(emission_region_index)
+                                                                    if (i_region > 0) then
+                                                                        temp_target_subgrid_per_source_region(i,j,i_pollutant,i_region) = temp_target_subgrid_per_source_region(i,j,i_pollutant,i_region) + temp_subgrid_internal_pollutant(i_pollutant)
+                                                                    end if
+                                                                end if
+                                                            else
+                                                                ! dispersion calculation is done directly on the fine-resolution target grid, so there is only one target region
+                                                                ! -> we can directly check if the target subgrid region ID matches the current emission grid region ID
+                                                                if (emission_region_index > 0 .and. emission_region_index == subgrid_region_index(i,j)) then
+                                                                    subgrid_from_in_region_new(i,j,i_pollutant) = subgrid_from_in_region_new(i,j,i_pollutant) + temp_subgrid_internal_pollutant(i_pollutant)
+                                                                end if
+                                                            end if
+                                                            ! ************************
                                                         endif
                                                     enddo
 
@@ -873,13 +887,26 @@ contains
                                                 endif
 
                                                 if (trace_emissions_from_in_region) then
-                                                    if (use_subgrid_region(ii,jj,source_index)) then
-                                                        if (use_target_subgrid) then
-                                                            temp_target_subgrid_from_in_region(i,j,:)=temp_target_subgrid_from_in_region(i,j,:) + temp_subgrid_rotated
-                                                        else
-                                                            temp_subgrid_from_in_region(i,j,:)=temp_subgrid_from_in_region(i,j,:) + temp_subgrid_rotated
-                                                        endif
-                                                    endif
+                                                    ! New version of in-region calculations: allowing target region to vary with the target grid
+                                                    ! ****************
+                                                    emission_region_index = emission_subgrid_region_index(ii,jj,source_index)
+                                                    if (use_target_subgrid) then
+                                                        ! one temp_target_subgrid may contain multiple regions in the finer resolution, so we must store results in a per-region array
+                                                        ! -> add this contribution to the region ID that matches the current emission grid
+                                                        if (emission_region_index > 0) then
+                                                            i_region = regionindex_loop_back_index(emission_region_index)
+                                                            if (i_region > 0) then
+                                                                temp_target_subgrid_per_source_region(i,j,:,i_region) = temp_target_subgrid_per_source_region(i,j,:,i_region) + temp_subgrid_rotated
+                                                            end if
+                                                        end if
+                                                    else
+                                                        ! dispersion calculation is done directly on the fine-resolution target grid, so there is only one target region
+                                                        ! -> we can directly check if the target subgrid region ID matches the current emission grid region ID
+                                                        if (emission_region_index > 0 .and. emission_region_index == subgrid_region_index(i,j)) then
+                                                            subgrid_from_in_region_new(i,j,:) = subgrid_from_in_region_new(i,j,:) + temp_subgrid_rotated
+                                                        end if
+                                                    end if
+                                                    ! ************************
                                                 endif
 
                                                 !write(*,'(4i5,2es12.2,4f12.3)') i,j,ii,jj,temp_subgrid(i,j,:), &
@@ -972,7 +999,7 @@ contains
                         else
                             !Set to nodata value for grids that should not be used for all pollutants
                             temp_subgrid(i,j,:)=NODATA_value
-                            if (trace_emissions_from_in_region) temp_subgrid_from_in_region(i,j,:)=NODATA_value
+                            if (trace_emissions_from_in_region) subgrid_from_in_region_new(i,j,:)=NODATA_value
 
                         endif
                         if (.not.use_target_subgrid) then
@@ -1005,17 +1032,24 @@ contains
                                         +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,traveltime_temp_target_subgrid(:,:,2,i_pollutant) &
                                         ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
                                     !write(*,*) tt,i,j,temp_subgrid(i,j)
-                                    if (trace_emissions_from_in_region) then
-                                        temp_subgrid_from_in_region(i,j,i_pollutant)=area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,temp_target_subgrid_from_in_region(:,:,i_pollutant) &
-                                            ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
-                                    endif
+                                    ! New version of in-region, allowing target region to vary within the target grid
+                                    ! ****************
+                                    if (trace_emissions_from_in_region .and. subgrid_region_index(i,j) > 0) then
+                                        ! interpolate the contribution corresponding to the region index of this target grid
+                                        i_region = regionindex_loop_back_index(subgrid_region_index(i,j))
+                                        subgrid_from_in_region_new(i,j,i_pollutant) = area_weighted_interpolation_function( &
+                                            x_target_subgrid,y_target_subgrid,temp_target_subgrid_per_source_region(:,:,i_pollutant,i_region) &
+                                            ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index) &
+                                            ,emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
+                                    end if
+                                    ! ***************
 
                                 enddo
                             else
                                 temp_subgrid(i,j,:)=NODATA_value
                                 traveltime_subgrid(i,j,tt,:,:)=NODATA_value
                                 if (trace_emissions_from_in_region) then
-                                    temp_subgrid_from_in_region(i,j,:)=NODATA_value
+                                    subgrid_from_in_region_new(i,j,:)=NODATA_value
                                 endif
 
                             endif
@@ -1029,14 +1063,14 @@ contains
                 !write(unit_logfile,'(a,3f12.3)') 'Mean, min and max grid concentration: ',sum(temp_subgrid)/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index),minval(temp_subgrid),maxval(temp_subgrid)
                 do i_pollutant=1,n_pollutant_loop
                     temp_sum_subgrid(i_pollutant)=0.
-                    if (trace_emissions_from_in_region) temp_sum_subgrid_from_in_region=0.
+                    if (trace_emissions_from_in_region) temp_sum_subgrid_from_in_region_new=0.
                     count=0
                     do j=1,subgrid_dim(y_dim_index)
                         do i=1,subgrid_dim(x_dim_index)
                             if (use_subgrid(i,j,source_index)) then
                                 temp_sum_subgrid(i_pollutant)=temp_sum_subgrid(i_pollutant)+temp_subgrid(i,j,i_pollutant)
                                 if (trace_emissions_from_in_region) then
-                                    temp_sum_subgrid_from_in_region(i_pollutant)=temp_sum_subgrid_from_in_region(i_pollutant)+temp_subgrid_from_in_region(i,j,i_pollutant)
+                                    temp_sum_subgrid_from_in_region_new(i_pollutant)=temp_sum_subgrid_from_in_region_new(i_pollutant)+subgrid_from_in_region_new(i,j,i_pollutant)
                                 endif
                                 count=count+1
                             endif
@@ -1049,11 +1083,11 @@ contains
                     endif
                     if (trace_emissions_from_in_region) then
                         if (count.gt.0) then
-                            temp_sum_subgrid_from_in_region(i_pollutant)=temp_sum_subgrid_from_in_region(i_pollutant)/count
+                            temp_sum_subgrid_from_in_region_new(i_pollutant)=temp_sum_subgrid_from_in_region_new(i_pollutant)/count
                         else
-                            temp_sum_subgrid_from_in_region(i_pollutant)=0
+                            temp_sum_subgrid_from_in_region_new(i_pollutant)=0
                         endif
-                        write(unit_logfile,'(a,3f12.3)') 'Mean concentration '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//': ',temp_sum_subgrid(i_pollutant),temp_sum_subgrid_from_in_region(i_pollutant)
+                        write(unit_logfile,'(a,2f12.3)') 'Mean concentration (total, inregion) '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//': ',temp_sum_subgrid(i_pollutant),temp_sum_subgrid_from_in_region_new(i_pollutant)
                     else
                         write(unit_logfile,'(a,3f12.3)') 'Mean concentration '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//': ',temp_sum_subgrid(i_pollutant)
                     endif
@@ -1061,7 +1095,7 @@ contains
                 subgrid(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid
 
                 if (trace_emissions_from_in_region) then
-                    subgrid_from_in_region(:,:,tt,proxy_subgrid_index,source_index,:)=temp_subgrid_from_in_region
+                    subgrid_proxy_from_in_region(:,:,tt,source_index,:)=subgrid_from_in_region_new
                 endif
 
                 !Determine the final travel time
@@ -1090,8 +1124,8 @@ contains
         if (allocated(temp_subgrid)) deallocate(temp_subgrid)
         if (allocated(traveltime_temp_target_subgrid)) deallocate(traveltime_temp_target_subgrid)
         if (allocated(temp_target_subgrid)) deallocate(temp_target_subgrid)
-        if (allocated(temp_target_subgrid_from_in_region)) deallocate(temp_target_subgrid_from_in_region)
-        if (allocated(temp_subgrid_from_in_region)) deallocate(temp_subgrid_from_in_region)
+        if (allocated(subgrid_from_in_region_new)) deallocate(subgrid_from_in_region_new)
+        if (allocated(temp_target_subgrid_per_source_region)) deallocate(temp_target_subgrid_per_source_region)
 
 
 

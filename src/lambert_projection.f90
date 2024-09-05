@@ -3,14 +3,14 @@ module mod_lambert_projection
 
     use uemep_constants, only: pi
     use uEMEP_definitions
-    use utility_functions, only: ltm2ll, utm2ll
+    use utility_functions, only: ltm2ll, utm2ll, ll2utm, ll2ltm
     use mod_rdm2ll, only: RDM2LL
 
     implicit none
     private
 
     public :: lb2lambert2_uEMEP, LL2PS_spherical, PROJ2LL, LL2LAEA, lambert2lb2_uEMEP, &
-        lb2lambert_uEMEP
+        lb2lambert_uEMEP, LL2PROJ
 
 contains
 
@@ -383,8 +383,45 @@ contains
         else if (projection_type_in .eq. LL_projection_index) then
             lon_out = x_in
             lat_out = y_in
+        else
+            write(unit_logfile, '(A,I0)') 'ERROR: This projection type index is not implemented:', projection_type_in
+            stop
         end if
     end subroutine PROJ2LL
+
+    subroutine LL2PROJ(lon_in, lat_in, x_out, y_out, projection_attributes_out, projection_type_out)
+        ! Definitions only needed for the identification indexes
+        double precision, intent(in) :: projection_attributes_out(10)
+        real, intent(out) :: x_out, y_out
+        integer, intent(in) :: projection_type_out
+        real, intent(in) :: lon_in,lat_in
+        integer :: utm_zone_out
+        real :: ltm_lon0_out
+
+        if (projection_type_out .eq. RDM_projection_index) then
+            write(unit_logfile,'(A)') ' ERROR: Conversion from lon-lat to RDM projection is not implemented"'
+            stop
+        else if (projection_type_out .eq. UTM_projection_index) then
+            utm_zone_out = floor(projection_attributes_out(1) + 0.5)
+            call ll2utm(1, utm_zone_out, lat_in, lon_in, y_out, x_out)
+        else if (projection_type_out .eq. LTM_projection_index) then
+            utm_zone_out = floor(projection_attributes_out(1) + 0.5)
+            ltm_lon0_out = projection_attributes_out(2)
+            call ll2ltm(1, ltm_lon0_out, lat_in, lon_in, y_out, x_out)  !?????????
+        else if (projection_type_out .eq. LAEA_projection_index) then
+            call LL2LAEA(x_out, y_out, lon_in, lat_in, projection_attributes_out)
+        else if (projection_type_out .eq. LCC_projection_index) then
+            call lb2lambert2_uEMEP(x_out, y_out, lon_in, lat_in, projection_attributes_out)
+        else if (projection_type_out .eq. PS_projection_index) then
+            call LL2PS_spherical(x_out, y_out, lon_in, lat_in, projection_attributes_out)
+        else if (projection_type_out .eq. LL_projection_index) then
+            x_out = lon_in
+            y_out = lat_in
+        else
+            write(unit_logfile, '(A,I0)') 'ERROR: This projection type index is not implemented:', projection_type_out
+            stop
+        end if
+    end subroutine LL2PROJ
 
     subroutine LL2PS_spherical(x, y, lon_in, lat_in, projection_attr)
         ! https://mathworld.wolfram.com/StereographicProjection.html

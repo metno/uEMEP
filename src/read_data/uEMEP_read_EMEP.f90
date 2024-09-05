@@ -533,11 +533,17 @@ contains
                             var_name_nc_temp=var_name_nc(i,i_pollutant,i_source)
                             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                             !write(*,*) 'Status1: ',status_nc,var_id_nc,trim(var_name_nc_temp),i_source
-                            !Exception for pm10
+                            !Exception for pm10: read pmco and pm25
                             !if ((i.eq.conc_nc_index.or.i.eq.frac_nc_index.or.i.eq.emis_nc_index).and.i_pollutant.eq.pm10_nc_index) then
                             if ((i.eq.conc_nc_index.or.(i.ge.min_frac_nc_loop_index.and.i.le.max_frac_nc_loop_index).or.i.eq.emis_nc_index).and.i_pollutant.eq.pm10_nc_index) then
+                                ! check if at least one of them exists
+                                ! if pmco exists, use it for var_id_nc, if not use pm25
                                 var_name_nc_temp=var_name_nc(i,pmco_nc_index,i_source)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                                if (status_nc .ne. NF90_NOERR) then
+                                    var_name_nc_temp=var_name_nc(i,pm25_nc_index,i_source)
+                                    status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
+                                end if
                                 !write(*,*) '-------------------',trim(var_name_nc_temp),status_nc
                             endif
 
@@ -556,14 +562,18 @@ contains
                                 elseif (temp_num_dims.eq.3.and.i_file.eq.1.and.i.eq.emis_nc_index.and.i_pollutant.eq.pm10_nc_index.and.i_source.ne.extrasource_nc_index) then
                                     var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                                     status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var3d_nc(:,:,:,i,i_source,1),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var3d_nc(:,:,:,i,i_source,1)),maxval(pm_var3d_nc(:,:,:,i,i_source,1))
-                                    write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var3d_nc(:,:,:,i,i_source,1))/(size(pm_var3d_nc,1)*size(pm_var3d_nc,2)*size(pm_var3d_nc,4))
+                                    if (status_nc .eq. NF90_NOERR) then
+                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var3d_nc(:,:,:,i,i_source,1),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                        write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var3d_nc(:,:,:,i,i_source,1)),maxval(pm_var3d_nc(:,:,:,i,i_source,1))
+                                        write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var3d_nc(:,:,:,i,i_source,1))/(size(pm_var3d_nc,1)*size(pm_var3d_nc,2)*size(pm_var3d_nc,4))
+                                    end if
                                     var_name_nc_temp2=var_name_nc(i,pm25_nc_index,i_source)
                                     status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var3d_nc(:,:,:,i,i_source,2),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var3d_nc(:,:,:,i,i_source,2)),maxval(pm_var3d_nc(:,:,:,i,i_source,2))
-                                    write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var3d_nc(:,:,:,i,i_source,2))/(size(pm_var3d_nc,1)*size(pm_var3d_nc,2)*size(pm_var3d_nc,4)),size(pm_var3d_nc,1),size(pm_var3d_nc,2),size(pm_var3d_nc,4)
+                                    if (status_nc .eq. NF90_NOERR) then
+                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var3d_nc(:,:,:,i,i_source,2),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                        write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var3d_nc(:,:,:,i,i_source,2)),maxval(pm_var3d_nc(:,:,:,i,i_source,2))
+                                        write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var3d_nc(:,:,:,i,i_source,2))/(size(pm_var3d_nc,1)*size(pm_var3d_nc,2)*size(pm_var3d_nc,4)),size(pm_var3d_nc,1),size(pm_var3d_nc,2),size(pm_var3d_nc,4)
+                                    end if
                                     var3d_nc(:,:,:,i,i_source,p_loop_index)=pm_var3d_nc(:,:,:,i,i_source,1)+pm_var3d_nc(:,:,:,i,i_source,2)
                                     write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc(i,pm10_nc_index,i_source)),sum(var3d_nc(:,:,:,i,i_source,p_loop_index))/(size(var3d_nc,1)*size(var3d_nc,2)*size(var3d_nc,4)),size(var3d_nc,1),size(var3d_nc,2),size(var3d_nc,4)
                                 elseif (temp_num_dims.eq.3.and.i_file.eq.1) then
@@ -578,14 +588,18 @@ contains
                                     elseif (i.eq.conc_nc_index.and.i_pollutant.eq.pm10_nc_index.and.i_source.ne.extrasource_nc_index) then
                                         var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
-                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,1),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                        write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,1)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,1))
-                                        write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var4d_nc(:,:,1,:,i,i_source,1))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4))
+                                        if (status_nc .eq. 0) then
+                                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,1),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                            write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,1)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,1))
+                                            write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var4d_nc(:,:,1,:,i,i_source,1))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4))
+                                        end if
                                         var_name_nc_temp2=var_name_nc(i,pm25_nc_index,i_source)
                                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
-                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,2),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                        write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,2)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,2))
-                                        write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var4d_nc(:,:,1,:,i,i_source,2))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4)),size(pm_var4d_nc,1),size(pm_var4d_nc,2),size(pm_var4d_nc,4)
+                                        if (status_nc .eq. 0) then
+                                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,2),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                            write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,2)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,2))
+                                            write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var4d_nc(:,:,1,:,i,i_source,2))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4)),size(pm_var4d_nc,1),size(pm_var4d_nc,2),size(pm_var4d_nc,4)
+                                        end if
                                         var4d_nc(:,:,:,:,i,i_source,p_loop_index)=pm_var4d_nc(:,:,:,:,i,i_source,1)+pm_var4d_nc(:,:,:,:,i,i_source,2)
                                         write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc(i,pm10_nc_index,i_source)),sum(var4d_nc(:,:,:,:,i,i_source,p_loop_index))/(size(var4d_nc,1)*size(var4d_nc,2)*size(var4d_nc,4)),size(var4d_nc,1),size(var4d_nc,2),size(var4d_nc,4)
                                     else
@@ -609,12 +623,16 @@ contains
                                     if (i.ge.min_frac_nc_loop_index.and.i.le.max_frac_nc_loop_index.and.i_pollutant.eq.pm10_nc_index) then
                                         var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
-                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                        write(unit_logfile,'(A,2I0,3A,2f16.4)') ' Reading: ',i,temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1))
+                                        if (status_nc .eq. 0) then
+                                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                            write(unit_logfile,'(A,2I0,3A,2f16.4)') ' Reading: ',i,temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1))
+                                        end if
                                         var_name_nc_temp2=var_name_nc(i,pm25_nc_index,i_source)
                                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
-                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                        write(unit_logfile,'(A,2I0,3A,2f16.4)') ' Reading: ',i,temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2))
+                                        if (status_nc .eq. 0) then
+                                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                            write(unit_logfile,'(A,2I0,3A,2f16.4)') ' Reading: ',i,temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2))
+                                        end if
                                         !Not used but calculated for writing
                                         !lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index)=pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1)+pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)
                                     else

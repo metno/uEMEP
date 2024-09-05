@@ -124,7 +124,12 @@ contains
                 write(unit_logfile,'(A,A)') ' ERROR: SSB file does not exist: ', trim(pathfilename_population(SSB_file_index))
                 stop
             endif
+            temp_name=pathfilename_population(SSB_file_index)
+        end if
 
+        ! Determine grid resolution of population file
+        ! NB: should this also be done for dwelling_index and establishement_index?
+        if (SSB_data_type.eq.population_index) then
             !Search file name to define the grid size
             ssb_dx=0.;ssb_dy=0.
             do k=1,n_search
@@ -133,7 +138,8 @@ contains
                     ssb_dx=search_delta(k)
                     ssb_dy=search_delta(k)
                     write(unit_logfile,'(i,A)') temp_search,' Reading municipality population data with resolution '//trim(adjustl(search_str(k)))
-                    limit_population_delta=search_delta(k)
+                    ! No point changing 'limit_population_delta' here, since it has already been used (uEMEP_set_subgrids)
+                    !limit_population_delta=search_delta(k)
                 endif
             enddo
 
@@ -141,9 +147,6 @@ contains
                 write(unit_logfile,'(A)') 'Cannot find a valid SSB grid size. Stopping. '//trim(filename_population(SSB_file_index))
                 stop
             endif
-
-            temp_name=pathfilename_population(SSB_file_index)
-
         endif
 
 
