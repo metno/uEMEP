@@ -81,20 +81,8 @@ program uEMEP_v6
     ! Check command line arguments and handle special cases that have to be printed to stdout
     call check_command_line()
 
-    ! Open new log file and set log level
-    call open_log_file(logfile_name)
-    call set_log_level(INFO)
-
     ! Set model version
     model_version_str='uEMEP_v6.3'
-
-    ! Test of new logger module
-    write(log_msg,"(2a)") "Starting program " // trim(model_version_str)
-    call log_header(log_msg, INFO, upper_space=.false.)
-    call get_command_argument(0, program_name)
-    write(log_msg,"(2a)") "Program executable name: " // trim(program_name)
-    call log_message(log_msg, INFO)
-    call log_message("", INFO)
 
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
@@ -103,7 +91,6 @@ program uEMEP_v6
 
     ! Read the command line, assigning the configuration file names and the substitution date_str
     call uEMEP_read_command_line()
-    call close_log_file()
 
     ! Set constants and variable names to be read from EMEP and meteo files
     call uEMEP_set_constants()

@@ -70,14 +70,12 @@ contains
         ! Read file names
         do i = 1, n_config_files
             call get_command_argument(i, name_config_file(i))
-            write(log_msg,"(a,i0,2a)"), "name_config_file(", i, ") = ", trim(name_config_file(i))
-            call log_message(log_msg, INFO)
+            write(*,"(a,i0,2a)"), "name_config_file(", i, ") = ", trim(name_config_file(i))
         end do
 
         ! Read date string
         call get_command_argument(n_args, config_date_str)
-        write(log_msg,"(2a)") "config_date_str = ", trim(config_date_str)
-        call log_message(log_msg, INFO)
+        write(*,"(2a)") "config_date_str = ", trim(config_date_str)
     end subroutine uEMEP_read_command_line
 
     subroutine print_help_page()
