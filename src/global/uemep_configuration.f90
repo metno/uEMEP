@@ -78,7 +78,7 @@ module uemep_configuration
     character(256) :: pathname_emissions_for_EMEP = ''
     character(256) :: save_emissions_for_EMEP_projection = 'lambert'
     character(256) :: save_emissions_for_EMEP_region = 'NO'
-    character(256) :: var_name_nc(num_var_nc_name, n_pollutant_nc_index, n_source_nc_index)
+    character(256), allocatable :: var_name_nc(:,:,:)
     character(256) :: filename_landuse = ''
     character(256) :: pathname_landuse = ''
     character(256) :: pathfilename_landuse = '' ! Combined path and filename
@@ -105,19 +105,19 @@ module uemep_configuration
     logical :: reduce_EMEP_region_flag = .false.
     logical :: use_multiple_receptor_grids_flag = .false.
     logical :: reduce_roadlink_region_flag = .true.
-    logical :: calculate_source(n_source_nc_index) = .false.
-    logical :: calculate_EMEP_source(n_source_nc_index) = .false.
-    logical :: make_EMEP_grid_emission_data(n_source_nc_index) = .false.
-    logical :: replace_EMEP_local_with_subgrid_local(n_source_nc_index) = .false.
+    logical, allocatable :: calculate_source(:)
+    logical, allocatable :: calculate_EMEP_source(:)
+    logical, allocatable :: make_EMEP_grid_emission_data(:)
+    logical, allocatable :: replace_EMEP_local_with_subgrid_local(:)
     logical :: subgrid_emission_distribution_flag = .false. ! If true then distributes the EMEP emissions to the existing emission subgrid
     logical :: EMEP_grid_interpolation_simple_flag = .false. ! not used?
     logical :: use_downwind_position_flag = .false. ! If true then searches the upwind EMEP grid position for emissions
     logical :: average_zc_h_in_Kz_flag = .true.
-    logical :: use_emission_positions_for_auto_subgrid_flag(n_source_index) = .false.
+    logical, allocatable :: use_emission_positions_for_auto_subgrid_flag(:)
     logical :: use_receptor_positions_for_auto_subgrid_flag = .false.
     logical :: use_population_positions_for_auto_subgrid_flag = .false.
     logical :: interpolate_subgrids_flag = .false.
-    logical :: use_trajectory_flag(n_source_index) = .false.
+    logical, allocatable :: use_trajectory_flag(:)
     logical :: calculate_aggregated_shipping_emissions_flag = .false.
     logical :: use_aggregated_shipping_emissions_flag = .true.
     logical :: calculate_population_exposure_flag = .false.
@@ -140,7 +140,7 @@ module uemep_configuration
     logical :: read_monthly_and_daily_shipping_data_flag = .false.
     logical :: use_tunnel_emissions_flag = .true.
     logical :: use_tunnel_deposition_flag = .false.
-    logical :: save_emissions_for_EMEP(n_source_index) = .false.
+    logical, allocatable :: save_emissions_for_EMEP(:)
     logical :: save_compounds = .true. ! Output data saving flags
     logical :: save_source_contributions = .true. ! Output data saving flags
     logical :: save_emep_source_contributions = .false. ! Output data saving flags
@@ -232,7 +232,7 @@ module uemep_configuration
     integer :: no2_chemistry_scheme_flag = 1
     integer :: no2_background_chemistry_scheme_flag = 0
     integer :: integral_subgrid_step = 1
-    integer :: n_subsource(n_source_index) = 1 !Initialise the number of actual emission subsources to 1 for all subsources
+    integer, allocatable :: n_subsource(:) !Initialise the number of actual emission subsources to 1 for all subsources
     integer :: num_multiple_roadlink_files = 0 ! Number of multiple road link files
     integer :: population_data_type = population_index
     integer :: emission_timeprofile_hour_shift = 1 ! Winter European time
@@ -244,13 +244,13 @@ module uemep_configuration
     integer :: save_emissions_end_index = 24
     integer :: EMEP_surface_level_nc = 1
     integer :: EMEP_surface_level_nc_2 = 1
-    integer :: uEMEP_to_EMEP_replace_sector(n_source_nc_index) = 0
+    integer, allocatable :: uEMEP_to_EMEP_replace_sector(:)
     integer :: local_fraction_grid_size(max_n_local_fraction_grids) = 1
     integer :: n_local_fraction_grids = 1
     integer :: local_fraction_grid_for_EMEP_grid_interpolation = 1
     integer :: local_fraction_grid_for_EMEP_additional_grid_interpolation = 1
     integer :: n_var_av = 100  ! Maximum number of variables to be saved as averages
-    integer :: convert_uEMEP_to_GNFR_sector_index(n_source_nc_index)
+    integer, allocatable :: convert_uEMEP_to_GNFR_sector_index(:)
     integer :: Kz_scheme = 2 ! 1 is O'Brian, 2 is Troen
     integer :: save_emission_subgrid_dim(n_dim_index)
     integer :: alternative_ppm_variable_for_lf_dim = 4
@@ -269,18 +269,18 @@ module uemep_configuration
     real :: init_subgrid_max(2)
     real :: deposition_subgrid_delta(2) = 0.0
     real :: landuse_subgrid_delta(2) = 0.0
-    real :: h_emis(n_source_index, n_possible_subsource)
-    real :: sig_y_00(n_source_index, n_possible_subsource)
+    real, allocatable :: h_emis(:,:)
+    real, allocatable :: sig_y_00(:,:)
     real :: sigy_0_subgid_width_scale = 0.25
-    real :: sig_z_00(n_source_index, n_possible_subsource)
+    real, allocatable :: sig_z_00(:,:)
     real :: FF_min_dispersion = 0.1
     real :: ustar_min = 0.001
     real :: hmix_min = 25.0
     real :: hmix_max = 2000.0
-    real :: emission_factor(n_compound_nc_index, n_source_index, n_possible_subsource) = 1.0
+    real, allocatable :: emission_factor(:,:,:)
     real :: ratio_truck_car_emission(n_compound_nc_index) = 10.0
-    real :: z_rec(n_source_index, n_possible_subsource) ! Pseudo dispersion parameters
-    real :: ay(n_source_index, n_possible_subsource) ! Pseudo dispersion parameters
+    real, allocatable :: z_rec(:,:) ! Pseudo dispersion parameters
+    real, allocatable :: ay(:,:) ! Pseudo dispersion parameters
     real :: replace_invL = NODATA_value  ! Will not replace invL when it has a NODATA value
     real :: replace_hmix = NODATA_value  ! Will not replace mix when it has a NODATA value
     real :: FF_scale = NODATA_value
@@ -327,8 +327,8 @@ module uemep_configuration
     real :: max_bin_pdf = 1000.0
     real :: min_bin_pdf = 0.0001
     real :: log10_step_bin_pdf = 0.05
-    real :: landuse_proxy_weighting(n_source_index, n_clc_landuse_index) = 0.0
-    real :: scale_GNFR_emission_source(n_source_index) = 1.0
+    real, allocatable :: landuse_proxy_weighting(:,:)
+    real, allocatable :: scale_GNFR_emission_source(:)
     real :: subgrid_receptor_offset(2) = 0.0
     real :: z_invL = 10.0
     real :: save_emission_subgrid_min(2)  !Only x and y

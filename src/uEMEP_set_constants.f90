@@ -64,9 +64,9 @@ contains
         uEMEP_to_EMEP_sector(solvents_index)=6
         uEMEP_to_EMEP_sector(aviation_index)=8
         uEMEP_to_EMEP_sector(offroad_index)=8
-        uEMEP_to_EMEP_sector(waste_index)=9
-        uEMEP_to_EMEP_sector(livestock_index)=10
-        uEMEP_to_EMEP_sector(other_index)=5
+        if (waste_index > 0) uEMEP_to_EMEP_sector(waste_index)=9
+        if (livestock_index > 0) uEMEP_to_EMEP_sector(livestock_index)=10
+        if (other_index > 0) uEMEP_to_EMEP_sector(other_index)=5
 
         uEMEP_to_EMEP_sector_str(traffic_index)='07'
         uEMEP_to_EMEP_sector_str(shipping_index)='08'
@@ -78,9 +78,9 @@ contains
         uEMEP_to_EMEP_sector_str(solvents_nc_index)='06'
         uEMEP_to_EMEP_sector_str(aviation_nc_index)='08'
         uEMEP_to_EMEP_sector_str(offroad_nc_index)='08'
-        uEMEP_to_EMEP_sector_str(waste_nc_index)='09'
-        uEMEP_to_EMEP_sector_str(livestock_nc_index)='10'
-        uEMEP_to_EMEP_sector_str(other_nc_index)='05'
+        if (waste_nc_index > 0) uEMEP_to_EMEP_sector_str(waste_nc_index)='09'
+        if (livestock_nc_index > 0) uEMEP_to_EMEP_sector_str(livestock_nc_index)='10'
+        if (other_nc_index > 0) uEMEP_to_EMEP_sector_str(other_nc_index)='05'
 
         !Concentrations
         var_name_nc=''
@@ -447,9 +447,9 @@ contains
         source_file_str(solvents_index)='solvents'
         source_file_str(aviation_index)='aviation'
         source_file_str(offroad_index)='offroad'
-        source_file_str(waste_index)='waste'
-        source_file_str(livestock_index)='livestock'
-        source_file_str(other_index)='other'
+        if (waste_index > 0) source_file_str(waste_index)='waste'
+        if (livestock_index > 0) source_file_str(livestock_index)='livestock'
+        if (other_index > 0) source_file_str(other_index)='other'
         source_file_str(traffic_exhaust_index)='traffic_exhaust'
         source_file_str(traffic_nonexhaust_index)='traffic_nonexhaust'
 
@@ -520,10 +520,10 @@ contains
         h_emis(industry_index,:)=100.
         h_emis(aviation_index,:)=10.
         h_emis(fugitive_index,:)=5.
-        h_emis(livestock_index,:)=5.
+        if (livestock_index > 0) h_emis(livestock_index,:)=5.
         h_emis(solvents_index,:)=15.
         h_emis(offroad_index,:)=5.
-        h_emis(waste_index,:)=15.
+        if (waste_index > 0) h_emis(waste_index,:)=15.
         sig_y_00(shipping_index,:)=5.
         sig_y_00(traffic_index,:)=1.
         sig_y_00(heating_index,:)=5.
@@ -620,19 +620,19 @@ contains
         !projection_attributes(5) = 6370000.0  !earth_radius
 
         !These are used for landuse sector conversion only. They are already specified in uEMEP_to_EMEP_sector
-        convert_GNFR_to_uEMEP_sector_index(1)=publicpower_nc_index
-        convert_GNFR_to_uEMEP_sector_index(2)=industry_nc_index
-        convert_GNFR_to_uEMEP_sector_index(3)=heating_nc_index
-        convert_GNFR_to_uEMEP_sector_index(4)=fugitive_nc_index
-        convert_GNFR_to_uEMEP_sector_index(5)=solvents_nc_index
-        convert_GNFR_to_uEMEP_sector_index(6)=traffic_nc_index
-        convert_GNFR_to_uEMEP_sector_index(7)=shipping_nc_index
-        convert_GNFR_to_uEMEP_sector_index(8)=aviation_nc_index
-        convert_GNFR_to_uEMEP_sector_index(9)=offroad_nc_index
-        convert_GNFR_to_uEMEP_sector_index(10)=waste_nc_index
-        convert_GNFR_to_uEMEP_sector_index(11)=livestock_nc_index
-        convert_GNFR_to_uEMEP_sector_index(12)=agriculture_nc_index
-        convert_GNFR_to_uEMEP_sector_index(13)=other_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(1)=publicpower_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(2)=industry_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(3)=heating_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(4)=fugitive_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(5)=solvents_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(6)=traffic_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(7)=shipping_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(8)=aviation_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(9)=offroad_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(10)=waste_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(11)=livestock_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(12)=agriculture_nc_index
+        ! convert_GNFR_to_uEMEP_sector_index(13)=other_nc_index
 
         convert_uEMEP_to_GNFR_sector_index(publicpower_nc_index)=1
         convert_uEMEP_to_GNFR_sector_index(industry_nc_index)=2
@@ -643,10 +643,10 @@ contains
         convert_uEMEP_to_GNFR_sector_index(shipping_nc_index)=7
         convert_uEMEP_to_GNFR_sector_index(aviation_nc_index)=8
         convert_uEMEP_to_GNFR_sector_index(offroad_nc_index)=9
-        convert_uEMEP_to_GNFR_sector_index(waste_nc_index)=10
-        convert_uEMEP_to_GNFR_sector_index(livestock_nc_index)=11
+        if (waste_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(waste_nc_index)=10
+        if (livestock_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(livestock_nc_index)=11
         convert_uEMEP_to_GNFR_sector_index(agriculture_nc_index)=12
-        convert_uEMEP_to_GNFR_sector_index(other_nc_index)=13
+        if (other_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(other_nc_index)=13
 
 
 
@@ -933,9 +933,9 @@ contains
             uEMEP_to_EMEP_sector(solvents_nc_index)=5
             uEMEP_to_EMEP_sector(aviation_nc_index)=8
             uEMEP_to_EMEP_sector(offroad_nc_index)=9
-            uEMEP_to_EMEP_sector(waste_nc_index)=10
-            uEMEP_to_EMEP_sector(livestock_nc_index)=11
-            uEMEP_to_EMEP_sector(other_nc_index)=13
+            if (waste_nc_index > 0) uEMEP_to_EMEP_sector(waste_nc_index)=10
+            if (livestock_nc_index > 0) uEMEP_to_EMEP_sector(livestock_nc_index)=11
+            if (other_nc_index > 0) uEMEP_to_EMEP_sector(other_nc_index)=13
             uEMEP_to_EMEP_sector(publicpower_point_nc_index)=14
             uEMEP_to_EMEP_sector(publicpower_area_nc_index)=15
             uEMEP_to_EMEP_sector(traffic_gasoline_nc_index)=16
@@ -976,9 +976,9 @@ contains
             uEMEP_to_EMEP_emis_sector_str(solvents_nc_index)='E'
             uEMEP_to_EMEP_emis_sector_str(aviation_nc_index)='H'
             uEMEP_to_EMEP_emis_sector_str(offroad_nc_index)='I'
-            uEMEP_to_EMEP_emis_sector_str(waste_nc_index)='J'
-            uEMEP_to_EMEP_emis_sector_str(livestock_nc_index)='K'
-            uEMEP_to_EMEP_emis_sector_str(other_nc_index)='M'
+            if (waste_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(waste_nc_index)='J'
+            if (livestock_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(livestock_nc_index)='K'
+            if (other_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(other_nc_index)='M'
             uEMEP_to_EMEP_emis_sector_str(traffic_gasoline_nc_index)='F1'
             uEMEP_to_EMEP_emis_sector_str(traffic_diesel_nc_index)='F2'
             uEMEP_to_EMEP_emis_sector_str(traffic_gas_nc_index)='F3'

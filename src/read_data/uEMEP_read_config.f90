@@ -134,9 +134,9 @@ contains
             calculate_source(solvents_index)=read_name_logical('calculate_source(solvents_index)',calculate_source(solvents_index),unit_in,unit_logfile)
             calculate_source(aviation_index)=read_name_logical('calculate_source(aviation_index)',calculate_source(aviation_index),unit_in,unit_logfile)
             calculate_source(offroad_index)=read_name_logical('calculate_source(offroad_index)',calculate_source(offroad_index),unit_in,unit_logfile)
-            calculate_source(waste_index)=read_name_logical('calculate_source(waste_index)',calculate_source(waste_index),unit_in,unit_logfile)
-            calculate_source(livestock_index)=read_name_logical('calculate_source(livestock_index)',calculate_source(livestock_index),unit_in,unit_logfile)
-            calculate_source(other_index)=read_name_logical('calculate_source(other_index)',calculate_source(other_index),unit_in,unit_logfile)
+            if (waste_index > 0) calculate_source(waste_index)=read_name_logical('calculate_source(waste_index)',calculate_source(waste_index),unit_in,unit_logfile)
+            if (livestock_index > 0) calculate_source(livestock_index)=read_name_logical('calculate_source(livestock_index)',calculate_source(livestock_index),unit_in,unit_logfile)
+            if (other_index > 0) calculate_source(other_index)=read_name_logical('calculate_source(other_index)',calculate_source(other_index),unit_in,unit_logfile)
 
             !Choose which EMEP sources to include/calculate. Will not be downscaled but will included as gridded source contributions
             !calculate_source(:)=read_name_logical('calculate_source(:)',calculate_source(allsource_index),unit_in,unit_logfile)
@@ -151,9 +151,9 @@ contains
             calculate_EMEP_source(solvents_index)=read_name_logical('calculate_EMEP_source(solvents_index)',calculate_EMEP_source(solvents_index),unit_in,unit_logfile)
             calculate_EMEP_source(aviation_index)=read_name_logical('calculate_EMEP_source(aviation_index)',calculate_EMEP_source(aviation_index),unit_in,unit_logfile)
             calculate_EMEP_source(offroad_index)=read_name_logical('calculate_EMEP_source(offroad_index)',calculate_EMEP_source(offroad_index),unit_in,unit_logfile)
-            calculate_EMEP_source(waste_index)=read_name_logical('calculate_EMEP_source(waste_index)',calculate_EMEP_source(waste_index),unit_in,unit_logfile)
-            calculate_EMEP_source(livestock_index)=read_name_logical('calculate_EMEP_source(livestock_index)',calculate_EMEP_source(livestock_index),unit_in,unit_logfile)
-            calculate_EMEP_source(other_index)=read_name_logical('calculate_EMEP_source(other_index)',calculate_EMEP_source(other_index),unit_in,unit_logfile)
+            if (waste_index > 0) calculate_EMEP_source(waste_index)=read_name_logical('calculate_EMEP_source(waste_index)',calculate_EMEP_source(waste_index),unit_in,unit_logfile)
+            if (livestock_index > 0) calculate_EMEP_source(livestock_index)=read_name_logical('calculate_EMEP_source(livestock_index)',calculate_EMEP_source(livestock_index),unit_in,unit_logfile)
+            if (other_index > 0) calculate_EMEP_source(other_index)=read_name_logical('calculate_EMEP_source(other_index)',calculate_EMEP_source(other_index),unit_in,unit_logfile)
             !GNFR19 sources. Note nc_index not in the input
             calculate_EMEP_source(traffic_gasoline_nc_index)=read_name_logical('calculate_EMEP_source(traffic_gasoline_index)',calculate_EMEP_source(traffic_gasoline_nc_index),unit_in,unit_logfile)
             calculate_EMEP_source(traffic_diesel_nc_index)=read_name_logical('calculate_EMEP_source(traffic_diesel_index)',calculate_EMEP_source(traffic_diesel_nc_index),unit_in,unit_logfile)
@@ -179,9 +179,9 @@ contains
             make_EMEP_grid_emission_data(solvents_index)=read_name_logical('make_EMEP_grid_emission_data(solvents_index)',make_EMEP_grid_emission_data(solvents_index),unit_in,unit_logfile)
             make_EMEP_grid_emission_data(aviation_index)=read_name_logical('make_EMEP_grid_emission_data(aviation_index)',make_EMEP_grid_emission_data(aviation_index),unit_in,unit_logfile)
             make_EMEP_grid_emission_data(offroad_index)=read_name_logical('make_EMEP_grid_emission_data(offroad_index)',make_EMEP_grid_emission_data(offroad_index),unit_in,unit_logfile)
-            make_EMEP_grid_emission_data(waste_index)=read_name_logical('make_EMEP_grid_emission_data(waste_index)',make_EMEP_grid_emission_data(waste_index),unit_in,unit_logfile)
-            make_EMEP_grid_emission_data(livestock_index)=read_name_logical('make_EMEP_grid_emission_data(livestock_index)',make_EMEP_grid_emission_data(livestock_index),unit_in,unit_logfile)
-            make_EMEP_grid_emission_data(other_index)=read_name_logical('make_EMEP_grid_emission_data(other_index)',make_EMEP_grid_emission_data(other_index),unit_in,unit_logfile)
+            if (waste_index > 0) make_EMEP_grid_emission_data(waste_index)=read_name_logical('make_EMEP_grid_emission_data(waste_index)',make_EMEP_grid_emission_data(waste_index),unit_in,unit_logfile)
+            if (livestock_index > 0) make_EMEP_grid_emission_data(livestock_index)=read_name_logical('make_EMEP_grid_emission_data(livestock_index)',make_EMEP_grid_emission_data(livestock_index),unit_in,unit_logfile)
+            if (other_index > 0) make_EMEP_grid_emission_data(other_index)=read_name_logical('make_EMEP_grid_emission_data(other_index)',make_EMEP_grid_emission_data(other_index),unit_in,unit_logfile)
             do i_source=1,n_source_index
                 if (make_EMEP_grid_emission_data(i_source)) make_EMEP_grid_emission_data(allsource_index)=.true.
             enddo
@@ -269,9 +269,9 @@ contains
             use_trajectory_flag(solvents_index)=read_name_logical('use_trajectory_flag(solvents_index)',use_trajectory_flag(solvents_index),unit_in,unit_logfile)
             use_trajectory_flag(aviation_index)=read_name_logical('use_trajectory_flag(aviation_index)',use_trajectory_flag(aviation_index),unit_in,unit_logfile)
             use_trajectory_flag(offroad_index)=read_name_logical('use_trajectory_flag(offroad_index)',use_trajectory_flag(offroad_index),unit_in,unit_logfile)
-            use_trajectory_flag(waste_index)=read_name_logical('use_trajectory_flag(waste_index)',use_trajectory_flag(waste_index),unit_in,unit_logfile)
-            use_trajectory_flag(livestock_index)=read_name_logical('use_trajectory_flag(livestock_index)',use_trajectory_flag(livestock_index),unit_in,unit_logfile)
-            use_trajectory_flag(other_index)=read_name_logical('use_trajectory_flag(other_index)',use_trajectory_flag(other_index),unit_in,unit_logfile)
+            if (waste_index > 0) use_trajectory_flag(waste_index)=read_name_logical('use_trajectory_flag(waste_index)',use_trajectory_flag(waste_index),unit_in,unit_logfile)
+            if (livestock_index > 0) use_trajectory_flag(livestock_index)=read_name_logical('use_trajectory_flag(livestock_index)',use_trajectory_flag(livestock_index),unit_in,unit_logfile)
+            if (other_index > 0) use_trajectory_flag(other_index)=read_name_logical('use_trajectory_flag(other_index)',use_trajectory_flag(other_index),unit_in,unit_logfile)
 
             traj_step_scale=read_name_real('traj_step_scale',traj_step_scale,unit_in,unit_logfile)
 
@@ -324,9 +324,9 @@ contains
             h_emis(solvents_index,1)=read_name_real('h_emis(solvents_index,1)',h_emis(solvents_index,1),unit_in,unit_logfile)
             h_emis(aviation_index,1)=read_name_real('h_emis(aviation_index,1)',h_emis(aviation_index,1),unit_in,unit_logfile)
             h_emis(offroad_index,1)=read_name_real('h_emis(offroad_index,1)',h_emis(offroad_index,1),unit_in,unit_logfile)
-            h_emis(waste_index,1)=read_name_real('h_emis(waste_index,1)',h_emis(waste_index,1),unit_in,unit_logfile)
-            h_emis(livestock_index,1)=read_name_real('h_emis(livestock_index,1)',h_emis(livestock_index,1),unit_in,unit_logfile)
-            h_emis(other_index,1)=read_name_real('h_emis(other_index,1)',h_emis(other_index,1),unit_in,unit_logfile)
+            if (waste_index > 0) h_emis(waste_index,1)=read_name_real('h_emis(waste_index,1)',h_emis(waste_index,1),unit_in,unit_logfile)
+            if (livestock_index > 0) h_emis(livestock_index,1)=read_name_real('h_emis(livestock_index,1)',h_emis(livestock_index,1),unit_in,unit_logfile)
+            if (other_index > 0) h_emis(other_index,1)=read_name_real('h_emis(other_index,1)',h_emis(other_index,1),unit_in,unit_logfile)
 
             !These second subsources do not exist but still possible to implement
             h_emis(traffic_index,2)=read_name_real('h_emis(traffic_index,2)',h_emis(traffic_index,2),unit_in,unit_logfile)
@@ -346,9 +346,9 @@ contains
             sig_y_00(solvents_index,1)=read_name_real('sig_y_00(solvents_index,1)',sig_y_00(solvents_index,1),unit_in,unit_logfile)
             sig_y_00(aviation_index,1)=read_name_real('sig_y_00(aviation_index,1)',sig_y_00(aviation_index,1),unit_in,unit_logfile)
             sig_y_00(offroad_index,1)=read_name_real('sig_y_00(offroad_index,1)',sig_y_00(offroad_index,1),unit_in,unit_logfile)
-            sig_y_00(waste_index,1)=read_name_real('sig_y_00(waste_index,1)',sig_y_00(waste_index,1),unit_in,unit_logfile)
-            sig_y_00(livestock_index,1)=read_name_real('sig_y_00(livestock_index,1)',sig_y_00(livestock_index,1),unit_in,unit_logfile)
-            sig_y_00(other_index,1)=read_name_real('sig_y_00(other_index,1)',sig_y_00(other_index,1),unit_in,unit_logfile)
+            if (waste_index > 0) sig_y_00(waste_index,1)=read_name_real('sig_y_00(waste_index,1)',sig_y_00(waste_index,1),unit_in,unit_logfile)
+            if (livestock_index > 0) sig_y_00(livestock_index,1)=read_name_real('sig_y_00(livestock_index,1)',sig_y_00(livestock_index,1),unit_in,unit_logfile)
+            if (other_index > 0) sig_y_00(other_index,1)=read_name_real('sig_y_00(other_index,1)',sig_y_00(other_index,1),unit_in,unit_logfile)
 
             !These second subsources do not exist but still possible to implement
             sig_y_00(traffic_index,2)=read_name_real('sig_y_00(traffic_index,2)',sig_y_00(traffic_index,2),unit_in,unit_logfile)
@@ -371,9 +371,9 @@ contains
             sig_z_00(solvents_index,1)=read_name_real('sig_z_00(solvents_index,1)',sig_z_00(solvents_index,1),unit_in,unit_logfile)
             sig_z_00(aviation_index,1)=read_name_real('sig_z_00(aviation_index,1)',sig_z_00(aviation_index,1),unit_in,unit_logfile)
             sig_z_00(offroad_index,1)=read_name_real('sig_z_00(offroad_index,1)',sig_z_00(offroad_index,1),unit_in,unit_logfile)
-            sig_z_00(waste_index,1)=read_name_real('sig_z_00(waste_index,1)',sig_z_00(waste_index,1),unit_in,unit_logfile)
-            sig_z_00(livestock_index,1)=read_name_real('sig_z_00(livestock_index,1)',sig_z_00(livestock_index,1),unit_in,unit_logfile)
-            sig_z_00(other_index,1)=read_name_real('sig_z_00(other_index,1)',sig_z_00(other_index,1),unit_in,unit_logfile)
+            if (waste_index > 0) sig_z_00(waste_index,1)=read_name_real('sig_z_00(waste_index,1)',sig_z_00(waste_index,1),unit_in,unit_logfile)
+            if (livestock_index > 0) sig_z_00(livestock_index,1)=read_name_real('sig_z_00(livestock_index,1)',sig_z_00(livestock_index,1),unit_in,unit_logfile)
+            if (other_index > 0) sig_z_00(other_index,1)=read_name_real('sig_z_00(other_index,1)',sig_z_00(other_index,1),unit_in,unit_logfile)
 
             !These second subsources do not exist but still possible to implement
             sig_z_00(traffic_index,2)=read_name_real('sig_z_00(traffic_index,2)',sig_z_00(traffic_index,2),unit_in,unit_logfile)
@@ -594,9 +594,9 @@ contains
             save_emissions_for_EMEP(solvents_index)=read_name_logical('save_emissions_for_EMEP(solvents_index)',save_emissions_for_EMEP(solvents_index),unit_in,unit_logfile)
             save_emissions_for_EMEP(aviation_index)=read_name_logical('save_emissions_for_EMEP(aviation_index)',save_emissions_for_EMEP(aviation_index),unit_in,unit_logfile)
             save_emissions_for_EMEP(offroad_index)=read_name_logical('save_emissions_for_EMEP(offroad_index)',save_emissions_for_EMEP(offroad_index),unit_in,unit_logfile)
-            save_emissions_for_EMEP(waste_index)=read_name_logical('save_emissions_for_EMEP(waste_index)',save_emissions_for_EMEP(waste_index),unit_in,unit_logfile)
-            save_emissions_for_EMEP(livestock_index)=read_name_logical('save_emissions_for_EMEP(livestock_index)',save_emissions_for_EMEP(livestock_index),unit_in,unit_logfile)
-            save_emissions_for_EMEP(other_index)=read_name_logical('save_emissions_for_EMEP(other_index)',save_emissions_for_EMEP(other_index),unit_in,unit_logfile)
+            if (waste_index > 0) save_emissions_for_EMEP(waste_index)=read_name_logical('save_emissions_for_EMEP(waste_index)',save_emissions_for_EMEP(waste_index),unit_in,unit_logfile)
+            if (livestock_index > 0) save_emissions_for_EMEP(livestock_index)=read_name_logical('save_emissions_for_EMEP(livestock_index)',save_emissions_for_EMEP(livestock_index),unit_in,unit_logfile)
+            if (other_index > 0) save_emissions_for_EMEP(other_index)=read_name_logical('save_emissions_for_EMEP(other_index)',save_emissions_for_EMEP(other_index),unit_in,unit_logfile)
             !Set all source index to true if any of the sources are to be saved. allsource_index defines if the routine is called or not
             do i_source=1,n_source_index
                 if (save_emissions_for_EMEP(i_source)) save_emissions_for_EMEP(allsource_index)=.true.
@@ -714,9 +714,9 @@ contains
                 uEMEP_to_EMEP_replace_sector(solvents_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(solvents_index)',uEMEP_to_EMEP_replace_sector(solvents_index),unit_in,unit_logfile)
                 uEMEP_to_EMEP_replace_sector(aviation_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(aviation_index)',uEMEP_to_EMEP_replace_sector(aviation_index),unit_in,unit_logfile)
                 uEMEP_to_EMEP_replace_sector(offroad_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(offroad_index)',uEMEP_to_EMEP_replace_sector(offroad_index),unit_in,unit_logfile)
-                uEMEP_to_EMEP_replace_sector(waste_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(waste_index)',uEMEP_to_EMEP_replace_sector(waste_index),unit_in,unit_logfile)
-                uEMEP_to_EMEP_replace_sector(livestock_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(livestock_index)',uEMEP_to_EMEP_replace_sector(livestock_index),unit_in,unit_logfile)
-                uEMEP_to_EMEP_replace_sector(other_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(other_index)',uEMEP_to_EMEP_replace_sector(other_index),unit_in,unit_logfile)
+                if (waste_index > 0) uEMEP_to_EMEP_replace_sector(waste_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(waste_index)',uEMEP_to_EMEP_replace_sector(waste_index),unit_in,unit_logfile)
+                if (livestock_index > 0) uEMEP_to_EMEP_replace_sector(livestock_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(livestock_index)',uEMEP_to_EMEP_replace_sector(livestock_index),unit_in,unit_logfile)
+                if (other_index > 0) uEMEP_to_EMEP_replace_sector(other_index)=read_name_integer('uEMEP_to_EMEP_replace_sector(other_index)',uEMEP_to_EMEP_replace_sector(other_index),unit_in,unit_logfile)
             endif
 
             EMEP_emission_aggregation_period=read_name_real('EMEP_emission_aggregation_period',EMEP_emission_aggregation_period,unit_in,unit_logfile)

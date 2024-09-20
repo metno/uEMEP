@@ -20,6 +20,7 @@ program uEMEP_v6
     !! C:\Program Files (x86)\netcdf 4.3.3.1\lib
     
     use uemep_configuration
+    use uEMEP_set_sources
     use uEMEP_definitions
     use read_command_line, only: uEMEP_read_command_line, check_command_line
     use set_constants, only: uEMEP_set_constants, uEMEP_set_pollutant_loop, &
@@ -91,6 +92,8 @@ program uEMEP_v6
 
     ! Read the command line, assigning the configuration file names and the substitution date_str
     call uEMEP_read_command_line()
+
+    call set_sources()
 
     ! Set constants and variable names to be read from EMEP and meteo files
     call uEMEP_set_constants()
