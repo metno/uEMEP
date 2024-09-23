@@ -8,11 +8,13 @@ module uEMEP_set_sources
 contains
 
     subroutine set_sources()
+        !! Dynaminally sets index values for sources and allocates arrays
 
         integer :: ic
 
         ic = 0
 
+        ! Set indices for uEMEP sources
         ic = ic + 1; allsource_index = ic; allsource_nc_index = allsource_index
         ic = ic + 1; traffic_index = ic; traffic_nc_index = traffic_index
         ic = ic + 1; shipping_index = ic; shipping_nc_index = shipping_index
@@ -48,21 +50,29 @@ contains
         ic = ic + 1; traffic_exhaust_index = ic; traffic_exhaust_nc_index = traffic_exhaust_index
         ic = ic + 1; traffic_nonexhaust_index = ic; traffic_nonexhaust_nc_index = traffic_nonexhaust_index
 
+        ! Set number of included uEMEP sources
         n_source_index = ic
 
-        ic = ic + 1; traffic_gasoline_nc_index = ic
-        ic = ic + 1; traffic_diesel_nc_index = ic
-        ic = ic + 1; traffic_gas_nc_index = ic
+        ! Set indices for additional GNFR19 sources if necessary
+        if (use_GNFR19_emissions_from_EMEP_flag) then
+            ic = ic + 1; traffic_gasoline_nc_index = ic
+            ic = ic + 1; traffic_diesel_nc_index = ic
+            ic = ic + 1; traffic_gas_nc_index = ic
+        end if
         if (include_source_publicpower .and. use_GNFR19_emissions_from_EMEP_flag) then
             ic = ic + 1; publicpower_point_nc_index = ic
             ic = ic + 1; publicpower_area_nc_index = ic
         end if
+
+        ! Set extrasource index if use_alternative_ppm_variable_for_lf patch is used
         if (use_alternative_ppm_variable_for_lf) then
             ic = ic + 1; extrasource_nc_index = ic
         end if
 
+        ! Set number of included uEMEP and EMEP sources
         n_source_nc_index = ic
 
+        ! Allocate arrays that are dependent on the number of sources
         allocate(compound_source_index(n_compound_index, n_source_index))
         allocate(emission_subgrid_loop_index(2, n_source_index))
         allocate(init_emission_subgrid_loop_index(2, n_source_index))
@@ -105,7 +115,6 @@ contains
         allocate(emission_factor_conversion(n_compound_nc_index, n_source_index, n_possible_subsource))
         allocate(local_fraction_grid_for_EMEP_grid_interpolation_source(n_source_index))
         allocate(EMEP_grid_interpolation_size_source(n_source_index))
-
         allocate(convert_GNFR_to_uEMEP_sector_index(n_source_nc_index))
         allocate(source_file_postfix(n_source_nc_index))
         allocate(save_EMEP_source(n_source_nc_index))
@@ -133,11 +142,11 @@ contains
         allocate(landuse_proxy_weighting(n_source_index, n_clc_landuse_index))
         allocate(scale_GNFR_emission_source(n_source_index))
 
+        ! Set initial values of some arrays
         unit_conversion = 1.0
         emission_factor_conversion = 0.0
         local_fraction_grid_for_EMEP_grid_interpolation_source = 1
         EMEP_grid_interpolation_size_source = 1.0
-        
         save_EMEP_source = .false.
         source_file_str = ''
         uEMEP_to_EMEP_sector = 0

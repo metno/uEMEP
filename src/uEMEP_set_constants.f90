@@ -938,9 +938,9 @@ contains
             if (other_nc_index > 0) uEMEP_to_EMEP_sector(other_nc_index)=13
             if (publicpower_point_nc_index > 0) uEMEP_to_EMEP_sector(publicpower_point_nc_index)=14
             if (publicpower_area_nc_index > 0) uEMEP_to_EMEP_sector(publicpower_area_nc_index)=15
-            uEMEP_to_EMEP_sector(traffic_gasoline_nc_index)=16
-            uEMEP_to_EMEP_sector(traffic_diesel_nc_index)=17
-            uEMEP_to_EMEP_sector(traffic_gas_nc_index)=18
+            if (traffic_gasoline_nc_index > 0) uEMEP_to_EMEP_sector(traffic_gasoline_nc_index)=16
+            if (traffic_diesel_nc_index > 0) uEMEP_to_EMEP_sector(traffic_diesel_nc_index)=17
+            if (traffic_gas_nc_index > 0) uEMEP_to_EMEP_sector(traffic_gas_nc_index)=18
             uEMEP_to_EMEP_sector(traffic_nonexhaust_nc_index)=19
         endif
 
@@ -979,9 +979,9 @@ contains
             if (waste_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(waste_nc_index)='J'
             if (livestock_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(livestock_nc_index)='K'
             if (other_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(other_nc_index)='M'
-            uEMEP_to_EMEP_emis_sector_str(traffic_gasoline_nc_index)='F1'
-            uEMEP_to_EMEP_emis_sector_str(traffic_diesel_nc_index)='F2'
-            uEMEP_to_EMEP_emis_sector_str(traffic_gas_nc_index)='F3'
+            if (traffic_gasoline_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(traffic_gasoline_nc_index)='F1'
+            if (traffic_diesel_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(traffic_diesel_nc_index)='F2'
+            if (traffic_gas_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(traffic_gas_nc_index)='F3'
             uEMEP_to_EMEP_emis_sector_str(traffic_nonexhaust_nc_index)='F4'
             if (publicpower_point_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(publicpower_point_nc_index)='A1'
             if (publicpower_area_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(publicpower_area_nc_index)='A2'
@@ -993,9 +993,9 @@ contains
         !Automatically set these extra files to be read
         !Of these only the traffic exhaust and nonexhaust will be saved
         if (use_GNFR19_emissions_from_EMEP_flag) then
-            calculate_EMEP_source(traffic_gasoline_nc_index)=.true.
-            calculate_EMEP_source(traffic_diesel_nc_index)=.true.
-            calculate_EMEP_source(traffic_gas_nc_index)=.true.
+            if (traffic_gasoline_nc_index > 0) calculate_EMEP_source(traffic_gasoline_nc_index)=.true.
+            if (traffic_diesel_nc_index > 0) calculate_EMEP_source(traffic_diesel_nc_index)=.true.
+            if (traffic_gas_nc_index > 0) calculate_EMEP_source(traffic_gas_nc_index)=.true.
             if (publicpower_point_nc_index > 0) calculate_EMEP_source(publicpower_point_nc_index)=.true.
             if (publicpower_area_nc_index > 0) calculate_EMEP_source(publicpower_area_nc_index)=.true.
             calculate_EMEP_source(traffic_exhaust_nc_index)=.true.

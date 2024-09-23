@@ -155,9 +155,9 @@ contains
             if (livestock_index > 0) calculate_EMEP_source(livestock_index)=read_name_logical('calculate_EMEP_source(livestock_index)',calculate_EMEP_source(livestock_index),unit_in,unit_logfile)
             if (other_index > 0) calculate_EMEP_source(other_index)=read_name_logical('calculate_EMEP_source(other_index)',calculate_EMEP_source(other_index),unit_in,unit_logfile)
             !GNFR19 sources. Note nc_index not in the input
-            calculate_EMEP_source(traffic_gasoline_nc_index)=read_name_logical('calculate_EMEP_source(traffic_gasoline_index)',calculate_EMEP_source(traffic_gasoline_nc_index),unit_in,unit_logfile)
-            calculate_EMEP_source(traffic_diesel_nc_index)=read_name_logical('calculate_EMEP_source(traffic_diesel_index)',calculate_EMEP_source(traffic_diesel_nc_index),unit_in,unit_logfile)
-            calculate_EMEP_source(traffic_gas_nc_index)=read_name_logical('calculate_EMEP_source(traffic_gas_index)',calculate_EMEP_source(traffic_gas_nc_index),unit_in,unit_logfile)
+            if (traffic_gasoline_nc_index > 0) calculate_EMEP_source(traffic_gasoline_nc_index)=read_name_logical('calculate_EMEP_source(traffic_gasoline_index)',calculate_EMEP_source(traffic_gasoline_nc_index),unit_in,unit_logfile)
+            if (traffic_diesel_nc_index > 0) calculate_EMEP_source(traffic_diesel_nc_index)=read_name_logical('calculate_EMEP_source(traffic_diesel_index)',calculate_EMEP_source(traffic_diesel_nc_index),unit_in,unit_logfile)
+            if (traffic_gas_nc_index > 0) calculate_EMEP_source(traffic_gas_nc_index)=read_name_logical('calculate_EMEP_source(traffic_gas_index)',calculate_EMEP_source(traffic_gas_nc_index),unit_in,unit_logfile)
             calculate_EMEP_source(traffic_nonexhaust_nc_index)=read_name_logical('calculate_EMEP_source(traffic_nonexhaust_index)',calculate_EMEP_source(traffic_nonexhaust_nc_index),unit_in,unit_logfile)
             if (publicpower_point_nc_index > 0) calculate_EMEP_source(publicpower_point_nc_index)=read_name_logical('calculate_EMEP_source(publicpower_point_index)',calculate_EMEP_source(publicpower_point_nc_index),unit_in,unit_logfile)
             if (publicpower_area_nc_index > 0) calculate_EMEP_source(publicpower_area_nc_index)=read_name_logical('calculate_EMEP_source(publicpower_area_index)',calculate_EMEP_source(publicpower_area_nc_index),unit_in,unit_logfile)
