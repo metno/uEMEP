@@ -288,9 +288,11 @@ program uEMEP_v6
                     end if
 
                     ! Read and subgrid agriculture data
-                    if (calculate_source(agriculture_index) .and. use_rivm_agricuture_emission_data .and. .not. read_subgrid_emission_data) then
-                        ! Currently only data from RIVM here
-                        call uEMEP_read_agriculture_rivm_data()
+                    if (agriculture_index > 0) then
+                        if (calculate_source(agriculture_index) .and. use_rivm_agricuture_emission_data .and. .not. read_subgrid_emission_data) then
+                            ! Currently only data from RIVM here
+                            call uEMEP_read_agriculture_rivm_data()
+                        end if
                     end if
                     if (read_rivm_landuse_flag) then
                         call uEMEP_read_landuse_rivm_data()

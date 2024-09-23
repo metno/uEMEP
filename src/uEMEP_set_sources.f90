@@ -17,16 +17,34 @@ contains
         ic = ic + 1; traffic_index = ic; traffic_nc_index = traffic_index
         ic = ic + 1; shipping_index = ic; shipping_nc_index = shipping_index
         ic = ic + 1; heating_index = ic; heating_nc_index = heating_index
-        ic = ic + 1; agriculture_index = ic; agriculture_nc_index = agriculture_index
+        if (include_source_agriculture) then
+            ic = ic + 1; agriculture_index = ic; agriculture_nc_index = agriculture_index
+        end if
         ic = ic + 1; industry_index = ic; industry_nc_index = industry_index
-        ic = ic + 1; publicpower_index = ic; publicpower_nc_index = publicpower_index
-        ic = ic + 1; fugitive_index = ic; fugitive_nc_index = fugitive_index
-        ic = ic + 1; solvents_index = ic; solvents_nc_index = solvents_index
-        ic = ic + 1; aviation_index = ic; aviation_nc_index = aviation_index
-        ic = ic + 1; offroad_index = ic; offroad_nc_index = offroad_index
-        if (include_source_waste) ic = ic + 1; waste_index = ic; waste_nc_index = waste_index
-        if (include_source_livestock) ic = ic + 1; livestock_index = ic; livestock_nc_index = livestock_index
-        if (include_source_other) ic = ic + 1; other_index = ic; other_nc_index = other_index
+        if (include_source_publicpower) then
+            ic = ic + 1; publicpower_index = ic; publicpower_nc_index = publicpower_index
+        end if
+        if (include_source_fugitive) then
+            ic = ic + 1; fugitive_index = ic; fugitive_nc_index = fugitive_index
+        end if
+        if (include_source_solvents) then
+            ic = ic + 1; solvents_index = ic; solvents_nc_index = solvents_index
+        end if
+        if (include_source_aviation) then
+            ic = ic + 1; aviation_index = ic; aviation_nc_index = aviation_index
+        end if
+        if (include_source_offroad) then
+            ic = ic + 1; offroad_index = ic; offroad_nc_index = offroad_index
+        end if
+        if (include_source_waste) then
+            ic = ic + 1; waste_index = ic; waste_nc_index = waste_index
+        end if
+        if (include_source_livestock) then
+            ic = ic + 1; livestock_index = ic; livestock_nc_index = livestock_index
+        end if
+        if (include_source_other) then
+            ic = ic + 1; other_index = ic; other_nc_index = other_index
+        end if
         ic = ic + 1; traffic_exhaust_index = ic; traffic_exhaust_nc_index = traffic_exhaust_index
         ic = ic + 1; traffic_nonexhaust_index = ic; traffic_nonexhaust_nc_index = traffic_nonexhaust_index
 
@@ -35,9 +53,13 @@ contains
         ic = ic + 1; traffic_gasoline_nc_index = ic
         ic = ic + 1; traffic_diesel_nc_index = ic
         ic = ic + 1; traffic_gas_nc_index = ic
-        ic = ic + 1; publicpower_point_nc_index = ic
-        ic = ic + 1; publicpower_area_nc_index = ic
-        ic = ic + 1; extrasource_nc_index = ic
+        if (include_source_publicpower .and. use_GNFR19_emissions_from_EMEP_flag) then
+            ic = ic + 1; publicpower_point_nc_index = ic
+            ic = ic + 1; publicpower_area_nc_index = ic
+        end if
+        if (use_alternative_ppm_variable_for_lf) then
+            ic = ic + 1; extrasource_nc_index = ic
+        end if
 
         n_source_nc_index = ic
 

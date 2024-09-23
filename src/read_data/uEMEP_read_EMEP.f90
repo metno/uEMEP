@@ -1417,9 +1417,12 @@ contains
                 !Special case for PM10 because traffic exhaust is not read for PM10
                 !lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_exhaust_nc_index,pollutant_loop_back_index(pm10_nc_index))=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,traffic_exhaust_nc_index,pollutant_loop_back_index(pm25_nc_index))
                 !Aggregate the two public powers
-                lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_nc_index,:)=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_nc_index,:) &
-                    +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_point_nc_index,:) &
-                    +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_area_nc_index,:)
+                write(*,"(a,i3,a,i3)") "publicpower_nc_index: ", publicpower_nc_index, " publicpower_index: ", publicpower_index
+                if (publicpower_nc_index > 0) then
+                    lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_nc_index,:)=lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_nc_index,:) &
+                        +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_point_nc_index,:) &
+                        +lc_var3d_nc(:,:,:,:,:,lc_local_nc_index,publicpower_area_nc_index,:)
+                end if
             enddo
             do lc_local_nc_index=minval(lc_local_nc_loop_index),maxval(lc_local_nc_loop_index)
                 write(unit_logfile,'(A,i0,a,f16.4)') 'Mean exhaust PM2.5 EMEP contribution centre lc grid: ',lc_local_nc_index,' ' &
@@ -1447,9 +1450,11 @@ contains
                 +var3d_nc(:,:,:,emis_nc_index,traffic_exhaust_nc_index,:) &
                 +var3d_nc(:,:,:,emis_nc_index,traffic_nonexhaust_nc_index,:)
             !Aggregating public power emissions
-            var3d_nc(:,:,:,emis_nc_index,publicpower_nc_index,:)=var3d_nc(:,:,:,emis_nc_index,publicpower_nc_index,:) &
-                +var3d_nc(:,:,:,emis_nc_index,publicpower_point_nc_index,:) &
-                +var3d_nc(:,:,:,emis_nc_index,publicpower_area_nc_index,:)
+            if (publicpower_nc_index > 0) then
+                var3d_nc(:,:,:,emis_nc_index,publicpower_nc_index,:)=var3d_nc(:,:,:,emis_nc_index,publicpower_nc_index,:) &
+                    +var3d_nc(:,:,:,emis_nc_index,publicpower_point_nc_index,:) &
+                    +var3d_nc(:,:,:,emis_nc_index,publicpower_area_nc_index,:)
+            end if
         endif
 
         !Scale the read in voc emissions so they are split into benzene

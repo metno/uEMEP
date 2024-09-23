@@ -41,6 +41,11 @@ contains
         real x_temp(3,3),y_temp(3,3),z_temp(3,3)
         real temp_emission
 
+        if (agriculture_index <= 0) then
+            write(unit_logfile,'(a)') 'WARNING: Attempting to read agriculture data, but agriculture index is not setup'
+            return 
+        end if
+
         write(unit_logfile,'(A)') ''
         write(unit_logfile,'(A)') '================================================================'
         write(unit_logfile,'(A)') 'Reading agriculture rivm nh3 data  (uEMEP_read_agriculture_rivm_data)'

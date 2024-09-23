@@ -367,6 +367,12 @@ module uEMEP_definitions
     integer, parameter :: n_compound_index = 20
 
     ! Sources control flags
+    logical :: include_source_agriculture = .false.
+    logical :: include_source_publicpower = .false.
+    logical :: include_source_fugitive = .false.
+    logical :: include_source_solvents = .false.
+    logical :: include_source_aviation = .false.
+    logical :: include_source_offroad = .false.
     logical :: include_source_waste = .false.
     logical :: include_source_livestock = .false.
     logical :: include_source_other = .false.

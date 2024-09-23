@@ -53,31 +53,31 @@ contains
         uEMEP_to_EMEP_sector=0
         uEMEP_to_EMEP_sector(traffic_index)=7
         uEMEP_to_EMEP_sector(shipping_index)=8
-        uEMEP_to_EMEP_sector(agriculture_index)=10
+        if (agriculture_index > 0) uEMEP_to_EMEP_sector(agriculture_index)=10
         uEMEP_to_EMEP_sector(heating_index)=2
         uEMEP_to_EMEP_sector(industry_index)=3 !Used to be 4??? Changed when including the rest
         !Set replace value to -1 as flag
         uEMEP_to_EMEP_replace_sector=-1
 
-        uEMEP_to_EMEP_sector(publicpower_index)=1
-        uEMEP_to_EMEP_sector(fugitive_index)=4
-        uEMEP_to_EMEP_sector(solvents_index)=6
-        uEMEP_to_EMEP_sector(aviation_index)=8
-        uEMEP_to_EMEP_sector(offroad_index)=8
+        if (publicpower_index > 0) uEMEP_to_EMEP_sector(publicpower_index)=1
+        if (fugitive_index > 0) uEMEP_to_EMEP_sector(fugitive_index)=4
+        if (solvents_index > 0) uEMEP_to_EMEP_sector(solvents_index)=6
+        if (aviation_index > 0) uEMEP_to_EMEP_sector(aviation_index)=8
+        if (offroad_index > 0) uEMEP_to_EMEP_sector(offroad_index)=8
         if (waste_index > 0) uEMEP_to_EMEP_sector(waste_index)=9
         if (livestock_index > 0) uEMEP_to_EMEP_sector(livestock_index)=10
         if (other_index > 0) uEMEP_to_EMEP_sector(other_index)=5
 
         uEMEP_to_EMEP_sector_str(traffic_index)='07'
         uEMEP_to_EMEP_sector_str(shipping_index)='08'
-        uEMEP_to_EMEP_sector_str(agriculture_index)='10'
+        if (agriculture_index > 0) uEMEP_to_EMEP_sector_str(agriculture_index)='10'
         uEMEP_to_EMEP_sector_str(heating_index)='02'
         uEMEP_to_EMEP_sector_str(industry_index)='03'
-        uEMEP_to_EMEP_sector_str(publicpower_nc_index)='01'
-        uEMEP_to_EMEP_sector_str(fugitive_nc_index)='04'
-        uEMEP_to_EMEP_sector_str(solvents_nc_index)='06'
-        uEMEP_to_EMEP_sector_str(aviation_nc_index)='08'
-        uEMEP_to_EMEP_sector_str(offroad_nc_index)='08'
+        if (publicpower_nc_index > 0) uEMEP_to_EMEP_sector_str(publicpower_nc_index)='01'
+        if (fugitive_nc_index > 0) uEMEP_to_EMEP_sector_str(fugitive_nc_index)='04'
+        if (solvents_nc_index > 0) uEMEP_to_EMEP_sector_str(solvents_nc_index)='06'
+        if (aviation_nc_index > 0) uEMEP_to_EMEP_sector_str(aviation_nc_index)='08'
+        if (offroad_nc_index > 0) uEMEP_to_EMEP_sector_str(offroad_nc_index)='08'
         if (waste_nc_index > 0) uEMEP_to_EMEP_sector_str(waste_nc_index)='09'
         if (livestock_nc_index > 0) uEMEP_to_EMEP_sector_str(livestock_nc_index)='10'
         if (other_nc_index > 0) uEMEP_to_EMEP_sector_str(other_nc_index)='05'
@@ -118,8 +118,8 @@ contains
         var_name_nc(conc_nc_index,o3_26th_nc_index,allsource_nc_index)='26th_o3'
 
         !Special extrasource file. Will be used if called with. use_alternative_ppm_variable_for_lf
-        var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index)='D3_ug_PPM25'
-        var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index)='D3_ug_PPM_C'
+        if (extrasource_nc_index > 0) var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index)='D3_ug_PPM25'
+        if (extrasource_nc_index > 0) var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index)='D3_ug_PPM_C'
 
         !Local fractions
         var_name_nc(frac_nc_index,nox_nc_index,traffic_nc_index)='nox_sec07_local_fraction'
@@ -130,7 +130,7 @@ contains
         var_name_nc(frac_nc_index,pm25_nc_index,shipping_nc_index)='pm25_sec08_local_fraction'
         var_name_nc(frac_nc_index,pmco_nc_index,shipping_nc_index)='pmco_sec08_local_fraction'
 
-        var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)='nh3_sec10_local_fraction'
+        if (agriculture_nc_index > 0) var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)='nh3_sec10_local_fraction'
 
         var_name_nc(frac_nc_index,nox_nc_index,heating_nc_index)='nox_sec02_local_fraction'
         var_name_nc(frac_nc_index,pm25_nc_index,heating_nc_index)='pm25_sec02_local_fraction'
@@ -148,7 +148,7 @@ contains
         var_name_nc(emis_nc_index,pm25_nc_index,allsource_nc_index)='Emis_mgm2_pm25'
 
         !Sector emissions
-        var_name_nc(emis_nc_index,nh3_nc_index,agriculture_nc_index)='Emis_mgm2_nh3'
+        if (agriculture_nc_index > 0) var_name_nc(emis_nc_index,nh3_nc_index,agriculture_nc_index)='Emis_mgm2_nh3'
 
         var_name_nc(emis_nc_index,nox_nc_index,traffic_nc_index)='Emis_mgm2_sec7nox'
         var_name_nc(emis_nc_index,pm25_nc_index,traffic_nc_index)='Emis_mgm2_sec7pm25'
@@ -438,15 +438,15 @@ contains
         source_file_str(allsource_index)='allsources'
         source_file_str(traffic_index)='traffic'
         source_file_str(shipping_index)='shipping'
-        source_file_str(agriculture_index)='agriculture'
+        if (agriculture_index > 0) source_file_str(agriculture_index)='agriculture'
         source_file_str(heating_index)='heating'
         source_file_str(industry_index)='industry'
 
-        source_file_str(publicpower_index)='publicpower'
-        source_file_str(fugitive_index)='fugitive'
-        source_file_str(solvents_index)='solvents'
-        source_file_str(aviation_index)='aviation'
-        source_file_str(offroad_index)='offroad'
+        if (publicpower_index > 0) source_file_str(publicpower_index)='publicpower'
+        if (fugitive_index > 0) source_file_str(fugitive_index)='fugitive'
+        if (solvents_index > 0) source_file_str(solvents_index)='solvents'
+        if (aviation_index > 0) source_file_str(aviation_index)='aviation'
+        if (offroad_index > 0) source_file_str(offroad_index)='offroad'
         if (waste_index > 0) source_file_str(waste_index)='waste'
         if (livestock_index > 0) source_file_str(livestock_index)='livestock'
         if (other_index > 0) source_file_str(other_index)='other'
@@ -516,26 +516,26 @@ contains
         h_emis(traffic_index,:)=2.
         h_emis(shipping_index,:)=70.
         h_emis(heating_index,:)=15.
-        h_emis(agriculture_index,:)=1.
+        if (agriculture_index > 0) h_emis(agriculture_index,:)=1.
         h_emis(industry_index,:)=100.
-        h_emis(aviation_index,:)=10.
-        h_emis(fugitive_index,:)=5.
+        if (aviation_index > 0) h_emis(aviation_index,:)=10.
+        if (fugitive_index > 0) h_emis(fugitive_index,:)=5.
         if (livestock_index > 0) h_emis(livestock_index,:)=5.
-        h_emis(solvents_index,:)=15.
-        h_emis(offroad_index,:)=5.
+        if (solvents_index > 0) h_emis(solvents_index,:)=15.
+        if (offroad_index > 0) h_emis(offroad_index,:)=5.
         if (waste_index > 0) h_emis(waste_index,:)=15.
         sig_y_00(shipping_index,:)=5.
         sig_y_00(traffic_index,:)=1.
         sig_y_00(heating_index,:)=5.
-        sig_y_00(agriculture_index,:)=5.
+        if (agriculture_index > 0) sig_y_00(agriculture_index,:)=5.
         sig_y_00(industry_index,:)=5.
-        sig_y_00(aviation_index,:)=25.
+        if (aviation_index > 0) sig_y_00(aviation_index,:)=25.
         sig_z_00(shipping_index,:)=5.
         sig_z_00(traffic_index,:)=1.
         sig_z_00(heating_index,:)=10.
-        sig_z_00(agriculture_index,:)=10.
+        if (agriculture_index > 0) sig_z_00(agriculture_index,:)=10.
         sig_z_00(industry_index,:)=10.
-        sig_z_00(aviation_index,:)=10.
+        if (aviation_index > 0) sig_z_00(aviation_index,:)=10.
 
         !Set all emission factors to unity
         emission_factor=1.
@@ -565,8 +565,8 @@ contains
 
         emission_factor(pmex_index,traffic_index,:)=0.01 !(g/km/veh)
 
-        emission_factor(nh3_index,agriculture_index,:)=1. !Agriculture data is in emissions [kg/yr]
-        emission_factor(nh4_index,agriculture_index,:)=1. !Agriculture data is in emissions [kg/yr]
+        if (agriculture_index > 0) emission_factor(nh3_index,agriculture_index,:)=1. !Agriculture data is in emissions [kg/yr]
+        if (agriculture_index > 0) emission_factor(nh4_index,agriculture_index,:)=1. !Agriculture data is in emissions [kg/yr]
 
         ratio_truck_car_emission(nox_index)=12.5 !4.86/.318 !From excel sheet for NOx. 12.5 matches the values used in NORTRIP
         ratio_truck_car_emission(no2_index)=12.5 !4.86/.318 !Should perhaps be different but
@@ -634,18 +634,18 @@ contains
         ! convert_GNFR_to_uEMEP_sector_index(12)=agriculture_nc_index
         ! convert_GNFR_to_uEMEP_sector_index(13)=other_nc_index
 
-        convert_uEMEP_to_GNFR_sector_index(publicpower_nc_index)=1
+        if (publicpower_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(publicpower_nc_index)=1
         convert_uEMEP_to_GNFR_sector_index(industry_nc_index)=2
         convert_uEMEP_to_GNFR_sector_index(heating_nc_index)=3
-        convert_uEMEP_to_GNFR_sector_index(fugitive_nc_index)=4
-        convert_uEMEP_to_GNFR_sector_index(solvents_nc_index)=5
+        if (fugitive_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(fugitive_nc_index)=4
+        if (solvents_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(solvents_nc_index)=5
         convert_uEMEP_to_GNFR_sector_index(traffic_nc_index)=6
         convert_uEMEP_to_GNFR_sector_index(shipping_nc_index)=7
-        convert_uEMEP_to_GNFR_sector_index(aviation_nc_index)=8
-        convert_uEMEP_to_GNFR_sector_index(offroad_nc_index)=9
+        if (aviation_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(aviation_nc_index)=8
+        if (offroad_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(offroad_nc_index)=9
         if (waste_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(waste_nc_index)=10
         if (livestock_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(livestock_nc_index)=11
-        convert_uEMEP_to_GNFR_sector_index(agriculture_nc_index)=12
+        if (agriculture_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(agriculture_nc_index)=12
         if (other_nc_index > 0) convert_uEMEP_to_GNFR_sector_index(other_nc_index)=13
 
 
@@ -925,19 +925,19 @@ contains
             uEMEP_to_EMEP_sector(allsource_index)=0
             uEMEP_to_EMEP_sector(traffic_index)=6
             uEMEP_to_EMEP_sector(shipping_index)=7
-            uEMEP_to_EMEP_sector(agriculture_index)=12
+            if (agriculture_index > 0) uEMEP_to_EMEP_sector(agriculture_index)=12
             uEMEP_to_EMEP_sector(heating_index)=3
             uEMEP_to_EMEP_sector(industry_index)=2
-            uEMEP_to_EMEP_sector(publicpower_nc_index)=1
-            uEMEP_to_EMEP_sector(fugitive_nc_index)=4
-            uEMEP_to_EMEP_sector(solvents_nc_index)=5
-            uEMEP_to_EMEP_sector(aviation_nc_index)=8
-            uEMEP_to_EMEP_sector(offroad_nc_index)=9
+            if (publicpower_nc_index > 0) uEMEP_to_EMEP_sector(publicpower_nc_index)=1
+            if (fugitive_nc_index > 0) uEMEP_to_EMEP_sector(fugitive_nc_index)=4
+            if (solvents_nc_index > 0) uEMEP_to_EMEP_sector(solvents_nc_index)=5
+            if (aviation_nc_index > 0) uEMEP_to_EMEP_sector(aviation_nc_index)=8
+            if (offroad_nc_index > 0) uEMEP_to_EMEP_sector(offroad_nc_index)=9
             if (waste_nc_index > 0) uEMEP_to_EMEP_sector(waste_nc_index)=10
             if (livestock_nc_index > 0) uEMEP_to_EMEP_sector(livestock_nc_index)=11
             if (other_nc_index > 0) uEMEP_to_EMEP_sector(other_nc_index)=13
-            uEMEP_to_EMEP_sector(publicpower_point_nc_index)=14
-            uEMEP_to_EMEP_sector(publicpower_area_nc_index)=15
+            if (publicpower_point_nc_index > 0) uEMEP_to_EMEP_sector(publicpower_point_nc_index)=14
+            if (publicpower_area_nc_index > 0) uEMEP_to_EMEP_sector(publicpower_area_nc_index)=15
             uEMEP_to_EMEP_sector(traffic_gasoline_nc_index)=16
             uEMEP_to_EMEP_sector(traffic_diesel_nc_index)=17
             uEMEP_to_EMEP_sector(traffic_gas_nc_index)=18
@@ -968,14 +968,14 @@ contains
             uEMEP_to_EMEP_emis_sector_str(allsource_index)=''
             uEMEP_to_EMEP_emis_sector_str(traffic_index)='F'
             uEMEP_to_EMEP_emis_sector_str(shipping_index)='G'
-            uEMEP_to_EMEP_emis_sector_str(agriculture_index)='L'
+            if (agriculture_index > 0) uEMEP_to_EMEP_emis_sector_str(agriculture_index)='L'
             uEMEP_to_EMEP_emis_sector_str(heating_index)='C'
             uEMEP_to_EMEP_emis_sector_str(industry_index)='B'
-            uEMEP_to_EMEP_emis_sector_str(publicpower_nc_index)='A'
-            uEMEP_to_EMEP_emis_sector_str(fugitive_nc_index)='D'
-            uEMEP_to_EMEP_emis_sector_str(solvents_nc_index)='E'
-            uEMEP_to_EMEP_emis_sector_str(aviation_nc_index)='H'
-            uEMEP_to_EMEP_emis_sector_str(offroad_nc_index)='I'
+            if (publicpower_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(publicpower_nc_index)='A'
+            if (fugitive_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(fugitive_nc_index)='D'
+            if (solvents_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(solvents_nc_index)='E'
+            if (aviation_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(aviation_nc_index)='H'
+            if (offroad_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(offroad_nc_index)='I'
             if (waste_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(waste_nc_index)='J'
             if (livestock_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(livestock_nc_index)='K'
             if (other_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(other_nc_index)='M'
@@ -983,8 +983,8 @@ contains
             uEMEP_to_EMEP_emis_sector_str(traffic_diesel_nc_index)='F2'
             uEMEP_to_EMEP_emis_sector_str(traffic_gas_nc_index)='F3'
             uEMEP_to_EMEP_emis_sector_str(traffic_nonexhaust_nc_index)='F4'
-            uEMEP_to_EMEP_emis_sector_str(publicpower_point_nc_index)='A1'
-            uEMEP_to_EMEP_emis_sector_str(publicpower_area_nc_index)='A2'
+            if (publicpower_point_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(publicpower_point_nc_index)='A1'
+            if (publicpower_area_nc_index > 0) uEMEP_to_EMEP_emis_sector_str(publicpower_area_nc_index)='A2'
             uEMEP_to_EMEP_emis_sector_str(traffic_exhaust_nc_index)='F1-3' !Not read
         endif
 
@@ -996,8 +996,8 @@ contains
             calculate_EMEP_source(traffic_gasoline_nc_index)=.true.
             calculate_EMEP_source(traffic_diesel_nc_index)=.true.
             calculate_EMEP_source(traffic_gas_nc_index)=.true.
-            calculate_EMEP_source(publicpower_point_nc_index)=.true.
-            calculate_EMEP_source(publicpower_area_nc_index)=.true.
+            if (publicpower_point_nc_index > 0) calculate_EMEP_source(publicpower_point_nc_index)=.true.
+            if (publicpower_area_nc_index > 0) calculate_EMEP_source(publicpower_area_nc_index)=.true.
             calculate_EMEP_source(traffic_exhaust_nc_index)=.true.
             calculate_EMEP_source(traffic_nonexhaust_nc_index)=.true.
             !We do not want to add these since they are already in traffic but we do want to save them
@@ -1034,10 +1034,8 @@ contains
             var_name_nc(frac_nc_index,pm25_nc_index,shipping_nc_index)='pm25_sec07_local_fraction'
             var_name_nc(frac_nc_index,pmco_nc_index,shipping_nc_index)='pmco_sec07_local_fraction'
 
-            !var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)='nh3_sec11_local_fraction'
-            !var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)='nh3_sec12_local_fraction'
             !Read as total for the time being as these have become two sectors now
-            var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)='nh3_local_fraction'
+            if (agriculture_nc_index > 0) var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)='nh3_local_fraction'
 
             var_name_nc(frac_nc_index,nox_nc_index,heating_nc_index)='nox_sec03_local_fraction'
             var_name_nc(frac_nc_index,pm25_nc_index,heating_nc_index)='pm25_sec03_local_fraction'
@@ -1054,7 +1052,7 @@ contains
             var_name_nc(emis_nc_index,pm25_nc_index,allsource_nc_index)='Emis_mgm2_pm25'
 
             !Sector emissions read as total
-            var_name_nc(emis_nc_index,nh3_nc_index,agriculture_nc_index)='Emis_mgm2_nh3'
+            if (agriculture_nc_index > 0) var_name_nc(emis_nc_index,nh3_nc_index,agriculture_nc_index)='Emis_mgm2_nh3'
 
             var_name_nc(emis_nc_index,nox_nc_index,traffic_nc_index)='Emis_mgm2_sec6nox'
             var_name_nc(emis_nc_index,pm25_nc_index,traffic_nc_index)='Emis_mgm2_sec6pm25'
