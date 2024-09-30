@@ -7,7 +7,6 @@ NILU/Not_used
 *.i90
 *.i
 uEMEPv*
-ford*
 
 # Build directories and files
 debug/
