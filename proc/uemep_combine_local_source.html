@@ -1,0 +1,463 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_combine_local_source &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_combine_local_source
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.7% of total for procedures.">135 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_redistribute_data.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_redistribute_data.f90.html'>uEMEP_redistribute_data.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/redistribute_data.html'>redistribute_data</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_combine_local_source</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_combine_local_source.html#src">uEMEP_combine_local_source</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine uEMEP_combine_local_source()  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/uemep_definitions.html'>uEMEP_definitions</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+    <h3>Arguments</h3>
+    <em>None</em>
+    <br>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_combine_local_source</span>
+
+<span class="w">        </span><span class="k">use </span><span class="n">uEMEP_definitions</span>
+
+<span class="w">        </span><span class="k">implicit none</span>
+
+<span class="k">        </span><span class="kt">integer </span><span class="n">source_index</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_pollutant</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i</span><span class="p">,</span><span class="n">j</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_sp</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">sum_temp</span><span class="p">(</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">))</span>
+
+<span class="w">        </span><span class="c">!if (interpolate_subgrids_flag) then</span>
+<span class="w">        </span><span class="c">!write(unit_logfile,&#39;(a)&#39;) &#39;Interpolate routines not currently active. Doing nothing&#39;</span>
+<span class="w">        </span><span class="c">!call uEMEP_interpolate_auto_subgrid</span>
+<span class="w">        </span><span class="c">!return</span>
+<span class="w">        </span><span class="c">!stop</span>
+<span class="w">        </span><span class="c">!call uEMEP_interpolate_subgrids</span>
+<span class="w">        </span><span class="c">!call uEMEP_linear_interpolate_subgrids</span>
+<span class="w">        </span><span class="c">!call uEMEP_bilinear_interpolate_subgrids</span>
+
+<span class="w">        </span><span class="c">!Remember to reset the use_subgrids val and logical so that everything will be used in the end</span>
+<span class="w">        </span><span class="c">!endif</span>
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="s1">&#39;--------------------------&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="s1">&#39;Combining the local and nonlocal contributions at each subgrid&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="s1">&#39;--------------------------&#39;</span>
+
+<span class="w">        </span><span class="c">!Calculate redistributed subgrid allsource concentrations</span>
+<span class="w">        </span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">local_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">        </span><span class="k">do </span><span class="n">source_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_source_index</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">source_index</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="n">source_index</span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="n">allsource_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">local_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">=</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">local_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">+</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">local_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="w">            </span><span class="c">!Add the selected EMEP local sources to this as well, if they are not already included in the subgrid downscaling</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">source_index</span><span class="p">).</span><span class="nb">and</span><span class="p">..</span><span class="nb">not</span><span class="p">.</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">source_index</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="n">source_index</span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="n">allsource_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">local_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">=</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">local_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">+</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_local_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span>
+<span class="w">                </span><span class="c">!write(*,*) source_index,sum(subgrid(:,:,:,emep_local_subgrid_index,source_index,:)),sum(subgrid(:,:,:,local_subgrid_index,allsource_index,:)),sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,:))</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">        enddo</span>
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_additional_grid_interpolation_size</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            do </span><span class="n">i_pollutant</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_loop</span>
+<span class="w">                </span><span class="c">!If the compound is PM2.5 or PM10 then add the non PPM part to the non-local</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm25_index</span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm10_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Pollutant: &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">),</span><span class="n">allsource_nc_index</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;MEAN PPM NONLOCAL ADDITIONAL: &#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">((</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_additional_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_additional_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_additional_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="o">+</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">))</span><span class="o">-</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;MEAN ADD REST NONLOCAL ADDITIONAL: &#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">((</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">))</span><span class="o">-</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">endif</span>
+
+<span class="w">                </span><span class="c">!subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant)=subgrid(:,:,:,local_subgrid_index,allsource_index,i_pollutant)+subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)</span>
+
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">        endif</span>
+
+<span class="k">        do </span><span class="n">i_pollutant</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_loop</span>
+<span class="w">            </span><span class="c">!If the compound is PM2.5 or PM10 then add the non PPM part to the non-local</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm25_index</span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm10_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Pollutant: &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">),</span><span class="n">allsource_nc_index</span><span class="p">))</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;MEAN PPM NONLOCAL: &#39;</span><span class="p">,</span><span class="n">mean_mask</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">),</span><span class="n">use_subgrid</span><span class="p">(:,:,</span><span class="n">allsource_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!sum((subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;MEAN PPM LOCAL: &#39;</span><span class="p">,</span><span class="n">mean_mask</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_local_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">),</span><span class="n">use_subgrid</span><span class="p">(:,:,</span><span class="n">allsource_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!sum((subgrid(:,:,:,emep_local_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;MEAN PPM TOTAL: &#39;</span><span class="p">,</span><span class="n">mean_mask</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">),</span><span class="n">use_subgrid</span><span class="p">(:,:,</span><span class="n">allsource_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!sum((subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;MEAN COMP PM TOTAL: &#39;</span><span class="p">,</span><span class="n">mean_mask</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)),</span><span class="n">use_subgrid</span><span class="p">(:,:,</span><span class="n">allsource_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!sum((comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;MEAN COMP PM ORIGINAL: &#39;</span><span class="p">,</span><span class="n">mean_mask</span><span class="p">(</span><span class="n">orig_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)),</span><span class="n">use_subgrid</span><span class="p">(:,:,</span><span class="n">allsource_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!sum((orig_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)</span>
+<span class="w">                </span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">+</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">))</span><span class="o">-</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">))</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;MEAN ADD REST NONLOCAL: &#39;</span><span class="p">,</span><span class="n">mean_mask</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">))</span><span class="o">-</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">),</span><span class="n">use_subgrid</span><span class="p">(:,:,</span><span class="n">allsource_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!sum((comp_EMEP_subgrid(:,:,:,pollutant_loop_index(i_pollutant))-subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;MEAN NEW PM NONLOCAL: &#39;</span><span class="p">,</span><span class="n">mean_mask</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">),</span><span class="n">use_subgrid</span><span class="p">(:,:,</span><span class="n">allsource_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!sum((subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant)))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">))</span><span class="o">-</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)).</span><span class="n">lt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;WARNING!!!: PPM EMEP is more than total EMEP PM. Negative non PPM contributions.&#39;</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">            </span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">total_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">local_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">+</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span>
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="k">        do </span><span class="n">i_pollutant</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_loop</span>
+<span class="w">            </span><span class="c">!Place the results in the compound results</span>
+<span class="w">            </span><span class="c">!do i_loop=1,n_pollutant_compound_loop(i_pollutant)</span>
+<span class="w">            </span><span class="n">comp_subgrid</span><span class="p">(:,:,:,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">))</span><span class="o">=</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">total_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span>
+<span class="w">            </span><span class="c">!enddo</span>
+<span class="w">            </span><span class="c">!write(*,&#39;(2i,4f16.2)&#39;) i_pollutant,pollutant_loop_index(i_pollutant)&amp;</span>
+<span class="w">            </span><span class="c">!    ,sum(subgrid(:,:,:,total_subgrid_index,allsource_index,i_pollutant))/subgrid_dim(x_dim_index)/subgrid_dim(y_dim_index)/subgrid_dim(t_dim_index)&amp;</span>
+<span class="w">            </span><span class="c">!    ,sum(subgrid(:,:,:,local_subgrid_index,allsource_index,i_pollutant))&amp;</span>
+<span class="w">            </span><span class="c">!    ,sum(subgrid(:,:,:,emep_nonlocal_subgrid_index,allsource_index,i_pollutant))&amp;</span>
+<span class="w">            </span><span class="c">!    ,sum(comp_subgrid(:,:,:,pollutant_loop_index(i_pollutant)))</span>
+
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="w">        </span><span class="c">!Replace the species PPM with the actual species PPM used in the local fraction and then replace this with the nonlocal part.</span>
+<span class="w">        </span><span class="c">!Only works for the complete group of species</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">save_emep_species</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">!Replace the primary species value with the one used in the calculations for consistency</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;ppm read from surf and read emep. Difference should just be deposition&#39;</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;PPM25 (init_sp,comp)&#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">pollutant_loop_back_index</span><span class="p">(</span><span class="n">pm25_nc_index</span><span class="p">)))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;PPM10 (init_sp,comp)&#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">pollutant_loop_back_index</span><span class="p">(</span><span class="n">pm10_nc_index</span><span class="p">)))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;pm surf init species and summed species should be the same. comp should be different (difference between SURF and SURF_rh50)&#39;</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,3f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;PM25 (init_sp,sum_sp,comp)&#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">sp_pm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_nc_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,3f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;PM10 (init_sp,sum_sp,comp)&#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">sp_pm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_nc_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="c">!The remaining species will not, most likely, be normalised with the total. This is done here but the total ppm is kept</span>
+<span class="w">            </span><span class="c">!Something weird is going on here. Need to check</span>
+
+<span class="w">            </span><span class="c">!Normalise the species surface values with the total grid values to account for any difference du to deposition and water</span>
+<span class="w">            </span><span class="c">!Because t can have dimension 1 and &#39;sum&#39; function does not think it is a dimension anymore then need to do the sum over the time loop. This turned out to not be the case so they are the same</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">            do </span><span class="n">i_sp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">sp_ppm_index</span>
+<span class="w">                </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">*</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_nc_index</span><span class="p">))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">/</span><span class="n">sum_temp</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">sum_temp</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)).</span><span class="nb">or</span><span class="p">.</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">            do </span><span class="n">i_sp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">sp_ppm_index</span>
+<span class="w">                </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">*</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_nc_index</span><span class="p">))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">/</span><span class="n">sum_temp</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">sum_temp</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)).</span><span class="nb">or</span><span class="p">.</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">enddo</span>
+
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;sum_sp should be the same as comp after scaling, init should be unchanged&#39;</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,3f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;PM25 (init_sp,sum_sp,comp)&#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">sp_pm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_nc_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,3f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;PM10 (init_sp,sum_sp,comp)&#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">sp_pm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_nc_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="c">!Replace the ppm values in the species with the emep read version</span>
+<span class="w">            </span><span class="c">!This is not correct. emep_subgrid_index,allsource_index is the sum of all local and nonlocal sources, so a larger number than the primary.</span>
+<span class="w">            </span><span class="c">!This will lead to negative values set to 0. So comment out this line (21.03.2022)</span>
+<span class="w">            </span><span class="c">!species_EMEP_subgrid(:,:,:,pm25_sp_index,sp_ppm_index)=subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm25_nc_index))</span>
+<span class="w">            </span><span class="c">!species_EMEP_subgrid(:,:,:,pm10_sp_index,sp_ppm_index)=subgrid(:,:,:,emep_subgrid_index,allsource_index,pollutant_loop_back_index(pm10_nc_index))</span>
+<span class="w">            </span><span class="c">!Normalise the species other than ppm again after subtracting the ppm</span>
+<span class="w">            </span><span class="c">!This should not change anything</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">            do </span><span class="n">i_sp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">*</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_nc_index</span><span class="p">)</span><span class="o">-</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">/</span><span class="n">sum_temp</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">sum_temp</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)).</span><span class="nb">or</span><span class="p">.</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">            do </span><span class="n">i_sp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">*</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_nc_index</span><span class="p">)</span><span class="o">-</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">/</span><span class="n">sum_temp</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">sum_temp</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)).</span><span class="nb">or</span><span class="p">.</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">enddo</span>
+
+
+<span class="w">            </span><span class="c">!Remove the primary based on the local contribution.</span>
+<span class="w">            </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">)</span><span class="o">=</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">)</span><span class="o">-</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_local_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">pollutant_loop_back_index</span><span class="p">(</span><span class="n">pm25_nc_index</span><span class="p">))</span>
+<span class="w">            </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">)</span><span class="o">=</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">)</span><span class="o">-</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_local_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">pollutant_loop_back_index</span><span class="p">(</span><span class="n">pm10_nc_index</span><span class="p">))</span>
+<span class="w">            </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">).</span><span class="n">lt</span><span class="p">.</span><span class="mf">0.</span><span class="nb">or</span><span class="p">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">)))</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">).</span><span class="n">lt</span><span class="p">.</span><span class="mf">0.</span><span class="nb">or</span><span class="p">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">)))</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">sp_ppm_index</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">            </span><span class="c">!Normalise again after the subtraction to the nonlocal contribution (21.03.2022)</span>
+<span class="w">            </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_sp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">sp_ppm_index</span>
+<span class="w">                </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">*</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">pollutant_loop_back_index</span><span class="p">(</span><span class="n">pm25_nc_index</span><span class="p">)))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">/</span><span class="n">sum_temp</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">sum_temp</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)).</span><span class="nb">or</span><span class="p">.</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                </span><span class="n">sum_temp</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">            do </span><span class="n">i_sp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">sp_ppm_index</span>
+<span class="w">                </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">*</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">pollutant_loop_back_index</span><span class="p">(</span><span class="n">pm10_nc_index</span><span class="p">)))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                    </span><span class="o">/</span><span class="n">sum_temp</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">sum_temp</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)).</span><span class="nb">or</span><span class="p">.</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">i_sp</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">enddo</span>
+
+
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;init_sp should be the same as before, sum_sp should be the same as nonlocal, comp should be larger&#39;</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,4f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;PM25 (init_sp,sum_sp,comp,nonlocal)&#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="n">sp_pm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm25_nc_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">pollutant_loop_back_index</span><span class="p">(</span><span class="n">pm25_nc_index</span><span class="p">)))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,4f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;PM10 (init_sp,sum_sp,comp,nonlocal)&#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="n">sp_pm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">species_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_sp_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">sp_ppm_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">comp_EMEP_subgrid</span><span class="p">(:,:,:,</span><span class="n">pm10_nc_index</span><span class="p">))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_nonlocal_subgrid_index</span><span class="p">,</span><span class="n">allsource_index</span><span class="p">,</span><span class="n">pollutant_loop_back_index</span><span class="p">(</span><span class="n">pm10_nc_index</span><span class="p">)))</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">        </span><span class="k">endif</span>
+
+
+<span class="w">        </span><span class="c">!Only show results where all the subgrids and all sources are valid</span>
+<span class="w">        </span><span class="c">!This is temporary</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">interpolate_subgrids_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            do </span><span class="n">source_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_source_index</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">source_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">use_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                                </span><span class="c">!subgrid(i,j,:,total_subgrid_index,allsource_index,:)=NODATA_value</span>
+<span class="w">                                </span><span class="c">!subgrid(i,j,:,total_subgrid_index,source_index,:)=NODATA_value</span>
+<span class="w">                                </span><span class="c">!comp_subgrid(i,j,:,:)=NODATA_value</span>
+<span class="w">                            </span><span class="k">endif</span>
+<span class="k">                        enddo</span>
+<span class="k">                    enddo</span>
+<span class="k">                endif</span>
+<span class="k">            enddo</span>
+<span class="k">        endif</span>
+
+<span class="k">    end subroutine </span><span class="n">uEMEP_combine_local_source</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

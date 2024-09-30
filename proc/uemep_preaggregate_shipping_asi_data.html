@@ -1,0 +1,478 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_preaggregate_shipping_asi_data &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_preaggregate_shipping_asi_data
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 1.0% of total for procedures.">202 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_read_shipping_asi_data.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_read_shipping_asi_data.f90.html'>uEMEP_read_shipping_asi_data.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/read_shipping_asi_data.html'>read_shipping_asi_data</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_preaggregate_shipping_asi_data</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_preaggregate_shipping_asi_data.html#src">uEMEP_preaggregate_shipping_asi_data</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine uEMEP_preaggregate_shipping_asi_data()  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/uemep_definitions.html'>uEMEP_definitions</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+    <h3>Arguments</h3>
+    <em>None</em>
+    <br>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_preaggregate_shipping_asi_data</span>
+
+<span class="w">        </span><span class="c">!This routine aggregates shipping data in space and time</span>
+<span class="w">        </span><span class="c">!Reads in ASI data from standard files and aggregates in UTM33 100 m grids</span>
+<span class="w">        </span><span class="c">!Writes the data out again in standard ASI format</span>
+<span class="w">        </span><span class="c">!This routine is called if the flag &#39;preaggregate_shipping_asi_data_flag&#39; is set to true</span>
+<span class="w">        </span><span class="k">use </span><span class="n">uEMEP_definitions</span>
+
+<span class="w">        </span><span class="k">implicit none</span>
+
+<span class="k">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span><span class="w"> </span><span class="n">temp_str</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">temp_str1</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">unit_in</span>
+<span class="w">        </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">exists</span>
+<span class="w">        </span><span class="kt">integer </span><span class="nb">count</span><span class="p">,</span><span class="n">index_val</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">ddlatitude</span><span class="p">,</span><span class="n">ddlongitude</span><span class="p">,</span><span class="n">totalnoxemission</span><span class="p">,</span><span class="n">totalparticulatematteremission</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">y_ship</span><span class="p">,</span><span class="n">x_ship</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_ship_index</span><span class="p">,</span><span class="n">j_ship_index</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">t</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">ship_i_dim_index</span><span class="p">,</span><span class="n">ship_j_dim_index</span><span class="p">,</span><span class="n">ship_x_dim_index</span><span class="p">,</span><span class="n">ship_y_dim_index</span><span class="p">,</span><span class="n">ship_lat_dim_index</span><span class="p">,</span><span class="n">ship_lon_dim_index</span><span class="p">,</span><span class="n">ship_count_dim_index</span><span class="p">,</span><span class="n">ship_pm_dim_index</span><span class="p">,</span><span class="n">ship_nox_dim_index</span>
+<span class="w">        </span><span class="k">parameter</span><span class="w"> </span><span class="p">(</span><span class="n">ship_i_dim_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ship_j_dim_index</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">ship_count_dim_index</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">        </span><span class="k">parameter</span><span class="w"> </span><span class="p">(</span><span class="n">ship_x_dim_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ship_y_dim_index</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">ship_lat_dim_index</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">ship_lon_dim_index</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">ship_pm_dim_index</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">ship_nox_dim_index</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">max_ship_dim_index</span>
+<span class="w">        </span><span class="k">parameter</span><span class="w"> </span><span class="p">(</span><span class="n">max_ship_dim_index</span><span class="o">=</span><span class="mi">500000</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">ship_index</span><span class="p">(</span><span class="n">max_ship_dim_index</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">ship_value</span><span class="p">(</span><span class="n">max_ship_dim_index</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">ship_index_count</span><span class="p">,</span><span class="n">i_count</span>
+<span class="w">        </span><span class="kt">logical </span><span class="n">found_index</span>
+
+<span class="w">        </span><span class="kt">real</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ship_delta</span><span class="o">=</span><span class="mi">25</span><span class="mf">0.</span>
+<span class="w">        </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i_ship_min</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span><span class="n">i_ship_max</span><span class="o">=-</span><span class="mi">1000000</span><span class="p">,</span><span class="n">j_ship_min</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span><span class="n">j_ship_max</span><span class="o">=-</span><span class="mi">1000000</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_ship_dim_min</span><span class="p">,</span><span class="n">i_ship_dim_max</span><span class="p">,</span><span class="n">j_ship_dim_min</span><span class="p">,</span><span class="n">j_ship_dim_max</span>
+<span class="w">        </span><span class="k">parameter</span><span class="w"> </span><span class="p">(</span><span class="n">i_ship_dim_min</span><span class="o">=-</span><span class="mi">400</span><span class="p">,</span><span class="n">i_ship_dim_max</span><span class="o">=</span><span class="mi">4500</span><span class="p">,</span><span class="n">j_ship_dim_min</span><span class="o">=</span><span class="mi">25000</span><span class="p">,</span><span class="n">j_ship_dim_max</span><span class="o">=</span><span class="mi">32000</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">ship_array_index</span><span class="p">(</span><span class="n">i_ship_dim_min</span><span class="p">:</span><span class="n">i_ship_dim_max</span><span class="p">,</span><span class="n">j_ship_dim_min</span><span class="p">:</span><span class="n">j_ship_dim_max</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">havbase_data_type</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">        </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">io</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">calculate_aggregated_shipping_emissions_flag</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Aggregating shipping asi data  (uEMEP_preaggregate_shipping_asi_data)&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+
+<span class="w">        </span><span class="n">source_index</span><span class="o">=</span><span class="n">shipping_index</span>
+<span class="w">        </span><span class="n">n_subsource</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">        </span><span class="n">proxy_emission_subgrid</span><span class="p">(:,:,</span><span class="n">source_index</span><span class="p">,:)</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">t</span><span class="o">=</span><span class="mi">1</span>
+
+
+<span class="w">        </span><span class="n">pathfilename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathname_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="w">        </span><span class="c">!Test existence of the shipping filename. If does not exist then use default</span>
+<span class="w">        </span><span class="k">inquire</span><span class="p">(</span><span class="k">file</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span><span class="n">exist</span><span class="o">=</span><span class="n">exists</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">exists</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; ERROR: Shipping file does not exist: &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        endif</span>
+
+<span class="k">        </span><span class="n">ship_index_count</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="n">ship_value</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">ship_index</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="n">ship_array_index</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">        </span><span class="c">!Open the file for reading</span>
+<span class="w">        </span><span class="n">unit_in</span><span class="o">=</span><span class="mi">20</span>
+<span class="w">        </span><span class="k">open</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="n">pathfilename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="nb">access</span><span class="o">=</span><span class="s1">&#39;sequential&#39;</span><span class="p">,</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;old&#39;</span><span class="p">,</span><span class="n">readonly</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Opening shipping file &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="w">        </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+
+<span class="w">        </span><span class="n">subsource_index</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">        </span><span class="n">havbase_data_type</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">        </span><span class="c">!Read header old: ddlatitude;ddlongitude;totalnoxemission;totalparticulatematteremission;fk_vessellloydstype;fk_ais_norwegianmainvesselcategory;date;time</span>
+<span class="w">        </span><span class="c">!Read header new: mmsi;date_time_utc;lat;lon;lloydstype;norvesselcategory;sizegroupgrosston;vesselname;imonumber;dist_nextpoint;sec_nextpoint;fuelconsumption;me_fuelquality;co2emission;so2emission;particulatematteremission;noxemission;nmvocemission;ch4emission;n2oemission;coemission;blackcarbonemission;organiccarbonemission</span>
+<span class="w">        </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">temp_str</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_str</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">count</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="k">do</span>
+<span class="k">            read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">temp_str</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">exit</span>
+<span class="w">            </span><span class="c">!read(unit_in,*) temp_str</span>
+<span class="w">            </span><span class="c">!write(*,*) trim(temp_str)</span>
+<span class="w">            </span><span class="n">ddlatitude</span><span class="o">=</span><span class="mf">0.</span><span class="p">;</span><span class="n">ddlongitude</span><span class="o">=</span><span class="mf">0.</span><span class="p">;</span><span class="n">totalnoxemission</span><span class="o">=</span><span class="mf">0.</span><span class="p">;</span><span class="n">totalparticulatematteremission</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">havbase_data_type</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                </span><span class="c">!Extract the values in the temp_str</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip mmsi</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip date_time_utc</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str1</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_val</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:);</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index_val</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">read</span><span class="p">(</span><span class="n">temp_str1</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">ddlatitude</span><span class="w"> </span><span class="c">!Read an entry</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str1</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_val</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:);</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index_val</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">read</span><span class="p">(</span><span class="n">temp_str1</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">ddlongitude</span><span class="w"> </span><span class="c">!Read an entry</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip lloydstype</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip norvesselcategory</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip sizegroupgrosston</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip vesselname</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip imonumber</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip dist_nextpoint</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip sec_nextpoint</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip fuelconsumption</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip me_fuelquality</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip co2emission</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!Skip so2emission</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str1</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_val</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:);</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index_val</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">read</span><span class="p">(</span><span class="n">temp_str1</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">totalparticulatematteremission</span><span class="w"> </span><span class="c">!Read an entry</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str1</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_val</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:);</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index_val</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">read</span><span class="p">(</span><span class="n">temp_str1</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">totalnoxemission</span><span class="w"> </span><span class="c">!Read an entry</span>
+<span class="w">            </span><span class="k">else</span>
+
+<span class="w">                </span><span class="c">!Extract the values in the temp_str</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str1</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_val</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span>
+<span class="w">                </span><span class="k">read</span><span class="p">(</span><span class="n">temp_str1</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">ddlatitude</span>
+<span class="w">                </span><span class="c">!write (*,*) ddlatitude</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str1</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_val</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span>
+<span class="w">                </span><span class="k">read</span><span class="p">(</span><span class="n">temp_str1</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">ddlongitude</span>
+<span class="w">                </span><span class="c">!write (*,*) ddlongitude</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str1</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_val</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span>
+<span class="w">                </span><span class="c">!write(*,*) index_val,trim(temp_str1),trim(temp_str)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index_val</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">read</span><span class="p">(</span><span class="n">temp_str1</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">totalnoxemission</span>
+<span class="w">                </span><span class="c">!write (*,*) totalnoxemission</span>
+<span class="w">                </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str1</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_val</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index_val</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">read</span><span class="p">(</span><span class="n">temp_str1</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">totalparticulatematteremission</span>
+<span class="w">                </span><span class="c">!index_val=index(temp_str,&#39;;&#39;,back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)</span>
+<span class="w">                </span><span class="c">!if (index_val.gt.1) read(temp_str1,*) temp_int</span>
+<span class="w">                </span><span class="c">!index_val=index(temp_str,&#39;;&#39;,back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)</span>
+<span class="w">                </span><span class="c">!if (index_val.gt.1) read(temp_str1,*) temp_int</span>
+<span class="w">                </span><span class="c">!index_val=index(temp_str,&#39;;&#39;,back=.false.);temp_str1=temp_str(1:index_val-1);temp_str=temp_str(index_val+1:)</span>
+<span class="w">                </span><span class="c">!if (index_val.gt.1) read(temp_str1,*) temp_str2</span>
+<span class="w">                </span><span class="c">!write (*,*) trim(temp_str1)</span>
+<span class="w">                </span><span class="c">!temp_str1=temp_str</span>
+<span class="w">                </span><span class="c">!if (len(temp_str1).gt.0) read(temp_str1,*) temp_str2</span>
+<span class="w">                </span><span class="c">!write (*,*) trim(temp_str1)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="w">            </span><span class="c">!write(*,*) count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission</span>
+<span class="w">            </span><span class="nb">count</span><span class="o">=</span><span class="nb">count</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">mod</span><span class="p">(</span><span class="nb">count</span><span class="p">,</span><span class="mi">10000</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s1">&#39;(2i12,2f12.2,2e12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="nb">count</span><span class="p">,</span><span class="n">ship_index_count</span><span class="p">,</span><span class="n">ddlatitude</span><span class="p">,</span><span class="n">ddlongitude</span><span class="p">,</span><span class="n">totalnoxemission</span><span class="p">,</span><span class="n">totalparticulatematteremission</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">totalnoxemission</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mf">0.</span><span class="nb">or</span><span class="p">.</span><span class="n">totalparticulatematteremission</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                </span><span class="c">!Convert lat lon to utm coords</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">UTM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">ll2utm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">utm_zone</span><span class="p">,</span><span class="n">ddlatitude</span><span class="p">,</span><span class="n">ddlongitude</span><span class="p">,</span><span class="n">y_ship</span><span class="p">,</span><span class="n">x_ship</span><span class="p">)</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LTM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">ll2ltm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ltm_lon0</span><span class="p">,</span><span class="n">ddlatitude</span><span class="p">,</span><span class="n">ddlongitude</span><span class="p">,</span><span class="n">y_ship</span><span class="p">,</span><span class="n">x_ship</span><span class="p">)</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LAEA_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">LL2LAEA</span><span class="p">(</span><span class="n">x_ship</span><span class="p">,</span><span class="n">y_ship</span><span class="p">,</span><span class="n">ddlongitude</span><span class="p">,</span><span class="n">ddlatitude</span><span class="p">,</span><span class="n">projection_attributes</span><span class="p">)</span>
+<span class="w">                </span><span class="k">endif</span>
+
+<span class="w">                </span><span class="c">!Find the grid index it belongs to. This assumes a minimum UTM grid at 0 so the index can be negative</span>
+<span class="w">                </span><span class="c">!Not certain if this 0.5 is correct</span>
+<span class="w">                </span><span class="n">i_ship_index</span><span class="o">=</span><span class="nb">floor</span><span class="p">((</span><span class="n">x_ship</span><span class="o">-</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">ship_delta</span><span class="o">+</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="w">                </span><span class="n">j_ship_index</span><span class="o">=</span><span class="nb">floor</span><span class="p">((</span><span class="n">y_ship</span><span class="o">-</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">ship_delta</span><span class="o">+</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="w">                </span><span class="n">i_ship_min</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">i_ship_index</span><span class="p">,</span><span class="n">i_ship_min</span><span class="p">)</span>
+<span class="w">                </span><span class="n">i_ship_max</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">i_ship_index</span><span class="p">,</span><span class="n">i_ship_max</span><span class="p">)</span>
+<span class="w">                </span><span class="n">j_ship_min</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">j_ship_index</span><span class="p">,</span><span class="n">j_ship_min</span><span class="p">)</span>
+<span class="w">                </span><span class="n">j_ship_max</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">j_ship_index</span><span class="p">,</span><span class="n">j_ship_max</span><span class="p">)</span>
+
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_ship_index</span><span class="p">.</span><span class="n">lt</span><span class="p">.</span><span class="n">i_ship_dim_min</span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="n">i_ship_index</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="n">i_ship_dim_max</span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="n">j_ship_index</span><span class="p">.</span><span class="n">lt</span><span class="p">.</span><span class="n">j_ship_dim_min</span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="n">j_ship_index</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="n">j_ship_dim_max</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">i_ship_dim_min</span><span class="p">,</span><span class="n">i_ship_dim_max</span><span class="p">,</span><span class="n">j_ship_dim_min</span><span class="p">,</span><span class="n">j_ship_dim_max</span>
+<span class="w">                    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">i_ship_index</span><span class="p">,</span><span class="n">j_ship_index</span>
+<span class="w">                    </span><span class="k">stop</span>
+<span class="k">                endif</span>
+
+<span class="k">                </span><span class="n">i_count</span><span class="o">=</span><span class="n">ship_array_index</span><span class="p">(</span><span class="n">i_ship_index</span><span class="p">,</span><span class="n">j_ship_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_count</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">ship_index_count</span><span class="o">=</span><span class="n">ship_index_count</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                    </span><span class="n">ship_array_index</span><span class="p">(</span><span class="n">i_ship_index</span><span class="p">,</span><span class="n">j_ship_index</span><span class="p">)</span><span class="o">=</span><span class="n">ship_index_count</span>
+<span class="w">                    </span><span class="n">i_count</span><span class="o">=</span><span class="n">ship_index_count</span>
+<span class="w">                </span><span class="k">endif</span>
+<span class="k">                </span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_count_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_count_dim_index</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">totalparticulatematteremission</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mf">0.</span><span class="nb">and</span><span class="p">..</span><span class="nb">not</span><span class="p">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">totalparticulatematteremission</span><span class="p">))</span><span class="w"> </span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_pm_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_pm_dim_index</span><span class="p">)</span><span class="o">+</span><span class="n">totalparticulatematteremission</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">totalnoxemission</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mf">0.</span><span class="nb">and</span><span class="p">..</span><span class="nb">not</span><span class="p">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">totalnoxemission</span><span class="p">))</span><span class="w"> </span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_nox_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_nox_dim_index</span><span class="p">)</span><span class="o">+</span><span class="n">totalnoxemission</span>
+<span class="w">                </span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_i_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">i_ship_index</span>
+<span class="w">                </span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_j_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">j_ship_index</span>
+
+<span class="w">                </span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_i_dim_index</span><span class="p">)</span><span class="o">+</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">ship_delta</span>
+<span class="w">                </span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_j_dim_index</span><span class="p">)</span><span class="o">+</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">ship_delta</span>
+<span class="w">                </span><span class="k">call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_x_dim_index</span><span class="p">),</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_y_dim_index</span><span class="p">),</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_lon_dim_index</span><span class="p">),</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_lat_dim_index</span><span class="p">),</span><span class="n">projection_attributes</span><span class="p">,</span><span class="n">projection_type</span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">utm2ll</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">utm_zone</span><span class="p">,</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_y_dim_index</span><span class="p">),</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_x_dim_index</span><span class="p">),</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_lat_dim_index</span><span class="p">),</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_lon_dim_index</span><span class="p">))</span>
+
+<span class="w">                </span><span class="c">!if (mod(count,10000).eq.0) write(*,&#39;(2i,2f,2e)&#39;) count,ship_index_count,ddlatitude,ddlongitude,totalnoxemission,totalparticulatematteremission</span>
+<span class="w">                </span><span class="c">!if (mod(count,10000).eq.0) write(*,&#39;(3i12,4f14.4,2es14.5)&#39;) count,i_count,ship_index(i_count,ship_count_dim_index),ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index),ship_value(i_count,ship_pm_dim_index),ship_value(i_count,ship_nox_dim_index)</span>
+<span class="w">                </span><span class="c">!write(*,*) ship_index_count,x_ship,y_ship</span>
+<span class="w">                </span><span class="c">!write(*,*) i_count,i_ship_index,j_ship_index</span>
+<span class="w">                </span><span class="c">!write(*,*) ship_index(i_count,ship_i_dim_index),ship_index(i_count,ship_j_dim_index),ship_index(i_count,ship_count_dim_index)</span>
+
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="w">            </span><span class="c">!Determine if the grid has been found before and add to it</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="mf">1.</span><span class="n">eq</span><span class="p">.</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                if</span><span class="w"> </span><span class="p">((</span><span class="n">totalnoxemission</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mf">0.</span><span class="nb">or</span><span class="p">.</span><span class="n">totalparticulatematteremission</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">found_index</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ship_index_count</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_i_dim_index</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">i_ship_index</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_j_dim_index</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">j_ship_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_count_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_count_dim_index</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                            </span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_pm_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_pm_dim_index</span><span class="p">)</span><span class="o">+</span><span class="n">totalparticulatematteremission</span>
+<span class="w">                            </span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_nox_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_nox_dim_index</span><span class="p">)</span><span class="o">+</span><span class="n">totalnoxemission</span>
+<span class="w">                            </span><span class="n">found_index</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">                            </span><span class="k">exit</span>
+<span class="k">                        endif</span>
+<span class="k">                    enddo</span>
+<span class="k">                    if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">found_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">ship_index_count</span><span class="o">=</span><span class="n">ship_index_count</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                        </span><span class="n">i_count</span><span class="o">=</span><span class="n">ship_index_count</span>
+<span class="w">                        </span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_i_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">i_ship_index</span>
+<span class="w">                        </span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_j_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">j_ship_index</span>
+<span class="w">                        </span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_count_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">                        </span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_pm_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">totalparticulatematteremission</span>
+<span class="w">                        </span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_nox_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">totalnoxemission</span>
+<span class="w">                    </span><span class="k">endif</span>
+
+<span class="w">                    </span><span class="c">!write(*,*) count,ship_index_count</span>
+<span class="w">                </span><span class="k">endif</span>
+<span class="k">            endif</span>
+
+<span class="k">        enddo</span>
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2I)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Shipping counts = &#39;</span><span class="p">,</span><span class="nb">count</span><span class="p">,</span><span class="n">ship_index_count</span>
+
+<span class="w">        </span><span class="k">close</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+
+
+
+<span class="w">        </span><span class="c">!Calculate the x,y, lat,lon of the centre of the valid grids</span>
+<span class="w">        </span><span class="c">!do i_count=1,ship_index_count</span>
+<span class="w">        </span><span class="c">!ship_value(i_count,ship_x_dim_index)=(ship_index(i_count,ship_i_dim_index)+.5)*ship_delta</span>
+<span class="w">        </span><span class="c">!ship_value(i_count,ship_y_dim_index)=(ship_index(i_count,ship_j_dim_index)+.5)*ship_delta</span>
+<span class="w">        </span><span class="c">!call utm2ll_modern(1,utm_zone,ship_value(i_count,ship_y_dim_index),ship_value(i_count,ship_x_dim_index),ship_value(i_count,ship_lat_dim_index),ship_value(i_count,ship_lon_dim_index))</span>
+<span class="w">        </span><span class="c">!enddo</span>
+
+<span class="w">        </span><span class="c">!Save the data in the same format as previously provided</span>
+<span class="w">        </span><span class="n">pathfilename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathname_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39;Aggregated_&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="w">        </span><span class="c">!Open the file for reading</span>
+<span class="w">        </span><span class="n">unit_in</span><span class="o">=</span><span class="mi">20</span>
+<span class="w">        </span><span class="k">open</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="n">pathfilename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="nb">access</span><span class="o">=</span><span class="s1">&#39;sequential&#39;</span><span class="p">,</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Writing to aggregated shipping file &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;ddlatitude;ddlongitude;totalnoxemission;totalparticulatematteremission;fk_vessellloydstype;fk_ais_norwegianmainvesselcategory;date;time&#39;</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ship_index_count</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ship_index</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_count_dim_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="s1">&#39;(f14.5,a1,f14.5,a1,e12.2,a1,e12.2,a4)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_lat_dim_index</span><span class="p">),</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_lon_dim_index</span><span class="p">),</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_nox_dim_index</span><span class="p">),</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">ship_value</span><span class="p">(</span><span class="n">i_count</span><span class="p">,</span><span class="n">ship_pm_dim_index</span><span class="p">),</span><span class="s1">&#39;;;;;&#39;</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">        enddo</span>
+
+<span class="k">        close</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!Max and min array dimensions found</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">i_ship_min</span><span class="p">,</span><span class="n">i_ship_max</span><span class="p">,</span><span class="n">j_ship_min</span><span class="p">,</span><span class="n">j_ship_max</span>
+<span class="w">        </span><span class="k">stop</span>
+
+<span class="k">    end subroutine </span><span class="n">uEMEP_preaggregate_shipping_asi_data</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

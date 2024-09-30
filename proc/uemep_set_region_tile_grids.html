@@ -1,0 +1,769 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_set_region_tile_grids &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_set_region_tile_grids
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 2.1% of total for procedures.">410 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_tiling_routines.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_tiling_routines.f90.html'>uEMEP_tiling_routines.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/tiling_routines.html'>tiling_routines</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_set_region_tile_grids</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_set_region_tile_grids.html#src">uEMEP_set_region_tile_grids</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine uEMEP_set_region_tile_grids()  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/uemep_definitions.html'>uEMEP_definitions</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+    <h3>Arguments</h3>
+    <em>None</em>
+    <br>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_set_region_tile_grids</span>
+<span class="w">        </span><span class="c">!This routine creates the tile files for regions/municipalities</span>
+<span class="w">        </span><span class="c">!It is based on the variable tile make &#39;uEMEP_set_tile_grids&#39; so has a lot of unused code in it</span>
+<span class="w">        </span><span class="c">!It basically reads the masking file, in SSB coordinates, and then finds the extent of this to create municipality tile limits and various resolutions</span>
+
+
+<span class="w">        </span><span class="k">use </span><span class="n">uEMEP_definitions</span>
+
+<span class="w">        </span><span class="k">implicit none</span>
+
+<span class="k">        </span><span class="kt">integer </span><span class="n">n_tiles_population_classes</span><span class="p">,</span><span class="n">n_tiles_traffic_classes</span><span class="p">,</span><span class="n">n_tiles_shipping_classes</span>
+<span class="w">        </span><span class="k">parameter</span><span class="w"> </span><span class="p">(</span><span class="n">n_tiles_population_classes</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">n_tiles_traffic_classes</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">n_tiles_shipping_classes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="n">n_tiles_population_classes</span><span class="p">)</span>
+<span class="w">        </span><span class="k">data </span><span class="n">limit_val_tile_population</span><span class="w"> </span><span class="o">/</span><span class="mf">0.</span><span class="p">,</span><span class="mi">10</span><span class="mf">0.</span><span class="p">,</span><span class="mi">100</span><span class="mf">0.</span><span class="p">,</span><span class="mi">1000</span><span class="mf">0.</span><span class="p">,</span><span class="mi">10000</span><span class="mf">0.</span><span class="o">/</span>
+<span class="w">        </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">num_tiles_with_population</span><span class="p">(</span><span class="n">n_tiles_population_classes</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">limit_val_tile_traffic</span><span class="p">(</span><span class="n">n_tiles_traffic_classes</span><span class="p">)</span>
+<span class="w">        </span><span class="k">data </span><span class="n">limit_val_tile_traffic</span><span class="w"> </span><span class="o">/</span><span class="mf">0.</span><span class="p">,</span><span class="mi">100</span><span class="mf">0.</span><span class="p">,</span><span class="mi">1000</span><span class="mf">0.</span><span class="p">,</span><span class="mi">10000</span><span class="mf">0.</span><span class="p">,</span><span class="mi">100000</span><span class="mf">0.</span><span class="o">/</span>
+<span class="w">        </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">num_tiles_with_traffic</span><span class="p">(</span><span class="n">n_tiles_traffic_classes</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">limit_val_tile_shipping</span><span class="p">(</span><span class="n">n_tiles_shipping_classes</span><span class="p">)</span>
+<span class="w">        </span><span class="k">data </span><span class="n">limit_val_tile_shipping</span><span class="w"> </span><span class="o">/</span><span class="mf">0.</span><span class="o">/</span>
+<span class="w">        </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">num_tiles_with_shipping</span><span class="p">(</span><span class="n">n_tiles_shipping_classes</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">        </span><span class="kt">real </span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">n_dim_index</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">n_dim_index</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">tile_subgrid_max</span><span class="p">(</span><span class="n">n_dim_index</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">n_dim_index</span><span class="p">)</span>
+
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tile_subgrid</span><span class="p">(:,:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">x_tile_subgrid</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">y_tile_subgrid</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">lon_tile_subgrid</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">lat_tile_subgrid</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">crossreference_emission_to_tile_subgrid</span><span class="p">(:,:,:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">crossreference_population_to_tile_subgrid</span><span class="p">(:,:,:)</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tile_class_subgrid</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tile_municipality_subgrid</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">aggregated_tile_subgrid</span><span class="p">(:,:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">aggregated_x_tile_subgrid</span><span class="p">(:,:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">aggregated_y_tile_subgrid</span><span class="p">(:,:,:)</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">aggregated_tile_class_subgrid</span><span class="p">(:,:,:)</span>
+
+<span class="w">        </span><span class="kt">integer </span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i_class</span><span class="p">,</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">i_source</span><span class="p">,</span><span class="n">k</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_tile_index</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">tile_population_index</span><span class="w"> </span><span class="c">!,tile_municipality_index,tile_class_index</span>
+
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">temp_name</span><span class="p">,</span><span class="n">temp_str</span><span class="p">,</span><span class="n">temp_str1</span>
+<span class="w">        </span><span class="kt">integer</span><span class="o">*</span><span class="mi">8</span><span class="w"> </span><span class="n">ssb_id</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">municipality_id</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_ssb</span><span class="p">,</span><span class="n">f_easting</span><span class="p">,</span><span class="n">ssb_dx</span><span class="p">,</span><span class="n">y_ssb</span><span class="p">,</span><span class="n">ssb_dy</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">num_tiles_with_municipality</span>
+<span class="w">        </span><span class="kt">logical </span><span class="n">exists</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">unit_in</span>
+<span class="w">        </span><span class="kt">integer </span><span class="nb">count</span><span class="p">,</span><span class="w"> </span><span class="n">index_val</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">num_tile_classes</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">resolution_tile_classes</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="n">count_str</span>
+<span class="w">        </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">unit_tile</span><span class="o">=</span><span class="mi">21</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">population_tile_scale</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">reduce_grid_class</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_aggregated_tiles</span>
+<span class="w">        </span><span class="k">parameter</span><span class="w"> </span><span class="p">(</span><span class="n">n_aggregated_tiles</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="c">!40to5km</span>
+<span class="w">        </span><span class="c">!parameter (n_aggregated_tiles=5) !160to10km</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">dim_region_tiles</span>
+<span class="w">        </span><span class="k">parameter</span><span class="w"> </span><span class="p">(</span><span class="n">dim_region_tiles</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">internal_region_index</span><span class="p">(</span><span class="n">dim_region_tiles</span><span class="p">),</span><span class="n">internal_region_id</span><span class="p">(</span><span class="n">dim_region_tiles</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">internal_region_name</span><span class="p">(</span><span class="n">dim_region_tiles</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_region_tiles</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">dim_region_tiles</span><span class="p">,</span><span class="n">n_dim_index</span><span class="p">),</span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">dim_region_tiles</span><span class="p">,</span><span class="n">n_dim_index</span><span class="p">)</span>
+
+<span class="w">        </span><span class="kt">real </span><span class="n">aggregated_tile_subgrid_delta</span><span class="p">(</span><span class="n">n_dim_index</span><span class="p">,</span><span class="n">n_aggregated_tiles</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">aggregated_tile_subgrid_min</span><span class="p">(</span><span class="n">n_dim_index</span><span class="p">,</span><span class="n">n_aggregated_tiles</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">aggregated_tile_subgrid_max</span><span class="p">(</span><span class="n">n_dim_index</span><span class="p">,</span><span class="n">n_aggregated_tiles</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">aggregated_tile_subgrid_dim</span><span class="p">(</span><span class="n">n_dim_index</span><span class="p">,</span><span class="n">n_aggregated_tiles</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">save_as_seperate_files</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_search</span>
+<span class="w">        </span><span class="k">parameter</span><span class="w"> </span><span class="p">(</span><span class="n">n_search</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="n">search_str</span><span class="p">(</span><span class="n">n_search</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">search_delta</span><span class="p">(</span><span class="n">n_search</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">temp_search</span>
+<span class="w">        </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">io</span>
+
+<span class="w">        </span><span class="k">data </span><span class="n">search_str</span><span class="w"> </span><span class="o">/</span><span class="s1">&#39;_1000m&#39;</span><span class="p">,</span><span class="s1">&#39;_500m&#39;</span><span class="p">,</span><span class="s1">&#39;_250m&#39;</span><span class="p">,</span><span class="s1">&#39;_100m&#39;</span><span class="p">,</span><span class="s1">&#39;_50m&#39;</span><span class="o">/</span>
+<span class="w">        </span><span class="k">data </span><span class="n">search_delta</span><span class="w"> </span><span class="o">/</span><span class="mi">100</span><span class="mf">0.</span><span class="p">,</span><span class="mi">50</span><span class="mf">0.</span><span class="p">,</span><span class="mi">25</span><span class="mf">0.</span><span class="p">,</span><span class="mi">10</span><span class="mf">0.</span><span class="p">,</span><span class="mi">5</span><span class="mf">0.</span><span class="o">/</span>
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Calculating regional tile distribution and resolution (uEMEP_set_region_tile_grids)&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+
+<span class="w">        </span><span class="c">!Set tile index values</span>
+<span class="w">        </span><span class="n">n_tile_index</span><span class="o">=</span><span class="n">n_source_index</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">        </span><span class="n">tile_population_index</span><span class="o">=</span><span class="n">n_source_index</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">        </span><span class="c">!tile_municipality_index=n_source_index+2</span>
+<span class="w">        </span><span class="c">!tile_class_index=n_source_index+3</span>
+
+<span class="w">        </span><span class="c">!Reduce size of grids at and above this value</span>
+<span class="w">        </span><span class="n">reduce_grid_class</span><span class="o">=</span><span class="mi">6</span><span class="w"> </span><span class="c">!Set to 6 does not reduce</span>
+
+<span class="w">        </span><span class="c">!Specify the tiling region to cover all of Norway</span>
+<span class="w">        </span><span class="n">population_tile_scale</span><span class="o">=</span><span class="mf">1.</span><span class="w"> </span><span class="c">!For 10 km</span>
+<span class="w">        </span><span class="c">!population_tile_scale=3. !For 20 km</span>
+<span class="w">        </span><span class="n">population_tile_scale</span><span class="o">=</span><span class="mf">0.625</span><span class="w"> </span><span class="c">!For 5 km, to give 250 people /km^2</span>
+<span class="w">        </span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=-</span><span class="mi">7000</span><span class="mf">0.</span><span class="o">-</span><span class="mi">40000</span>
+<span class="w">        </span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">644000</span><span class="mf">0.</span><span class="o">-</span><span class="mi">40000</span>
+<span class="w">        </span><span class="n">tile_subgrid_max</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">111000</span><span class="mf">0.</span><span class="o">+</span><span class="mi">4000</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">tile_subgrid_max</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">795000</span><span class="mf">0.</span><span class="o">+</span><span class="mi">4000</span><span class="mf">0.</span>
+
+<span class="w">        </span><span class="c">!40to5km tile class</span>
+<span class="w">        </span><span class="n">population_tile_scale</span><span class="o">=</span><span class="mf">0.5</span><span class="w"> </span><span class="c">!For 5 km, to give 200 people /km^2</span>
+<span class="w">        </span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">500</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">500</span><span class="mf">0.</span>
+<span class="w">        </span><span class="c">!Municipality tile classs</span>
+<span class="w">        </span><span class="n">population_tile_scale</span><span class="o">=</span><span class="mf">0.01</span>
+<span class="w">        </span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">100</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">100</span><span class="mf">0.</span>
+
+<span class="w">        </span><span class="n">limit_val_tile_population</span><span class="o">=</span><span class="n">limit_val_tile_population</span><span class="o">*</span><span class="n">population_tile_scale</span>
+
+<span class="w">        </span><span class="c">!Set all tile subgrids relative to the target subgrid</span>
+<span class="w">        </span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="nb">floor</span><span class="p">((</span><span class="n">tile_subgrid_max</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">-</span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span><span class="o">/</span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!New definition</span>
+<span class="w">        </span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="nb">floor</span><span class="p">((</span><span class="n">tile_subgrid_max</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">-</span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span><span class="o">/</span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!New definition</span>
+<span class="w">        </span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span><span class="w"> </span><span class="c">!Not used</span>
+
+
+<span class="w">        </span><span class="c">!aggregation_tile_scale</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n_aggregated_tiles</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">!Not in use</span>
+<span class="w">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span><span class="mf">6.</span>
+<span class="w">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="mf">8.</span>
+<span class="w">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">=</span><span class="mf">4.</span>
+<span class="w">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">=</span><span class="mf">2.</span>
+<span class="w">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span>
+<span class="w">        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">n_aggregated_tiles</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="mf">8.</span>
+<span class="w">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="mf">4.</span>
+<span class="w">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">=</span><span class="mf">2.</span>
+<span class="w">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span>
+<span class="w">        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">n_aggregated_tiles</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="mf">4.</span>
+<span class="w">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="mf">2.</span>
+<span class="w">            </span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="k">        do </span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_aggregated_tiles</span>
+<span class="w">            </span><span class="n">aggregated_tile_subgrid_min</span><span class="p">(:,</span><span class="n">k</span><span class="p">)</span><span class="o">=</span><span class="n">tile_subgrid_min</span><span class="p">(:)</span>
+<span class="w">            </span><span class="n">aggregated_tile_subgrid_max</span><span class="p">(:,</span><span class="n">k</span><span class="p">)</span><span class="o">=</span><span class="n">tile_subgrid_max</span><span class="p">(:)</span>
+<span class="w">            </span><span class="n">aggregated_tile_subgrid_delta</span><span class="p">(:,</span><span class="n">k</span><span class="p">)</span><span class="o">=</span><span class="n">tile_subgrid_delta</span><span class="p">(:)</span><span class="o">*</span><span class="n">aggregation_tile_scale</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">            </span><span class="n">aggregated_tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">=</span><span class="nb">floor</span><span class="p">((</span><span class="n">aggregated_tile_subgrid_max</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">-</span><span class="n">aggregated_tile_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">))</span><span class="o">/</span><span class="n">aggregated_tile_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+<span class="w">            </span><span class="n">aggregated_tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">=</span><span class="nb">floor</span><span class="p">((</span><span class="n">aggregated_tile_subgrid_max</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">-</span><span class="n">aggregated_tile_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">))</span><span class="o">/</span><span class="n">aggregated_tile_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+<span class="w">        </span><span class="k">enddo</span>
+
+
+<span class="w">        </span><span class="c">!Allocate tile subgrids</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">n_tile_index</span><span class="p">))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">x_tile_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">x_tile_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">y_tile_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">y_tile_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">lon_tile_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">lon_tile_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">lat_tile_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">lat_tile_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">crossreference_emission_to_tile_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">crossreference_emission_to_tile_subgrid</span><span class="p">(</span><span class="n">emission_max_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">emission_max_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="mi">2</span><span class="p">,</span><span class="n">n_source_index</span><span class="p">))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">crossreference_population_to_tile_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">crossreference_population_to_tile_subgrid</span><span class="p">(</span><span class="n">population_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">population_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">tile_class_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">tile_class_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">tile_municipality_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">tile_municipality_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">aggregated_tile_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">aggregated_tile_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">n_aggregated_tiles</span><span class="p">))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">aggregated_x_tile_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">aggregated_x_tile_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">n_aggregated_tiles</span><span class="p">))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">aggregated_y_tile_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">aggregated_y_tile_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">n_aggregated_tiles</span><span class="p">))</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">aggregated_tile_class_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">aggregated_tile_class_subgrid</span><span class="p">(</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">n_aggregated_tiles</span><span class="p">))</span>
+
+<span class="w">        </span><span class="c">!Set to 0 all tile values</span>
+<span class="w">        </span><span class="n">tile_subgrid</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">tile_municipality_subgrid</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="n">tile_class_subgrid</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">        </span><span class="c">!Read in SSB file containing gridded municipality ids</span>
+<span class="w">        </span><span class="c">!ssb_dx=1000.</span>
+<span class="w">        </span><span class="c">!ssb_dy=1000.</span>
+<span class="w">        </span><span class="n">f_easting</span><span class="o">=</span><span class="mf">2.e6</span>
+
+<span class="w">        </span><span class="c">!Search file name to define the grid size</span>
+<span class="w">        </span><span class="n">ssb_dx</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">ssb_dy</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">        </span><span class="k">do </span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_search</span>
+<span class="w">            </span><span class="n">temp_search</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">filename_population</span><span class="p">(</span><span class="n">municipality_index</span><span class="p">),</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">search_str</span><span class="p">(</span><span class="n">k</span><span class="p">))))</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">temp_search</span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">ssb_dx</span><span class="o">=</span><span class="n">search_delta</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">                </span><span class="n">ssb_dy</span><span class="o">=</span><span class="n">search_delta</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(i,A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">temp_search</span><span class="p">,</span><span class="s1">&#39; Reading municipality masking data with resolution &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">search_str</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">        enddo</span>
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">ssb_dx</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Cannot find a valid SSB grid size. Stopping. &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename_population</span><span class="p">(</span><span class="n">municipality_index</span><span class="p">))</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        else</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Setting municipality SSB grid size (x,y) = &#39;</span><span class="p">,</span><span class="n">ssb_dx</span><span class="p">,</span><span class="n">ssb_dy</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="k">        </span><span class="n">pathfilename_population</span><span class="p">(</span><span class="n">municipality_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathname_population</span><span class="p">(</span><span class="n">municipality_index</span><span class="p">))</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename_population</span><span class="p">(</span><span class="n">municipality_index</span><span class="p">))</span>
+<span class="w">        </span><span class="c">!Test existence of the heating filename. If does not exist then use default</span>
+<span class="w">        </span><span class="k">inquire</span><span class="p">(</span><span class="k">file</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_population</span><span class="p">(</span><span class="n">municipality_index</span><span class="p">)),</span><span class="n">exist</span><span class="o">=</span><span class="n">exists</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">exists</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; ERROR: SSB file with municipality IDs does not exist: &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_population</span><span class="p">(</span><span class="n">municipality_index</span><span class="p">))</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        endif</span>
+<span class="k">        </span><span class="n">temp_name</span><span class="o">=</span><span class="n">pathfilename_population</span><span class="p">(</span><span class="n">municipality_index</span><span class="p">)</span>
+<span class="w">        </span><span class="c">!Open the file for reading</span>
+<span class="w">        </span><span class="n">unit_in</span><span class="o">=</span><span class="mi">20</span>
+<span class="w">        </span><span class="k">open</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="n">temp_name</span><span class="p">,</span><span class="nb">access</span><span class="o">=</span><span class="s1">&#39;sequential&#39;</span><span class="p">,</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;old&#39;</span><span class="p">,</span><span class="n">readonly</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Opening SSB municipality file &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_name</span><span class="p">)</span>
+<span class="w">        </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">        </span><span class="c">!Read header SSBID0250M;kommunenum</span>
+<span class="w">        </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">temp_str</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Header: &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_str</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">count</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="k">do</span>
+<span class="k">            </span><span class="n">ssb_id</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">municipality_id</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="c">!Read in file string</span>
+<span class="w">            </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">temp_str</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">exit</span>
+<span class="k">            </span><span class="n">index_val</span><span class="o">=</span><span class="nb">index</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">back</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.);</span><span class="n">temp_str1</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_val</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="n">temp_str</span><span class="o">=</span><span class="n">temp_str</span><span class="p">(</span><span class="n">index_val</span><span class="o">+</span><span class="mi">1</span><span class="p">:);</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index_val</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">read</span><span class="p">(</span><span class="n">temp_str1</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">ssb_id</span>
+<span class="w">            </span><span class="k">read</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">municipality_id</span>
+<span class="w">            </span><span class="nb">count</span><span class="o">=</span><span class="nb">count</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">            </span><span class="c">!if (mod(count,100000).eq.0) write(*,*) count,ssb_id,municipality_id</span>
+<span class="w">            </span><span class="c">!Convert id to grid centre coordinates that are already in UTM33 for SSB data</span>
+<span class="w">            </span><span class="n">x_ssb</span><span class="o">=</span><span class="nb">floor</span><span class="p">(</span><span class="n">ssb_id</span><span class="o">/</span><span class="mi">1000000</span><span class="mf">0.</span><span class="p">)</span><span class="o">-</span><span class="n">f_easting</span><span class="o">+</span><span class="n">ssb_dx</span><span class="o">/</span><span class="mf">2.</span>
+<span class="w">            </span><span class="n">y_ssb</span><span class="o">=</span><span class="nb">mod</span><span class="p">(</span><span class="n">ssb_id</span><span class="p">,</span><span class="mi">10000000</span><span class="p">)</span><span class="o">+</span><span class="n">ssb_dy</span><span class="o">/</span><span class="mf">2.</span>
+<span class="w">            </span><span class="c">!Find the tile this ssb grid is in</span>
+<span class="w">            </span><span class="n">i_tile</span><span class="o">=</span><span class="mi">1</span><span class="o">+</span><span class="nb">floor</span><span class="p">((</span><span class="n">x_ssb</span><span class="o">-</span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span><span class="o">/</span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!New definition</span>
+<span class="w">            </span><span class="n">j_tile</span><span class="o">=</span><span class="mi">1</span><span class="o">+</span><span class="nb">floor</span><span class="p">((</span><span class="n">y_ssb</span><span class="o">-</span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span><span class="o">/</span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span><span class="w"> </span><span class="c">!New definition</span>
+<span class="w">            </span><span class="c">!Add the municipality id to give the grid a value</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">municipality_id</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">tile_municipality_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">)</span><span class="o">=</span><span class="n">municipality_id</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">        enddo</span>
+<span class="k">        close</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!Read municipality ID&#39;s and names</span>
+<span class="w">        </span><span class="n">pathfilename_region_id</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathname_region_id</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename_region_id</span><span class="p">)</span>
+<span class="w">        </span><span class="c">!Test existence of the heating filename. If does not exist then use default</span>
+<span class="w">        </span><span class="k">inquire</span><span class="p">(</span><span class="k">file</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_region_id</span><span class="p">),</span><span class="n">exist</span><span class="o">=</span><span class="n">exists</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">exists</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; ERROR: Region file with municipality IDs does not exist: &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_region_id</span><span class="p">)</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        endif</span>
+<span class="k">        </span><span class="n">temp_name</span><span class="o">=</span><span class="n">pathfilename_region_id</span>
+<span class="w">        </span><span class="c">!Open the file for reading</span>
+<span class="w">        </span><span class="n">unit_in</span><span class="o">=</span><span class="mi">20</span>
+<span class="w">        </span><span class="k">open</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="n">temp_name</span><span class="p">,</span><span class="nb">access</span><span class="o">=</span><span class="s1">&#39;sequential&#39;</span><span class="p">,</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;old&#39;</span><span class="p">,</span><span class="n">readonly</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Opening municipality ID file &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_name</span><span class="p">)</span>
+<span class="w">        </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">        </span><span class="c">!Read header index,ID,name</span>
+<span class="w">        </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">temp_str</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Header: &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_str</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">count</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="k">do</span>
+<span class="k">            </span><span class="nb">count</span><span class="o">=</span><span class="nb">count</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">internal_region_index</span><span class="p">(</span><span class="nb">count</span><span class="p">),</span><span class="n">internal_region_id</span><span class="p">(</span><span class="nb">count</span><span class="p">),</span><span class="n">internal_region_name</span><span class="p">(</span><span class="nb">count</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">exit</span>
+<span class="k">        enddo</span>
+<span class="k">        </span><span class="n">n_region_tiles</span><span class="o">=</span><span class="nb">count</span>
+<span class="nb">        </span><span class="k">close</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Number of municipalities: &#39;</span><span class="p">,</span><span class="n">n_region_tiles</span>
+
+<span class="w">        </span><span class="c">!Determine tile subgrid</span>
+<span class="w">        </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">x_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="o">=</span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">+</span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="w"> </span><span class="c">!New definition</span>
+<span class="w">                </span><span class="n">y_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="o">=</span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">+</span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="w"> </span><span class="c">!New definition</span>
+
+<span class="w">                </span><span class="k">call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">x_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">y_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">lon_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">lat_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">projection_attributes</span><span class="p">,</span><span class="n">projection_type</span><span class="p">)</span>
+<span class="w">                </span><span class="c">!if (projection_type.eq.RDM_projection_index) then</span>
+<span class="w">                </span><span class="c">!    call RDM2LL(y_tile_subgrid(i,j),x_tile_subgrid(i,j),lat_tile_subgrid(i,j),lon_tile_subgrid(i,j))</span>
+<span class="w">                </span><span class="c">!elseif (projection_type.eq.UTM_projection_index) then</span>
+<span class="w">                </span><span class="c">!    call UTM2LL(utm_zone,y_tile_subgrid(i,j),x_tile_subgrid(i,j),lat_tile_subgrid(i,j),lon_tile_subgrid(i,j))</span>
+<span class="w">                </span><span class="c">!endif</span>
+<span class="w">                </span><span class="c">!If the EMEP projection is lambert then set the proj coordinates to lambert, otherwise to lat-lon</span>
+<span class="w">                </span><span class="c">!if (EMEP_projection_type.eq.LCC_projection_index) then</span>
+<span class="w">                </span><span class="c">!    call lb2lambert2_uEMEP(xproj_tile_subgrid(i,j),yproj_tile_subgrid(i,j),lon_tile_subgrid(i,j),lat_tile_subgrid(i,j),EMEP_projection_attributes)</span>
+<span class="w">                </span><span class="c">!else</span>
+<span class="w">                </span><span class="c">!    xproj_tile_subgrid(i,j)=lon_tile_subgrid(i,j)</span>
+<span class="w">                </span><span class="c">!    yproj_tile_subgrid(i,j)=lat_tile_subgrid(i,j)</span>
+<span class="w">                </span><span class="c">!endif</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">        enddo</span>
+
+<span class="w">        </span><span class="c">!Find grid max and min for each municipality</span>
+<span class="w">        </span><span class="k">do </span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_region_tiles</span>
+<span class="w">            </span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mf">1e24</span>
+<span class="w">            </span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=-</span><span class="mf">1e24</span>
+<span class="w">            </span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mf">1e24</span>
+<span class="w">            </span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=-</span><span class="mf">1e24</span>
+<span class="w">            </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tile_municipality_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">internal_region_id</span><span class="p">(</span><span class="n">k</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        if</span><span class="w"> </span><span class="p">(</span><span class="n">x_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">).</span><span class="n">lt</span><span class="p">.</span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">))</span><span class="w"> </span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">x_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">))</span><span class="w"> </span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">x_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">y_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">).</span><span class="n">lt</span><span class="p">.</span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">))</span><span class="w"> </span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">y_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">y_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">))</span><span class="w"> </span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">y_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">endif</span>
+<span class="k">                enddo</span>
+<span class="k">            enddo</span>
+<span class="w">            </span><span class="c">!Add or subtract ssb grid size to allow for the poor resolution and make sure all of the kommune is within the tile</span>
+<span class="w">            </span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">-</span><span class="n">ssb_dx</span><span class="o">*</span><span class="mf">1.5</span>
+<span class="w">            </span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">+</span><span class="n">ssb_dx</span><span class="o">*</span><span class="mf">1.5</span>
+<span class="w">            </span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">-</span><span class="n">ssb_dy</span><span class="o">*</span><span class="mf">1.5</span>
+<span class="w">            </span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">+</span><span class="n">ssb_dy</span><span class="o">*</span><span class="mf">1.5</span>
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="w">        </span><span class="c">!Determine the aggregated tile subgrids, in UTM only</span>
+<span class="w">        </span><span class="k">do </span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_aggregated_tiles</span>
+<span class="w">            </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">aggregated_tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">)</span>
+<span class="w">                </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">aggregated_tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">)</span>
+<span class="w">                    </span><span class="n">aggregated_x_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">=</span><span class="n">aggregated_tile_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">+</span><span class="n">aggregated_tile_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="w">                    </span><span class="n">aggregated_y_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">=</span><span class="n">aggregated_tile_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">+</span><span class="n">aggregated_tile_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="w">                </span><span class="k">enddo</span>
+<span class="k">            enddo</span>
+<span class="k">        enddo</span>
+
+<span class="w">        </span><span class="c">!Create a cross reference grid</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i_source</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_source_index</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                        </span><span class="n">crossreference_emission_to_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span><span class="o">+</span><span class="nb">floor</span><span class="p">((</span><span class="n">x_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">-</span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span><span class="o">/</span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span>
+<span class="w">                        </span><span class="n">crossreference_emission_to_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span><span class="o">+</span><span class="nb">floor</span><span class="p">((</span><span class="n">y_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">-</span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span><span class="o">/</span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">enddo</span>
+<span class="k">                enddo</span>
+<span class="k">            endif</span>
+<span class="k">        enddo</span>
+
+<span class="k">        do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">population_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">population_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">crossreference_population_to_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span><span class="o">+</span><span class="nb">floor</span><span class="p">((</span><span class="n">x_population_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="o">-</span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span><span class="o">/</span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span>
+<span class="w">                </span><span class="n">crossreference_population_to_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span><span class="o">+</span><span class="nb">floor</span><span class="p">((</span><span class="n">y_population_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="o">-</span><span class="n">tile_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span><span class="o">/</span><span class="n">tile_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">        enddo</span>
+
+<span class="w">        </span><span class="c">!Calculate the population within each tile</span>
+<span class="w">        </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">population_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">population_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">i_tile</span><span class="o">=</span><span class="n">crossreference_population_to_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">j_tile</span><span class="o">=</span><span class="n">crossreference_population_to_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_tile</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mf">0.</span><span class="nb">and</span><span class="p">.</span><span class="n">j_tile</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">)</span><span class="o">=</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">)</span><span class="o">+</span><span class="n">population_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">population_data_type</span><span class="p">)</span>
+<span class="w">                </span><span class="k">endif</span>
+<span class="k">            enddo</span>
+<span class="k">        enddo</span>
+
+<span class="w">        </span><span class="c">!Calculate the veh.km within each tile</span>
+<span class="w">        </span><span class="n">i_source</span><span class="o">=</span><span class="n">traffic_index</span>
+<span class="w">        </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                </span><span class="n">i_tile</span><span class="o">=</span><span class="n">crossreference_emission_to_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                </span><span class="n">j_tile</span><span class="o">=</span><span class="n">crossreference_emission_to_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_tile</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mf">0.</span><span class="nb">and</span><span class="p">.</span><span class="n">j_tile</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">)</span><span class="o">=</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">proxy_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i_source</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="mi">100</span><span class="mf">0.</span><span class="w"> </span><span class="c">!ADT*km</span>
+<span class="w">                </span><span class="k">endif</span>
+<span class="k">            enddo</span>
+<span class="k">        enddo</span>
+
+<span class="w">        </span><span class="c">!Calculate the shipping emissions within each tile</span>
+<span class="w">        </span><span class="n">i_source</span><span class="o">=</span><span class="n">shipping_index</span>
+<span class="w">        </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                </span><span class="n">i_tile</span><span class="o">=</span><span class="n">crossreference_emission_to_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                </span><span class="n">j_tile</span><span class="o">=</span><span class="n">crossreference_emission_to_tile_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_tile</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mf">0.</span><span class="nb">and</span><span class="p">.</span><span class="n">j_tile</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">proxy_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i_source</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="c">!emission for the time period</span>
+<span class="w">                </span><span class="k">endif</span>
+<span class="k">            enddo</span>
+<span class="k">        enddo</span>
+
+<span class="w">        </span><span class="c">!Write summary results</span>
+<span class="w">        </span><span class="n">num_tiles_with_municipality</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="k">do </span><span class="n">j_tile</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_tile</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tile_municipality_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">num_tiles_with_municipality</span><span class="o">=</span><span class="n">num_tiles_with_municipality</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">        enddo</span>
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;MUNICIPALITY TILE: &#39;</span><span class="p">,</span><span class="n">num_tiles_with_municipality</span>
+
+<span class="w">        </span><span class="c">!Write summary results</span>
+<span class="w">        </span><span class="n">num_tiles_with_population</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">        </span><span class="k">do </span><span class="n">j_tile</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_tile</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">do </span><span class="n">i_class</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_tiles_population_classes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="n">i_class</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="n">num_tiles_with_population</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span><span class="o">=</span><span class="n">num_tiles_with_population</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                </span><span class="k">enddo</span>
+<span class="k">                </span><span class="n">i_class</span><span class="o">=</span><span class="n">n_tiles_population_classes</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="n">i_class</span><span class="p">))</span><span class="w"> </span><span class="n">num_tiles_with_population</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span><span class="o">=</span><span class="n">num_tiles_with_population</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">        enddo</span>
+<span class="k">        do </span><span class="n">i_class</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_tiles_population_classes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i,f12.1,a,f12.1,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;POPULATION TILE: &#39;</span><span class="p">,</span><span class="n">i_class</span><span class="p">,</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="n">i_class</span><span class="p">),</span><span class="s1">&#39; -&#39;</span><span class="p">,</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="n">i_class</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">num_tiles_with_population</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span>
+<span class="w">        </span><span class="k">enddo</span>
+<span class="k">        </span><span class="n">i_class</span><span class="o">=</span><span class="n">n_tiles_population_classes</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i,f12.1,a,a12,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;POPULATION TILE: &#39;</span><span class="p">,</span><span class="n">i_class</span><span class="p">,</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="n">i_class</span><span class="p">),</span><span class="s1">&#39; &lt;&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="n">num_tiles_with_population</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!Write summary results</span>
+<span class="w">        </span><span class="n">num_tiles_with_traffic</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">        </span><span class="k">do </span><span class="n">j_tile</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_tile</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">do </span><span class="n">i_class</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_tiles_traffic_classes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">limit_val_tile_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">limit_val_tile_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="n">num_tiles_with_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span><span class="o">=</span><span class="n">num_tiles_with_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                </span><span class="k">enddo</span>
+<span class="k">                </span><span class="n">i_class</span><span class="o">=</span><span class="n">n_tiles_traffic_classes</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">limit_val_tile_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="p">))</span><span class="w"> </span><span class="n">num_tiles_with_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span><span class="o">=</span><span class="n">num_tiles_with_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">        enddo</span>
+<span class="k">        do </span><span class="n">i_class</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_tiles_traffic_classes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i,f12.1,a,f12.1,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TRAFFIC TILE: &#39;</span><span class="p">,</span><span class="n">i_class</span><span class="p">,</span><span class="n">limit_val_tile_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="p">),</span><span class="s1">&#39; -&#39;</span><span class="p">,</span><span class="n">limit_val_tile_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">num_tiles_with_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span>
+<span class="w">        </span><span class="k">enddo</span>
+<span class="k">        </span><span class="n">i_class</span><span class="o">=</span><span class="n">n_tiles_traffic_classes</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i,f12.1,a,a12,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TRAFFIC TILE: &#39;</span><span class="p">,</span><span class="n">i_class</span><span class="p">,</span><span class="n">limit_val_tile_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="p">),</span><span class="s1">&#39; &lt;&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="n">num_tiles_with_traffic</span><span class="p">(</span><span class="n">i_class</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!Write summary results</span>
+<span class="w">        </span><span class="n">num_tiles_with_shipping</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="k">do </span><span class="n">j_tile</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_tile</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">shipping_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">limit_val_tile_shipping</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="n">num_tiles_with_shipping</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="n">num_tiles_with_shipping</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">        enddo</span>
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;SHIPPING TILE: &#39;</span><span class="p">,</span><span class="n">num_tiles_with_shipping</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="w">        </span><span class="n">num_tile_classes</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="c">!Class 1: 500 m. No emissions at all so interpolated, irrespective of population</span>
+<span class="w">        </span><span class="c">!Class 2: 250 m. Shipping emissions &gt; 0 and Traffic &lt; 1000 (1) or (population &lt; 1000 and Traffic &lt; 10000 (2))</span>
+<span class="w">        </span><span class="c">!Class 3: 125 m. Traffic &lt; 10000 (2) or (population &gt; 1000 (2) population &lt; 5000 (2)</span>
+<span class="w">        </span><span class="c">!Class 4: 50 m. Traffic &gt; 10000 (2) and population &gt; 5000 (3)</span>
+
+<span class="w">        </span><span class="n">tile_class_subgrid</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">        </span><span class="k">do </span><span class="n">j_tile</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_tile</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tile_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+
+<span class="w">                </span><span class="c">!Only choose tiles that are part of a municipality</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tile_municipality_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">tile_class_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">shipping_index</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">limit_val_tile_shipping</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">limit_val_tile_traffic</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">tile_class_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span><span class="w"> </span><span class="c">!No sources and population less than 100</span>
+<span class="w">                    </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">shipping_index</span><span class="p">).</span><span class="n">ge</span><span class="p">.</span><span class="n">limit_val_tile_shipping</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">limit_val_tile_traffic</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">ge</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">tile_class_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">)</span><span class="o">=</span><span class="mi">2</span><span class="w"> </span><span class="c">!Little traffic but any shipping and any population</span>
+<span class="w">                    </span><span class="k">elseif</span><span class="w"> </span><span class="p">((</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="mi">4</span><span class="p">)).</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">).</span><span class="n">ge</span><span class="p">.</span><span class="n">limit_val_tile_traffic</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="mi">4</span><span class="p">)))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">tile_class_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">)</span><span class="o">=</span><span class="mi">3</span><span class="w"> </span><span class="c">!Population from 1000 to 5000 or road traffic</span>
+<span class="w">                    </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">tile_class_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">)</span><span class="o">=</span><span class="mi">4</span><span class="w"> </span><span class="c">!Population &gt; 10000</span>
+<span class="w">                    </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">tile_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">,</span><span class="n">tile_population_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">limit_val_tile_population</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">tile_class_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">)</span><span class="o">=</span><span class="mi">4</span><span class="w"> </span><span class="c">!Population &gt; 100000</span>
+<span class="w">                    </span><span class="k">endif</span>
+<span class="w">                    </span><span class="c">!if (tile_class_subgrid(i_tile,j_tile).eq.2) tile_class_subgrid(i_tile,j_tile)=3</span>
+<span class="w">                    </span><span class="n">num_tile_classes</span><span class="p">(</span><span class="n">tile_class_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">))</span><span class="o">=</span><span class="n">num_tile_classes</span><span class="p">(</span><span class="n">tile_class_subgrid</span><span class="p">(</span><span class="n">i_tile</span><span class="p">,</span><span class="n">j_tile</span><span class="p">))</span><span class="o">+</span><span class="mi">1</span>
+
+<span class="w">                </span><span class="k">endif</span>
+<span class="k">            enddo</span>
+<span class="k">        enddo</span>
+
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TILES OF CLASS 1 (500m): &#39;</span><span class="p">,</span><span class="n">num_tile_classes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TILES OF CLASS 2 (250m): &#39;</span><span class="p">,</span><span class="n">num_tile_classes</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TILES OF CLASS 3 (125m): &#39;</span><span class="p">,</span><span class="n">num_tile_classes</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reduce_grid_class</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TILES OF CLASS 4 ( 50m): &#39;</span><span class="p">,</span><span class="n">num_tile_classes</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TILES OF CLASS 4 ( 50m): &#39;</span><span class="p">,</span><span class="n">num_tile_classes</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">        </span><span class="k">endif</span>
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">reduce_grid_class</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TILES OF CLASS 5 ( 25m): &#39;</span><span class="p">,</span><span class="n">num_tile_classes</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TILES OF CLASS 5 ( 25m): &#39;</span><span class="p">,</span><span class="n">num_tile_classes</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="k">        </span><span class="n">resolution_tile_classes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="mi">50</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">resolution_tile_classes</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="mi">25</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">resolution_tile_classes</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">=</span><span class="mi">12</span><span class="mf">5.</span>
+<span class="w">        </span><span class="n">resolution_tile_classes</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">=</span><span class="mi">5</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">resolution_tile_classes</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">=</span><span class="mi">2</span><span class="mf">5.</span>
+
+
+<span class="w">        </span><span class="c">!Save results in a single file</span>
+<span class="w">        </span><span class="n">temp_name</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathname_tiles</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename_tiles</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,2a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Saving to: &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_name</span><span class="p">)</span>
+<span class="w">        </span><span class="k">open</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="n">temp_name</span><span class="p">,</span><span class="nb">access</span><span class="o">=</span><span class="s1">&#39;sequential&#39;</span><span class="p">,</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">count</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="k">do </span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_region_tiles</span>
+<span class="w">            </span><span class="nb">count</span><span class="o">=</span><span class="nb">count</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,i0.5)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;tile_tag= &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">save_tile_tag</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="nb">count</span>
+<span class="w">            </span><span class="c">!write(unit_tile,&#39;(a,i0.5)&#39;) &#39;tile_tag= &#39;,count</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;region_name= &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">internal_region_name</span><span class="p">(</span><span class="nb">count</span><span class="p">))</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,i0.5)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;region_id= &#39;</span><span class="p">,</span><span class="n">internal_region_id</span><span class="p">(</span><span class="nb">count</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,i0.5)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;region_index= &#39;</span><span class="p">,</span><span class="n">internal_region_index</span><span class="p">(</span><span class="nb">count</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_delta(x_dim_index)=&#39;</span><span class="p">,</span><span class="n">region_subgrid_delta</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_delta(y_dim_index)=&#39;</span><span class="p">,</span><span class="n">region_subgrid_delta</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_min(x_dim_index)=&#39;</span><span class="p">,</span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_min(y_dim_index)=&#39;</span><span class="p">,</span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_max(x_dim_index)=&#39;</span><span class="p">,</span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_max(y_dim_index)=&#39;</span><span class="p">,</span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">        </span><span class="k">enddo</span>
+<span class="k">        close</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!Save results in multiple files</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">save_as_seperate_files</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="nb">count</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">do </span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_region_tiles</span>
+<span class="w">                </span><span class="nb">count</span><span class="o">=</span><span class="nb">count</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">count_str</span><span class="p">,</span><span class="s1">&#39;(i8)&#39;</span><span class="p">)</span><span class="w"> </span><span class="nb">count</span>
+<span class="nb">                </span><span class="n">temp_name</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathname_tiles</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="nb">ADJUSTL</span><span class="p">(</span><span class="n">count_str</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39;_&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename_tiles</span><span class="p">)</span>
+<span class="w">                </span><span class="k">open</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="n">temp_name</span><span class="p">,</span><span class="nb">access</span><span class="o">=</span><span class="s1">&#39;sequential&#39;</span><span class="p">,</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,i0.5)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;tile_tag= &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">save_tile_tag</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="nb">count</span>
+<span class="nb">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;region_name= &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">internal_region_name</span><span class="p">(</span><span class="nb">count</span><span class="p">))</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,i0.5)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;region_id= &#39;</span><span class="p">,</span><span class="n">internal_region_id</span><span class="p">(</span><span class="nb">count</span><span class="p">)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,i0.5)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;region_index= &#39;</span><span class="p">,</span><span class="n">internal_region_index</span><span class="p">(</span><span class="nb">count</span><span class="p">)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_delta(x_dim_index)=&#39;</span><span class="p">,</span><span class="n">region_subgrid_delta</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_delta(y_dim_index)=&#39;</span><span class="p">,</span><span class="n">region_subgrid_delta</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_min(x_dim_index)=&#39;</span><span class="p">,</span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_min(y_dim_index)=&#39;</span><span class="p">,</span><span class="n">tile_region_min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_max(x_dim_index)=&#39;</span><span class="p">,</span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">,</span><span class="s1">&#39;(a,f12.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;subgrid_max(y_dim_index)=&#39;</span><span class="p">,</span><span class="n">tile_region_max</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">close</span><span class="p">(</span><span class="n">unit_tile</span><span class="p">)</span>
+<span class="w">            </span><span class="k">enddo</span>
+
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Number of region tiles: &#39;</span><span class="p">,</span><span class="nb">count</span>
+
+<span class="nb">        </span><span class="k">endif</span>
+
+
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Stopping after calculating tiles&#39;</span>
+<span class="w">        </span><span class="k">stop</span>
+
+<span class="k">    end subroutine </span><span class="n">uEMEP_set_region_tile_grids</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

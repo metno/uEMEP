@@ -1,0 +1,595 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_subgrid_EMEP_from_in_region &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_subgrid_EMEP_from_in_region
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 1.2% of total for procedures.">237 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_subgrid_EMEP.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_subgrid_emep.f90.html'>uEMEP_subgrid_EMEP.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/subgrid_emep.html'>subgrid_emep</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_subgrid_EMEP_from_in_region</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_subgrid_emep_from_in_region.html#src">uEMEP_subgrid_EMEP_from_in_region</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine uEMEP_subgrid_EMEP_from_in_region()  
+</h2>
+    
+
+
+
+    <h3>Arguments</h3>
+    <em>None</em>
+    <br>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_subgrid_EMEP_from_in_region</span>
+
+<span class="w">        </span><span class="c">! contribution to centre of each EMEP cell from in-region, within MW and outside MW, for each region</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">EMEP_local_from_in_region</span><span class="p">(:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:)</span><span class="w"> </span><span class="c">! (x,y,region,t,source,pollutant)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">EMEP_semilocal_from_in_region</span><span class="p">(:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:)</span><span class="w"> </span><span class="c">! (x,y,region,t,source,pollutant)</span>
+<span class="w">        </span><span class="c">! arrays for accumulating data for a single EMEP cell of the above arrays (is this actually faster than accumulating directly in the big arrays????)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">temp_EMEP_local_from_in_region</span><span class="p">(:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">temp_EMEP_semilocal_from_in_region</span><span class="p">(:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:)</span>
+<span class="w">        </span><span class="c">! additional increment for the centre of each EMEP cell, for each region</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">EMEP_additional_increment_from_in_region</span><span class="p">(:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:)</span><span class="w">  </span><span class="c">! (x,y,region,t,source,pollutant)</span>
+<span class="w">        </span><span class="c">! additional increment for a single EMEP cell, for each region, to be accumulated</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">temp_EMEP_additional_increment_from_in_region</span><span class="p">(:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:)</span><span class="w">  </span><span class="c">! (region,t,source,pollutant)</span>
+<span class="w">        </span><span class="c">! additional increment of a single big LF grid to a single receptor EMEP grid (before weighing by region)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">EMEP_additional_increment_current_lfgrid</span><span class="p">(:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="p">:)</span><span class="w">  </span><span class="c">! (t,source,pollutant)</span>
+<span class="w">        </span><span class="c">! weighting of the additional increment, for each region</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">weights_EMEP_additional_increment_current_lfgrid</span><span class="p">(:)</span><span class="w">  </span><span class="c">! (region)</span>
+<span class="w">        </span><span class="c">! weighting of an LF cell for local and semilocal contribution</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">weighting_value_local</span><span class="p">,</span><span class="n">weighting_value_semilocal</span>
+<span class="w">        </span><span class="c">! indexers for looping</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="w">             </span><span class="c">! target subgrids</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="w">           </span><span class="c">! EMEP grids</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_dist</span><span class="p">,</span><span class="n">j_dist</span><span class="w">   </span><span class="c">! LF dimensions</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">iiii</span><span class="p">,</span><span class="n">jjjj</span><span class="w">       </span><span class="c">! small LF grids within a big LF grid</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_sub</span><span class="p">,</span><span class="n">j_sub</span><span class="w">     </span><span class="c">! subsamples of an EMEP grid</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_region</span><span class="w">        </span><span class="c">! region dimension</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_source</span><span class="w">        </span><span class="c">! source dimension</span>
+<span class="w">        </span><span class="c">! indexers for determining positioning of additional LF grids</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">ii_start</span><span class="p">,</span><span class="n">jj_start</span>
+<span class="w">        </span><span class="c">! additinoal indexers</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">iii</span><span class="p">,</span><span class="n">jjj</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">iii_nc</span><span class="p">,</span><span class="n">jjj_nc</span>
+<span class="w">        </span><span class="c">! displacement distances in LF grids (whole grids)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">x_dist</span><span class="p">,</span><span class="n">y_dist</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">xdist_big</span><span class="p">,</span><span class="n">ydist_big</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">xdist_small</span><span class="p">,</span><span class="n">ydist_small</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">xdist_small_first</span><span class="p">,</span><span class="n">ydist_small_first</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">idist_small</span><span class="p">,</span><span class="n">jdist_small</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">max_x_dist</span><span class="p">,</span><span class="n">max_y_dist</span>
+<span class="w">        </span><span class="c">! indexers for the location of a 1x1 LF grid cell in the EMEP grid</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">iiii_nc</span><span class="p">,</span><span class="n">jjjj_nc</span>
+<span class="w">        </span><span class="c">! indexers for the location of a 1x1 LF grid cell in the extended EMEP grid</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">iiii_extended</span><span class="p">,</span><span class="n">jjjj_extended</span>
+<span class="w">        </span><span class="c">! indexers for finding local contributions in LF array</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">lc_index</span><span class="p">,</span><span class="n">lc_additional_index</span>
+<span class="w">        </span><span class="c">! counters</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">counter</span><span class="p">,</span><span class="n">counter_local</span><span class="p">,</span><span class="n">counter_semilocal</span>
+<span class="w">        </span><span class="c">! variables to hold a region index</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">current_region_index</span>
+<span class="w">        </span><span class="c">! fractional position of uEMEP subgrid within an EMEP grid</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">ii_frac_target</span><span class="p">,</span><span class="n">jj_frac_target</span>
+<span class="w">        </span><span class="c">! location of subgrid in EMEP&#39;s coordinate system</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_temp</span><span class="p">,</span><span class="n">y_temp</span>
+<span class="w">        </span><span class="c">! distance between target subgrid and an EMEP grid centre or EMEP subsample location</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_dist_target</span><span class="p">,</span><span class="n">y_dist_target</span>
+<span class="w">        </span><span class="c">! half-size of the moving window</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">n_EMEP_grids_to_edge_of_moving_window</span>
+<span class="w">        </span><span class="c">! fraction of an EMEP grid that is in the correct region</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">current_EMEP_region_fraction</span>
+<span class="w">        </span><span class="c">! weighting for area interpolation</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">weighting_val</span><span class="p">,</span><span class="n">weight_check</span>
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;=====================================================================================================&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Calculation local and semilocal from-in-region EMEP contributions to subgrids (uEMEP_subgrid_EMEP_from_in_region)&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;=====================================================================================================&#39;</span>
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,8I8)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;dims: (x_emep,y_emep,reg,time,source,pollutant,xdist,ydist) = &#39;</span><span class="p">,</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">),</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">),</span><span class="n">n_regions</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">,</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">xdist_dim_nc_index</span><span class="p">),</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">ydist_dim_nc_index</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">! ************************************************</span>
+<span class="w">        </span><span class="c">! PART 1: Calculate contributions to the EMEP grid</span>
+<span class="w">        </span><span class="c">! ************************************************</span>
+
+<span class="w">        </span><span class="c">! Indices in lc_var3d_nc to find the normal and additional local contributions</span>
+<span class="w">        </span><span class="n">lc_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lc_local_nc_loop_index</span><span class="p">(</span><span class="n">local_fraction_grid_for_EMEP_grid_interpolation</span><span class="p">)</span>
+<span class="w">        </span><span class="n">lc_additional_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lc_local_nc_loop_index</span><span class="p">(</span><span class="n">local_fraction_grid_for_EMEP_additional_grid_interpolation</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">! distance in x or y (EMEP grid) from receptor subgrid to edge of moving window, in units of EMEP grids</span>
+<span class="w">        </span><span class="c">! (normally whole number, but not if EMEP_grid_interpolation_size is odd number)</span>
+<span class="w">        </span><span class="n">n_EMEP_grids_to_edge_of_moving_window</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EMEP_grid_interpolation_size</span><span class="o">*</span><span class="mf">0.5</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f8.1)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;n_EMEP_grids_to_edge_of_moving_window=&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">n_EMEP_grids_to_edge_of_moving_window</span>
+
+<span class="w">        </span><span class="c">! Calculate local and semilocal contributions to centre of all EMEP grids</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Allocating arrays for calculating in-region local and semilocal contribution to the EMEP grid&#39;</span>
+
+<span class="w">        </span><span class="c">! Allocate arrays</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">EMEP_local_from_in_region</span><span class="p">(</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">),</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">),</span><span class="n">n_regions</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">))</span>
+<span class="w">        </span><span class="n">EMEP_local_from_in_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">),</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">),</span><span class="n">n_regions</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">))</span>
+<span class="w">        </span><span class="n">EMEP_semilocal_from_in_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">temp_EMEP_local_from_in_region</span><span class="p">(</span><span class="n">n_regions</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">))</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">temp_EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">n_regions</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">))</span>
+
+<span class="w">        </span><span class="c">! Loop over all EMEP cells and calculate local and semilocal contributions when moving window is centered at the centre of the cell</span>
+<span class="w">        </span><span class="k">do </span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">jj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">temp_EMEP_local_from_in_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">                </span><span class="n">temp_EMEP_semilocal_from_in_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">                </span><span class="c">! Loop over all (small) LF contribution cells to this EMEP cell</span>
+<span class="w">                </span><span class="k">do </span><span class="n">i_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">xdist_dim_nc_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">j_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">ydist_dim_nc_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="c">! number of grids displaced relative to the receptor grid cell</span>
+<span class="w">                        </span><span class="n">x_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i_dist</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">xdist_centre_nc</span>
+<span class="w">                        </span><span class="n">y_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">j_dist</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ydist_centre_nc</span>
+<span class="w">                        </span><span class="c">! index in the netcdf file of this cell</span>
+<span class="w">                        </span><span class="n">iiii_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">x_dist</span>
+<span class="w">                        </span><span class="n">jjjj_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y_dist</span>
+<span class="w">                        </span><span class="c">! index in the extended EMEP grid of this cell</span>
+<span class="w">                        </span><span class="n">iiii_extended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iiii_nc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ngrid_extended_margin</span>
+<span class="w">                        </span><span class="n">jjjj_extended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jjjj_nc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ngrid_extended_margin</span>
+
+<span class="w">                        </span><span class="c">! Check if this cell is covered by the extended grid. If not, assume it is completely outside all regions</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="p">(</span><span class="n">iiii_extended</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">iiii_extended</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">nx_EMEP_extended</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">jjjj_extended</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">jjjj_extended</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ny_EMEP_extended</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            cycle</span>
+<span class="k">                        end if</span>
+
+<span class="w">                        </span><span class="c">! Loop over all regions</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">i_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_regions</span>
+
+<span class="w">                            </span><span class="c">! get fraction of the LF grid that is in the region</span>
+<span class="w">                            </span><span class="n">current_region_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">regionindex_loop_index</span><span class="p">(</span><span class="n">i_region</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">current_EMEP_region_fraction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">regionfraction_per_EMEP_extended_grid</span><span class="p">(</span><span class="n">iiii_extended</span><span class="p">,</span><span class="w"> </span><span class="n">jjjj_extended</span><span class="p">,</span><span class="w"> </span><span class="n">i_region</span><span class="p">)</span>
+
+<span class="w">                            </span><span class="c">! Determine the weights to use for this LF cell</span>
+<span class="w">                            </span><span class="c">! for local, the weight is the area fraction that is in the region and inside the moving window</span>
+<span class="w">                            </span><span class="c">! for semilocal, the weight is the area fraction that is in the region but outside the moving window</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">current_EMEP_region_fraction</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                                </span><span class="c">! No part of this EMEP grid is within the region</span>
+<span class="w">                                </span><span class="k">cycle</span>
+<span class="k">                            else if</span><span class="w"> </span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x_dist</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">n_EMEP_grids_to_edge_of_moving_window</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">y_dist</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">n_EMEP_grids_to_edge_of_moving_window</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                                </span><span class="c">! this LF grid is sure to be completely within the moving window</span>
+<span class="w">                                </span><span class="n">weighting_value_local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_EMEP_region_fraction</span>
+<span class="w">                                </span><span class="n">weighting_value_semilocal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">                            </span><span class="k">else if</span><span class="w"> </span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x_dist</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">n_EMEP_grids_to_edge_of_moving_window</span><span class="o">+</span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">y_dist</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">n_EMEP_grids_to_edge_of_moving_window</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                                </span><span class="c">! this LF grid is sure to be completely outside the moving window</span>
+<span class="w">                                </span><span class="n">weighting_value_local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">                                </span><span class="n">weighting_value_semilocal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_EMEP_region_fraction</span>
+<span class="w">                            </span><span class="k">else</span>
+<span class="w">                                </span><span class="c">! this LF grid might be partly covered by the moving window</span>
+<span class="w">                                </span><span class="c">! -&gt; we must go through all subsamples of that grid to find the overlap between region and moving window</span>
+<span class="w">                                </span><span class="n">counter_local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w">       </span><span class="c">! count the subsample grids inside-moving-window &amp; in-region</span>
+<span class="w">                                </span><span class="n">counter_semilocal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w">   </span><span class="c">! count the subsample grids outside-moving-window &amp; in-region</span>
+<span class="w">                                </span><span class="k">do </span><span class="n">i_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                                    </span><span class="k">do </span><span class="n">j_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                                        </span><span class="c">! first check if this subsample is in the region</span>
+<span class="w">                                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_extended_subsample_region_id</span><span class="p">(</span><span class="n">i_sub</span><span class="p">,</span><span class="n">j_sub</span><span class="p">,</span><span class="n">iiii_extended</span><span class="p">,</span><span class="n">jjjj_extended</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">current_region_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                                            </span><span class="c">! deduce x- and y-distance (in number of EMEP grids) from this subsample location to the midpoint of the receptor grid-cell</span>
+<span class="w">                                            </span><span class="n">x_dist_target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_dist</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">i_sub</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">/</span><span class="n">n_subsamples_per_EMEP_grid</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5</span>
+<span class="w">                                            </span><span class="n">y_dist_target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_dist</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">j_sub</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">/</span><span class="n">n_subsamples_per_EMEP_grid</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5</span>
+<span class="w">                                            </span><span class="c">! use these distances to determine whether the subsample is inside the moving window</span>
+<span class="w">                                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x_dist_target</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">n_EMEP_grids_to_edge_of_moving_window</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">y_dist_target</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">n_EMEP_grids_to_edge_of_moving_window</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                                                </span><span class="c">! this subsample is inside the moving window</span>
+<span class="w">                                                </span><span class="n">counter_local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter_local</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                                            </span><span class="k">else</span>
+<span class="w">                                                </span><span class="c">! this subsample is outside the moving window</span>
+<span class="w">                                                </span><span class="n">counter_semilocal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter_semilocal</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                                            </span><span class="k">end if</span>
+<span class="k">                                        end if</span>
+<span class="k">                                    end do</span>
+<span class="k">                                end do</span>
+<span class="w">                                </span><span class="c">! Divide counters by total number of subsamples per EMEP grid to get the area fraction</span>
+<span class="w">                                </span><span class="n">weighting_value_local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter_local</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="n">n_subsamples_per_EMEP_grid</span><span class="o">**</span><span class="mi">2</span>
+<span class="w">                                </span><span class="n">weighting_value_semilocal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter_semilocal</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="n">n_subsamples_per_EMEP_grid</span><span class="o">**</span><span class="mi">2</span>
+<span class="w">                            </span><span class="k">end if</span>
+<span class="k">                            </span><span class="n">temp_EMEP_local_from_in_region</span><span class="p">(</span><span class="n">i_region</span><span class="p">,:,:,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temp_EMEP_local_from_in_region</span><span class="p">(</span><span class="n">i_region</span><span class="p">,:,:,:)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lc_var3d_nc</span><span class="p">(</span><span class="n">i_dist</span><span class="p">,</span><span class="n">j_dist</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:,</span><span class="n">lc_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">n_source_index</span><span class="p">,:)</span><span class="o">*</span><span class="n">weighting_value_local</span>
+<span class="w">                            </span><span class="n">temp_EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">i_region</span><span class="p">,:,:,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temp_EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">i_region</span><span class="p">,:,:,:)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lc_var3d_nc</span><span class="p">(</span><span class="n">i_dist</span><span class="p">,</span><span class="n">j_dist</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:,</span><span class="n">lc_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">n_source_index</span><span class="p">,:)</span><span class="o">*</span><span class="n">weighting_value_semilocal</span>
+<span class="w">                        </span><span class="k">end do</span><span class="w"> </span><span class="c">! i_region = 1, n_regions</span>
+
+<span class="w">                    </span><span class="k">end do</span>
+<span class="k">                end do</span>
+<span class="k">                </span><span class="n">EMEP_local_from_in_region</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:,:,:,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temp_EMEP_local_from_in_region</span>
+<span class="w">                </span><span class="n">EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:,:,:,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temp_EMEP_semilocal_from_in_region</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">        end do</span>
+
+<span class="w">        </span><span class="c">! Deallocate temporary arrays</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="p">(</span><span class="n">temp_EMEP_local_from_in_region</span><span class="p">)</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="p">(</span><span class="n">temp_EMEP_semilocal_from_in_region</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">! Calculate the additional incremental contribution to each EMEP grid for each region</span>
+<span class="w">        </span><span class="c">! NB: we let the interpolation domain extend to the very edge of the LF data, not limited by the EMEP_additional_grid_interpolation_size (this is only used to check &gt;0 to determine whether we should calculate it or not)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_additional_grid_interpolation_size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Allocating arrays for additional increment calculation&#39;</span>
+
+<span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">EMEP_additional_increment_from_in_region</span><span class="p">(</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">),</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">),</span><span class="n">n_regions</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">))</span>
+<span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">temp_EMEP_additional_increment_from_in_region</span><span class="p">(</span><span class="n">n_regions</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">))</span>
+<span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">EMEP_additional_increment_current_lfgrid</span><span class="p">(</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">))</span>
+<span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">weights_EMEP_additional_increment_current_lfgrid</span><span class="p">(</span><span class="n">n_regions</span><span class="p">))</span>
+
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Calculating additional increment to all EMEP grids&#39;</span>
+
+<span class="w">            </span><span class="c">! Use the starting position of the read in EMEP file to initialise the starting point</span>
+<span class="w">            </span><span class="n">ii_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">mod</span><span class="p">(</span><span class="n">dim_start_EMEP_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">            </span><span class="n">jj_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">mod</span><span class="p">(</span><span class="n">dim_start_EMEP_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="w">            </span><span class="c">! Deduce the max distance (+/-) we have LF data for</span>
+<span class="w">            </span><span class="n">max_x_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">xdist_dim_nc_index</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+<span class="w">            </span><span class="n">max_y_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">ydist_dim_nc_index</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+
+<span class="w">            </span><span class="c">! Loop over all EMEP grids</span>
+<span class="w">            </span><span class="n">EMEP_additional_increment_from_in_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">            </span><span class="k">do </span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">do </span><span class="n">jj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="c">! Initialize the additional increment of this EMEP cell to zero</span>
+<span class="w">                    </span><span class="n">temp_EMEP_additional_increment_from_in_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">                    </span><span class="c">! EMEP grid index of bottom-left-corner-cell of the additional grid associated with that EMEP grid</span>
+<span class="w">                    </span><span class="n">iii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">int</span><span class="p">((</span><span class="n">ii</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="n">ii_start</span><span class="p">)</span><span class="o">/</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ii_start</span>
+<span class="w">                    </span><span class="n">jjj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">int</span><span class="p">((</span><span class="n">jj</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="n">jj_start</span><span class="p">)</span><span class="o">/</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">jj_start</span>
+
+<span class="w">                    </span><span class="c">! Loop over all big (additional) LF grids that give contributions to the EMEP grid</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">xdist_dim_nc_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">j_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">ydist_dim_nc_index</span><span class="p">)</span>
+
+<span class="w">                            </span><span class="c">! Initialize additional increment to the total additional contribution from EMEP from this cell (all times, sources and pollutants)</span>
+<span class="w">                            </span><span class="n">EMEP_additional_increment_current_lfgrid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lc_var3d_nc</span><span class="p">(</span><span class="n">i_dist</span><span class="p">,</span><span class="n">j_dist</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:,</span><span class="n">lc_additional_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">n_source_index</span><span class="p">,:)</span>
+<span class="w">                            </span>
+<span class="w">                            </span><span class="c">! the x_dist and y_dist of this big LF grid (..., -1, 0, 1, ...)</span>
+<span class="w">                            </span><span class="n">xdist_big</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i_dist</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">xdist_centre_nc</span>
+<span class="w">                            </span><span class="n">ydist_big</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">j_dist</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ydist_centre_nc</span>
+<span class="w">                            </span><span class="c">! deduce what is the xdist and ydist in the 1x1 LF grid of the lower-left EMEP cell falling within this big LF grid</span>
+<span class="w">                            </span><span class="n">xdist_small_first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iii</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">xdist_big</span><span class="o">*</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">ydist_small_first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jjj</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ydist_big</span><span class="o">*</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! loop over all EMEP grids contained within this big LF grid</span>
+<span class="w">                            </span><span class="c">! Reset weights and counter</span>
+<span class="w">                            </span><span class="n">weights_EMEP_additional_increment_current_lfgrid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">                            </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w">  </span><span class="c">! count the grids not covered by the small LF grid</span>
+<span class="w">                            </span><span class="k">do </span><span class="n">iiii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">                                </span><span class="k">do </span><span class="n">jjjj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">                                    </span><span class="c">! Deduce the xdist and ydist of this EMEP grid in the small LF domain</span>
+<span class="w">                                    </span><span class="n">xdist_small</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xdist_small_first</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">iiii</span>
+<span class="w">                                    </span><span class="n">ydist_small</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ydist_small_first</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">jjjj</span>
+<span class="w">                                    </span><span class="c">! and corresponding index in the LF array</span>
+<span class="w">                                    </span><span class="n">idist_small</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xdist_small</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">xdist_centre_nc</span>
+<span class="w">                                    </span><span class="n">jdist_small</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ydist_small</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ydist_centre_nc</span>
+<span class="w">                                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">xdist_small</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">max_x_dist</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">ydist_small</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">max_y_dist</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                                        </span><span class="c">! This grid is NOT covered by 1x1 LF data, so add its region coverage to the weight</span>
+<span class="w">                                        </span><span class="c">! find index in the normal EMEP grid</span>
+<span class="w">                                        </span><span class="n">iiii_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">xdist_small</span>
+<span class="w">                                        </span><span class="n">jjjj_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ydist_small</span>
+<span class="w">                                        </span><span class="c">! find corresponding index in the extended EMEP grid of region fractions</span>
+<span class="w">                                        </span><span class="n">iiii_extended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iiii_nc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ngrid_extended_margin</span>
+<span class="w">                                        </span><span class="n">jjjj_extended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jjjj_nc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ngrid_extended_margin</span>
+<span class="w">                                        </span><span class="c">! check if this is within the extended region mask grid</span>
+<span class="w">                                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iiii_extended</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">iiii_extended</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">nx_EMEP_extended</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">jjjj_extended</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">jjjj_extended</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ny_EMEP_extended</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                            </span><span class="n">weights_EMEP_additional_increment_current_lfgrid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weights_EMEP_additional_increment_current_lfgrid</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">regionfraction_per_EMEP_extended_grid</span><span class="p">(</span><span class="n">iiii_extended</span><span class="p">,</span><span class="w"> </span><span class="n">jjjj_extended</span><span class="p">,</span><span class="w"> </span><span class="p">:)</span>
+<span class="w">                                        </span><span class="k">end if</span>
+<span class="w">                                        </span><span class="c">! NB: If the cell is is outside the extended EMEP grid, it is considered to be outside all the regions. If the extended grid size is set properly, this should never be the case for the receptor EMEP grids (ii,jj) that overlap with the target grid.</span>
+<span class="w">                                        </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                                    </span><span class="k">else</span>
+<span class="w">                                        </span><span class="c">! The grid is covered by 1x1 LF data: subtract the 1x1 LF from the additional increment</span>
+<span class="w">                                        </span><span class="n">EMEP_additional_increment_current_lfgrid</span><span class="o">=</span><span class="n">EMEP_additional_increment_current_lfgrid</span><span class="o">-</span><span class="n">lc_var3d_nc</span><span class="p">(</span><span class="n">idist_small</span><span class="p">,</span><span class="n">jdist_small</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:,</span><span class="n">lc_index</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">n_source_index</span><span class="p">,:)</span>
+<span class="w">                                    </span><span class="k">end if</span>
+<span class="k">                                end do</span>
+<span class="k">                            end do</span>
+<span class="w">                            </span><span class="c">! ensure the additional increment is not smaller than zero</span>
+<span class="w">                            </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_additional_increment_current_lfgrid</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span><span class="w"> </span><span class="n">EMEP_additional_increment_current_lfgrid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">                            </span><span class="c">! normalize the weights by the number of grids</span>
+<span class="w">                            </span><span class="c">! NB: if counter = 0, then the weights are zero so we can go to next LF source grid</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">counter</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                                </span><span class="c">! normalize weights by the number of cells summed over</span>
+<span class="w">                                </span><span class="n">weights_EMEP_additional_increment_current_lfgrid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weights_EMEP_additional_increment_current_lfgrid</span><span class="o">/</span><span class="n">counter</span>
+<span class="w">                                </span><span class="c">! For each region, multiply the additional increment by the weight calculated for that region</span>
+<span class="w">                                </span><span class="c">! and accumulate this in the array for the total additional increment (to be accumulated over all the big LF cells)</span>
+<span class="w">                                </span><span class="k">do </span><span class="n">i_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_regions</span>
+<span class="w">                                    </span><span class="n">temp_EMEP_additional_increment_from_in_region</span><span class="p">(</span><span class="n">i_region</span><span class="p">,:,:,:)</span><span class="o">=</span><span class="n">temp_EMEP_additional_increment_from_in_region</span><span class="p">(</span><span class="n">i_region</span><span class="p">,:,:,:)</span><span class="o">+</span><span class="n">EMEP_additional_increment_current_lfgrid</span><span class="o">*</span><span class="n">weights_EMEP_additional_increment_current_lfgrid</span><span class="p">(</span><span class="n">i_region</span><span class="p">)</span>
+<span class="w">                                </span><span class="k">end do</span>
+<span class="k">                            end if</span>
+<span class="k">                        end do</span>
+<span class="k">                    end do</span>
+<span class="w">                    </span><span class="c">! The additional increment has now been accumulated over all xdist and ydist source grids and weighted for each region</span>
+<span class="w">                    </span><span class="c">! So now it can be inserted into the main array</span>
+<span class="w">                    </span><span class="n">EMEP_additional_increment_from_in_region</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:,:,:,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temp_EMEP_additional_increment_from_in_region</span>
+<span class="w">                </span><span class="k">end do</span>
+<span class="k">            end do</span>
+
+<span class="k">            </span><span class="n">EMEP_semilocal_from_in_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EMEP_semilocal_from_in_region</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">EMEP_additional_increment_from_in_region</span>
+
+<span class="w">            </span><span class="k">deallocate</span><span class="p">(</span><span class="n">temp_EMEP_additional_increment_from_in_region</span><span class="p">)</span>
+<span class="w">            </span><span class="k">deallocate</span><span class="p">(</span><span class="n">EMEP_additional_increment_current_lfgrid</span><span class="p">)</span>
+<span class="w">            </span><span class="k">deallocate</span><span class="p">(</span><span class="n">weights_EMEP_additional_increment_current_lfgrid</span><span class="p">)</span>
+<span class="w">            </span><span class="k">deallocate</span><span class="p">(</span><span class="n">EMEP_additional_increment_from_in_region</span><span class="p">)</span>
+
+<span class="w">        </span><span class="k">end if</span>
+
+<span class="w">        </span><span class="c">! *****************************************</span>
+<span class="w">        </span><span class="c">! PART 2: Interpolate to the target subgrid</span>
+<span class="w">        </span><span class="c">! *****************************************</span>
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Allocating arrays for in-region local and semilocal contribution to the target grid&#39;</span>
+
+<span class="w">        </span><span class="c">! Allocate the arrays for holding the results and initialize them to zero</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="p">)</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="p">(</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">))</span>
+<span class="w">        </span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="p">)</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">))</span>
+<span class="w">        </span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Interpolating local and semilocal contribution from-in-region to the target subgrid&#39;</span>
+
+<span class="w">        </span><span class="c">! go through all target subgrids and interpolate the EMEP contributions calculated above</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+
+<span class="w">                </span><span class="c">! Find position along the region dimension of this region index</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">subgrid_region_index</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">regionindex_loop_back_index</span><span class="p">(</span><span class="n">subgrid_region_index</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">))</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="w">                    </span><span class="c">! this subgrid is not in any region, so keep it as 0</span>
+<span class="w">                    </span><span class="k">cycle</span>
+<span class="k">                end if</span>
+
+<span class="w">                </span><span class="c">! Find which EMEP grid the current subgrid is in</span>
+<span class="w">                </span><span class="n">ii</span><span class="o">=</span><span class="n">crossreference_target_to_emep_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">jj</span><span class="o">=</span><span class="n">crossreference_target_to_emep_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span>
+
+<span class="w">                </span><span class="c">! Find out where in this EMEP grid we are in EMEP grid coordinates</span>
+<span class="w">                </span><span class="c">! E.g. (0,0) for lower-left corner and (1,1) for upper right corner</span>
+<span class="w">                </span><span class="k">call </span><span class="n">LL2PROJ</span><span class="p">(</span><span class="n">lon_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">lat_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">x_temp</span><span class="p">,</span><span class="n">y_temp</span><span class="p">,</span><span class="n">EMEP_projection_attributes</span><span class="p">,</span><span class="n">EMEP_projection_type</span><span class="p">)</span>
+<span class="w">                </span><span class="c">! fractional position inside the EMEP grid (center is (0,0), lower-left corner is (-0.5,-0.5), upper-right corner is (+0.5,+0.5))</span>
+<span class="w">                </span><span class="n">ii_frac_target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">x_temp</span><span class="o">-</span><span class="n">var1d_nc</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">x_dim_nc_index</span><span class="p">))</span><span class="o">/</span><span class="n">dgrid_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">jj_frac_target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">y_temp</span><span class="o">-</span><span class="n">var1d_nc</span><span class="p">(</span><span class="n">jj</span><span class="p">,</span><span class="n">y_dim_nc_index</span><span class="p">))</span><span class="o">/</span><span class="n">dgrid_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">)</span>
+<span class="w">                </span><span class="c">! verify that this is within 0-1 (if not, crossreference has gone wrong...)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ii_frac_target</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.5</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">ii_frac_target</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.5</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">jj_frac_target</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.5</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">jj_frac_target</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.5</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2I12)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Something went wrong with locating target subgrid within EMEP grid!&#39;</span><span class="p">,</span><span class="n">ii_frac_target</span><span class="p">,</span><span class="n">jj_frac_target</span>
+<span class="w">                    </span><span class="k">stop</span>
+<span class="k">                end if</span>
+
+<span class="w">                </span><span class="c">! Interpolate to the target grid</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_grid_interpolation_flag</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                    </span><span class="c">! No interpolation: just pick the value of the EMEP cell we are in</span>
+<span class="w">                    </span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,:,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EMEP_local_from_in_region</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">i_region</span><span class="p">,:,:,:)</span>
+<span class="w">                    </span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,:,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">i_region</span><span class="p">,:,:,:)</span>
+<span class="w">                </span><span class="k">else if</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_grid_interpolation_flag</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                    </span><span class="c">! Use area-weighted interpolation</span>
+<span class="w">                    </span><span class="n">weight_check</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">                    </span><span class="c">! loop over a 3x3 EMEP cell domain centered at the closest EMEP cell to the target subgrid</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">iii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">jjj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span>
+<span class="w">                            </span><span class="n">iii_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">iii</span>
+<span class="w">                            </span><span class="n">jjj_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">jjj</span>
+<span class="w">                            </span><span class="c">! verify the EMEP grid covers this index</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="p">(</span><span class="n">iii_nc</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">iii_nc</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">jjj_nc</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">jjj_nc</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">)))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;ERROR: EMEP grid did not go far enough out to allow area interpolation to the target grid!&#39;</span>
+<span class="w">                                </span><span class="k">stop</span>
+<span class="k">                            end if</span>
+<span class="w">                            </span><span class="c">! calculate the weighting value as the area fraction of an EMEP cell centered at the target subgrid that falls within this EMEP cell</span>
+<span class="w">                            </span><span class="n">x_dist_target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iii</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ii_frac_target</span>
+<span class="w">                            </span><span class="n">y_dist_target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jjj</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">jj_frac_target</span>
+<span class="w">                            </span><span class="n">weighting_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">x_dist_target</span><span class="p">)))</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">y_dist_target</span><span class="p">)))</span>
+<span class="w">                            </span><span class="n">weight_check</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weight_check</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">weighting_val</span>
+<span class="w">                            </span><span class="c">! use this weighting for the data at this EMEP cell</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">weighting_val</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                </span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,:,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,:,:)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">EMEP_local_from_in_region</span><span class="p">(</span><span class="n">iii_nc</span><span class="p">,</span><span class="n">jjj_nc</span><span class="p">,</span><span class="n">i_region</span><span class="p">,:,:,:)</span><span class="o">*</span><span class="n">weighting_val</span>
+<span class="w">                                </span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,:,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,:,:)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">EMEP_semilocal_from_in_region</span><span class="p">(</span><span class="n">iii_nc</span><span class="p">,</span><span class="n">jjj_nc</span><span class="p">,</span><span class="n">i_region</span><span class="p">,:,:,:)</span><span class="o">*</span><span class="n">weighting_val</span>
+<span class="w">                            </span><span class="k">end if</span>
+<span class="k">                        end do</span>
+<span class="k">                    end do</span>
+<span class="k">                else</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,I0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;ERROR: uEMEP_subgrid_EMEP_from_in_region is not implemented for EMEP_grid_interpolation_flag =&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">EMEP_grid_interpolation_flag</span>
+<span class="w">                    </span><span class="k">stop</span>
+<span class="k">                end if</span>
+<span class="k">            end do</span>
+<span class="k">        end do</span>
+
+<span class="k">        deallocate</span><span class="p">(</span><span class="n">EMEP_local_from_in_region</span><span class="p">)</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="p">(</span><span class="n">EMEP_semilocal_from_in_region</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">! Set allsources to be the sum of only the sources we calculate for</span>
+<span class="w">        </span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="p">(:,:,:,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="p">(:,:,:,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i_source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_source_index</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">i_source</span><span class="p">).</span><span class="nb">or</span><span class="p">.</span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">i_source</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="n">i_source</span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="n">allsource_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="p">(:,:,:,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">=</span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="p">(:,:,:,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">+</span><span class="n">subgrid_EMEP_local_from_in_region</span><span class="p">(:,:,:,</span><span class="n">i_source</span><span class="p">,:)</span>
+<span class="w">                </span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="p">(:,:,:,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">=</span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="p">(:,:,:,</span><span class="n">allsource_index</span><span class="p">,:)</span><span class="o">+</span><span class="n">subgrid_EMEP_semilocal_from_in_region</span><span class="p">(:,:,:,</span><span class="n">i_source</span><span class="p">,:)</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="k">        end do</span>
+
+<span class="k">    end subroutine </span><span class="n">uEMEP_subgrid_EMEP_from_in_region</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

@@ -1,0 +1,1066 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_save_netcdf_receptor_file &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_save_netcdf_receptor_file
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 1.4% of total for procedures.">284 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_save_netcdf_file.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_save_netcdf_file.f90.html'>uEMEP_save_netcdf_file.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/save_netcdf_file.html'>save_netcdf_file</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_save_netcdf_receptor_file</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_save_netcdf_receptor_file.html#src">uEMEP_save_netcdf_receptor_file</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine uEMEP_save_netcdf_receptor_file(unit_logfile_in, filename_netcdf, nx, ny, nt_in, val_array_in, x_array, y_array, lon_array, lat_array, name_array, unit_array, title_str, create_file, valid_min, x_rec, y_rec, lon_rec, lat_rec, height_rec, name_rec_in, nr, variable_type, scale_factor)  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item">netcdf</li>
+                  <li class="list-inline-item"><a href='../module/uemep_definitions.html'>uEMEP_definitions</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+    <p>call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )
+call check( nf90_put_var(ncid, station_varid, name_rec(:), start = (/1,1/), count=(/n_dims(1),n_char/)) )</p>
+<p>call check( nf90_put_var(ncid, station_name_varid, name_rec, start = (/1,1/), count=(/n_char,n_dims(1)/)) )
+call check( nf90_put_var(ncid, station_name_varid, name_rec, start = (/1/), count=(/n_dims(1)/)) )</p>
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-unit_logfile_in~2"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>unit_logfile_in</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-filename_netcdf~3"></span>
+              character(len=256)
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>filename_netcdf</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nx~3"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nx</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ny~3"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ny</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nt_in~2"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nt_in</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-val_array_in~2"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>val_array_in</strong>(nx,ny,nt_in)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x_array~7"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x_array</strong>(nx,ny)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-y_array~7"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>y_array</strong>(nx,ny)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-lon_array~3"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>lon_array</strong>(nx,ny)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-lat_array~3"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>lat_array</strong>(nx,ny)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-name_array~3"></span>
+              character(len=256)
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name_array</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-unit_array~3"></span>
+              character(len=256)
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>unit_array</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-title_str~5"></span>
+              character(len=256)
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>title_str</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-create_file~5"></span>
+              logical
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>create_file</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-valid_min~5"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>valid_min</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x_rec"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x_rec</strong>(nr)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-y_rec"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>y_rec</strong>(nr)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-lon_rec"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>lon_rec</strong>(nr)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-lat_rec"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>lat_rec</strong>(nr)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-height_rec"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>height_rec</strong>(nr)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-name_rec_in"></span>
+              character(len=256)
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name_rec_in</strong>(nr)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nr"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nr</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-variable_type~5"></span>
+              character(len=256)
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>variable_type</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-scale_factor~5"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>scale_factor</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_save_netcdf_receptor_file</span><span class="p">(</span><span class="n">unit_logfile_in</span><span class="p">,</span><span class="n">filename_netcdf</span><span class="p">,</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">nt_in</span><span class="p">,</span><span class="n">val_array_in</span><span class="p">,</span><span class="n">x_array</span><span class="p">,</span><span class="n">y_array</span><span class="p">,</span><span class="n">lon_array</span><span class="p">,</span><span class="n">lat_array</span><span class="p">,</span><span class="n">name_array</span><span class="p">,</span><span class="n">unit_array</span><span class="p">,</span><span class="n">title_str</span><span class="p">,</span><span class="n">create_file</span><span class="p">,</span><span class="n">valid_min</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="p">,</span><span class="n">x_rec</span><span class="p">,</span><span class="n">y_rec</span><span class="p">,</span><span class="n">lon_rec</span><span class="p">,</span><span class="n">lat_rec</span><span class="p">,</span><span class="n">height_rec</span><span class="p">,</span><span class="n">name_rec_in</span><span class="p">,</span><span class="n">nr</span><span class="p">,</span><span class="n">variable_type</span><span class="p">,</span><span class="n">scale_factor</span><span class="p">)</span>
+
+<span class="w">        </span><span class="k">use </span><span class="n">uEMEP_definitions</span>
+<span class="w">        </span><span class="k">use </span><span class="n">netcdf</span>
+
+<span class="w">        </span><span class="k">implicit none</span>
+
+<span class="k">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">filename_netcdf</span><span class="p">,</span><span class="n">name_array</span><span class="p">,</span><span class="n">unit_array</span><span class="p">,</span><span class="n">title_str</span><span class="p">,</span><span class="n">temp_name</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">unit_logfile_in</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">nt_in</span><span class="p">,</span><span class="n">nr</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">val_array</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">nt_in</span><span class="p">),</span><span class="n">val_array_in</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">nt_in</span><span class="p">)</span><span class="c">!,val_array_temp(nx,ny,nt_in)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_array</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">y_array</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">lon_array</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">lat_array</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">)</span><span class="c">!,lat_array_temp(nx,ny)</span>
+<span class="w">        </span><span class="c">!real time_array(nt_in)</span>
+<span class="w">        </span><span class="c">!real x_vector(nx)</span>
+<span class="w">        </span><span class="c">!real y_vector(ny)</span>
+<span class="w">        </span><span class="kt">logical </span><span class="n">create_file</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">valid_min</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">variable_type</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">scale_factor</span>
+
+<span class="w">        </span><span class="kt">integer </span><span class="n">ncid</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">station_dimid</span><span class="p">,</span><span class="n">time_dimid</span><span class="p">,</span><span class="n">charlen_dimid</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">station_varid</span><span class="p">,</span><span class="n">station_name_varid</span><span class="p">,</span><span class="n">lat_varid</span><span class="p">,</span><span class="n">lon_varid</span><span class="p">,</span><span class="n">val_varid</span><span class="p">,</span><span class="n">time_varid</span><span class="p">,</span><span class="n">proj_varid</span><span class="p">,</span><span class="n">x_varid</span><span class="p">,</span><span class="n">y_varid</span><span class="p">,</span><span class="n">height_varid</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">dimids2</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">status</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">tr</span><span class="p">,</span><span class="n">rr</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_rec</span><span class="p">(</span><span class="n">nr</span><span class="p">),</span><span class="n">y_rec</span><span class="p">(</span><span class="n">nr</span><span class="p">),</span><span class="n">height_rec</span><span class="p">(</span><span class="n">nr</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">lon_rec</span><span class="p">(</span><span class="n">nr</span><span class="p">),</span><span class="n">lat_rec</span><span class="p">(</span><span class="n">nr</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">name_rec_in</span><span class="p">(</span><span class="n">nr</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">temp_char</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_char</span>
+<span class="w">        </span><span class="c">!parameter (n_char=7)</span>
+<span class="w">        </span><span class="k">parameter</span><span class="w"> </span><span class="p">(</span><span class="n">n_char</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="n">name_rec</span><span class="p">(</span><span class="n">n_char</span><span class="p">,</span><span class="n">nr</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_time_total</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">val_rec</span><span class="p">(</span><span class="n">nr</span><span class="p">,</span><span class="n">nt_in</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">delta</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">id_rec</span><span class="p">(</span><span class="n">nr</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">nf90_type</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">nt</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="n">time_seconds_output_nc</span><span class="p">(</span><span class="n">nt_in</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">tr_0</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_source</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="n">temp_str</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">temp_str2</span>
+
+<span class="w">        </span><span class="c">!Do not save if no receptor position data is available</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nr</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            return</span>
+<span class="k">        endif</span>
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">variable_type</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="s1">&#39;byte&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">nf90_type</span><span class="o">=</span><span class="n">NF90_BYTE</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">variable_type</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="s1">&#39;short&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">nf90_type</span><span class="o">=</span><span class="n">NF90_SHORT</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">variable_type</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="s1">&#39;float&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">nf90_type</span><span class="o">=</span><span class="n">NF90_FLOAT</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">variable_type</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="s1">&#39;double&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">nf90_type</span><span class="o">=</span><span class="n">NF90_DOUBLE</span>
+
+<span class="w">        </span><span class="n">nt</span><span class="o">=</span><span class="n">nt_in</span>
+<span class="w">        </span><span class="n">val_array</span><span class="o">=</span><span class="n">val_array_in</span>
+<span class="w">        </span><span class="n">time_seconds_output_nc</span><span class="o">=</span><span class="n">time_seconds_output</span>
+
+<span class="w">        </span><span class="c">!Save averages only</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">save_netcdf_average_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">counter_av</span><span class="o">=</span><span class="n">counter_av</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">counter_av</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="n">n_var_av</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile_in</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;ERROR: Array size for saving averages (n_var_av) not large enough. Stopping&#39;</span>
+<span class="w">                </span><span class="k">stop</span>
+<span class="k">            endif</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">val_array_av</span><span class="p">(:,:,</span><span class="n">counter_av</span><span class="p">)</span><span class="o">=</span><span class="n">val_array_av</span><span class="p">(:,:,</span><span class="n">counter_av</span><span class="p">)</span><span class="o">+</span><span class="n">val_array</span><span class="p">(:,:,</span><span class="n">nt</span><span class="p">)</span><span class="w"> </span><span class="c">!nt=1 in this case</span>
+<span class="w">                </span><span class="n">time_seconds_output_av</span><span class="p">(</span><span class="n">counter_av</span><span class="p">)</span><span class="o">=</span><span class="n">time_seconds_output_av</span><span class="p">(</span><span class="n">counter_av</span><span class="p">)</span><span class="o">+</span><span class="n">time_seconds_output_nc</span><span class="p">(</span><span class="n">nt</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">t_loop</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">end_time_loop_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">val_array</span><span class="p">(:,:,</span><span class="n">nt</span><span class="p">)</span><span class="o">=</span><span class="n">val_array_av</span><span class="p">(:,:,</span><span class="n">counter_av</span><span class="p">)</span><span class="o">/</span><span class="n">end_time_loop_index</span>
+<span class="w">                    </span><span class="n">time_seconds_output_nc</span><span class="p">(</span><span class="n">nt</span><span class="p">)</span><span class="o">=</span><span class="n">time_seconds_output_av</span><span class="p">(</span><span class="n">counter_av</span><span class="p">)</span><span class="o">/</span><span class="n">end_time_loop_index</span>
+<span class="w">                </span><span class="k">endif</span>
+<span class="w">                </span><span class="c">!write(unit_logfile_in,*) &#39;Saving as average single time loop (nt,counter_av):&#39;,nt,counter_av</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="c">!write(unit_logfile_in,*) &#39;Saving as average multiple time loop (nt,counter_av):&#39;,nt,counter_av,time_seconds_output_nc(1),time_seconds_output_nc(nt)</span>
+<span class="w">                </span><span class="c">!write(*,*) time_seconds_output_nc(1:nt)</span>
+<span class="w">                </span><span class="n">val_array_av</span><span class="p">(:,:,</span><span class="n">counter_av</span><span class="p">)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">val_array</span><span class="p">(:,:,</span><span class="mi">1</span><span class="p">:</span><span class="n">nt</span><span class="p">),</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">nt</span>
+<span class="w">                </span><span class="n">time_seconds_output_av</span><span class="p">(</span><span class="n">counter_av</span><span class="p">)</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">time_seconds_output_nc</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nt</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">nt</span>
+<span class="w">                </span><span class="c">!write(*,*) sum(time_seconds_output_nc(1:nt),1)</span>
+<span class="w">                </span><span class="n">nt</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">                </span><span class="n">val_array</span><span class="p">(:,:,</span><span class="n">nt</span><span class="p">)</span><span class="o">=</span><span class="n">val_array_av</span><span class="p">(:,:,</span><span class="n">counter_av</span><span class="p">)</span>
+<span class="w">                </span><span class="n">time_seconds_output_nc</span><span class="p">(</span><span class="n">nt</span><span class="p">)</span><span class="o">=</span><span class="n">time_seconds_output_av</span><span class="p">(</span><span class="n">counter_av</span><span class="p">)</span>
+<span class="w">                </span><span class="c">!write(unit_logfile_in,*) &#39;Saving as average multiple time loop (nt,counter_av):&#39;,nt,counter_av,time_seconds_output_nc(nt),time_seconds_output_av(counter_av)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">        endif</span>
+
+<span class="w">        </span><span class="c">!Interpolate to receptor position given the input array</span>
+<span class="w">        </span><span class="c">!write(unit_logfile,&#39;(a)&#39;)&#39; Interpolating to receptor point &#39;</span>
+<span class="w">        </span><span class="c">!Assumes 2 elements to an array</span>
+<span class="w">        </span><span class="n">delta</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">x_array</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">x_array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">        </span><span class="n">delta</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">y_array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">y_array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">        </span><span class="k">do </span><span class="n">rr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">nr</span>
+<span class="w">            </span><span class="k">do </span><span class="n">tr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">nt</span>
+<span class="w">                </span><span class="n">val_rec</span><span class="p">(</span><span class="n">rr</span><span class="p">,</span><span class="n">tr</span><span class="p">)</span><span class="o">=</span><span class="n">area_weighted_interpolation_function</span><span class="p">(</span><span class="n">x_array</span><span class="p">,</span><span class="n">y_array</span><span class="p">,</span><span class="n">val_array</span><span class="p">(:,:,</span><span class="n">tr</span><span class="p">),</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">delta</span><span class="p">,</span><span class="n">x_rec</span><span class="p">(</span><span class="n">rr</span><span class="p">),</span><span class="n">y_rec</span><span class="p">(</span><span class="n">rr</span><span class="p">))</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">        enddo</span>
+
+<span class="w">        </span><span class="c">!Make the receptor name to fit to netcdf requirements</span>
+<span class="w">        </span><span class="k">do </span><span class="n">rr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">nr</span>
+<span class="w">            </span><span class="n">id_rec</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span><span class="o">=</span><span class="n">rr</span>
+<span class="w">            </span><span class="n">temp_char</span><span class="o">=</span><span class="n">name_rec_in</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
+<span class="w">            </span><span class="n">tr_0</span><span class="o">=</span><span class="nb">len_trim</span><span class="p">(</span><span class="n">temp_char</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">tr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">tr_0</span>
+<span class="w">                </span><span class="n">name_rec</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span><span class="n">rr</span><span class="p">)</span><span class="o">=</span><span class="n">temp_char</span><span class="p">(</span><span class="n">tr</span><span class="p">:</span><span class="n">tr</span><span class="p">)</span>
+<span class="w">                </span><span class="c">!write(*,*) trim(name_rec_in(rr)),trim(name_rec(rr))</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            do </span><span class="n">tr</span><span class="o">=</span><span class="n">tr_0</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">n_char</span>
+<span class="w">                </span><span class="n">name_rec</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span><span class="n">rr</span><span class="p">)</span><span class="o">=</span><span class="nb">char</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">        enddo</span>
+
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">save_netcdf_average_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">n_time_total</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            </span><span class="n">n_time_total</span><span class="o">=</span><span class="n">end_time_nc_index</span><span class="o">-</span><span class="n">start_time_nc_index</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">        </span><span class="k">endif</span>
+
+
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">create_file</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">!Create a netcdf file</span>
+<span class="w">            </span><span class="c">!call check(  nf90_create(filename_netcdf, nf90_clobber, ncid) )</span>
+<span class="w">            </span><span class="c">!call check(  nf90_create(filename_netcdf, NF90_HDF5, ncid) )</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_create</span><span class="p">(</span><span class="n">filename_netcdf</span><span class="p">,</span><span class="w"> </span><span class="nb">IOR</span><span class="p">(</span><span class="n">NF90_HDF5</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_CLASSIC_MODEL</span><span class="p">),</span><span class="w"> </span><span class="n">ncid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c">!New</span>
+
+<span class="w">            </span><span class="c">!Specify global attributes</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Conventions&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CF-1.6&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;title&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">title_str</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Model&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">model_version_str</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;featureType&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;timeSeries&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!Save some model flags for later reference</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;EMEP_grid_interpolation_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">EMEP_grid_interpolation_flag</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;no2_chemistry_scheme_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">no2_chemistry_scheme_flag</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;EMEP_grid_interpolation_size&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">EMEP_grid_interpolation_size</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;EMEP_additional_grid_interpolation_size&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">EMEP_additional_grid_interpolation_size</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;no2_background_chemistry_scheme_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">no2_background_chemistry_scheme_flag</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;local_subgrid_method_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">local_subgrid_method_flag</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;EMEP_emission_grid_interpolation_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">EMEP_emission_grid_interpolation_flag</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">limit_emep_grid_interpolation_region_to_calculation_region</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;limit_emep_grid_interpolation_region_to_calculation_region&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;limit_emep_grid_interpolation_region_to_calculation_region&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">            call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;n_local_fraction_grids&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">n_local_fraction_grids</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_local_fraction_grids</span>
+<span class="w">                </span><span class="k">write</span><span class="w"> </span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;(i0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">i</span>
+<span class="w">                </span><span class="n">temp_str2</span><span class="o">=</span><span class="s2">&quot;local_fraction_grid_size(&quot;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_str</span><span class="p">)</span><span class="o">//</span><span class="s2">&quot;)&quot;</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_str2</span><span class="p">),</span><span class="w"> </span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;local_fraction_grid_for_EMEP_grid_interpolation&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">local_fraction_grid_for_EMEP_grid_interpolation</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;local_fraction_grid_for_EMEP_additional_grid_interpolation&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">local_fraction_grid_for_EMEP_additional_grid_interpolation</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">use_GNFR_emissions_from_EMEP_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;use_GNFR_emissions_from_EMEP_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">use_GNFR_emissions_from_EMEP_flag</span><span class="p">.</span><span class="nb">and</span><span class="p">..</span><span class="nb">not</span><span class="p">.</span><span class="n">use_GNFR19_emissions_from_EMEP_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;use_GNFR13_emissions_from_EMEP_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">use_GNFR19_emissions_from_EMEP_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;use_GNFR19_emissions_from_EMEP_flag&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="w">            </span><span class="c">!Write out sources</span>
+<span class="w">            </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_source</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_source_index</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">write</span><span class="w"> </span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;(i0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">i</span>
+<span class="w">                    </span><span class="n">temp_str2</span><span class="o">=</span><span class="s2">&quot;uEMEP_source(&quot;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_str</span><span class="p">)</span><span class="o">//</span><span class="s2">&quot;)&quot;</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_str2</span><span class="p">),</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">source_file_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">endif</span>
+<span class="k">            enddo</span>
+<span class="k">            call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;n_uEMEP_sources&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">))</span>
+<span class="w">            </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_source</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_source_index</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">write</span><span class="w"> </span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;(i0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">i</span>
+<span class="w">                    </span><span class="n">temp_str2</span><span class="o">=</span><span class="s2">&quot;EMEP_source(&quot;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_str</span><span class="p">)</span><span class="o">//</span><span class="s2">&quot;)&quot;</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_str2</span><span class="p">),</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">source_file_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">endif</span>
+<span class="k">            enddo</span>
+<span class="k">            call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_global</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;n_EMEP_sources&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">))</span>
+
+<span class="w">            </span><span class="c">!Projection data</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">UTM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;projection_utm&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_int</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;semi_major_axis&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">637813</span><span class="mf">7.0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;inverse_flattening&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">29</span><span class="mf">8.257222101</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;grid_mapping_name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;transverse_mercator&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;scale_factor_at_central_meridian&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">0.9996</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;latitude_of_projection_origin&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false_easting&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">50000</span><span class="mf">0.</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false_northing&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">0.</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;longitude_of_central_meridian&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">utm_lon0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="c">!call check(  nf90_put_att(ncid, proj_varid, &quot;semi_major_axis&quot;, 6378140.0 ) )</span>
+<span class="w">                </span><span class="c">!call check(  nf90_put_att(ncid, proj_varid, &quot;semi_minor_axis&quot;, 6356750.0 ) )</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LTM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;projection_tm&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_int</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;semi_major_axis&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">637813</span><span class="mf">7.0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;inverse_flattening&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">29</span><span class="mf">8.257222101</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;grid_mapping_name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;transverse_mercator&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;scale_factor_at_central_meridian&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">0.9996</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;latitude_of_projection_origin&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false_easting&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">50000</span><span class="mf">0.</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false_northing&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">0.</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;longitude_of_central_meridian&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ltm_lon0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">RDM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                </span><span class="c">!Not properly assigned, same as UTM</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;projection_RDM&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_int</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;semi_major_axis&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">637813</span><span class="mf">7.0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;inverse_flattening&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">29</span><span class="mf">8.257222101</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;grid_mapping_name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;transverse_mercator&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;scale_factor_at_central_meridian&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">0.9996</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;latitude_of_projection_origin&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false_easting&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">50000</span><span class="mf">0.</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false_northing&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">0.</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;longitude_of_central_meridian&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">utm_lon0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LAEA_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;projection_ETRS89_LAEA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_int</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="c">!call check(  nf90_put_att(ncid, proj_varid, &quot;semi_major_axis&quot;, 6378137.0 ) )</span>
+<span class="w">                </span><span class="c">!call check(  nf90_put_att(ncid, proj_varid, &quot;inverse_flattening&quot;, 298.257222101 ) )</span>
+
+<span class="w">                </span><span class="c">!https://github.com/mdsumner/rasterwise/blob/master/README.md</span>
+<span class="w">                </span><span class="c">!EPSG:3035</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;grid_mapping_name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;lambert_azimuthal_equal_area&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;semi_major_axis&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">projection_attributes</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;inverse_flattening&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">projection_attributes</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;latitude_of_projection_origin&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">projection_attributes</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false_easting&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">projection_attributes</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false_northing&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">projection_attributes</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">proj_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;longitude_of_projection_origin&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">projection_attributes</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="w">            </span><span class="c">!Define the dimensions for the entire dataset</span>
+<span class="w">            </span><span class="c">!write(*,*) &#39;n_valid_receptor_in&#39;,n_valid_receptor_in</span>
+<span class="w">            </span><span class="c">!write(*,*) &#39;n_valid_receptor&#39;,n_valid_receptor</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="s2">&quot;station_id&quot;</span><span class="p">,</span><span class="n">n_valid_receptor_in</span><span class="p">,</span><span class="w"> </span><span class="n">station_dimid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="s2">&quot;charlen&quot;</span><span class="p">,</span><span class="n">n_char</span><span class="p">,</span><span class="w"> </span><span class="n">charlen_dimid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!call check(  nf90_def_dim(ncid,&quot;time&quot;,n_time_total, time_dimid) )</span>
+<span class="w">            </span><span class="c">!To have time as unlimittec (Heiko)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_dim</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="s2">&quot;time&quot;</span><span class="p">,</span><span class="n">NF90_UNLIMITED</span><span class="p">,</span><span class="w"> </span><span class="n">time_dimid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+
+<span class="w">            </span><span class="c">!Define the dimension variables</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;station_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_INT</span><span class="p">,</span><span class="w"> </span><span class="n">station_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">station_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="c">!call check(  nf90_def_var(ncid, &quot;time&quot;, NF90_DOUBLE, time_dimid, time_varid) )</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;time&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_INT</span><span class="p">,</span><span class="w"> </span><span class="n">time_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">time_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!Define the values</span>
+<span class="w">            </span><span class="n">dimids2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="w"> </span><span class="n">station_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">time_dimid</span><span class="w"> </span><span class="o">/</span><span class="p">)</span>
+<span class="w">            </span><span class="c">!dimids1 = (/ station_dimid /)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;lat&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_REAL</span><span class="p">,</span><span class="w"> </span><span class="n">station_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">lat_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;lon&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_REAL</span><span class="p">,</span><span class="w"> </span><span class="n">station_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">lon_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_REAL</span><span class="p">,</span><span class="w"> </span><span class="n">station_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">y_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_REAL</span><span class="p">,</span><span class="w"> </span><span class="n">station_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">x_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;station_name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_CHAR</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="n">charlen_dimid</span><span class="p">,</span><span class="n">station_dimid</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="n">station_name_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;station_height&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_REAL</span><span class="p">,</span><span class="w"> </span><span class="n">station_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">height_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="c">!call check(  nf90_def_var(ncid, &quot;station_name&quot;, NF90_CHAR, (/station_dimid/), station_name_varid) )</span>
+<span class="w">            </span><span class="c">!call check(  nf90_def_var(ncid, &quot;station_name&quot;, NF90_CHAR, (/charlen_dimid,station_dimid/), station_name_varid) )</span>
+
+<span class="w">            </span><span class="c">!Specify the units</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">lat_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;degrees_north&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">lon_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;degrees_east&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">y_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;m&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">x_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;m&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">height_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;m&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">time_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">unit_dim_nc</span><span class="p">(</span><span class="n">time_dim_nc_index</span><span class="p">)))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">station_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;long_name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;station index&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">station_name_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;long_name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;station name&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">station_name_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;cf_role&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;timeseries_id&quot;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!Specify other dimension attributes</span>
+<span class="w">            </span><span class="c">!call check(  nf90_put_att(ncid, y_varid, &quot;standard_name&quot;, &quot;projection_y_coordinate&quot;) )</span>
+<span class="w">            </span><span class="c">!call check(  nf90_put_att(ncid, x_varid, &quot;standard_name&quot;, &quot;projection_x_coordinate&quot;) )</span>
+<span class="w">            </span><span class="c">!call check(  nf90_put_att(ncid, y_varid, &quot;axis&quot;, &quot;Y&quot;) )</span>
+<span class="w">            </span><span class="c">!call check(  nf90_put_att(ncid, x_varid, &quot;axis&quot;, &quot;X&quot;) )</span>
+
+<span class="w">            </span><span class="c">!Close the definitions</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_enddef</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index)) )</span>
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, station_varid, name_rec(:,1:n_char) )</span>
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, lat_varid, lat_array) )</span>
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, lon_varid, lon_array) )</span>
+
+<span class="w">            </span><span class="c">!Put this in to fix unlimitted problem? If works on annual need to check it works other places as well!</span>
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, time_varid, time_seconds_output_nc(1:nt), start=(/1/), count=(/nt/)) )</span>
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, time_varid, time_seconds_output_nc(1:nt)) )</span>
+
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_close</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!Add to the existing file</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_open</span><span class="p">(</span><span class="n">filename_netcdf</span><span class="p">,</span><span class="w"> </span><span class="n">NF90_WRITE</span><span class="p">,</span><span class="w"> </span><span class="n">ncid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!Get the dimensions id from the existing file</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inq_dimid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="s2">&quot;time&quot;</span><span class="p">,</span><span class="n">time_dimid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inq_dimid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;station_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">station_dimid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="c">! write(*,*) &#39;station_dimid &#39;,station_dimid</span>
+<span class="w">        </span><span class="c">! write(*,*) &#39;time_dimid &#39;,time_dimid</span>
+<span class="w">        </span><span class="n">dimids2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="w"> </span><span class="n">station_dimid</span><span class="p">,</span><span class="w"> </span><span class="n">time_dimid</span><span class="w"> </span><span class="o">/</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!Get the size of the dimensions</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inquire_dimension</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">dimids2</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">temp_name</span><span class="p">,</span><span class="w"> </span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inquire_dimension</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">dimids2</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">temp_name</span><span class="p">,</span><span class="w"> </span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="c">!Set the starting point to 1</span>
+<span class="w">        </span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span>
+
+
+<span class="w">        </span><span class="c">!Set time to full length in unlimitted case (Heiko)</span>
+<span class="w">        </span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n_time_total</span>
+
+<span class="w">        </span><span class="c">! write(*,*) &#39;n_dims_length(1) &#39;,n_dims_length(1)</span>
+<span class="w">        </span><span class="c">! write(*,*) &#39;n_dims_length(2) &#39;,n_dims_length(2)</span>
+
+<span class="w">        </span><span class="n">status</span><span class="o">=</span><span class="n">nf90_inq_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">name_array</span><span class="p">),</span><span class="w"> </span><span class="n">val_varid</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="n">nf90_NoErr</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">!if the variable does not exist then create a new one</span>
+<span class="w">            </span><span class="c">!write(*,*) &#39;Creating new: &#39;,trim(name_array)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_redef</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_def_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">name_array</span><span class="p">),</span><span class="w"> </span><span class="n">nf90_type</span><span class="p">,</span><span class="w"> </span><span class="n">dimids2</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">unit_array</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!Specify other variable attributes</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nf90_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">NF90_byte</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;missing_value&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">NODATA_value</span><span class="p">,</span><span class="nb">kind</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c">!New</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;valid_min&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">valid_min</span><span class="p">,</span><span class="nb">kind</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">nf90_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">NF90_short</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;missing_value&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">NODATA_value</span><span class="p">,</span><span class="nb">kind</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c">!New</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;valid_min&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">valid_min</span><span class="p">,</span><span class="nb">kind</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;missing_value&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NODATA_value</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="c">!New</span>
+<span class="w">                </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;valid_min&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">valid_min</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">            call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;grid_mapping&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;projection_utm&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;coordinates&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;station_name lat lon&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">scale_factor</span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="mf">1.</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w">  </span><span class="n">nf90_put_att</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;scale_factor&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">scale_factor</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!Close the definitions</span>
+<span class="w">            </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_enddef</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">endif</span>
+
+
+
+<span class="w">        </span><span class="c">!Should not be used but can be</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">!Add time to the time dimension</span>
+<span class="w">            </span><span class="c">!call check( nf90_inq_varid(ncid, &quot;time&quot;, time_varid) )</span>
+<span class="w">            </span><span class="c">!call check( nf90_inquire_dimension(ncid, time_dimid, temp_name, n_dims(3)) )</span>
+<span class="w">            </span><span class="c">!n_dims(3)=n_dims(3)+1</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">save_netcdf_average_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">                </span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                </span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="n">t_loop</span>
+<span class="w">                </span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, time_varid, val_dim_nc(1,time_dim_nc_index), start = (/n_dims(2)/) ) )</span>
+<span class="w">            </span><span class="c">!write(*,*) n_dims(3),val_dim_nc(1,time_dim_nc_index)</span>
+<span class="w">            </span><span class="c">!write(*,*) n_dims</span>
+
+<span class="w">            </span><span class="c">!Add dimension and array to existing</span>
+<span class="w">            </span><span class="c">!call check( nf90_inq_varid(ncid, trim(name_array), val_varid) )</span>
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, val_varid, val_rec, start=(/1,n_dims(2)/), count=(/n_dims(1),1/)) )</span>
+
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index), start=(/n_dims(2)/), count=(/1/)) )</span>
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, station_varid, name_rec(1,:), start=(/1,1/), count=(/n_dims(1),n_char/)) )</span>
+
+<span class="w">        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">use_multiple_receptor_grids_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">!Add time to the time dimension</span>
+<span class="w">            </span><span class="c">!call check( nf90_inq_varid(ncid, &quot;station&quot;, station_varid) )</span>
+<span class="w">            </span><span class="c">!call check( nf90_inquire_dimension(ncid, time_dimid, temp_name, n_dims(3)) )</span>
+<span class="w">            </span><span class="c">!n_dims(3)=n_dims(3)+1</span>
+
+<span class="w">            </span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="n">valid_receptor_inverse_index</span><span class="p">(</span><span class="n">g_loop</span><span class="p">)</span>
+<span class="w">            </span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">            </span><span class="n">id_rec</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="n">valid_receptor_inverse_index</span><span class="p">(</span><span class="n">g_loop</span><span class="p">)</span>
+<span class="w">            </span><span class="c">!write(*,*) n_dims(3),val_dim_nc(1,time_dim_nc_index)</span>
+<span class="w">            </span><span class="c">!write(*,*) n_dims</span>
+
+<span class="w">            </span><span class="c">!Add dimension and array to existing</span>
+<span class="w">            </span><span class="c">!call check( nf90_inq_varid(ncid, trim(name_array), val_varid) )</span>
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, val_varid, val_rec, start=(/n_dims(1),1/), count=(/1,n_dims(2)/)) )</span>
+
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index) , start=(/1/), count=(/n_dims(2)/)) )</span>
+<span class="w">            </span><span class="c">!call check( nf90_put_var(ncid, station_varid, name_rec(1,:), start = (/n_dims(1),1/), count=(/1,n_char/)) )</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!write(*,*) &#39;n_dims_start&#39;,n_dims_start</span>
+<span class="w">        </span><span class="c">!write(*,*) &#39;n_dims_length&#39;,n_dims_length</span>
+
+<span class="w">        </span><span class="c">!Fill in the complete dimension variables for time and receptor names</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inq_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;station_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">station_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inq_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;time&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">time_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inq_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;station_name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">station_name_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inq_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inq_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inq_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;lon&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lon_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inq_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;lat&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lat_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_inq_varid</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;station_height&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">height_varid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!Write time to the file</span>
+
+<span class="w">        </span><span class="c">!!call check( nf90_put_var(ncid, time_varid, val_dim_nc(1:dim_length_nc(time_dim_nc_index),time_dim_nc_index), start=(/n_dims_start(2)/), count=(/n_dims_length(2)/)) )</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">time_varid</span><span class="p">,</span><span class="w"> </span><span class="n">time_seconds_output_nc</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nt</span><span class="p">),</span><span class="w"> </span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="c">!!call check( nf90_put_var(ncid, station_varid, name_rec(:), start = (/1,1/), count=(/n_dims(1),n_char/)) )</span>
+
+<span class="w">        </span><span class="c">!Write station index and name</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">station_varid</span><span class="p">,</span><span class="w"> </span><span class="n">id_rec</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">1</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">n_char</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">station_name_varid</span><span class="p">,</span><span class="w"> </span><span class="n">name_rec</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_char</span><span class="p">,</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!!call check( nf90_put_var(ncid, station_name_varid, name_rec, start = (/1,1/), count=(/n_char,n_dims(1)/)) )</span>
+<span class="w">        </span><span class="c">!!call check( nf90_put_var(ncid, station_name_varid, name_rec, start = (/1/), count=(/n_dims(1)/)) )</span>
+
+<span class="w">        </span><span class="c">!Write the variable to file</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nf90_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">NF90_byte</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">val_rec</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="n">nt</span><span class="p">),</span><span class="nb">kind</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">nf90_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">NF90_short</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">val_rec</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="n">nt</span><span class="p">),</span><span class="nb">kind</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">val_varid</span><span class="p">,</span><span class="w"> </span><span class="n">val_rec</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="n">nt</span><span class="p">),</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!Write position data to the file</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">x_varid</span><span class="p">,</span><span class="w"> </span><span class="n">x_rec</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">y_varid</span><span class="p">,</span><span class="w"> </span><span class="n">y_rec</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">lon_varid</span><span class="p">,</span><span class="w"> </span><span class="n">lon_rec</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">lat_varid</span><span class="p">,</span><span class="w"> </span><span class="n">lat_rec</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_put_var</span><span class="p">(</span><span class="n">ncid</span><span class="p">,</span><span class="w"> </span><span class="n">height_varid</span><span class="p">,</span><span class="w"> </span><span class="n">height_rec</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_start</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">n_dims_length</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+
+
+
+
+<span class="w">        </span><span class="k">call </span><span class="n">check</span><span class="p">(</span><span class="w"> </span><span class="n">nf90_close</span><span class="p">(</span><span class="n">ncid</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+
+
+
+<span class="w">    </span><span class="k">end subroutine </span><span class="n">uEMEP_save_netcdf_receptor_file</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

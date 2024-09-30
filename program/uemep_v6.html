@@ -1,0 +1,908 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_v6 &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_v6      <small>Program</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title="100.0% of total for programs.">309 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_control_v2.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_control_v2.f90.html'>uEMEP_control_v2.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_v6</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/uemep_v6.html#variable-source_index~21">source_index</a>
+            <a class="list-group-item" href="../program/uemep_v6.html#variable-start_time_cpu">start_time_cpu</a>
+            <a class="list-group-item" href="../program/uemep_v6.html#variable-end_time_cpu">end_time_cpu</a>
+            <a class="list-group-item" href="../program/uemep_v6.html#variable-have_read_emep">have_read_emep</a>
+            <a class="list-group-item" href="../program/uemep_v6.html#variable-logfile_name~2">logfile_name</a>
+            <a class="list-group-item" href="../program/uemep_v6.html#variable-program_name">program_name</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../program/uemep_v6.html#src">uEMEP_v6</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/read_agriculture_asi_data.html'>read_agriculture_asi_data</a></li>
+                  <li class="list-inline-item"><a href='../module/read_shipping_asi_data.html'>read_shipping_asi_data</a></li>
+                  <li class="list-inline-item"><a href='../module/subgrid_emep.html'>subgrid_emep</a></li>
+                  <li class="list-inline-item"><a href='../module/tiling_routines.html'>tiling_routines</a></li>
+                  <li class="list-inline-item"><a href='../module/uemep_definitions.html'>uEMEP_definitions</a></li>
+                  <li class="list-inline-item"><a href='../module/read_receptor_data.html'>read_receptor_data</a></li>
+                  <li class="list-inline-item"><a href='../module/uemep_configuration.html'>uemep_configuration</a></li>
+                  <li class="list-inline-item"><a href='../module/subgrid_dispersion.html'>subgrid_dispersion</a></li>
+                  <li class="list-inline-item"><a href='../module/subgrid_emission_emep.html'>subgrid_emission_emep</a></li>
+                  <li class="list-inline-item"><a href='../module/calculate_exposure.html'>calculate_exposure</a></li>
+                  <li class="list-inline-item"><a href='../module/read_rwc_heating_data.html'>read_rwc_heating_data</a></li>
+                  <li class="list-inline-item"><a href='../module/read_emep.html'>read_emep</a></li>
+                  <li class="list-inline-item"><a href='../module/chemistry_no2.html'>chemistry_no2</a></li>
+                  <li class="list-inline-item"><a href='../module/uemep_logger.html'>uemep_logger</a></li>
+                  <li class="list-inline-item"><a href='../module/subgrid_meteo_emep.html'>subgrid_meteo_emep</a></li>
+                  <li class="list-inline-item"><a href='../module/save_emission_netcdf.html'>save_emission_netcdf</a></li>
+                  <li class="list-inline-item"><a href='../module/read_ssb_data.html'>read_ssb_data</a></li>
+                  <li class="list-inline-item"><a href='../module/set_filenames.html'>set_filenames</a></li>
+                  <li class="list-inline-item"><a href='../module/set_subgrids.html'>set_subgrids</a></li>
+                  <li class="list-inline-item"><a href='../module/read_roadlink_data_ascii.html'>read_roadlink_data_ascii</a></li>
+                  <li class="list-inline-item"><a href='../module/read_landuse_rivm_data.html'>read_landuse_rivm_data</a></li>
+                  <li class="list-inline-item"><a href='../module/subgrid_deposition_emep.html'>subgrid_deposition_emep</a></li>
+                  <li class="list-inline-item"><a href='../module/read_industry_data.html'>read_industry_data</a></li>
+                  <li class="list-inline-item"><a href='../module/redistribute_data.html'>redistribute_data</a></li>
+                  <li class="list-inline-item"><a href='../module/subgrid_deposition.html'>subgrid_deposition</a></li>
+                  <li class="list-inline-item"><a href='../module/read_meteo_nc.html'>read_meteo_nc</a></li>
+                  <li class="list-inline-item"><a href='../module/set_constants.html'>set_constants</a></li>
+                  <li class="list-inline-item"><a href='../module/read_time_profiles.html'>read_time_profiles</a></li>
+                  <li class="list-inline-item"><a href='../module/set_emission_factors.html'>set_emission_factors</a></li>
+                  <li class="list-inline-item"><a href='../module/crossreference_grids.html'>crossreference_grids</a></li>
+                  <li class="list-inline-item"><a href='../module/auto_subgrid.html'>auto_subgrid</a></li>
+                  <li class="list-inline-item"><a href='../module/define_subgrid.html'>define_subgrid</a></li>
+                  <li class="list-inline-item"><a href='../module/read_command_line.html'>read_command_line</a></li>
+                  <li class="list-inline-item"><a href='../module/read_config.html'>read_config</a></li>
+                  <li class="list-inline-item"><a href='../module/grid_roads.html'>grid_roads</a></li>
+                  <li class="list-inline-item"><a href='../module/save_netcdf_file.html'>save_netcdf_file</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    <hr>
+<p>uEMEP control v2</p>
+<p>Bruce rolstad Denby (brucerd@met.no)
+  MET Norway</p>
+<hr>
+<p>Reminder note for compilation on Intel
+To add this library to your linker input in the IDE, open the context menu for the project node, choose Properties, then in the Project Properties dialog box, choose Linker
+, and edit the Linker Input to add legacy_stdio_definitions.lib to the semi-colon-separated list
+Tools/options/intel compilers and tools/visual fortran/compilers and add bin, include and lib, e.g. C:\Program Files (x86)\netcdf 4.3.3.1\bin;
+  Control programme for running the downscaling routine uEMEP</p>
+<hr>
+<hr>
+<p>To link to netcdf in visual studio
+Tools - options - Intel compilers - VisusalFortran - Compilers - Libraries/includes/executables
+C:\Program Files (x86)\netcdf 4.3.3.1\include
+C:\Program Files (x86)\netcdf 4.3.3.1\bin
+C:\Program Files (x86)\netcdf 4.3.3.1\lib</p>
+<br>
+
+    <section>
+    <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-source_index~21"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>source_index</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-start_time_cpu"></span>
+              real
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>start_time_cpu</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-end_time_cpu"></span>
+              real
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>end_time_cpu</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-have_read_emep"></span>
+              logical
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>have_read_emep</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-logfile_name~2"></span>
+              character(len=64)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>logfile_name</strong></td>
+<td> =</td>
+                <td>&#34;logfile.txt&#34;</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-program_name"></span>
+              character(len=64)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>program_name</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+    
+
+    
+
+
+    
+
+    <section>
+    <h2 id="src">Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="k">program </span><span class="n">uEMEP_v6</span>
+<span class="w">    </span><span class="c">!! ****************************************************************************</span>
+<span class="w">    </span><span class="c">!!   uEMEP control v2</span>
+<span class="w">    </span><span class="c">!!</span>
+<span class="w">    </span><span class="c">!!   Bruce rolstad Denby (brucerd@met.no)</span>
+<span class="w">    </span><span class="c">!!   MET Norway</span>
+<span class="w">    </span><span class="c">!! ****************************************************************************</span>
+<span class="w">    </span><span class="c">!! Reminder note for compilation on Intel</span>
+<span class="w">    </span><span class="c">!! To add this library to your linker input in the IDE, open the context menu for the project node, choose Properties, then in the Project Properties dialog box, choose Linker</span>
+<span class="w">    </span><span class="c">!! , and edit the Linker Input to add legacy_stdio_definitions.lib to the semi-colon-separated list</span>
+<span class="w">    </span><span class="c">!! Tools/options/intel compilers and tools/visual fortran/compilers and add bin, include and lib, e.g. C:\Program Files (x86)\netcdf 4.3.3.1\bin;</span>
+<span class="w">    </span><span class="c">!!   Control programme for running the downscaling routine uEMEP</span>
+<span class="w">    </span><span class="c">!! ****************************************************************************</span>
+<span class="w">    </span><span class="c">!!</span>
+<span class="w">    </span><span class="c">!! ****************************************************************************</span>
+<span class="w">    </span><span class="c">!! To link to netcdf in visual studio</span>
+<span class="w">    </span><span class="c">!! Tools - options - Intel compilers - VisusalFortran - Compilers - Libraries/includes/executables</span>
+<span class="w">    </span><span class="c">!! C:\Program Files (x86)\netcdf 4.3.3.1\include</span>
+<span class="w">    </span><span class="c">!! C:\Program Files (x86)\netcdf 4.3.3.1\bin</span>
+<span class="w">    </span><span class="c">!! C:\Program Files (x86)\netcdf 4.3.3.1\lib</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="k">use </span><span class="n">uemep_configuration</span>
+<span class="w">    </span><span class="k">use </span><span class="n">uEMEP_definitions</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_command_line</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_command_line</span><span class="p">,</span><span class="w"> </span><span class="n">check_command_line</span>
+<span class="w">    </span><span class="k">use </span><span class="n">set_constants</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_set_constants</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_set_pollutant_loop</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_reset_constants</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_set_species_loop</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_config</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_config</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_emep</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_EMEP</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_meteo_nc</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_meteo_nc</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_rwc_heating_data</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_RWC_heating_data</span>
+<span class="w">    </span><span class="k">use </span><span class="n">save_emission_netcdf</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_calculate_emissions_for_EMEP</span>
+<span class="w">    </span><span class="k">use </span><span class="n">set_subgrids</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_set_subgrids</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_set_subgrid_select_latlon_centre</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_landuse_rivm_data</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_landuse_rivm_data</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_set_landuse_classes</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_read_netcdf_landuse_latlon</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_roadlink_data_ascii</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">read_country_bounding_box_data</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_read_roadlink_data_ascii</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_change_road_data</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_read_roadlink_emission_data</span>
+<span class="w">    </span><span class="k">use </span><span class="n">set_filenames</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_set_filenames</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_receptor_data</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_receptor_data</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_set_loop_receptor_grid</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_grid_receptor_data</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_ssb_data</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_netcdf_population</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_read_SSB_data</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_read_netcdf_population_latlon</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_agriculture_asi_data</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_agriculture_rivm_data</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_read_emission_rivm_data</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_industry_data</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_industry_data</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_shipping_asi_data</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_preaggregate_shipping_asi_data</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_read_netcdf_shipping_latlon</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_read_weekly_shipping_asi_data</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_read_monthly_and_daily_shipping_asi_data</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_read_shipping_asi_data</span>
+<span class="w">    </span><span class="k">use </span><span class="n">read_time_profiles</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_read_time_profiles</span>
+<span class="w">    </span><span class="k">use </span><span class="n">redistribute_data</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_redistribute_local_source</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_disperse_local_source</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_combine_local_source</span>
+<span class="w">    </span><span class="k">use </span><span class="n">save_netcdf_file</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_save_netcdf_control</span>
+<span class="w">    </span><span class="k">use </span><span class="n">subgrid_deposition</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_subgrid_deposition</span>
+<span class="w">    </span><span class="k">use </span><span class="n">subgrid_dispersion</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_subgrid_dispersion</span>
+<span class="w">    </span><span class="k">use </span><span class="n">set_emission_factors</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_set_emission_factors</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_convert_proxy_to_emissions</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_nox_emission_temperature</span>
+<span class="w">    </span><span class="k">use </span><span class="n">subgrid_emep</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_subgrid_EMEP</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_subgrid_EMEP_from_in_region</span>
+<span class="w">    </span><span class="k">use </span><span class="n">subgrid_deposition_emep</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_set_deposition_velocities</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">        </span><span class="n">uEMEP_subgrid_deposition_EMEP</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_calculate_deposition</span>
+<span class="w">    </span><span class="k">use </span><span class="n">subgrid_emission_emep</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_subgrid_emission_EMEP</span>
+<span class="w">    </span><span class="k">use </span><span class="n">subgrid_meteo_emep</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_subgrid_meteo_EMEP</span>
+<span class="w">    </span><span class="k">use </span><span class="n">tiling_routines</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_set_tile_grids</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_set_region_tile_grids</span>
+<span class="w">    </span><span class="k">use </span><span class="n">chemistry_no2</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_chemistry</span><span class="p">,</span><span class="w"> </span><span class="n">correct_annual_mean_chemistry</span>
+<span class="w">    </span><span class="k">use </span><span class="n">crossreference_grids</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_crossreference_grids</span>
+<span class="w">    </span><span class="k">use </span><span class="n">grid_roads</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_grid_roads</span>
+<span class="w">    </span><span class="k">use </span><span class="n">define_subgrid</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_define_subgrid_extent</span><span class="p">,</span><span class="w"> </span><span class="n">uEMEP_define_subgrid</span>
+<span class="w">    </span><span class="k">use </span><span class="n">calculate_exposure</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_calculate_exposure</span>
+<span class="w">    </span><span class="k">use </span><span class="n">auto_subgrid</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">uEMEP_region_mask_new</span>
+
+<span class="w">    </span><span class="k">use </span><span class="n">uemep_logger</span>
+
+<span class="w">    </span><span class="k">implicit none</span>
+
+<span class="k">    </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">source_index</span>
+<span class="w">    </span><span class="kt">real</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">start_time_cpu</span><span class="p">,</span><span class="w"> </span><span class="n">end_time_cpu</span>
+<span class="w">    </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">have_read_emep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">    </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">logfile_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;logfile.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">program_name</span>
+
+<span class="w">    </span><span class="c">! Start timer</span>
+<span class="w">    </span><span class="k">call </span><span class="nb">cpu_Time</span><span class="p">(</span><span class="n">start_time_cpu</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">! Check command line arguments and handle special cases that have to be printed to stdout</span>
+<span class="w">    </span><span class="k">call </span><span class="n">check_command_line</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">! Set model version</span>
+<span class="w">    </span><span class="n">model_version_str</span><span class="o">=</span><span class="s1">&#39;uEMEP_v6.3&#39;</span>
+
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;------------------------------------------------------------------------&#39;</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Starting program &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">model_version_str</span><span class="p">)</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;------------------------------------------------------------------------&#39;</span>
+
+<span class="w">    </span><span class="c">! Read the command line, assigning the configuration file names and the substitution date_str</span>
+<span class="w">    </span><span class="k">call </span><span class="n">uEMEP_read_command_line</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">! Set constants and variable names to be read from EMEP and meteo files</span>
+<span class="w">    </span><span class="k">call </span><span class="n">uEMEP_set_constants</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">! Read the configuration files. Hard coded to be up to 5 files. Log file opened in this routine</span>
+<span class="w">    </span><span class="k">call </span><span class="n">uEMEP_read_config</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">! If selected then specify subgrid using the lat and lon coordinates</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">select_latlon_centre_domain_position_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">        call </span><span class="n">uEMEP_set_subgrid_select_latlon_centre</span><span class="p">()</span>
+<span class="w">    </span><span class="k">end if</span>
+
+<span class="w">    </span><span class="c">! Set the landuse if required</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_landuse_as_proxy</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">read_landuse_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">        call </span><span class="n">uEMEP_set_landuse_classes</span><span class="p">()</span>
+<span class="w">    </span><span class="k">end if</span>
+
+<span class="w">    </span><span class="c">! Set the pollutant and compound loop definitions</span>
+<span class="w">    </span><span class="k">call </span><span class="n">uEMEP_set_pollutant_loop</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">!Reset any constants needed based on the configuration input</span>
+<span class="w">    </span><span class="k">call </span><span class="n">uEMEP_reset_constants</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">! Autoselect files and countries if required. Place here because it changes config data</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">auto_select_OSM_country_flag</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">select_country_by_name</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">        call </span><span class="n">read_country_bounding_box_data</span><span class="p">()</span>
+<span class="w">    </span><span class="k">end if</span>
+
+<span class="w">    </span><span class="c">! Set the EMEP species definitions if they are to be read</span>
+<span class="w">    </span><span class="k">call </span><span class="n">uEMEP_set_species_loop</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">! Set the names of files to be written to when saving intermediate files</span>
+<span class="w">    </span><span class="k">call </span><span class="n">uEMEP_set_filenames</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">! Read positions of receptor points (usually observations) for specifying multiple receptor grids or calculation points within a single grid</span>
+<span class="w">    </span><span class="k">call </span><span class="n">uEMEP_read_receptor_data</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">! Enter the routine for saving emissions used in uEMEP for EMEP in netcdf files defined for the Norwegian domain in Lambert coordinates. Will stop after this</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">save_emissions_for_EMEP</span><span class="p">(</span><span class="n">allsource_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">        call </span><span class="n">uEMEP_calculate_emissions_for_EMEP</span><span class="p">()</span>
+<span class="w">    </span><span class="k">end if</span>
+
+<span class="w">    </span><span class="c">! We set up an initial emission grid parameter set that can be used to first select the outester region</span>
+<span class="w">    </span><span class="c">! This has been done to enable reading of multiple road link files but only keeping those in the initial defined emission area</span>
+<span class="w">    </span><span class="k">call </span><span class="n">uEMEP_set_subgrids</span><span class="p">()</span>
+<span class="w">    </span><span class="n">init_emission_subgrid_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">emission_subgrid_min</span>
+<span class="w">    </span><span class="n">init_emission_subgrid_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">emission_subgrid_max</span>
+<span class="w">    </span><span class="n">init_emission_subgrid_dim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">emission_subgrid_dim</span>
+<span class="w">    </span><span class="n">init_emission_subgrid_delta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">emission_subgrid_delta</span>
+
+<span class="w">    </span><span class="c">! Set the grid loop (g_loop) extent based on use_multiple_receptor_grids_flag or not</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_multiple_receptor_grids_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">        </span><span class="n">start_grid_loop_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">end_grid_loop_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n_receptor_in</span>
+<span class="w">        </span><span class="n">n_receptor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">n_valid_receptor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">valid_receptor_index</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="k">        </span><span class="n">start_grid_loop_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">end_grid_loop_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">n_receptor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n_receptor_in</span>
+<span class="w">        </span><span class="n">use_receptor</span><span class="p">(</span><span class="n">start_grid_loop_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">    </span><span class="k">end if</span>
+
+<span class="k">    </span><span class="n">first_g_loop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="w">    </span><span class="c">! If the use_single_time_loop_flag is true (Reads and calculates one time step at a time to save memory) then set these parameters</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">        </span><span class="n">start_time_loop_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">end_time_loop_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">end_time_nc_index</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time_nc_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">time_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="k">        </span><span class="n">start_time_loop_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">end_time_loop_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">end_time_nc_index</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time_nc_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">time_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end if</span>
+
+<span class="w">    </span><span class="c">! Start internal grid receptor loop using only those receptor grids specified in uEMEP_read_receptor_data</span>
+<span class="w">    </span><span class="k">do </span><span class="n">g_loop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">start_grid_loop_index</span><span class="p">,</span><span class="w"> </span><span class="n">end_grid_loop_index</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_receptor</span><span class="p">(</span><span class="n">g_loop</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">! Set the grid definitions according to the receptor/observation positions</span>
+<span class="w">            </span><span class="k">call </span><span class="n">uEMEP_set_loop_receptor_grid</span><span class="p">()</span>
+
+<span class="w">            </span><span class="c">! Create the subgrid</span>
+<span class="w">            </span><span class="k">call </span><span class="n">uEMEP_set_subgrids</span><span class="p">()</span>
+
+<span class="w">            </span><span class="c">! Set emission factors for the current subgrid</span>
+<span class="w">            </span><span class="k">call </span><span class="n">uEMEP_set_emission_factors</span><span class="p">()</span>
+
+<span class="w">            </span><span class="c">! Start the internal time loop</span>
+<span class="w">            </span><span class="k">do </span><span class="n">t_loop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">start_time_loop_index</span><span class="p">,</span><span class="w"> </span><span class="n">end_time_loop_index</span>
+<span class="w">                </span><span class="c">! Write progress in time and receptor grid loop to screen</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;REC LOOP= &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">g_loop</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; OF &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">end_grid_loop_index</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">unit_logfile</span><span class="w"> </span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;REC LOOP= &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">g_loop</span><span class="p">,</span><span class="s1">&#39; OF &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">end_grid_loop_index</span>
+<span class="w">                </span><span class="k">end if</span>
+<span class="k">                write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TIME LOOP=&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">t_loop</span><span class="p">,</span><span class="s1">&#39; OF &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">end_time_loop_index</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">unit_logfile</span><span class="w"> </span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;TIME LOOP=&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">t_loop</span><span class="p">,</span><span class="s1">&#39; OF &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">end_time_loop_index</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! For the first time loop set the initial subgrid range values used in reading EMEP and meteo data</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">t_loop</span><span class="w"> </span><span class="p">.</span><span class="n">ge</span><span class="p">.</span><span class="w"> </span><span class="n">start_time_loop_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">init_subgrid_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subgrid_min</span>
+<span class="w">                    </span><span class="n">init_subgrid_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subgrid_max</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Read EMEP data from netcdf files. Time stamps based on this</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">have_read_emep</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">uEMEP_read_EMEP</span><span class="p">()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! If read EMEP only once flag is on then turn off the EMEP reading</span>
+<span class="w">                </span><span class="c">! This is intended for use with multiple receptor files and requires alot of memory so is permanently turned off</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">read_EMEP_only_once_flag</span><span class="p">)</span><span class="w"> </span><span class="n">have_read_emep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="w">                </span><span class="c">! Read meteo grid from netcdf files if required</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_alternative_meteorology_flag</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">use_alternative_z0_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">uEMEP_read_meteo_nc</span><span class="p">()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Set the following for the first internal time step only</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">t_loop</span><span class="w"> </span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="w"> </span><span class="n">start_time_loop_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                    </span><span class="c">! Define subgrid positions and buffer zones. Must be done after reading EMEP data as is based on EMEP grid sizes</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">uEMEP_define_subgrid_extent</span><span class="p">()</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">uEMEP_define_subgrid</span><span class="p">()</span>
+
+<span class="w">                    </span><span class="c">! Define and allocate cross reference subgrids used to transfer data between different subgrids</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">uEMEP_crossreference_grids</span><span class="p">()</span>
+
+<span class="w">                    </span><span class="c">! Read all road link data from ascii files</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">read_subgrid_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="c">! Do this only for the first receptor grid loop</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">first_g_loop</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">uEMEP_read_roadlink_data_ascii</span><span class="p">()</span>
+<span class="w">                            </span><span class="k">call </span><span class="n">uEMEP_change_road_data</span><span class="p">()</span>
+<span class="w">                            </span>
+<span class="w">                            </span><span class="c">! Read in the NORTRIP emission data for traffic in the first g_loop if required</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_NORTRIP_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                call </span><span class="n">uEMEP_read_roadlink_emission_data</span><span class="p">()</span>
+<span class="w">                            </span><span class="k">end if</span>
+<span class="k">                        end if</span>
+<span class="k">                    end if</span>
+
+<span class="w">                    </span><span class="c">! Read in and grid industry data</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">industry_index</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">read_subgrid_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">uEMEP_read_industry_data</span><span class="p">()</span>
+<span class="w">                    </span><span class="k">end if</span>
+
+<span class="w">                    </span><span class="c">! Read and subgrid shipping data</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">shipping_index</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">read_subgrid_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="c">! If necessary aggregate shipping data first</span>
+<span class="w">                        </span><span class="k">call </span><span class="n">uEMEP_preaggregate_shipping_asi_data</span><span class="p">()</span>
+<span class="w">                        </span>
+<span class="w">                        </span><span class="c">! Read in shipping data</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">read_shipping_from_netcdf_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">uEMEP_read_netcdf_shipping_latlon</span><span class="p">()</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="k">                            if</span><span class="w"> </span><span class="p">(</span><span class="n">read_weekly_shipping_data_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                call </span><span class="n">uEMEP_read_weekly_shipping_asi_data</span><span class="p">()</span>
+<span class="w">                            </span><span class="k">else if</span><span class="w"> </span><span class="p">(</span><span class="n">read_monthly_and_daily_shipping_data_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                call </span><span class="n">uEMEP_read_monthly_and_daily_shipping_asi_data</span><span class="p">()</span>
+<span class="w">                            </span><span class="k">else</span>
+<span class="k">                                call </span><span class="n">uEMEP_read_shipping_asi_data</span><span class="p">()</span>
+<span class="w">                            </span><span class="k">end if</span>
+<span class="k">                        end if</span>
+<span class="k">                    end if</span>
+
+<span class="w">                    </span><span class="c">! Read in proxy data for home heating. Currently dwelling density</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">heating_index</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">read_subgrid_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="c">! If calculating tiles then read only the dwelling data</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_tiling_flag</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">calculate_region_tiling_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">use_RWC_emission_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">                        </span><span class="k">end if</span>
+<span class="w">                        </span>
+<span class="w">                        </span><span class="c">! Read the Residential Wood Combustion data from MetVed</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_RWC_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">uEMEP_read_RWC_heating_data</span><span class="p">()</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="w">                            </span><span class="c">! Read and subgrid SSB dwelling data</span>
+<span class="w">                            </span><span class="n">SSB_data_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dwelling_index</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">read_population_from_netcdf_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                call </span><span class="n">uEMEP_read_netcdf_population_latlon</span><span class="p">()</span>
+<span class="w">                            </span><span class="k">else if</span><span class="w"> </span><span class="p">(</span><span class="n">read_population_from_netcdf_local_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                call </span><span class="n">uEMEP_read_netcdf_population</span><span class="p">()</span>
+<span class="w">                            </span><span class="k">else</span>
+<span class="k">                                call </span><span class="n">uEMEP_read_SSB_data</span><span class="p">()</span>
+<span class="w">                            </span><span class="k">end if</span>
+<span class="k">                        end if</span>
+<span class="k">                    end if</span>
+
+<span class="w">                    </span><span class="c">! Read and subgrid agriculture data</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">agriculture_index</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">use_rivm_agricuture_emission_data</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">read_subgrid_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="c">! Currently only data from RIVM here</span>
+<span class="w">                        </span><span class="k">call </span><span class="n">uEMEP_read_agriculture_rivm_data</span><span class="p">()</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                    if</span><span class="w"> </span><span class="p">(</span><span class="n">read_rivm_landuse_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">uEMEP_read_landuse_rivm_data</span><span class="p">()</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                    if</span><span class="w"> </span><span class="p">(</span><span class="n">read_subgrid_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="c">! Special routine for reading in RIVM point source emission data</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_rivm_subgrid_emission_format</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">uEMEP_read_emission_rivm_data</span><span class="p">()</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="w">                            </span><span class="c">! Nothing else available yet</span>
+<span class="w">                        </span><span class="k">end if</span>
+<span class="k">                    end if</span>
+
+<span class="w">                    </span><span class="c">! Read in population data</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_population_exposure_flag</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">use_population_positions_for_auto_subgrid_flag</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">save_population</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="c">! Read and subgrid SSB population data</span>
+<span class="w">                        </span><span class="n">SSB_data_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">population_data_type</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">read_population_from_netcdf_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">uEMEP_read_netcdf_population_latlon</span><span class="p">()</span>
+<span class="w">                        </span><span class="k">else if</span><span class="w"> </span><span class="p">(</span><span class="n">read_population_from_netcdf_local_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">uEMEP_read_netcdf_population</span><span class="p">()</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="k">                            call </span><span class="n">uEMEP_read_SSB_data</span><span class="p">()</span>
+<span class="w">                        </span><span class="k">end if</span>
+<span class="k">                    end if</span>
+
+<span class="k">                    if</span><span class="w"> </span><span class="p">(</span><span class="n">use_landuse_as_proxy</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">read_landuse_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">uEMEP_read_netcdf_landuse_latlon</span><span class="p">()</span>
+<span class="w">                    </span><span class="k">end if</span>
+
+<span class="w">                    </span><span class="c">! Autogrid setting for selecting which subgrids to calculate</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_emission_positions_for_auto_subgrid_flag</span><span class="p">(</span><span class="n">allsource_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">uEMEP_grid_roads</span><span class="p">()</span>
+<span class="w">                        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;&#39;uEMEP_auto_subgrid&#39; has been disabled, because array &#39;use_subgrid_val&#39; is disabled&quot;</span>
+<span class="w">                        </span><span class="k">stop</span>
+<span class="w">                        </span><span class="c">!call uEMEP_auto_subgrid()</span>
+<span class="w">                    </span><span class="k">end if</span>
+
+<span class="w">                    </span><span class="c">! No longer call uEMEP_region_mask, as use_subgrid_val is deactivated and use_subgrid is set elsewhere</span>
+<span class="w">                    </span><span class="c">!if (use_region_select_and_mask_flag) then</span>
+<span class="w">                    </span><span class="c">!    call uEMEP_region_mask()</span>
+<span class="w">                    </span><span class="c">!end if</span>
+
+<span class="w">                    </span><span class="c">! New subroutine for reading region mask and region fraction</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">trace_emissions_from_in_region</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">use_region_select_and_mask_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">uEMEP_region_mask_new</span><span class="p">()</span>
+<span class="w">                    </span><span class="k">endif</span>
+
+<span class="w">                    </span><span class="c">! Specify the subgrids sizes to be calculated using use_receptor_region</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">uEMEP_grid_receptor_data</span>
+
+<span class="w">                    </span><span class="c">! Carry out tiling. Programme will stop here</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_tiling_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">uEMEP_grid_roads</span><span class="p">()</span>
+<span class="w">                        </span><span class="k">call </span><span class="n">uEMEP_set_tile_grids</span><span class="p">()</span>
+<span class="w">                    </span><span class="k">end if</span>
+
+<span class="w">                    </span><span class="c">! Carry out regional tiling. Programme will stop here</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_region_tiling_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">uEMEP_set_region_tile_grids</span><span class="p">()</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                end if</span>
+
+<span class="w">                </span><span class="c">! Read time profiles for emissions</span>
+<span class="w">                </span><span class="k">call </span><span class="n">uEMEP_read_time_profiles</span><span class="p">()</span>
+
+<span class="w">                </span><span class="c">! Call grid_roads again to include the time variation from NORTRIP</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">read_subgrid_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">uEMEP_grid_roads</span><span class="p">()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Interpolate meteo data to subgrid. Placed on the integral subgrid</span>
+<span class="w">                </span><span class="k">call </span><span class="n">uEMEP_subgrid_meteo_EMEP</span><span class="p">()</span>
+
+<span class="w">                </span><span class="c">! Replaces proxy emissions with distributed EMEP emissions</span>
+<span class="w">                </span><span class="k">call </span><span class="n">uEMEP_subgrid_emission_EMEP</span><span class="p">()</span>
+
+<span class="w">                </span><span class="c">! Convert proxies to emissions including time profiles</span>
+<span class="w">                </span><span class="k">call </span><span class="n">uEMEP_convert_proxy_to_emissions</span><span class="p">()</span>
+
+<span class="w">                </span><span class="c">! Adjust traffic emissions of NOx based on temperature</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_traffic_nox_emission_temperature_dependency</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">uEMEP_nox_emission_temperature</span><span class="p">()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Places EMEP deposition velocities into the deposition_subgrid</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_deposition_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">uEMEP_set_deposition_velocities</span><span class="p">()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Set travel_time values to 0 outside of the source loop as these are aggregated over all sources</span>
+<span class="w">                </span><span class="n">traveltime_subgrid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">                </span>
+<span class="w">                </span><span class="c">! Subgrid dispersion calculation</span>
+<span class="w">                </span><span class="k">do </span><span class="n">source_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_source_index</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">use_plume_dispersion_deposition_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">uEMEP_subgrid_dispersion</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                end do</span>
+
+<span class="k">                do </span><span class="n">source_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_source_index</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">use_plume_dispersion_deposition_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">uEMEP_subgrid_deposition</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                end do</span>
+
+<span class="w">                </span><span class="c">! Interpolate local_subgrid if necessary</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">interpolate_subgrids_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;&#39;uEMEP_interpolate_auto_subgrid&#39; has been disabled, because array &#39;use_subgrid_val&#39; is disabled&quot;</span>
+<span class="w">                    </span><span class="k">stop</span>
+<span class="w">                    </span><span class="c">!call uEMEP_interpolate_auto_subgrid()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Old diagnostic for comparing EMEP and proxy data emissions. Working only on lat lon EMEP grids. Do not use</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">make_EMEP_grid_emission_data</span><span class="p">(</span><span class="n">allsource_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                    </span><span class="c">!call uEMEP_aggregate_proxy_emission_in_EMEP_grid</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Put EMEP data into the additional subgrids for all sources.</span>
+<span class="w">                </span><span class="c">! Must be run first</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_additional_grid_interpolation_size</span><span class="w"> </span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">calculate_EMEP_additional_grid_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">uEMEP_subgrid_EMEP</span><span class="p">()</span>
+<span class="w">                    </span><span class="n">calculate_EMEP_additional_grid_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Put EMEP data into subgrids for all sources</span>
+<span class="w">                </span><span class="k">call </span><span class="n">uEMEP_subgrid_EMEP</span><span class="p">()</span>
+
+<span class="w">                </span><span class="c">! Call the new subroutine for calculating more precise estimates of the contributions from outside moving window but within region</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">trace_emissions_from_in_region</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    if</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_grid_interpolation_flag</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">EMEP_grid_interpolation_flag</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">uEMEP_subgrid_EMEP_from_in_region</span><span class="p">()</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="w">                    </span><span class="c">! NB: Only implemented to be consistent with interpolation flag 0 and 6</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="k">                if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_deposition_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">uEMEP_subgrid_deposition_EMEP</span><span class="p">()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Interpolate EMEP to sub-grid</span>
+<span class="w">                </span><span class="k">do </span><span class="n">source_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_source_index</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">source_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="c">! Redistributes proxy subgrid data into the EMEP grid concentrations only when local_subgrid_method_flag=1 (based on EMEP concentration redistribution scaling factor)</span>
+<span class="w">                        </span><span class="k">call </span><span class="n">uEMEP_redistribute_local_source</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                        </span>
+<span class="w">                        </span><span class="c">! Places the proxy_subgrid data into the local_subgrid when local_subgrid_method_flag&lt;&gt;1</span>
+<span class="w">                        </span><span class="k">call </span><span class="n">uEMEP_disperse_local_source</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                end do</span>
+
+<span class="w">                </span><span class="c">! Combine and save sources in local and total values</span>
+<span class="w">                </span><span class="k">call </span><span class="n">uEMEP_combine_local_source</span><span class="p">()</span>
+
+<span class="w">                </span><span class="c">! Calculate the nonlocal depositions</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_deposition_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">uEMEP_calculate_deposition</span><span class="p">()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Calculate chemistry for NO2 and O3</span>
+<span class="w">                </span><span class="k">call </span><span class="n">uEMEP_chemistry</span><span class="p">()</span>
+
+<span class="w">                </span><span class="c">! Correct annual mean chemistry for pdf</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_annual_mean_pdf_chemistry_correction</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">correct_annual_mean_chemistry</span><span class="p">()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Calculate exposure</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_population_exposure_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">uEMEP_calculate_exposure</span><span class="p">()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="w">                </span><span class="c">! Save results to netcdf</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">save_netcdf_file_flag</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">save_netcdf_receptor_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    call </span><span class="n">uEMEP_save_netcdf_control</span><span class="p">()</span>
+<span class="w">                </span><span class="k">end if</span>
+
+<span class="k">            end do</span><span class="w"> </span><span class="c">! t_loop</span>
+
+<span class="w">            </span><span class="c">! Update first_g_loop flag</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">first_g_loop</span><span class="p">)</span><span class="w"> </span><span class="n">first_g_loop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+
+<span class="w">        </span><span class="k">end if</span><span class="w"> </span><span class="c">! use_receptor</span>
+<span class="w">    </span><span class="k">end do</span><span class="w"> </span><span class="c">! g_loop</span>
+
+<span class="w">    </span><span class="k">call </span><span class="nb">cpu_time</span><span class="p">(</span><span class="n">end_time_cpu</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">unit_logfile</span><span class="w"> </span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;------------------------------------------------------------------------&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Ending program &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">model_version_str</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i5,a,i2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; CPU time taken (MM:SS): &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">floor</span><span class="p">((</span><span class="n">end_time_cpu</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time_cpu</span><span class="p">)</span><span class="o">/</span><span class="mi">6</span><span class="mf">0.0</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">floor</span><span class="p">(</span><span class="nb">mod</span><span class="p">(</span><span class="n">end_time_cpu</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time_cpu</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="mf">0.0</span><span class="p">))</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;------------------------------------------------------------------------&#39;</span>
+<span class="w">    </span><span class="k">end if</span>
+
+<span class="k">    if</span><span class="w"> </span><span class="p">(</span><span class="n">unit_logfile</span><span class="w"> </span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">        close</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;keep&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end if</span>
+
+<span class="w">    </span><span class="c">! Save finished file</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="n">finished_filename</span><span class="p">)</span><span class="w"> </span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">save_netcdf_receptor_flag</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">n_valid_receptor</span><span class="w"> </span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s1">&#39;(2A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Writing finished file for uEMEP output: &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">finished_file_rec</span><span class="p">)</span>
+<span class="w">            </span><span class="k">open</span><span class="p">(</span><span class="n">unit_finishedfile</span><span class="p">,</span><span class="w"> </span><span class="k">file</span><span class="o">=</span><span class="n">finished_file_rec</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">close</span><span class="p">(</span><span class="n">unit_finishedfile</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end if</span>
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">save_netcdf_file_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s1">&#39;(2A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Writing finished file for uEMEP output: &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">finished_file</span><span class="p">)</span>
+<span class="w">            </span><span class="k">open</span><span class="p">(</span><span class="n">unit_finishedfile</span><span class="p">,</span><span class="w"> </span><span class="k">file</span><span class="o">=</span><span class="n">finished_file</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">close</span><span class="p">(</span><span class="n">unit_finishedfile</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end if</span>
+<span class="k">    end if</span>
+
+<span class="k">    write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;------------------------------------------------------------------------&#39;</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Ending program &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">model_version_str</span><span class="p">)</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s1">&#39;(a,i5,a,i2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; CPU time taken (MM:SS): &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">floor</span><span class="p">((</span><span class="n">end_time_cpu</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time_cpu</span><span class="p">)</span><span class="o">/</span><span class="mi">6</span><span class="mf">0.0</span><span class="p">),</span><span class="s1">&#39;:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">floor</span><span class="p">(</span><span class="nb">mod</span><span class="p">(</span><span class="n">end_time_cpu</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time_cpu</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="mf">0.0</span><span class="p">))</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;------------------------------------------------------------------------&#39;</span>
+
+<span class="k">end program </span><span class="n">uEMEP_v6</span>
+</pre></div>
+
+    </section>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

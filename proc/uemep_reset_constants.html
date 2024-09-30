@@ -1,0 +1,699 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_reset_constants &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_reset_constants
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 1.7% of total for procedures.">336 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_set_constants.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_set_constants.f90.html'>uEMEP_set_constants.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/set_constants.html'>set_constants</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_reset_constants</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_reset_constants.html#src">uEMEP_reset_constants</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine uEMEP_reset_constants()  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/uemep_definitions.html'>uEMEP_definitions</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+    <h3>Arguments</h3>
+    <em>None</em>
+    <br>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_reset_constants</span>
+<span class="w">        </span><span class="c">!Reset some constants based on the configuration file input</span>
+<span class="w">        </span><span class="k">use </span><span class="n">uEMEP_definitions</span>
+<span class="w">        </span><span class="k">implicit none</span>
+
+<span class="k">        </span><span class="kt">integer </span><span class="n">index_start</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">prefix_str</span><span class="p">,</span><span class="n">postfix_str</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i</span><span class="p">,</span><span class="n">j</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="n">sector_str_lf</span><span class="p">,</span><span class="n">sector_str_emis</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">sector_index</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">temp_str</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_comp</span><span class="p">,</span><span class="n">i_source</span><span class="p">,</span><span class="n">p_loop</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">local_fraction_naming_template_str_temp</span><span class="p">,</span><span class="n">local_fraction_grid_size_str</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">index</span><span class="p">(</span><span class="n">alternative_meteorology_type</span><span class="p">,</span><span class="s1">&#39;nortrip&#39;</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">var_name_meteo_nc</span><span class="p">(</span><span class="n">lon_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;lon&#39;</span>
+<span class="w">            </span><span class="n">var_name_meteo_nc</span><span class="p">(</span><span class="n">lat_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;lat&#39;</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!Reset meteorological names</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">index</span><span class="p">(</span><span class="n">alternative_meteorology_type</span><span class="p">,</span><span class="s1">&#39;nbv&#39;</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">dim_name_meteo_nc</span><span class="p">(</span><span class="n">z_dim_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;height4&#39;</span>
+<span class="w">            </span><span class="n">var_name_meteo_nc</span><span class="p">(</span><span class="n">lon_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;lon&#39;</span>
+<span class="w">            </span><span class="n">var_name_meteo_nc</span><span class="p">(</span><span class="n">lat_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;lat&#39;</span>
+<span class="w">            </span><span class="n">var_name_meteo_nc</span><span class="p">(</span><span class="n">hmix_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;boundary_layer_height&#39;</span>
+<span class="w">            </span><span class="n">var_name_meteo_nc</span><span class="p">(</span><span class="n">logz0_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;surface_roughness_momentum&#39;</span><span class="w"> </span><span class="c">!Needs to be converted to log(Z0)</span>
+<span class="w">            </span><span class="n">var_name_meteo_nc</span><span class="p">(</span><span class="n">Hflux_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;surface_upward_sensible_heat_flux&#39;</span><span class="w">     </span><span class="c">!Note this is upward not downward so must have a negative when read</span>
+<span class="w">            </span><span class="n">var_name_meteo_nc</span><span class="p">(</span><span class="n">precip_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;precipitation_amount&#39;</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">use_EMEP_surface_ozone_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">o3_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_O3&#39;</span>
+<span class="w">        </span><span class="k">endif</span>
+
+
+<span class="w">        </span><span class="c">!If GNFR19 emissions are true then so are the GNFR13 emissions</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_GNFR19_emissions_from_EMEP_flag</span><span class="p">)</span><span class="w"> </span><span class="n">use_GNFR_emissions_from_EMEP_flag</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="w">        </span><span class="c">!Set the emission sector index to be read to standard GNFR.</span>
+<span class="w">        </span><span class="c">!Not actually used now but could be used in the loop below</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_GNFR_emissions_from_EMEP_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">allsource_index</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">)</span><span class="o">=</span><span class="mi">6</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">shipping_index</span><span class="p">)</span><span class="o">=</span><span class="mi">7</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">agriculture_index</span><span class="p">)</span><span class="o">=</span><span class="mi">12</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">heating_index</span><span class="p">)</span><span class="o">=</span><span class="mi">3</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">industry_index</span><span class="p">)</span><span class="o">=</span><span class="mi">2</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">publicpower_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">fugitive_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">4</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">solvents_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">5</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">aviation_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">8</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">offroad_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">9</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">waste_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">10</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">livestock_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">11</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">other_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">13</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">publicpower_point_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">14</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">publicpower_area_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">15</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">traffic_gasoline_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">16</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">traffic_diesel_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">17</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">traffic_gas_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">18</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">traffic_nonexhaust_nc_index</span><span class="p">)</span><span class="o">=</span><span class="mi">19</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!Create the sector strings, different for emissions to the local fraction strings, no leading 0&#39;s</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i_source</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_source_nc_index</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;(i2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">i_source</span><span class="p">).</span><span class="n">lt</span><span class="p">.</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">uEMEP_to_EMEP_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">temp_str</span><span class="p">))</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                </span><span class="n">uEMEP_to_EMEP_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">temp_str</span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">            write</span><span class="p">(</span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">),</span><span class="s1">&#39;(i2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_source</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">                </span><span class="n">uEMEP_to_EMEP_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="w">            </span><span class="c">!write(*,*) i_source,uEMEP_to_EMEP_sector_str(i_source),&#39; &#39;,uEMEP_to_EMEP_emis_sector_str(i_source)</span>
+
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">use_alphabetic_GNFR_emissions_from_EMEP_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">allsource_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;F&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">shipping_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;G&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">agriculture_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;L&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">heating_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;C&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">industry_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;B&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">publicpower_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;A&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">fugitive_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;D&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">solvents_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;E&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">aviation_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;H&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">offroad_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;I&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">waste_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;J&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">livestock_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;K&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">other_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;M&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">traffic_gasoline_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">traffic_diesel_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;F2&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">traffic_gas_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;F3&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">traffic_nonexhaust_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;F4&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">publicpower_point_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;A1&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">publicpower_area_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;A2&#39;</span>
+<span class="w">            </span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">traffic_exhaust_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;F1-3&#39;</span><span class="w"> </span><span class="c">!Not read</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="k">        </span><span class="n">save_EMEP_source</span><span class="o">=</span><span class="n">calculate_EMEP_source</span>
+
+<span class="w">        </span><span class="c">!Automatically set these extra files to be read</span>
+<span class="w">        </span><span class="c">!Of these only the traffic exhaust and nonexhaust will be saved</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_GNFR19_emissions_from_EMEP_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">traffic_gasoline_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">            </span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">traffic_diesel_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">            </span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">traffic_gas_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">            </span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">publicpower_point_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">            </span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">publicpower_area_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">            </span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">traffic_exhaust_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">            </span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">traffic_nonexhaust_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">            </span><span class="c">!We do not want to add these since they are already in traffic but we do want to save them</span>
+<span class="w">            </span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">traffic_exhaust_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">            </span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">traffic_nonexhaust_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">            </span><span class="n">save_EMEP_source</span><span class="p">(</span><span class="n">traffic_exhaust_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">            </span><span class="n">save_EMEP_source</span><span class="p">(</span><span class="n">traffic_nonexhaust_nc_index</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!integer GNFR_index(n_source_nc_index)</span>
+<span class="w">        </span><span class="c">!A 1 �PublicPower� (1)</span>
+<span class="w">        </span><span class="c">!B 2 �Industry� (3)</span>
+<span class="w">        </span><span class="c">!C 3 �OtherStationaryComb� (2)</span>
+<span class="w">        </span><span class="c">!D 4 �Fugitive� (4)</span>
+<span class="w">        </span><span class="c">!E 5 �Solvents� (6)</span>
+<span class="w">        </span><span class="c">!F 6 �RoadTransport� (7)</span>
+<span class="w">        </span><span class="c">!G 7 �Shipping� (8)</span>
+<span class="w">        </span><span class="c">!H 8 �Aviation� (8)</span>
+<span class="w">        </span><span class="c">!I 9 �Offroad� (8)</span>
+<span class="w">        </span><span class="c">!J 10 �Waste� (9)</span>
+<span class="w">        </span><span class="c">!K 11 �AgriLivestock� (10)</span>
+<span class="w">        </span><span class="c">!L 12 �AgriOther� (10)</span>
+<span class="w">        </span><span class="c">!M 13 �Other� (5)</span>
+
+<span class="w">        </span><span class="c">!These are for the previous EMEP version before 4.3.3</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_GNFR_emissions_from_EMEP_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">            </span><span class="c">!Local fractions</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">nox_nc_index</span><span class="p">,</span><span class="n">traffic_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;nox_sec06_local_fraction&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">pmco_nc_index</span><span class="p">,</span><span class="n">traffic_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;pmco_sec06_local_fraction&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">pm25_nc_index</span><span class="p">,</span><span class="n">traffic_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;pm25_sec06_local_fraction&#39;</span>
+
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">nox_nc_index</span><span class="p">,</span><span class="n">shipping_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;nox_sec07_local_fraction&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">pm25_nc_index</span><span class="p">,</span><span class="n">shipping_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;pm25_sec07_local_fraction&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">pmco_nc_index</span><span class="p">,</span><span class="n">shipping_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;pmco_sec07_local_fraction&#39;</span>
+
+<span class="w">            </span><span class="c">!var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)=&#39;nh3_sec11_local_fraction&#39;</span>
+<span class="w">            </span><span class="c">!var_name_nc(frac_nc_index,nh3_nc_index,agriculture_nc_index)=&#39;nh3_sec12_local_fraction&#39;</span>
+<span class="w">            </span><span class="c">!Read as total for the time being as these have become two sectors now</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">nh3_nc_index</span><span class="p">,</span><span class="n">agriculture_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;nh3_local_fraction&#39;</span>
+
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">nox_nc_index</span><span class="p">,</span><span class="n">heating_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;nox_sec03_local_fraction&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">pm25_nc_index</span><span class="p">,</span><span class="n">heating_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;pm25_sec03_local_fraction&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">pmco_nc_index</span><span class="p">,</span><span class="n">heating_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;pmco_sec03_local_fraction&#39;</span>
+
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">nox_nc_index</span><span class="p">,</span><span class="n">industry_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;nox_sec02_local_fraction&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">pm25_nc_index</span><span class="p">,</span><span class="n">industry_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;pm25_sec02_local_fraction&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">pmco_nc_index</span><span class="p">,</span><span class="n">industry_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;pmco_sec02_local_fraction&#39;</span>
+
+<span class="w">            </span><span class="c">!Total emissions remain the same</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">nh3_nc_index</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_nh3&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">nox_nc_index</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_nox&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">pmco_nc_index</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_pmco&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">pm25_nc_index</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_pm25&#39;</span>
+
+<span class="w">            </span><span class="c">!Sector emissions read as total</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">nh3_nc_index</span><span class="p">,</span><span class="n">agriculture_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_nh3&#39;</span>
+
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">nox_nc_index</span><span class="p">,</span><span class="n">traffic_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec6nox&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">pm25_nc_index</span><span class="p">,</span><span class="n">traffic_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec6pm25&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">pmco_nc_index</span><span class="p">,</span><span class="n">traffic_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec6pmco&#39;</span>
+
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">nox_nc_index</span><span class="p">,</span><span class="n">shipping_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec7nox&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">pm25_nc_index</span><span class="p">,</span><span class="n">shipping_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec7pm25&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">pmco_nc_index</span><span class="p">,</span><span class="n">shipping_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec7pmco&#39;</span>
+
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">nox_nc_index</span><span class="p">,</span><span class="n">heating_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec3nox&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">pm25_nc_index</span><span class="p">,</span><span class="n">heating_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec3pm25&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">pmco_nc_index</span><span class="p">,</span><span class="n">heating_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec3pmco&#39;</span>
+
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">nox_nc_index</span><span class="p">,</span><span class="n">industry_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec2nox&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">pm25_nc_index</span><span class="p">,</span><span class="n">industry_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec2pm25&#39;</span>
+<span class="w">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">pmco_nc_index</span><span class="p">,</span><span class="n">industry_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec2pmco&#39;</span>
+
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!General setting of names. Overrides all other presets</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i_comp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_nc_index</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_source</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_source_nc_index</span>
+
+<span class="w">                </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">i_comp</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i_comp</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39;_sec&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">uEMEP_to_EMEP_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39;_local_fraction&#39;</span>
+<span class="w">                </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i_comp</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="o">//</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i_comp</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_source</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">i_comp</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i_comp</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39;_local_fraction&#39;</span>
+<span class="w">                    </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i_comp</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_&#39;</span><span class="o">//</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i_comp</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">endif</span>
+<span class="k">                if</span><span class="w"> </span><span class="p">(</span><span class="n">extract_benzene_from_voc_emissions</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">i_comp</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">c6h6_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i_comp</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39;voc&#39;</span>
+<span class="w">                </span><span class="k">endif</span>
+
+<span class="w">                </span><span class="c">!write(*,*) i_comp,i_source,trim(var_name_nc(frac_nc_index,i_comp,i_source)),trim(var_name_nc(emis_nc_index,i_comp,i_source))</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">        enddo</span>
+
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">use_emission_naming_template_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">!Set the prefix and postfix part of the emission name string based on the template</span>
+<span class="w">            </span><span class="c">!Assumes compound is added at the end</span>
+
+<span class="w">            </span><span class="n">index_start</span><span class="o">=</span><span class="nb">INDEX</span><span class="p">(</span><span class="n">emission_naming_template_str</span><span class="p">,</span><span class="s1">&#39;&lt;n&gt;&#39;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index_start</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">prefix_str</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                </span><span class="n">prefix_str</span><span class="o">=</span><span class="n">emission_naming_template_str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_start</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">index_start</span><span class="o">+</span><span class="mf">3.</span><span class="n">gt</span><span class="p">.</span><span class="nb">len_trim</span><span class="p">(</span><span class="n">emission_naming_template_str</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">postfix_str</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                </span><span class="n">postfix_str</span><span class="o">=</span><span class="n">emission_naming_template_str</span><span class="p">(</span><span class="n">index_start</span><span class="o">+</span><span class="mi">3</span><span class="p">:)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="w">            </span><span class="c">!write(*,*) index_start,index_start+3,len_trim(emission_naming_template_str)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_GNFR_emissions_from_EMEP_flag</span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="n">use_alphabetic_GNFR_emissions_from_EMEP_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Using emission name template for GNFR sectors: &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">emission_naming_template_str</span><span class="p">)</span>
+<span class="w">                </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_nc_index</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i_source</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_source_nc_index</span>
+<span class="w">                        </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">prefix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">extract_benzene_from_voc_emissions</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">i</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">c6h6_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">prefix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;voc&#39;</span>
+<span class="w">                        </span><span class="k">endif</span>
+
+<span class="k">                        if</span><span class="w"> </span><span class="p">(</span><span class="n">i_source</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">prefix_str</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">extract_benzene_from_voc_emissions</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">i</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">c6h6_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">prefix_str</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;voc&#39;</span>
+<span class="w">                            </span><span class="k">endif</span>
+<span class="k">                            if</span><span class="w"> </span><span class="p">(</span><span class="n">use_alphabetic_GNFR_emissions_from_EMEP_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                                </span><span class="c">!Remove any leading &#39;_&#39; in the postfix_str</span>
+<span class="w">                                </span><span class="n">index_start</span><span class="o">=</span><span class="nb">INDEX</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">,</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+<span class="w">                                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index_start</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                    </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">(</span><span class="mi">2</span><span class="p">:))</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span>
+<span class="w">                                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">extract_benzene_from_voc_emissions</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">i</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">c6h6_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                        </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">(</span><span class="mi">2</span><span class="p">:))</span><span class="o">//</span><span class="s1">&#39;voc&#39;</span>
+<span class="w">                                    </span><span class="k">endif</span>
+<span class="k">                                else</span>
+<span class="k">                                    </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span>
+<span class="w">                                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">extract_benzene_from_voc_emissions</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">i</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">c6h6_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                        </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;voc&#39;</span>
+<span class="w">                                    </span><span class="k">endif</span>
+<span class="k">                                endif</span>
+<span class="k">                            endif</span>
+<span class="k">                        endif</span>
+<span class="w">                        </span><span class="c">!write(*,*) i,i_source,trim(var_name_nc(emis_nc_index,i,i_source))</span>
+
+<span class="w">                    </span><span class="k">enddo</span>
+<span class="k">                enddo</span>
+
+<span class="k">            else</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Using emission name template for SNAP sectors: &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">emission_naming_template_str</span><span class="p">)</span>
+
+<span class="w">                </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_nc_index</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i_source</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_source_nc_index</span>
+<span class="w">                        </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">prefix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">uEMEP_to_EMEP_emis_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_source</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">prefix_str</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">extract_benzene_from_voc_emissions</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">i</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">c6h6_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">prefix_str</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;voc&#39;</span>
+<span class="w">                            </span><span class="k">endif</span>
+<span class="k">                        endif</span>
+<span class="k">                    enddo</span>
+<span class="k">                enddo</span>
+<span class="k">            endif</span>
+
+
+<span class="k">        endif</span>
+
+<span class="w">        </span><span class="c">!Set the indexes for the local fraction data and increase the number of variables appropriately</span>
+<span class="w">        </span><span class="c">!Include a conversion array between the local and fraction arrays</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_local_fraction_naming_template_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="k">            </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_local_fraction_grids</span>
+<span class="w">                </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="n">lc_frac_nc_loop_index</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">=</span><span class="n">i</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_local_fraction_grids</span>
+<span class="w">                </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="n">lc_local_nc_loop_index</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">=</span><span class="n">i</span>
+<span class="w">                </span><span class="c">!convert_local_to_fraction_loop_index(lc_local_nc_loop_index(j))=lc_frac_nc_loop_index(j)</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="w">            </span><span class="c">!do j=1,n_local_fraction_grids</span>
+<span class="w">            </span><span class="c">!    convert_fraction_to_local_loop_index(lc_fraction_nc_loop_index(j))=lc_local_nc_loop_index(j)</span>
+<span class="w">            </span><span class="c">!enddo</span>
+<span class="w">            </span><span class="n">num_lc_var_nc</span><span class="o">=</span><span class="n">i</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;New number of num_lc_var_nc variables with additional LF EMEP: &#39;</span><span class="p">,</span><span class="n">num_lc_var_nc</span>
+<span class="w">            </span><span class="n">min_lc_frac_nc_loop_index</span><span class="o">=</span><span class="nb">minval</span><span class="p">(</span><span class="n">lc_frac_nc_loop_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">max_lc_frac_nc_loop_index</span><span class="o">=</span><span class="nb">maxval</span><span class="p">(</span><span class="n">lc_frac_nc_loop_index</span><span class="p">)</span>
+
+<span class="w">            </span><span class="n">i</span><span class="o">=</span><span class="n">num_var_nc_start</span>
+<span class="w">            </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_local_fraction_grids</span>
+<span class="w">                </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="n">frac_nc_loop_index</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">=</span><span class="n">i</span>
+<span class="w">                </span><span class="n">convert_frac_to_lc_frac_loop_index</span><span class="p">(</span><span class="n">frac_nc_loop_index</span><span class="p">(</span><span class="n">j</span><span class="p">))</span><span class="o">=</span><span class="n">lc_frac_nc_loop_index</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                </span><span class="c">!write(*,*) i,j,frac_nc_loop_index(j),convert_frac_to_lc_frac_loop_index(frac_nc_loop_index(j))</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_local_fraction_grids</span>
+<span class="w">                </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="n">local_nc_loop_index</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">=</span><span class="n">i</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            </span><span class="n">num_var_nc</span><span class="o">=</span><span class="n">i</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;New number of num_var_nc variables with additional LF EMEP: &#39;</span><span class="p">,</span><span class="n">num_var_nc</span>
+<span class="w">            </span><span class="n">min_frac_nc_loop_index</span><span class="o">=</span><span class="nb">minval</span><span class="p">(</span><span class="n">frac_nc_loop_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">max_frac_nc_loop_index</span><span class="o">=</span><span class="nb">maxval</span><span class="p">(</span><span class="n">frac_nc_loop_index</span><span class="p">)</span>
+
+
+<span class="w">        </span><span class="k">endif</span>
+
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">use_local_fraction_naming_template_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">!Set the prefix and postfix part of the emission name string based on the template</span>
+<span class="w">            </span><span class="c">!Assumes compound is added at the end</span>
+<span class="w">            </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_local_fraction_grids</span>
+<span class="w">                </span><span class="n">local_fraction_naming_template_str_temp</span><span class="o">=</span><span class="n">local_fraction_naming_template_str</span>
+<span class="w">                </span><span class="n">index_start</span><span class="o">=</span><span class="nb">INDEX</span><span class="p">(</span><span class="n">local_fraction_naming_template_str_temp</span><span class="p">,</span><span class="s1">&#39;&lt;n&gt;&#39;</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index_start</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">prefix_str</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="k">                    </span><span class="n">prefix_str</span><span class="o">=</span><span class="n">local_fraction_naming_template_str_temp</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">index_start</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                </span><span class="k">endif</span>
+<span class="k">                if</span><span class="w"> </span><span class="p">(</span><span class="n">index_start</span><span class="o">+</span><span class="mf">3.</span><span class="n">gt</span><span class="p">.</span><span class="nb">len_trim</span><span class="p">(</span><span class="n">local_fraction_naming_template_str_temp</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">postfix_str</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="k">                    </span><span class="n">postfix_str</span><span class="o">=</span><span class="n">local_fraction_naming_template_str_temp</span><span class="p">(</span><span class="n">index_start</span><span class="o">+</span><span class="mi">3</span><span class="p">:)</span>
+<span class="w">                </span><span class="k">endif</span>
+
+<span class="w">                </span><span class="c">!Create the local fraction grid size for appending to the variable name</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">temp_str</span><span class="p">,</span><span class="s1">&#39;(i2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                </span><span class="n">local_fraction_grid_size_str</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">temp_str</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39;x&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">temp_str</span><span class="p">))</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">use_local_fraction_grid_size_in_template_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">local_fraction_grid_size_str</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">                </span><span class="k">endif</span>
+
+<span class="w">                </span><span class="c">!write(*,*) index_start,index_start+3,len_trim(emission_naming_template_str)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Using local fraction name template: &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">local_fraction_naming_template_str_temp</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39; for lf grid = &#39;</span><span class="p">,</span><span class="n">j</span>
+<span class="w">                </span><span class="c">!do i=1,n_pollutant_nc_index</span>
+<span class="w">                </span><span class="k">do </span><span class="n">p_loop</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_emep_pollutant_loop</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">p_loop</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="n">n_emep_pollutant_loop</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">i</span><span class="o">=</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">p_loop</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">else</span>
+<span class="k">                        </span><span class="n">i</span><span class="o">=</span><span class="n">pmco_nc_index</span><span class="w"> </span><span class="c">!Necessary to include this</span>
+<span class="w">                    </span><span class="k">endif</span>
+
+<span class="k">                    do </span><span class="n">i_source</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_source_nc_index</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">i_source</span><span class="p">).</span><span class="nb">or</span><span class="p">.</span><span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">i_source</span><span class="p">).</span><span class="nb">or</span><span class="p">.</span><span class="n">save_EMEP_source</span><span class="p">(</span><span class="n">i_source</span><span class="p">).</span><span class="nb">or</span><span class="p">.</span><span class="n">i_source</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_loop_index</span><span class="p">(</span><span class="n">j</span><span class="p">),</span><span class="n">i</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39;_&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">prefix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">uEMEP_to_EMEP_sector_str</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">local_fraction_grid_size_str</span><span class="p">)</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_source</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_loop_index</span><span class="p">(</span><span class="n">j</span><span class="p">),</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">local_fraction_grid_size_str</span><span class="p">)</span>
+<span class="w">                            </span><span class="k">endif</span>
+<span class="k">                            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(2i6,2a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="n">i_source</span><span class="p">,</span><span class="s1">&#39;  &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_loop_index</span><span class="p">(</span><span class="n">j</span><span class="p">),</span><span class="n">i</span><span class="p">,</span><span class="n">i_source</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">endif</span>
+<span class="k">                    enddo</span>
+<span class="k">                enddo</span>
+<span class="k">            enddo</span>
+
+<span class="k">        endif</span>
+
+<span class="w">        </span><span class="c">!Only works on the old sectors and lf names</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_user_specified_sectors_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Replacing sector index in EMEP (sector,pollutant,lf_name,emis_name)&#39;</span>
+
+<span class="w">            </span><span class="k">do </span><span class="n">sector_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">n_source_nc_index</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">sector_index</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="n">uEMEP_to_EMEP_replace_sector</span><span class="p">(</span><span class="n">sector_index</span><span class="p">).</span><span class="n">ge</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                    </span><span class="c">!sector_index=traffic_nc_index</span>
+<span class="w">                    </span><span class="k">write</span><span class="p">(</span><span class="n">sector_str_lf</span><span class="p">,</span><span class="s1">&#39;(i0.2)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">uEMEP_to_EMEP_replace_sector</span><span class="p">(</span><span class="n">sector_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">write</span><span class="p">(</span><span class="n">sector_str_emis</span><span class="p">,</span><span class="s1">&#39;(i0.1)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">uEMEP_to_EMEP_replace_sector</span><span class="p">(</span><span class="n">sector_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uEMEP_to_EMEP_replace_sector</span><span class="p">(</span><span class="n">sector_index</span><span class="p">).</span><span class="n">ne</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">sector_str_lf</span><span class="o">=</span><span class="s1">&#39;_sec&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">sector_str_lf</span><span class="p">)</span>
+<span class="w">                        </span><span class="n">sector_str_emis</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">sector_str_emis</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">else</span>
+<span class="k">                        </span><span class="n">sector_str_lf</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">                        </span><span class="n">sector_str_emis</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">                    </span><span class="k">endif</span>
+<span class="k">                    do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_nc_index</span>
+<span class="w">                        </span><span class="c">!Can fix the above problem here</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_local_fraction_naming_template_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">sector_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">prefix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">sector_str_lf</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="k">                            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">sector_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">sector_str_lf</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;_local_fraction&#39;</span>
+<span class="w">                        </span><span class="k">endif</span>
+
+<span class="w">                        </span><span class="c">!var_name_nc(frac_nc_index,pmco_nc_index,sector_index)=&#39;pmco&#39;//trim(sector_str)//&#39;_local_fraction&#39;</span>
+<span class="w">                        </span><span class="c">!var_name_nc(frac_nc_index,pm25_nc_index,sector_index)=&#39;pm25&#39;//trim(sector_str)//&#39;_local_fraction&#39;</span>
+
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_emission_naming_template_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">sector_index</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">prefix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">sector_str_emis</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">postfix_str</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="k">                            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">sector_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;Emis_mgm2_sec&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">sector_str_emis</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">conc_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">allsource_nc_index</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">endif</span>
+
+<span class="k">                        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(2i8,a6,i2,a4,i2,a3,2a48)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">sector_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="s1">&#39; from &#39;</span><span class="p">,</span><span class="n">uEMEP_to_EMEP_sector</span><span class="p">(</span><span class="n">sector_index</span><span class="p">),</span><span class="s1">&#39; to &#39;</span><span class="p">,</span><span class="n">uEMEP_to_EMEP_replace_sector</span><span class="p">(</span><span class="n">sector_index</span><span class="p">),</span><span class="s1">&#39; : &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">frac_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">sector_index</span><span class="p">)),</span><span class="nb">trim</span><span class="p">(</span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">sector_index</span><span class="p">))</span>
+
+<span class="w">                    </span><span class="k">enddo</span>
+
+<span class="k">                endif</span>
+<span class="k">            enddo</span>
+<span class="k">        endif</span>
+<span class="w">        </span><span class="c">!stop</span>
+<span class="w">        </span><span class="c">!write(unit_tile,&#39;(a,i0.5)&#39;) &#39;tile_tag= &#39;//trim(save_tile_tag)//&#39;_&#39;,count</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_EMEP_surface_compounds_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Using EMEP surface compounds instead of gridded&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">o3_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_O3&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">no2_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_NO2&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">nox_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ugN_NOX&#39;</span><span class="w"> </span><span class="c">!Not used</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">nh3_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_NH3&#39;</span>
+<span class="w">            </span><span class="c">!comp_name_nc(nh3_nc_index)=&#39;nh3&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">nh4_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_NH4_F&#39;</span>
+<span class="w">            </span><span class="c">!comp_name_nc(pm25_nc_index)=&#39;pm25&#39;</span>
+<span class="w">            </span><span class="c">!comp_name_nc(pmco_nc_index)=&#39;SURF_ug_PMCO&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">pm10_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_PM10&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">pm25_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_PM25&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">co_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_CO&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">bap_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_BAP&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">c6h6_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_BENZENE&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">so2_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_SO2&#39;</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">use_water_in_EMEP_surface_pm_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Using EMEP surface PM including water (RH50)&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">pm10_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_PM10_rh50&#39;</span>
+<span class="w">            </span><span class="n">comp_name_nc</span><span class="p">(</span><span class="n">pm25_nc_index</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;SURF_ug_PM25_rh50&#39;</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!Reset emission names so they will not be read if they are not used</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">make_EMEP_grid_emission_data</span><span class="p">(</span><span class="n">allsource_index</span><span class="p">).</span><span class="nb">or</span><span class="p">.</span><span class="n">local_subgrid_method_flag</span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="mf">2.</span><span class="nb">or</span><span class="p">.</span><span class="n">save_emissions_for_EMEP</span><span class="p">(</span><span class="n">allsource_index</span><span class="p">).</span><span class="nb">or</span><span class="p">.</span><span class="n">save_emissions</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">        else</span>
+<span class="k">            </span><span class="n">var_name_nc</span><span class="p">(</span><span class="n">emis_nc_index</span><span class="p">,:,:)</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Will not read or write any EMEP emission data&#39;</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!If utm zones set the projection parameters to these values</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">UTM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">projection_attributes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="n">utm_zone</span>
+<span class="w">            </span><span class="n">projection_attributes</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="n">utm_lon0</span>
+<span class="w">        </span><span class="k">endif</span>
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LTM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">projection_attributes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="n">utm_zone</span>
+<span class="w">            </span><span class="n">projection_attributes</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="n">ltm_lon0</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!Reset the EMEP grid region based on the size of the selected local fraction</span>
+<span class="w">        </span><span class="n">local_fraction_grid_size_scaling</span><span class="o">=</span><span class="kt">real</span><span class="p">(</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="n">local_fraction_grid_for_EMEP_grid_interpolation</span><span class="p">))</span>
+<span class="w">        </span><span class="n">EMEP_grid_interpolation_size_original</span><span class="o">=</span><span class="n">EMEP_grid_interpolation_size</span>
+<span class="w">        </span><span class="c">!EMEP_grid_interpolation_size=EMEP_grid_interpolation_size_original*local_fraction_grid_size_scaling</span>
+<span class="w">        </span><span class="n">local_fraction_additional_grid_size_scaling</span><span class="o">=</span><span class="kt">real</span><span class="p">(</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="n">local_fraction_grid_for_EMEP_additional_grid_interpolation</span><span class="p">))</span>
+<span class="w">        </span><span class="n">EMEP_additional_grid_interpolation_size_original</span><span class="o">=</span><span class="n">EMEP_additional_grid_interpolation_size</span>
+<span class="w">        </span><span class="c">!EMEP_additional_grid_interpolation_size=EMEP_additional_grid_interpolation_size_original*local_fraction_additional_grid_size_scaling</span>
+
+<span class="w">        </span><span class="c">!Definitions of the emission saving grid. These are the pre February 2020 values</span>
+<span class="w">        </span><span class="c">!save_emission_subgrid_min(x_dim_index)=-6.498834E+05</span>
+<span class="w">        </span><span class="c">!save_emission_subgrid_delta(x_dim_index)=2500.</span>
+<span class="w">        </span><span class="c">!save_emission_subgrid_dim(x_dim_index)=531</span>
+<span class="w">        </span><span class="c">!save_emission_subgrid_min(y_dim_index)=-6.567275E+05</span>
+<span class="w">        </span><span class="c">!save_emission_subgrid_delta(y_dim_index)=2500.</span>
+<span class="w">        </span><span class="c">!save_emission_subgrid_dim(y_dim_index)=671</span>
+
+<span class="w">    </span><span class="k">end subroutine </span><span class="n">uEMEP_reset_constants</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

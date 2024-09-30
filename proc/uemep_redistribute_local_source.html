@@ -1,0 +1,397 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_redistribute_local_source &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_redistribute_local_source
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.4% of total for procedures.">85 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_redistribute_data.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_redistribute_data.f90.html'>uEMEP_redistribute_data.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/redistribute_data.html'>redistribute_data</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_redistribute_local_source</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_redistribute_local_source.html#src">uEMEP_redistribute_local_source</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine uEMEP_redistribute_local_source(source_index)  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/uemep_definitions.html'>uEMEP_definitions</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-source_index~17"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>source_index</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_redistribute_local_source</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span>
+
+<span class="w">        </span><span class="k">use </span><span class="n">uEMEP_definitions</span>
+
+<span class="w">        </span><span class="k">implicit none</span>
+
+<span class="k">        </span><span class="kt">integer </span><span class="n">i</span><span class="p">,</span><span class="n">j</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">source_index</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">tt</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">integral_counter</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">sum_integral</span><span class="p">(</span><span class="n">n_pollutant_loop</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_start</span><span class="p">,</span><span class="n">i_end</span><span class="p">,</span><span class="n">j_start</span><span class="p">,</span><span class="n">j_end</span><span class="p">,</span><span class="n">t_start</span><span class="p">,</span><span class="n">t_end</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">emep_subsource</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">xpos_limit</span><span class="p">,</span><span class="n">ypos_limit</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">xpos_area_min</span><span class="p">,</span><span class="n">xpos_area_max</span><span class="p">,</span><span class="n">ypos_area_min</span><span class="p">,</span><span class="n">ypos_area_max</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">xpos_integral_subgrid</span><span class="p">,</span><span class="n">ypos_integral_subgrid</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_pollutant</span>
+
+<span class="w">        </span><span class="c">!allocate (sum_integral(subgrid_dim(1),subgrid_dim(2))) !Can just be a scalar</span>
+<span class="w">        </span><span class="c">!allocate (scaling_factor_traffic_subgrid(subgrid_dim(1),subgrid_dim(2))) !Can just be a scalar</span>
+<span class="w">        </span><span class="c">!allocate (traffic_redistributed_local_subgrid(subgrid_dim(1),subgrid_dim(2))) !Can just be a scalar</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">local_subgrid_method_flag</span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">return</span>
+
+
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Redistribute local source using EMEP concentrations (uEMEP_redistribute_local_source)&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+
+<span class="w">        </span><span class="c">!No subsources for the emep related arrays</span>
+<span class="w">        </span><span class="n">emep_subsource</span><span class="o">=</span><span class="mi">1</span>
+
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(2A)&#39;</span><span class="p">)</span><span class="s1">&#39;Calculating the scaling factor and local contribution at each subgrid for &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">source_file_str</span><span class="p">(</span><span class="n">source_index</span><span class="p">))</span>
+
+<span class="w">        </span><span class="n">xpos_limit</span><span class="o">=</span><span class="n">dgrid_nc</span><span class="p">(</span><span class="n">lon_nc_index</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">EMEP_grid_interpolation_size</span><span class="o">*</span><span class="n">local_fraction_grid_size_scaling</span>
+<span class="w">        </span><span class="n">ypos_limit</span><span class="o">=</span><span class="n">dgrid_nc</span><span class="p">(</span><span class="n">lat_nc_index</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">EMEP_grid_interpolation_size</span><span class="o">*</span><span class="n">local_fraction_grid_size_scaling</span>
+
+<span class="w">        </span><span class="c">!Set the start and end times of the loop</span>
+<span class="w">        </span><span class="n">t_start</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">        </span><span class="n">t_end</span><span class="o">=</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+
+<span class="w">        </span><span class="k">do </span><span class="n">tt</span><span class="o">=</span><span class="n">t_start</span><span class="p">,</span><span class="n">t_end</span>
+
+<span class="w">            </span><span class="c">!Calculate the mean concentration of the integral values for each subgrid point</span>
+<span class="w">            </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+
+<span class="k">                        </span><span class="n">sum_integral</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">                        </span><span class="n">integral_counter</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">                        </span><span class="n">i_cross_integral</span><span class="o">=</span><span class="n">crossreference_target_to_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="n">j_cross_integral</span><span class="o">=</span><span class="n">crossreference_target_to_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">)</span>
+
+<span class="w">                        </span><span class="n">xpos_integral_subgrid</span><span class="o">=</span><span class="n">xproj_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                        </span><span class="n">ypos_integral_subgrid</span><span class="o">=</span><span class="n">yproj_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+
+
+<span class="w">                        </span><span class="c">!Use the wind direction to move the target area downwind</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_downwind_position_flag</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">hourly_calculations</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                            </span><span class="c">!Use the same area as for non upwind</span>
+<span class="w">                            </span><span class="n">i_start</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">i_cross_integral</span><span class="o">-</span><span class="n">integral_subgrid_loop_index</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">i_end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">i_cross_integral</span><span class="o">+</span><span class="n">integral_subgrid_loop_index</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">j_start</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="o">-</span><span class="n">integral_subgrid_loop_index</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">j_end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">j_cross_integral</span><span class="o">+</span><span class="n">integral_subgrid_loop_index</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span>
+
+<span class="w">                            </span><span class="n">xpos_area_max</span><span class="o">=</span><span class="n">xpos_integral_subgrid</span><span class="o">+</span><span class="n">xpos_limit</span>
+<span class="w">                            </span><span class="n">xpos_area_min</span><span class="o">=</span><span class="n">xpos_integral_subgrid</span><span class="o">-</span><span class="n">xpos_limit</span>
+<span class="w">                            </span><span class="n">ypos_area_max</span><span class="o">=</span><span class="n">ypos_integral_subgrid</span><span class="o">+</span><span class="n">ypos_limit</span>
+<span class="w">                            </span><span class="n">ypos_area_min</span><span class="o">=</span><span class="n">ypos_integral_subgrid</span><span class="o">-</span><span class="n">ypos_limit</span>
+
+<span class="w">                        </span><span class="k">else</span>
+
+<span class="k">                            </span><span class="n">i_start</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">i_cross_integral</span><span class="o">-</span><span class="n">integral_subgrid_loop_index</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">i_end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">i_cross_integral</span><span class="o">+</span><span class="n">integral_subgrid_loop_index</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">j_start</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="o">-</span><span class="n">integral_subgrid_loop_index</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">j_end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">j_cross_integral</span><span class="o">+</span><span class="n">integral_subgrid_loop_index</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span>
+
+<span class="w">                            </span><span class="n">xpos_area_max</span><span class="o">=</span><span class="n">xpos_integral_subgrid</span><span class="o">+</span><span class="n">xpos_limit</span>
+<span class="w">                            </span><span class="n">xpos_area_min</span><span class="o">=</span><span class="n">xpos_integral_subgrid</span><span class="o">-</span><span class="n">xpos_limit</span>
+<span class="w">                            </span><span class="n">ypos_area_max</span><span class="o">=</span><span class="n">ypos_integral_subgrid</span><span class="o">+</span><span class="n">ypos_limit</span>
+<span class="w">                            </span><span class="n">ypos_area_min</span><span class="o">=</span><span class="n">ypos_integral_subgrid</span><span class="o">-</span><span class="n">ypos_limit</span>
+
+<span class="w">                        </span><span class="k">endif</span>
+
+<span class="w">                        </span><span class="c">!write(*,*) i_start-i_cross_integral,i_end-i_cross_integral,j_start-j_cross_integral,j_end-j_cross_integral</span>
+<span class="w">                        </span><span class="c">!Calculate the average grid concentration at each integral subgrid based on proxy integral</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">jj</span><span class="o">=</span><span class="n">j_start</span><span class="p">,</span><span class="n">j_end</span>
+<span class="w">                            </span><span class="k">do </span><span class="n">ii</span><span class="o">=</span><span class="n">i_start</span><span class="p">,</span><span class="n">i_end</span>
+
+<span class="w">                                </span><span class="n">xpos_integral_subgrid</span><span class="o">=</span><span class="n">xproj_integral_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">)</span>
+<span class="w">                                </span><span class="n">ypos_integral_subgrid</span><span class="o">=</span><span class="n">yproj_integral_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">)</span>
+
+<span class="w">                                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">xpos_integral_subgrid</span><span class="p">.</span><span class="n">ge</span><span class="p">.</span><span class="n">xpos_area_min</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">xpos_integral_subgrid</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="n">xpos_area_max</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                    </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">ypos_integral_subgrid</span><span class="p">.</span><span class="n">ge</span><span class="p">.</span><span class="n">ypos_area_min</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">ypos_integral_subgrid</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="n">ypos_area_max</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                                    </span><span class="c">!do i_pollutant=1,n_pollutant_loop</span>
+<span class="w">                                    </span><span class="n">sum_integral</span><span class="p">(:)</span><span class="o">=</span><span class="n">sum_integral</span><span class="p">(:)</span><span class="o">+</span><span class="n">integral_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">hsurf_average_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span>
+<span class="w">                                    </span><span class="c">!write(*,*) ii,jj,integral_subgrid(ii,jj,tt,hsurf_average_subgrid_index,source_index,1)</span>
+<span class="w">                                    </span><span class="c">!enddo</span>
+
+<span class="w">                                    </span><span class="n">integral_counter</span><span class="o">=</span><span class="n">integral_counter</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                                    </span><span class="c">!write(*,*) i,j,ii-i_cross_integral,jj-j_cross_integral</span>
+<span class="w">                                </span><span class="k">endif</span>
+<span class="k">                            enddo</span>
+<span class="k">                        enddo</span>
+
+<span class="w">                        </span><span class="c">!Calculate scaling factor</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">i_pollutant</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_loop</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sum_integral</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">ne</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                </span><span class="n">subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">scaling_factor_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="n">subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">proxy_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">/</span><span class="n">sum_integral</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">*</span><span class="n">integral_counter</span>
+<span class="w">                            </span><span class="k">else</span>
+<span class="k">                                </span><span class="n">subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">scaling_factor_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">                            </span><span class="k">endif</span>
+<span class="w">                            </span><span class="c">!write(*,*) i_pollutant,subgrid(i,j,tt,proxy_subgrid_index,source_index,i_pollutant),sum_integral(i_pollutant)</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">scaling_factor_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)))</span><span class="w"> </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">sum_integral</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">),</span><span class="n">integral_counter</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">emep_local_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)))</span><span class="w"> </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;L&#39;</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">sum_integral</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">),</span><span class="n">integral_counter</span>
+<span class="w">                        </span><span class="k">enddo</span>
+
+<span class="k">                    endif</span>
+
+<span class="k">                enddo</span>
+<span class="w">                </span><span class="c">!write(*,*) &#39;Redistribution&#39;,j,&#39; of &#39;,subgrid_dim(2)</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Redistribution time &#39;</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="s1">&#39; of &#39;</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="k">        do </span><span class="n">i_pollutant</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_loop</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(i,A,f12.4)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">i_pollutant</span><span class="p">,</span><span class="s1">&#39; Max scaling factor for pollutant  =&#39;</span><span class="p">,</span><span class="nb">maxval</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">scaling_factor_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">))</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(i,A,f12.4)&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">i_pollutant</span><span class="p">,</span><span class="s1">&#39; Mean scaling factor for pollutant =&#39;</span><span class="p">,</span><span class="nb">sum</span><span class="p">(</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">scaling_factor_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="o">/</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="w">        </span><span class="c">!Calculate redistributed subgrid source concentrations</span>
+<span class="w">        </span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">local_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span><span class="o">=</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">scaling_factor_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span><span class="o">*</span><span class="n">subgrid</span><span class="p">(:,:,:,</span><span class="n">emep_local_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span>
+
+
+<span class="w">    </span><span class="k">end subroutine </span><span class="n">uEMEP_redistribute_local_source</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

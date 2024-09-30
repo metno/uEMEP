@@ -1,0 +1,477 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_grid_roads &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_grid_roads
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.8% of total for procedures.">159 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_grid_roads.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_grid_roads.f90.html'>uEMEP_grid_roads.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/grid_roads.html'>grid_roads</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_grid_roads</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_grid_roads.html#src">uEMEP_grid_roads</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine uEMEP_grid_roads()  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/uemep_definitions.html'>uEMEP_definitions</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+    <h3>Arguments</h3>
+    <em>None</em>
+    <br>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_grid_roads</span>
+
+<span class="w">        </span><span class="k">use </span><span class="n">uEMEP_definitions</span>
+
+<span class="w">        </span><span class="k">implicit none</span>
+
+<span class="k">        </span><span class="kt">integer </span><span class="n">i</span><span class="p">,</span><span class="n">j</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">ro</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">f_subgrid</span><span class="p">(:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">adt_temp</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">adt_car_temp</span><span class="p">(:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">adt_truck_temp</span><span class="p">(:)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_subgrid_in</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="n">y_subgrid_in</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_line_in</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="n">y_line_in</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="n">lat_line_in</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="n">lon_line_in</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_traffic_index</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="n">j_traffic_index</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_start</span><span class="p">,</span><span class="n">i_end</span><span class="p">,</span><span class="n">j_start</span><span class="p">,</span><span class="n">j_end</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">source_index</span><span class="p">,</span><span class="n">t</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">n_pollutant_loop</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">tt</span><span class="p">,</span><span class="n">ttt</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">major_ro</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">t_start_temp</span><span class="p">,</span><span class="n">t_end_temp</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">tunnel_ratio</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">sigma0_temp</span>
+
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_pollutant</span>
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Gridding road link proxy data (uEMEP_grid_roads)&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+
+<span class="w">        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">f_subgrid</span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">))</span>
+<span class="w">        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">adt_temp</span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">,</span><span class="n">n_pollutant_loop</span><span class="p">))</span>
+<span class="w">        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">adt_car_temp</span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">))</span>
+<span class="w">        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">adt_truck_temp</span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">))</span>
+<span class="w">        </span><span class="c">!allocate (traffic_emission_subgrid(subgrid_dim(1),subgrid_dim(2)),n_emission_subgrid_index)</span>
+
+<span class="w">        </span><span class="n">source_index</span><span class="o">=</span><span class="n">traffic_index</span>
+<span class="w">        </span><span class="n">t</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="w">        </span><span class="n">proxy_emission_subgrid</span><span class="p">(:,:,</span><span class="n">source_index</span><span class="p">,:)</span><span class="o">=</span><span class="mf">0.</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_traffic_for_sigma0_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">emission_properties_subgrid</span><span class="p">(:,:,</span><span class="n">emission_sigy00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">            </span><span class="n">emission_properties_subgrid</span><span class="p">(:,:,</span><span class="n">emission_sigz00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!Possible to split the traffic source into different subsources at this point if necessary, e.g. light and heavy traffic</span>
+<span class="w">        </span><span class="c">!Here we weight the adt by the emission ratio and give an emission factor valid for cars</span>
+<span class="w">        </span><span class="n">adt_car_temp</span><span class="o">=</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_roadlinks</span><span class="p">,</span><span class="n">adt_rl_index</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_roadlinks</span><span class="p">,</span><span class="n">hdv_rl_index</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="mf">0.</span><span class="p">)</span>
+<span class="w">        </span><span class="n">adt_truck_temp</span><span class="o">=</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_roadlinks</span><span class="p">,</span><span class="n">adt_rl_index</span><span class="p">)</span><span class="o">*</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_roadlinks</span><span class="p">,</span><span class="n">hdv_rl_index</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="mf">0.</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i_pollutant</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_loop</span>
+<span class="w">            </span><span class="n">adt_temp</span><span class="p">(:,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="n">adt_car_temp</span><span class="o">+</span><span class="n">adt_truck_temp</span><span class="o">*</span><span class="n">ratio_truck_car_emission</span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">))</span>
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="w">        </span><span class="c">!Calculate the pseudo traffic emissions in each grid</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="s1">&#39;Gridding traffic emission proxy data&#39;</span>
+
+<span class="w">        </span><span class="c">!Convert from uEMEP to NORTRIP</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_NORTRIP_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">            </span><span class="c">!This links the order of the NORTRIP output to the pollutants</span>
+<span class="w">            </span><span class="c">!Order is: pm10,pm2.5,pmex,nox,pm10_sand/salt,pm2.5_sand/salt,pm10_salt,pm2.5_salt</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_pollutant</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_loop</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm10_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm25_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">2</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pmex_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">3</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">nox_nc_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">4</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm10_sand_nc_index</span><span class="p">.</span><span class="nb">and</span><span class="p">.(</span><span class="n">pollutant_index</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">all_sand_nc_index</span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="n">pollutant_index</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">all_sand_salt_nc_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">5</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm10_salt_nc_index</span><span class="p">.</span><span class="nb">and</span><span class="p">.(</span><span class="n">pollutant_index</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">all_sand_salt_nc_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">6</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm10_salt_nc_index</span><span class="p">.</span><span class="nb">and</span><span class="p">.(</span><span class="n">pollutant_index</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">all_salt_nc_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">5</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm25_sand_nc_index</span><span class="p">.</span><span class="nb">and</span><span class="p">.(</span><span class="n">pollutant_index</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">all_sand_nc_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">6</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm25_sand_nc_index</span><span class="p">.</span><span class="nb">and</span><span class="p">.(</span><span class="n">pollutant_index</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">all_sand_salt_nc_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">7</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm25_salt_nc_index</span><span class="p">.</span><span class="nb">and</span><span class="p">.(</span><span class="n">pollutant_index</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">all_salt_nc_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">6</span>
+<span class="w">                </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="n">pm25_salt_nc_index</span><span class="p">.</span><span class="nb">and</span><span class="p">.(</span><span class="n">pollutant_index</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">all_sand_salt_nc_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="mi">8</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,2i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;STOPPING: No valid compound chosen for NORTRIP. Stopping uEMEP_grid_roads. Pollutant index=&#39;</span><span class="p">,</span><span class="n">pollutant_index</span><span class="p">,</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">)</span>
+<span class="w">                    </span><span class="c">!write(*,*) n_pollutant_loop</span>
+<span class="w">                    </span><span class="c">!write(*,*) pollutant_loop_index(1:n_pollutant_loop)</span>
+<span class="w">                    </span><span class="k">stop</span>
+<span class="k">                endif</span>
+<span class="k">            enddo</span>
+
+<span class="k">            </span><span class="n">emission_subgrid</span><span class="p">(:,:,:,</span><span class="n">traffic_index</span><span class="p">,:)</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">            </span><span class="c">!Set the time to be used based on the time loop flag</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">t_start_temp</span><span class="o">=</span><span class="n">t_loop</span>
+<span class="w">                </span><span class="n">t_end_temp</span><span class="o">=</span><span class="n">t_loop</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                </span><span class="n">t_start_temp</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">                </span><span class="n">t_end_temp</span><span class="o">=</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">        endif</span>
+
+<span class="k">        do </span><span class="n">ro</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_roadlinks</span>
+
+<span class="w">            </span><span class="n">x_line_in</span><span class="o">=</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">:</span><span class="n">x2_rl_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">y_line_in</span><span class="o">=</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">:</span><span class="n">y2_rl_index</span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!Convert to EMEP coordinates from specified projection type to lambertCC or latlon. Not certain if the fraction is correctly calculated in lat lon coordinates but otherwise very complicated</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">save_emissions_for_EMEP</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">x_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">y_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">lon_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">lat_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">projection_attributes</span><span class="p">,</span><span class="n">projection_type</span><span class="p">)</span>
+<span class="w">                    </span><span class="c">!call UTM2LL(utm_zone,y_line_in(i),x_line_in(i),lat_line_in(i),lon_line_in(i))</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LL_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">x_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">=</span><span class="n">lon_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">                        </span><span class="n">y_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">=</span><span class="n">lat_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LCC_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">lb2lambert2_uEMEP</span><span class="p">(</span><span class="n">x_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">y_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">lon_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">lat_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">EMEP_projection_attributes</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">PS_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">LL2PS_spherical</span><span class="p">(</span><span class="n">x_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">y_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">lon_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">lat_line_in</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">EMEP_projection_attributes</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">endif</span>
+<span class="k">                enddo</span>
+<span class="w">                </span><span class="c">!write(*,*) x_line_in(1),y_line_in(1),lon_line_in(1),lat_line_in(1)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">            </span><span class="n">i_traffic_index</span><span class="o">=</span><span class="mi">1</span><span class="o">+</span><span class="nb">floor</span><span class="p">((</span><span class="n">x_line_in</span><span class="o">-</span><span class="n">emission_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span><span class="o">/</span><span class="n">emission_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span>
+<span class="w">            </span><span class="n">j_traffic_index</span><span class="o">=</span><span class="mi">1</span><span class="o">+</span><span class="nb">floor</span><span class="p">((</span><span class="n">y_line_in</span><span class="o">-</span><span class="n">emission_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span><span class="o">/</span><span class="n">emission_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">i_traffic_index</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">ge</span><span class="p">.</span><span class="mf">1.</span><span class="nb">or</span><span class="p">.</span><span class="n">i_traffic_index</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">ge</span><span class="p">.</span><span class="mi">1</span><span class="p">).</span><span class="nb">and</span><span class="p">.(</span><span class="n">j_traffic_index</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">ge</span><span class="p">.</span><span class="mf">1.</span><span class="nb">or</span><span class="p">.</span><span class="n">j_traffic_index</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">ge</span><span class="p">.</span><span class="mi">1</span><span class="p">).</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">(</span><span class="n">i_traffic_index</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">).</span><span class="nb">or</span><span class="p">.</span><span class="n">i_traffic_index</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)).</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">(</span><span class="n">j_traffic_index</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">).</span><span class="nb">or</span><span class="p">.</span><span class="n">j_traffic_index</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)))</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                </span><span class="c">!write(*,*) ro,i_traffic_index,j_traffic_index</span>
+<span class="w">                </span><span class="c">!Limit the loop if it is near the edge</span>
+<span class="w">                </span><span class="n">i_start</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">minval</span><span class="p">(</span><span class="n">i_traffic_index</span><span class="p">))</span>
+<span class="w">                </span><span class="n">i_end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">),</span><span class="nb">maxval</span><span class="p">(</span><span class="n">i_traffic_index</span><span class="p">))</span>
+<span class="w">                </span><span class="n">j_start</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">minval</span><span class="p">(</span><span class="n">j_traffic_index</span><span class="p">))</span>
+<span class="w">                </span><span class="n">j_end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">),</span><span class="nb">maxval</span><span class="p">(</span><span class="n">j_traffic_index</span><span class="p">))</span>
+
+<span class="w">                </span><span class="c">!if (i_end-i_start.gt.2.or.j_end-j_start.gt.2) write(*,*) ro,i_start,i_end,j_start,j_end</span>
+
+<span class="w">                </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="n">j_start</span><span class="p">,</span><span class="n">j_end</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="n">i_start</span><span class="p">,</span><span class="n">i_end</span>
+
+<span class="w">                        </span><span class="n">x_subgrid_in</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="n">x_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">-</span><span class="n">emission_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
+<span class="w">                        </span><span class="n">x_subgrid_in</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="n">x_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">+</span><span class="n">emission_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
+<span class="w">                        </span><span class="n">y_subgrid_in</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="n">y_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">-</span><span class="n">emission_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
+<span class="w">                        </span><span class="n">y_subgrid_in</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="n">y_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">+</span><span class="n">emission_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
+
+<span class="w">                        </span><span class="n">f_subgrid</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span><span class="o">=</span><span class="n">line_fraction_in_grid_func</span><span class="p">(</span><span class="n">x_subgrid_in</span><span class="p">,</span><span class="n">y_subgrid_in</span><span class="p">,</span><span class="n">x_line_in</span><span class="p">,</span><span class="n">y_line_in</span><span class="p">)</span>
+
+<span class="w">                        </span><span class="c">!do subsource_index=1,n_subsource(source_index)</span>
+<span class="w">                        </span><span class="n">proxy_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span><span class="o">=</span><span class="n">proxy_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                            </span><span class="o">+</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">*</span><span class="n">f_subgrid</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span><span class="o">*</span><span class="n">adt_temp</span><span class="p">(</span><span class="n">ro</span><span class="p">,:)</span>
+
+<span class="w">                        </span><span class="c">!Put the temporally changing emissions straight into the emission subgrid</span>
+<span class="w">                        </span><span class="c">!Will not be overwritten in uEMEP_convert_proxy_to_emissions if use_NORTRIP_emission_data=true</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_NORTRIP_emission_data</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">major_ro</span><span class="o">=</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">major_index_rl_index</span><span class="p">)</span>
+<span class="w">                            </span><span class="k">do </span><span class="n">tt</span><span class="o">=</span><span class="n">t_start_temp</span><span class="p">,</span><span class="n">t_end_temp</span>
+<span class="w">                                </span><span class="c">!Convert from g/km/hour to ug/s/subgrid</span>
+<span class="w">                                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                    </span><span class="n">ttt</span><span class="o">=</span><span class="n">t_loop</span>
+<span class="w">                                    </span><span class="n">t</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">                                </span><span class="k">else</span>
+<span class="k">                                    </span><span class="n">t</span><span class="o">=</span><span class="n">tt</span>
+<span class="w">                                    </span><span class="n">ttt</span><span class="o">=</span><span class="n">tt</span>
+<span class="w">                                </span><span class="k">endif</span>
+<span class="w">                                </span><span class="c">!write(*,*) &#39;ro,major_ro,tt,t,ttt&#39;,ro,major_ro,tt,t,ttt</span>
+<span class="w">                                </span><span class="c">!write(*,*) &#39;emission_grid&#39;,shape(emission_subgrid)</span>
+<span class="w">                                </span><span class="c">!write(*,*) &#39;inputdata_rl_emissions&#39;,shape(inputdata_rl_emissions)</span>
+
+<span class="w">                                </span><span class="c">!if (t_loop.eq.2) stop</span>
+
+<span class="w">                                </span><span class="k">do </span><span class="n">i_pollutant</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_pollutant_loop</span>
+<span class="w">                                    </span><span class="c">!write(*,*) i_pollutant,major_ro,inputdata_rl(major_ro,tunnel_length_rl_index)</span>
+<span class="w">                                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_tunnel_deposition_flag</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">tunnel_length_rl_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                        call </span><span class="n">tunnel_deposition_factor</span><span class="p">(</span><span class="n">pollutant_loop_index</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">tunnel_length_rl_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="p">,</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">ADT_rl_index</span><span class="p">)</span><span class="o">*</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">/</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">tunnel_length_rl_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                            </span><span class="p">,</span><span class="n">ventilation_factor</span><span class="p">,</span><span class="n">min_ADT_ventilation_factor</span><span class="p">,</span><span class="n">min_length_ventilation_factor</span><span class="p">,</span><span class="n">windspeed_tunnel</span><span class="p">,</span><span class="n">tunnel_ratio</span><span class="p">)</span>
+<span class="w">                                    </span><span class="k">else</span>
+<span class="k">                                        </span><span class="n">tunnel_ratio</span><span class="o">=</span><span class="mf">1.</span>
+<span class="w">                                    </span><span class="k">endif</span>
+
+<span class="w">                                    </span><span class="c">!Turn off tunnel emissions if required</span>
+<span class="w">                                    </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">use_tunnel_emissions_flag</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">tunnel_length_rl_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                        </span><span class="n">tunnel_ratio</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                                    </span><span class="k">endif</span>
+<span class="w">                                    </span><span class="c">!Converts from g/km/hr (NORTRIP) to ug/sec (uEMEP)</span>
+<span class="w">                                    </span><span class="n">emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="o">=</span><span class="n">emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">i_pollutant</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                        </span><span class="o">+</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">*</span><span class="n">f_subgrid</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span><span class="o">*</span><span class="n">inputdata_rl_emissions</span><span class="p">(</span><span class="n">major_ro</span><span class="p">,</span><span class="n">ttt</span><span class="p">,</span><span class="n">i_roadlink_emission_compound</span><span class="p">(</span><span class="n">i_pollutant</span><span class="p">))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                        </span><span class="o">*</span><span class="mf">1.e6</span><span class="o">/</span><span class="mf">1.e3</span><span class="o">/</span><span class="mi">360</span><span class="mf">0.</span><span class="o">*</span><span class="n">tunnel_ratio</span>
+<span class="w">                                </span><span class="k">enddo</span>
+<span class="w">                                </span><span class="c">!write(*,*) i,j, emission_subgrid(i,j,t,source_index,pollutant_loop_back_index(pm10_nc_index)),emission_subgrid(i,j,t,source_index,pollutant_loop_back_index(pm25_nc_index))</span>
+<span class="w">                            </span><span class="k">enddo</span>
+<span class="k">                        endif</span>
+
+<span class="w">                        </span><span class="c">!Set the sigma values according to traffic speed and road width using proxy weighting</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_traffic_for_sigma0_flag</span><span class="p">.</span><span class="nb">and</span><span class="p">..</span><span class="nb">not</span><span class="p">.</span><span class="n">save_emissions_for_EMEP</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">sigma0_temp</span><span class="o">=</span><span class="n">sigma0_traffic_func</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">speed_rl_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">tunnel_length_rl_index</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="mi">5</span><span class="mf">0.</span><span class="p">)</span><span class="w"> </span><span class="n">sigma0_temp</span><span class="o">=</span><span class="n">tunnel_sig_z_00</span>
+<span class="w">                            </span><span class="n">emission_properties_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">emission_sigy00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">=</span><span class="n">emission_properties_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">emission_sigy00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="o">+</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">*</span><span class="n">f_subgrid</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span><span class="o">*</span><span class="n">adt_temp</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nb">sqrt</span><span class="p">((</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">width_rl_index</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">sigma0_temp</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">emission_properties_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">emission_sigz00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">=</span><span class="n">emission_properties_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">emission_sigz00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                </span><span class="o">+</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">*</span><span class="n">f_subgrid</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span><span class="o">*</span><span class="n">adt_temp</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">sigma0_temp</span>
+<span class="w">                        </span><span class="k">endif</span>
+
+
+<span class="w">                        </span><span class="c">!enddo</span>
+<span class="w">                        </span><span class="c">!write(*,*) ro,i,j,f_subgrid(ro)</span>
+<span class="w">                        </span><span class="c">!write(*,*) ro,f_subgrid(ro),traffic_emission_subgrid(i,j,x_emission_subgrid_index),traffic_emission_subgrid(i,j,y_emission_subgrid_index),x_line_in,y_line_in</span>
+<span class="w">                    </span><span class="k">enddo</span>
+<span class="k">                enddo</span>
+
+<span class="w">                </span><span class="c">!write(*,*) &#39;Gridding traffic emission&#39;,ro,&#39; of &#39;,n_roadlinks</span>
+
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="w">            </span><span class="c">!if (mod(ro,10000).eq.0) write(*,*) &#39;Gridding traffic emission&#39;,ro,&#39; of &#39;,n_roadlinks</span>
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="w">        </span><span class="c">!Set the road properties based on ADT weighting</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_traffic_for_sigma0_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">emission_properties_subgrid</span><span class="p">(:,:,</span><span class="n">emission_sigy00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">=</span><span class="n">emission_properties_subgrid</span><span class="p">(:,:,</span><span class="n">emission_sigy00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">/</span><span class="n">proxy_emission_subgrid</span><span class="p">(:,:,</span><span class="n">source_index</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">emission_properties_subgrid</span><span class="p">(:,:,</span><span class="n">emission_sigz00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">=</span><span class="n">emission_properties_subgrid</span><span class="p">(:,:,</span><span class="n">emission_sigz00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">/</span><span class="n">proxy_emission_subgrid</span><span class="p">(:,:,</span><span class="n">source_index</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="k">        deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">f_subgrid</span><span class="p">)</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">adt_temp</span><span class="p">)</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">adt_car_temp</span><span class="p">)</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">adt_truck_temp</span><span class="p">)</span>
+
+
+<span class="w">        </span><span class="c">!Deallocate road link arrays after gridding but not when the external time step is used</span>
+<span class="w">        </span><span class="c">!and not when the multiple receptor grids are used</span>
+<span class="w">        </span><span class="c">!and not when the auto subgridding is used</span>
+<span class="w">        </span><span class="c">!because gridding roads is called again</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_single_time_loop_flag</span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="n">use_multiple_receptor_grids_flag</span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="n">use_emission_positions_for_auto_subgrid_flag</span><span class="p">(</span><span class="n">allsource_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">!Do not deallocate because they will be used again</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_int_rl</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_int_rl</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl_emissions</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_rl_emissions</span><span class="p">)</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="k">    end subroutine </span><span class="n">uEMEP_grid_roads</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

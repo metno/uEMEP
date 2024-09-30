@@ -1,0 +1,655 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_set_dispersion_sigma_Kz &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_set_dispersion_sigma_Kz
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for procedures.">42 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_Kz_functions.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_kz_functions.f90.html'>uEMEP_Kz_functions.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/kz_functions.html'>kz_functions</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_set_dispersion_sigma_Kz</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_set_dispersion_sigma_kz.html#src">uEMEP_set_dispersion_sigma_Kz</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine uEMEP_set_dispersion_sigma_Kz(Kz_scheme_in, x_in, sig_z00, sig_y00, sigy_0_subgid_width_scale, sig_z_in, z_emis_loc, h_mix_loc, invL, u_val, z_val, logz0, subgrid_delta, u_star0_in, average_zc_h_in_Kz_flag, n_kz_iterations, sig_y_scaling_factor, sig_z, sig_y, u_zc)  
+</h2>
+    
+
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-kz_scheme_in"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Kz_scheme_in</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x_in"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>x_in</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sig_z00"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sig_z00</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sig_y00"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sig_y00</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sigy_0_subgid_width_scale~4"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sigy_0_subgid_width_scale</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sig_z_in"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sig_z_in</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-z_emis_loc"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>z_emis_loc</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-h_mix_loc"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>h_mix_loc</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-invl~4"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>invL</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_val"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_val</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-z_val"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>z_val</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-logz0~3"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>logz0</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-subgrid_delta~4"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>subgrid_delta</strong>(2)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_star0_in"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_star0_in</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-average_zc_h_in_kz_flag"></span>
+              logical,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>average_zc_h_in_Kz_flag</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_kz_iterations"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n_kz_iterations</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sig_y_scaling_factor"></span>
+              real,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sig_y_scaling_factor</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sig_z~14"></span>
+              real,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sig_z</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sig_y~10"></span>
+              real,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sig_y</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-u_zc"></span>
+              real,
+            </td>
+<td>intent(out)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>u_zc</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_set_dispersion_sigma_Kz</span><span class="p">(</span><span class="n">Kz_scheme_in</span><span class="p">,</span><span class="n">x_in</span><span class="p">,</span><span class="n">sig_z00</span><span class="p">,</span><span class="n">sig_y00</span><span class="p">,</span><span class="n">sigy_0_subgid_width_scale</span><span class="p">,</span><span class="n">sig_z_in</span><span class="p">,</span><span class="n">z_emis_loc</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">invL</span><span class="p">,</span><span class="n">u_val</span><span class="p">,</span><span class="n">z_val</span><span class="p">,</span><span class="n">logz0</span><span class="p">,</span><span class="n">subgrid_delta</span><span class="p">,</span><span class="n">u_star0_in</span><span class="p">,</span><span class="n">average_zc_h_in_Kz_flag</span><span class="p">,</span><span class="n">n_kz_iterations</span><span class="p">,</span><span class="n">sig_y_scaling_factor</span><span class="p">,</span><span class="n">sig_z</span><span class="p">,</span><span class="n">sig_y</span><span class="p">,</span><span class="n">u_zc</span><span class="p">)</span>
+
+<span class="w">        </span><span class="k">implicit none</span>
+
+<span class="k">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">x_in</span><span class="p">,</span><span class="n">sig_z00</span><span class="p">,</span><span class="n">sig_y00</span><span class="p">,</span><span class="n">sigy_0_subgid_width_scale</span><span class="p">,</span><span class="n">sig_z_in</span><span class="p">,</span><span class="n">z_emis_loc</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">invL</span><span class="p">,</span><span class="n">u_val</span><span class="p">,</span><span class="n">z_val</span><span class="p">,</span><span class="n">logz0</span><span class="p">,</span><span class="n">subgrid_delta</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="n">u_star0_in</span><span class="p">,</span><span class="n">sig_y_scaling_factor</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Kz_scheme_in</span><span class="p">,</span><span class="n">n_kz_iterations</span>
+<span class="w">        </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">average_zc_h_in_Kz_flag</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">sig_z</span><span class="p">,</span><span class="n">sig_y</span><span class="p">,</span><span class="n">u_zc</span>
+
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_loop</span><span class="p">,</span><span class="n">j</span>
+
+<span class="w">        </span><span class="kt">real </span><span class="n">K_z</span><span class="p">,</span><span class="n">L</span>
+<span class="w">        </span><span class="kt">real</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">z_tau_min</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span><span class="n">z_tau_max</span><span class="o">=</span><span class="mi">10</span><span class="mf">0.</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">z0</span><span class="p">,</span><span class="n">zc</span>
+<span class="w">        </span><span class="kt">real</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">K_min</span><span class="o">=</span><span class="mf">0.001</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">l_t</span><span class="p">,</span><span class="n">f_t</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">u_star0</span><span class="p">,</span><span class="n">u_star0_val</span><span class="p">,</span><span class="n">tau</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">min_xy</span><span class="p">,</span><span class="n">x</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">phih_temp</span>
+
+<span class="w">        </span><span class="n">n_loop</span><span class="o">=</span><span class="n">n_kz_iterations</span>
+
+<span class="w">        </span><span class="c">!Limit stable L to this positive L value</span>
+<span class="w">        </span><span class="c">!L=1.e6</span>
+<span class="w">        </span><span class="c">!L=lowest_stable_L</span>
+<span class="w">        </span><span class="c">!if (abs(invL).gt.1./L) L=1./invL</span>
+<span class="w">        </span><span class="n">L</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="n">invL</span>
+<span class="w">        </span><span class="c">!Why does it not explode? when invL=0?</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">invL</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">epsilon0</span><span class="p">)</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0e6</span>
+
+<span class="w">        </span><span class="n">z0</span><span class="o">=</span><span class="nb">exp</span><span class="p">(</span><span class="n">logz0</span><span class="p">)</span>
+<span class="w">        </span><span class="n">min_xy</span><span class="o">=</span><span class="p">(</span><span class="n">subgrid_delta</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">subgrid_delta</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">/</span><span class="mf">4.</span>
+<span class="w">        </span><span class="c">!min_x=1.</span>
+<span class="w">        </span><span class="c">!x=max(x_in,min_xy)</span>
+<span class="w">        </span><span class="c">!Set x to this value because it simulates that it has already travelled half a grid to get this sig_z0</span>
+<span class="w">        </span><span class="c">!Which is why sg_z is added only to sig_z00</span>
+<span class="w">        </span><span class="n">x</span><span class="o">=</span><span class="n">x_in</span><span class="o">+</span><span class="n">min_xy</span>
+
+<span class="w">        </span><span class="c">!Initialise sig_z</span>
+<span class="w">        </span><span class="n">sig_z</span><span class="o">=</span><span class="n">sig_z_in</span>
+
+<span class="w">        </span><span class="c">!If the emission is above the boundary layer height then set the initial plume guess to its low turbulence form</span>
+<span class="w">        </span><span class="c">!Same values used in the emulator (1/1000 slender plume)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">z_emis_loc</span><span class="o">/</span><span class="n">h_mix_loc</span><span class="p">.</span><span class="n">ge</span><span class="p">.</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="n">sig_z</span><span class="o">=</span><span class="n">sig_z00</span><span class="o">+</span><span class="mf">0.001</span><span class="o">*</span><span class="nb">exp</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="nb">log</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="w">        </span><span class="c">!Set ustar0 for K_z to the value from EMEP</span>
+<span class="w">        </span><span class="n">u_star0</span><span class="o">=</span><span class="n">u_star0_in</span>
+
+<span class="w">        </span><span class="n">zc</span><span class="o">=</span><span class="n">z_emis_loc</span>
+
+<span class="w">        </span><span class="c">!Set zc and K_z at start of plume based on sig_z0</span>
+<span class="w">        </span><span class="c">!call z_centremass_gauss_func(sig_z0,z_emis_loc,h_mix_loc,zc_start)</span>
+<span class="w">        </span><span class="c">!call Kz_func(h_mix_loc,L,u_star0,zc_start,K_min,K_z_start)</span>
+<span class="w">        </span><span class="c">!call u_profile_val_func(zc_start,L,u_val,z_val,h_mix_loc,z0,u_zc_start,u_star0,u_hmix)</span>
+
+<span class="w">        </span><span class="c">!Put bug back in</span>
+<span class="w">        </span><span class="n">u_zc</span><span class="o">=</span><span class="n">u_val</span>
+
+<span class="w">        </span><span class="c">!Calculate the Lagrangian time scale before the iteration loop using a minimum distance for this to make it non zero on the grid</span>
+<span class="w">        </span><span class="c">!l_t=max(x,min_xy)/u_zc</span>
+<span class="w">        </span><span class="n">tau</span><span class="o">=</span><span class="mf">0.6</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">z_tau_max</span><span class="p">,</span><span class="n">z_emis_loc</span><span class="p">),</span><span class="n">z_tau_min</span><span class="p">)</span><span class="o">/</span><span class="n">u_star0</span>
+<span class="w">        </span><span class="c">!f_t=1.+tau/l_t*(exp(-l_t/tau)-1.)</span>
+<span class="w">        </span><span class="c">!if (x.lt.200) then</span>
+<span class="w">        </span><span class="c">!write(*,&#39;(a,i,5f)&#39;) &#39;S: &#39;,j,tau,l_t,f_t,u_zc,sig_z</span>
+<span class="w">        </span><span class="c">!write(*,&#39;(a,5f)&#39;) &#39;S: &#39;,tau,u_star0,z_tau_max,z_emis_loc,z_tau_min</span>
+<span class="w">        </span><span class="c">!endif</span>
+
+<span class="w">        </span><span class="c">!All functions commented out 4 secs</span>
+<span class="w">        </span><span class="c">!All functions included 15 secs</span>
+<span class="w">        </span><span class="c">!Without u_profile 11 secs</span>
+<span class="w">        </span><span class="c">!Commenting out all functions below gives 7 secs</span>
+<span class="w">        </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_loop</span>
+
+<span class="w">            </span><span class="c">!Calculate centre of mass for the emission height.</span>
+<span class="w">            </span><span class="k">call </span><span class="n">z_centremass_gauss_func</span><span class="p">(</span><span class="n">sig_z</span><span class="p">,</span><span class="n">z_emis_loc</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">zc</span><span class="p">)</span><span class="w"> </span><span class="c">!4.5 sec</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">average_zc_h_in_Kz_flag</span><span class="p">)</span><span class="w"> </span><span class="n">zc</span><span class="o">=</span><span class="p">(</span><span class="n">z_emis_loc</span><span class="o">+</span><span class="n">zc</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
+
+<span class="w">            </span><span class="c">!write(*,&#39;(i,4f)&#39;) j,sig_z,z_emis_loc,h_mix_loc,zc</span>
+
+<span class="w">            </span><span class="c">!Calculate the wind profile</span>
+<span class="w">            </span><span class="c">!call u_profile_val_func(zc,L,u_val,z_val,h_mix_loc,z0,u_zc,u_star0_val,u_hmix) !7secs. Without phim_func calls 5 secs</span>
+<span class="w">            </span><span class="k">call </span><span class="n">u_profile_neutral_val_func</span><span class="p">(</span><span class="n">zc</span><span class="p">,</span><span class="n">u_val</span><span class="p">,</span><span class="n">z_val</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">z0</span><span class="p">,</span><span class="n">u_zc</span><span class="p">,</span><span class="n">u_star0_val</span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!write(*,&#39;(i,9f)&#39;) j,zc,L,u_val,z_val,h_mix_loc,z0,u_zc,u_star0,u_hmix</span>
+<span class="w">            </span><span class="c">!u_zc=(u_zc+u_zc_start)/2.</span>
+<span class="w">            </span><span class="c">!write(*,&#39;(i,8f)&#39;) j,x,u_star0_in,u_star0,zc,z_val,u_zc,u_zc_start,u_val</span>
+
+<span class="w">            </span><span class="c">!Use the calculated u_star for the dispersion, not the EMEP input</span>
+<span class="w">            </span><span class="c">!u_star0=u_star0_val</span>
+
+<span class="w">            </span><span class="c">!Calculate K_z at the centre of mass</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Kz_scheme_in</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                call </span><span class="n">TROENKz</span><span class="p">(</span><span class="n">zc</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">u_star0</span><span class="p">,</span><span class="n">invL</span><span class="p">,</span><span class="n">K_min</span><span class="p">,</span><span class="n">K_z</span><span class="p">,</span><span class="n">phih_temp</span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                call </span><span class="n">Kz_func</span><span class="p">(</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">L</span><span class="p">,</span><span class="n">u_star0</span><span class="p">,</span><span class="n">zc</span><span class="p">,</span><span class="n">K_min</span><span class="p">,</span><span class="n">K_z</span><span class="p">)</span><span class="w"> </span><span class="c">!5.5 secs</span>
+<span class="w">            </span><span class="k">endIf</span>
+
+<span class="w">            </span><span class="c">!write(*,&#39;(i,1f)&#39;) j,K_z</span>
+<span class="w">            </span><span class="c">!Take average of K_z_start(x=0) and K_z(x)</span>
+<span class="w">            </span><span class="c">!K_z=(K_z+K_z_start)/2.</span>
+
+<span class="w">            </span><span class="c">!calculate l_t based on the centre of mass wind speed</span>
+<span class="w">            </span><span class="n">l_t</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">min_xy</span><span class="p">)</span><span class="o">/</span><span class="n">u_zc</span>
+<span class="w">            </span><span class="n">f_t</span><span class="o">=</span><span class="mf">1.</span><span class="o">+</span><span class="n">tau</span><span class="o">/</span><span class="n">l_t</span><span class="o">*</span><span class="p">(</span><span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="n">l_t</span><span class="o">/</span><span class="n">tau</span><span class="p">)</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!Calculate sig_z for the next iteration, using the sig_z0 from the neutral plume approximation</span>
+<span class="w">            </span><span class="n">sig_z</span><span class="o">=</span><span class="n">sig_z00</span><span class="o">+</span><span class="nb">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">K_z</span><span class="o">*</span><span class="n">l_t</span><span class="o">*</span><span class="n">f_t</span><span class="p">)</span>
+<span class="w">            </span><span class="c">!write(*,&#39;(i,1f)&#39;) j,sig_z</span>
+<span class="w">            </span><span class="c">!write(*,*) K_z,l_t,f_t,sig_z,u_zc</span>
+<span class="w">            </span><span class="c">!write(*,*) j,z_emis_loc,zc,h_mix_loc*0.25,sig_z</span>
+
+<span class="w">            </span><span class="c">!if (x.lt.200) then</span>
+<span class="w">            </span><span class="c">!write(*,&#39;(a,i,5f)&#39;) &#39;S: &#39;,j,tau,l_t,f_t,u_zc,sig_z</span>
+<span class="w">            </span><span class="c">!endif</span>
+
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="w">        </span><span class="c">!Calculate sigma_y at the maximum K, around the average of the emission height and 0.25 of the boundary layer height</span>
+<span class="w">        </span><span class="c">!THis is new 27.10.2018 and not tested. It will reduce sig_y which is OK</span>
+<span class="w">        </span><span class="c">!h_y=(h_mix_loc*0.25+z_emis_loc)/2.</span>
+<span class="w">        </span><span class="c">!call Kz_func(h_mix_loc,L,u_star0,h_y,K_min,K_y)</span>
+<span class="w">        </span><span class="c">!sig_y=sig_y00+min_xy*sigy_0_subgid_width_scale+sqrt(2.*K_y*l_t*f_t)</span>
+
+<span class="w">        </span><span class="c">!Should change this to what is documented, i.e. 2*sig_z. Need to test</span>
+<span class="w">        </span><span class="n">sig_y</span><span class="o">=</span><span class="n">sig_y00</span><span class="o">+</span><span class="n">min_xy</span><span class="o">*</span><span class="n">sigy_0_subgid_width_scale</span><span class="o">+</span><span class="p">(</span><span class="n">sig_z</span><span class="o">-</span><span class="n">sig_z00</span><span class="p">)</span><span class="o">*</span><span class="n">sig_y_scaling_factor</span>
+
+<span class="w">    </span><span class="k">end subroutine </span><span class="n">uEMEP_set_dispersion_sigma_Kz</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

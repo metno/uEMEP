@@ -1,0 +1,679 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_subgrid_dispersion_integral &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_subgrid_dispersion_integral
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 1.3% of total for procedures.">255 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_subgrid_dispersion.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_subgrid_dispersion.f90.html'>uEMEP_subgrid_dispersion.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/subgrid_dispersion.html'>subgrid_dispersion</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_subgrid_dispersion_integral</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_subgrid_dispersion_integral.html#src">uEMEP_subgrid_dispersion_integral</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private  subroutine uEMEP_subgrid_dispersion_integral(source_index)  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/uemep_definitions.html'>uEMEP_definitions</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-source_index~12"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>source_index</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_subgrid_dispersion_integral</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span>
+
+<span class="w">        </span><span class="k">use </span><span class="n">uEMEP_definitions</span>
+
+<span class="w">        </span><span class="k">implicit none</span>
+
+<span class="k">        </span><span class="kt">integer </span><span class="n">i</span><span class="p">,</span><span class="n">j</span>
+<span class="w">        </span><span class="kt">integer         </span><span class="n">source_index</span>
+<span class="w">        </span><span class="kt">integer         </span><span class="n">jj</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">tt</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">distance_subgrid</span>
+<span class="w">        </span><span class="kt">integer         </span><span class="n">i_start</span><span class="p">,</span><span class="n">i_end</span><span class="p">,</span><span class="n">j_start</span><span class="p">,</span><span class="n">j_end</span><span class="p">,</span><span class="n">t_start</span><span class="p">,</span><span class="n">t_end</span>
+<span class="w">        </span><span class="kt">integer         </span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span>
+<span class="w">        </span><span class="kt">integer         </span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">i_cross_target_integral</span><span class="p">,</span><span class="n">j_cross_target_integral</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">cos_subgrid_loc</span><span class="p">,</span><span class="n">sin_subgrid_loc</span><span class="p">,</span><span class="n">FF_loc</span><span class="p">,</span><span class="n">FF_zc_loc</span><span class="p">,</span><span class="n">zc_loc</span>
+<span class="w">        </span><span class="kt">integer         </span><span class="n">subsource_index</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">ay_loc</span><span class="p">,</span><span class="n">by_loc</span><span class="p">,</span><span class="n">az_loc</span><span class="p">,</span><span class="n">bz_loc</span><span class="p">,</span><span class="n">sig_y_0_loc</span><span class="p">,</span><span class="n">sig_z_0_loc</span><span class="p">,</span><span class="n">sig_y_00_loc</span><span class="p">,</span><span class="n">sig_z_00_loc</span><span class="p">,</span><span class="n">h_emis_loc</span><span class="p">,</span><span class="n">z_rec_loc</span><span class="p">,</span><span class="n">sig_z_loc</span><span class="p">,</span><span class="n">sig_y_loc</span><span class="p">,</span><span class="n">h_mix_loc</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">xpos_limit</span><span class="p">,</span><span class="n">ypos_limit</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">x_downwind</span><span class="p">,</span><span class="n">y_downwind</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">xpos_area_min</span><span class="p">,</span><span class="n">xpos_area_max</span><span class="p">,</span><span class="n">ypos_area_min</span><span class="p">,</span><span class="n">ypos_area_max</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">xpos_emission_subgrid</span><span class="p">,</span><span class="n">ypos_emission_subgrid</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">xpos_integral_subgrid</span><span class="p">,</span><span class="n">ypos_integral_subgrid</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">distance_emission_subgrid_min</span>
+
+<span class="w">        </span><span class="kt">integer         </span><span class="n">traj_max_index</span>
+<span class="w">        </span><span class="kt">logical         </span><span class="n">valid_traj</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">traj_step_size</span><span class="p">,</span><span class="n">x_loc</span><span class="p">,</span><span class="n">y_loc</span><span class="p">,</span><span class="n">invL_loc</span><span class="p">,</span><span class="n">FFgrid_loc</span><span class="p">,</span><span class="n">logz0_loc</span><span class="p">,</span><span class="n">u_star0_loc</span><span class="p">,</span><span class="n">FF10_loc</span>
+<span class="w">        </span><span class="kt">real            </span><span class="n">z0_temp</span><span class="p">,</span><span class="n">h_temp</span>
+
+<span class="w">        </span><span class="c">!real, allocatable :: temp_emission_subgrid(:,:)</span>
+<span class="w">        </span><span class="c">!real, allocatable :: temp_subgrid(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">temp_FF_subgrid</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">temp_FF_emission_subgrid</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">trajectory_subgrid</span><span class="p">(:,:,:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">angle_diff</span><span class="p">(:,:)</span>
+
+<span class="w">        </span><span class="c">!functions</span>
+<span class="w">        </span><span class="c">!real gauss_plume_second_order_rotated_func</span>
+<span class="w">        </span><span class="c">!real gauss_plume_cartesian_func</span>
+
+<span class="w">        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)))</span>
+<span class="w">        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">angle_diff</span><span class="p">(</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)))</span>
+<span class="w">        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">temp_FF_emission_subgrid</span><span class="p">(</span><span class="n">emission_max_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">emission_max_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)))</span>
+
+<span class="w">        </span><span class="n">temp_FF_subgrid</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">temp_FF_emission_subgrid</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">angle_diff</span><span class="o">=</span><span class="mf">0.</span>
+
+<span class="w">        </span><span class="n">xpos_limit</span><span class="o">=</span><span class="n">dgrid_nc</span><span class="p">(</span><span class="n">lon_nc_index</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">EMEP_grid_interpolation_size</span><span class="o">*</span><span class="n">local_fraction_grid_size_scaling</span>
+<span class="w">        </span><span class="n">ypos_limit</span><span class="o">=</span><span class="n">dgrid_nc</span><span class="p">(</span><span class="n">lat_nc_index</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">EMEP_grid_interpolation_size</span><span class="o">*</span><span class="n">local_fraction_grid_size_scaling</span>
+
+<span class="w">        </span><span class="c">!Minimum distance for dispersion set to  half of an emission grid diagonal weighted so the circle has the same area as the square with that diagonal</span>
+<span class="w">        </span><span class="n">distance_emission_subgrid_min</span><span class="o">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">emission_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">*</span><span class="n">emission_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="o">+</span><span class="n">emission_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">*</span><span class="n">emission_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span><span class="o">/</span><span class="nb">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">)</span><span class="o">*</span><span class="mf">4.</span><span class="o">/</span><span class="mf">3.14159</span>
+
+<span class="w">        </span><span class="k">do </span><span class="n">subsource_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_subsource</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span>
+
+<span class="w">            </span><span class="k">call </span><span class="n">uEMEP_set_dispersion_params_simple</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!Set local dispersion parameters prior to time loop for use in annual data</span>
+<span class="w">            </span><span class="n">ay_loc</span><span class="o">=</span><span class="n">ay</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">by_loc</span><span class="o">=</span><span class="n">by</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">az_loc</span><span class="o">=</span><span class="n">az</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">bz_loc</span><span class="o">=</span><span class="n">bz</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">sig_y_00_loc</span><span class="o">=</span><span class="n">sig_y_00</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">sig_z_00_loc</span><span class="o">=</span><span class="n">sig_z_00</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">h_emis_loc</span><span class="o">=</span><span class="n">h_emis</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">z_rec_loc</span><span class="o">=</span><span class="n">z_rec</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!write(*,*) z_rec_loc,ay_loc,by_loc,az_loc,bz_loc,sig_y_0_loc,sig_z_0_loc</span>
+
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i3)&#39;</span><span class="p">)</span><span class="s1">&#39;Calculating proxy integral concentration data for &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">source_file_str</span><span class="p">(</span><span class="n">source_index</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39; with subsource index &#39;</span><span class="p">,</span><span class="n">subsource_index</span>
+
+<span class="w">            </span><span class="c">!Set the start and end times of the loop</span>
+<span class="w">            </span><span class="n">t_start</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">            </span><span class="n">t_end</span><span class="o">=</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!Loop through the time</span>
+<span class="w">            </span><span class="k">do </span><span class="n">tt</span><span class="o">=</span><span class="n">t_start</span><span class="p">,</span><span class="n">t_end</span>
+
+<span class="w">                </span><span class="n">integral_subgrid</span><span class="p">(:,:,</span><span class="n">tt</span><span class="p">,:,</span><span class="n">source_index</span><span class="p">,:)</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">                </span><span class="n">temp_FF_subgrid</span><span class="o">=</span><span class="mf">0.</span>
+
+<span class="w">                </span><span class="c">!Set the last meteo data subgrid in the case when the internal time loop is used</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">use_single_time_loop_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    if</span><span class="w"> </span><span class="p">(</span><span class="n">tt</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="n">t_start</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">last_meteo_subgrid</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(:,:,</span><span class="n">tt</span><span class="o">-</span><span class="mi">1</span><span class="p">,:)</span>
+<span class="w">                    </span><span class="k">else</span>
+<span class="k">                        </span><span class="n">last_meteo_subgrid</span><span class="p">(:,:,:)</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(:,:,</span><span class="n">tt</span><span class="p">,:)</span>
+<span class="w">                    </span><span class="k">endif</span>
+<span class="k">                endif</span>
+
+<span class="w">                </span><span class="c">!Precalculate information for the trajectory model</span>
+<span class="w">                </span><span class="c">!Maxium number of trajectory steps and size of steps based on the integral (meteorology) loop size</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_trajectory_flag</span><span class="p">(</span><span class="n">source_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+
+<span class="k">                    </span><span class="n">traj_step_size</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">integral_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">integral_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span><span class="o">*</span><span class="n">traj_step_scale</span>
+<span class="w">                    </span><span class="n">traj_max_index</span><span class="o">=</span><span class="nb">floor</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">integral_subgrid_loop_index</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">integral_subgrid_loop_index</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">))</span><span class="o">/</span><span class="n">traj_step_scale</span><span class="p">)</span>
+<span class="w">                    </span><span class="c">!if (use_downwind_position_flag) traj_max_index=traj_max_index*2</span>
+
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tt</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">t_start</span><span class="p">)</span><span class="w"> </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,f12.1,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Trajectory step (m) and dimensions: &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">traj_step_size</span><span class="p">,</span><span class="w"> </span><span class="n">traj_max_index</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">trajectory_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="p">(</span><span class="n">trajectory_subgrid</span><span class="p">(</span><span class="n">emission_max_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">emission_max_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">traj_max_index</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="w">                    </span><span class="n">trajectory_subgrid</span><span class="o">=</span><span class="n">NODATA_value</span>
+
+<span class="w">                    </span><span class="c">!Loop through the emissions and create trajectories for all emissions source grids</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">).</span><span class="n">ne</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                call </span><span class="n">uEMEP_calculate_all_trajectory</span><span class="p">(</span><span class="n">x_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">source_index</span><span class="p">),</span><span class="n">y_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">source_index</span><span class="p">),</span><span class="n">tt</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                    </span><span class="n">traj_max_index</span><span class="p">,</span><span class="n">traj_step_size</span><span class="p">,</span><span class="n">trajectory_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">trajectory_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,</span><span class="n">y_dim_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="k">endif</span>
+
+<span class="k">                        enddo</span>
+<span class="k">                    enddo</span>
+
+<span class="k">                endif</span>
+
+<span class="w">                </span><span class="c">!Create a temporary wind speed subgrid for each hour</span>
+<span class="w">                </span><span class="n">temp_FF_subgrid</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">                </span><span class="k">do </span><span class="n">j_cross</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i_cross</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="n">z0_temp</span><span class="o">=</span><span class="nb">exp</span><span class="p">(</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">logz0_subgrid_index</span><span class="p">))</span>
+<span class="w">                        </span><span class="n">h_temp</span><span class="o">=</span><span class="n">h_emis</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">annual_calculations</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">inv_FFgrid_subgrid_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">annual_calculations</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">inv_FFgrid_subgrid_index</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="p">(</span><span class="nb">log</span><span class="p">((</span><span class="n">H_meteo</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">-</span><span class="nb">log</span><span class="p">((</span><span class="n">h_temp</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">))</span><span class="o">/</span><span class="nb">log</span><span class="p">((</span><span class="n">H_meteo</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">annual_calculations</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">inv_FF10_subgrid_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">annual_calculations</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">inv_FF10_subgrid_index</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="p">(</span><span class="nb">log</span><span class="p">((</span><span class="mi">1</span><span class="mf">0.</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">-</span><span class="nb">log</span><span class="p">((</span><span class="n">h_temp</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">))</span><span class="o">/</span><span class="nb">log</span><span class="p">((</span><span class="mi">1</span><span class="mf">0.</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">hourly_calculations</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">FFgrid_subgrid_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">hourly_calculations</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">FFgrid_subgrid_index</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="p">(</span><span class="nb">log</span><span class="p">((</span><span class="n">H_meteo</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">-</span><span class="nb">log</span><span class="p">((</span><span class="n">h_temp</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">))</span><span class="o">/</span><span class="nb">log</span><span class="p">((</span><span class="n">H_meteo</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">hourly_calculations</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">FF10_subgrid_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">hourly_calculations</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">FF10_subgrid_index</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="p">(</span><span class="nb">log</span><span class="p">((</span><span class="mi">1</span><span class="mf">0.</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">-</span><span class="nb">log</span><span class="p">((</span><span class="n">h_temp</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">))</span><span class="o">/</span><span class="nb">log</span><span class="p">((</span><span class="mi">1</span><span class="mf">0.</span><span class="o">+</span><span class="n">z0_temp</span><span class="p">)</span><span class="o">/</span><span class="n">z0_temp</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                            </span><span class="c">!Will set later based on sigma z centre of mass</span>
+<span class="w">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                            </span><span class="c">!Will set later based on average sigma z centre of mass and z_emis</span>
+<span class="w">                            </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="k">                            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;No valid wind_level_integral_flag selected. Stopping (uEMEP_subgrid_dispersion)&#39;</span>
+<span class="w">                            </span><span class="k">stop</span>
+<span class="k">                        endif</span>
+
+<span class="w">                        </span><span class="c">!Setting a minimum value for wind for dispersion purposes (cannot be zero)</span>
+<span class="w">                        </span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">*</span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">+</span><span class="n">FF_min_dispersion</span><span class="o">*</span><span class="n">FF_min_dispersion</span><span class="p">)</span>
+
+<span class="w">                        </span><span class="c">!Finds the angle difference between the current and last meteo field for dispersion and implements meandering if selected</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hourly_calculations</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">delta_wind_direction</span><span class="w"> </span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">FF10_subgrid_index</span><span class="p">),</span><span class="n">angle_diff</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="k">                            </span><span class="n">angle_diff</span><span class="p">(</span><span class="n">i_cross</span><span class="p">,</span><span class="n">j_cross</span><span class="p">)</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">                        </span><span class="k">endif</span>
+
+
+<span class="k">                    enddo</span>
+<span class="k">                enddo</span>
+
+<span class="w">                </span><span class="c">!If wind level flag is set to 5, use of initial plume centre of mass, then set wind speed for each non-zero emission grid</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">temp_FF_emission_subgrid</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">jj</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">ii</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)).</span><span class="n">ne</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                                </span><span class="c">!Set the integral meteorological grid position for the emission position</span>
+<span class="w">                                </span><span class="n">i_cross_integral</span><span class="o">=</span><span class="n">crossreference_emission_to_integral_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                                </span><span class="n">j_cross_integral</span><span class="o">=</span><span class="n">crossreference_emission_to_integral_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+
+<span class="w">                                </span><span class="c">!Set the local variables</span>
+<span class="w">                                </span><span class="n">logz0_loc</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">logz0_subgrid_index</span><span class="p">)</span>
+<span class="w">                                </span><span class="n">FF10_loc</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">FF10_subgrid_index</span><span class="p">)</span>
+<span class="w">                                </span><span class="n">sig_y_00_loc</span><span class="o">=</span><span class="n">emission_properties_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">emission_sigy00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                                </span><span class="n">sig_z_00_loc</span><span class="o">=</span><span class="n">emission_properties_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">emission_sigz00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                                </span><span class="n">h_emis_loc</span><span class="o">=</span><span class="n">emission_properties_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">emission_h_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                                </span><span class="n">h_mix_loc</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">hmix_subgrid_index</span><span class="p">)</span>
+
+
+<span class="w">                                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">annual_calculations</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                    </span><span class="n">FF10_loc</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">inv_FF10_subgrid_index</span><span class="p">)</span>
+<span class="w">                                </span><span class="k">endif</span>
+
+<span class="w">                                </span><span class="c">!Set sig_0&#39;s at the emission position</span>
+<span class="w">                                </span><span class="n">x_loc</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">                                </span><span class="k">call </span><span class="n">uEMEP_set_dispersion_sigma_simple</span><span class="p">(</span><span class="n">sig_z_00_loc</span><span class="p">,</span><span class="n">sig_y_00_loc</span><span class="p">,</span><span class="n">sigy_0_subgid_width_scale</span><span class="p">,</span><span class="n">emission_subgrid_delta</span><span class="p">(:,</span><span class="n">source_index</span><span class="p">),</span><span class="n">angle_diff</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">),</span><span class="n">x_loc</span><span class="p">,</span><span class="n">sig_z_loc</span><span class="p">,</span><span class="n">sig_y_loc</span><span class="p">,</span><span class="n">sig_z_0_loc</span><span class="p">,</span><span class="n">sig_y_0_loc</span><span class="p">)</span>
+
+<span class="w">                                </span><span class="c">!Use the initial plume centre of mass to determine wind advection height</span>
+<span class="w">                                </span><span class="k">call </span><span class="n">z_centremass_gauss_func</span><span class="p">(</span><span class="n">sig_z_0_loc</span><span class="p">,</span><span class="n">h_emis_loc</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">zc_loc</span><span class="p">)</span>
+<span class="w">                                </span><span class="k">call </span><span class="n">u_profile_neutral_val_func</span><span class="p">(</span><span class="n">zc_loc</span><span class="p">,</span><span class="n">FF10_loc</span><span class="p">,</span><span class="mi">1</span><span class="mf">0.</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="nb">exp</span><span class="p">(</span><span class="n">logz0_loc</span><span class="p">),</span><span class="n">FF_loc</span><span class="p">,</span><span class="n">u_star0_loc</span><span class="p">)</span>
+
+<span class="w">                                </span><span class="c">!Set a minimum wind speed based on traffic (if use_traffic_for_minFF_flag=T)</span>
+<span class="c">!                FF_loc=sqrt(FF_loc*FF_loc+emission_properties_subgrid(ii,jj,emission_minFF_index,source_index,subsource_index)*emission_properties_subgrid(ii,jj,emission_minFF_index,source_index,subsource_index))</span>
+
+<span class="w">                                </span><span class="c">!Set the minimum wind speed</span>
+<span class="w">                                </span><span class="n">FF_loc</span><span class="o">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">FF_loc</span><span class="o">*</span><span class="n">FF_loc</span><span class="o">+</span><span class="n">FF_min_dispersion</span><span class="o">*</span><span class="n">FF_min_dispersion</span><span class="p">)</span>
+
+<span class="w">                                </span><span class="n">temp_FF_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">)</span><span class="o">=</span><span class="n">FF_loc</span>
+<span class="w">                                </span><span class="c">!write(*,*) FF10_loc,FF_loc,zc_loc,sig_z_0_loc</span>
+
+
+<span class="w">                            </span><span class="k">endif</span>
+<span class="k">                        enddo</span>
+<span class="k">                    enddo</span>
+<span class="k">                endif</span>
+
+<span class="w">                </span><span class="c">!Loop through the proxy integral grid</span>
+<span class="w">                </span><span class="k">do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">integral_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+
+<span class="w">                        </span><span class="n">xpos_integral_subgrid</span><span class="o">=</span><span class="n">xproj_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                        </span><span class="n">ypos_integral_subgrid</span><span class="o">=</span><span class="n">yproj_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+
+<span class="w">                        </span><span class="c">!Find the cross reference to the integral grid from the emission grid</span>
+<span class="w">                        </span><span class="n">i_cross</span><span class="o">=</span><span class="n">crossreference_integral_to_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                        </span><span class="n">j_cross</span><span class="o">=</span><span class="n">crossreference_integral_to_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+
+<span class="w">                        </span><span class="n">i_cross_target_integral</span><span class="o">=</span><span class="n">i</span>
+<span class="w">                        </span><span class="n">j_cross_target_integral</span><span class="o">=</span><span class="n">j</span>
+
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_downwind_position_flag</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">hourly_calculations</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="k">                            </span><span class="n">x_downwind</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span><span class="nb">min</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_target_integral</span><span class="p">,</span><span class="n">j_cross_target_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">cos_subgrid_index</span><span class="p">)</span><span class="o">*</span><span class="nb">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">)))</span>
+<span class="w">                            </span><span class="n">y_downwind</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span><span class="nb">min</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_target_integral</span><span class="p">,</span><span class="n">j_cross_target_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">sin_subgrid_index</span><span class="p">)</span><span class="o">*</span><span class="nb">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">)))</span>
+<span class="w">                            </span><span class="n">i_end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="nb">ceiling</span><span class="p">(</span><span class="n">i_cross</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">x_downwind</span><span class="p">)</span><span class="o">*</span><span class="n">emission_subgrid_loop_index</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)),</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">i_start</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="nb">floor</span><span class="p">(</span><span class="n">i_cross</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">x_downwind</span><span class="p">)</span><span class="o">*</span><span class="n">emission_subgrid_loop_index</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)),</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">j_end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="nb">ceiling</span><span class="p">(</span><span class="n">j_cross</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">y_downwind</span><span class="p">)</span><span class="o">*</span><span class="n">emission_subgrid_loop_index</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)),</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">j_start</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="nb">floor</span><span class="p">(</span><span class="n">j_cross</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">y_downwind</span><span class="p">)</span><span class="o">*</span><span class="n">emission_subgrid_loop_index</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)),</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="w">                            </span><span class="c">!Set new lon and lat limits to include the upwind source region</span>
+<span class="w">                            </span><span class="n">xpos_area_max</span><span class="o">=</span><span class="n">xpos_integral_subgrid</span><span class="o">+</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">x_downwind</span><span class="p">)</span><span class="o">*</span><span class="n">xpos_limit</span><span class="o">/</span><span class="mf">2.</span><span class="o">+</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">xpos_area_min</span><span class="o">=</span><span class="n">xpos_integral_subgrid</span><span class="o">-</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">x_downwind</span><span class="p">)</span><span class="o">*</span><span class="n">xpos_limit</span><span class="o">/</span><span class="mf">2.</span><span class="o">-</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">ypos_area_max</span><span class="o">=</span><span class="n">ypos_integral_subgrid</span><span class="o">+</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">y_downwind</span><span class="p">)</span><span class="o">*</span><span class="n">ypos_limit</span><span class="o">/</span><span class="mf">2.</span><span class="o">+</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">ypos_area_min</span><span class="o">=</span><span class="n">ypos_integral_subgrid</span><span class="o">-</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">y_downwind</span><span class="p">)</span><span class="o">*</span><span class="n">ypos_limit</span><span class="o">/</span><span class="mf">2.</span><span class="o">-</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+
+<span class="w">                        </span><span class="k">else</span>
+
+<span class="w">                            </span><span class="c">!Set the size of the loop region around the target cell to be up to integral_subgrid_loop_index</span>
+<span class="w">                            </span><span class="n">i_start</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">i_cross</span><span class="o">-</span><span class="n">emission_subgrid_loop_index</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">i_end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">),</span><span class="n">i_cross</span><span class="o">+</span><span class="n">emission_subgrid_loop_index</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">j_start</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">j_cross</span><span class="o">-</span><span class="n">emission_subgrid_loop_index</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span>
+<span class="w">                            </span><span class="n">j_end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">),</span><span class="n">j_cross</span><span class="o">+</span><span class="n">emission_subgrid_loop_index</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span>
+
+<span class="w">                            </span><span class="n">xpos_area_max</span><span class="o">=</span><span class="n">xpos_integral_subgrid</span><span class="o">+</span><span class="n">xpos_limit</span>
+<span class="w">                            </span><span class="n">xpos_area_min</span><span class="o">=</span><span class="n">xpos_integral_subgrid</span><span class="o">-</span><span class="n">xpos_limit</span>
+<span class="w">                            </span><span class="n">ypos_area_max</span><span class="o">=</span><span class="n">ypos_integral_subgrid</span><span class="o">+</span><span class="n">ypos_limit</span>
+<span class="w">                            </span><span class="n">ypos_area_min</span><span class="o">=</span><span class="n">ypos_integral_subgrid</span><span class="o">-</span><span class="n">ypos_limit</span>
+
+<span class="w">                        </span><span class="k">endif</span>
+
+<span class="w">                        </span><span class="c">!Loop through emission sub_grids in the nearby region</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">jj</span><span class="o">=</span><span class="n">j_start</span><span class="p">,</span><span class="n">j_end</span>
+<span class="w">                            </span><span class="k">do </span><span class="n">ii</span><span class="o">=</span><span class="n">i_start</span><span class="p">,</span><span class="n">i_end</span>
+
+<span class="w">                                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)).</span><span class="n">ne</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                                    </span><span class="c">!</span>
+<span class="w">                                    </span><span class="n">xpos_emission_subgrid</span><span class="o">=</span><span class="n">xproj_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                                    </span><span class="n">ypos_emission_subgrid</span><span class="o">=</span><span class="n">yproj_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+
+<span class="w">                                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">xpos_emission_subgrid</span><span class="p">.</span><span class="n">ge</span><span class="p">.</span><span class="n">xpos_area_min</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">xpos_emission_subgrid</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="n">xpos_area_max</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                        </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">ypos_emission_subgrid</span><span class="p">.</span><span class="n">ge</span><span class="p">.</span><span class="n">ypos_area_min</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">ypos_emission_subgrid</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="n">ypos_area_max</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                                        </span><span class="c">!Determine meteorology grid position</span>
+<span class="w">                                        </span><span class="n">i_cross_integral</span><span class="o">=</span><span class="n">crossreference_emission_to_integral_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                                        </span><span class="n">j_cross_integral</span><span class="o">=</span><span class="n">crossreference_emission_to_integral_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+
+<span class="w">                                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hourly_calculations</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="k">                                            if</span><span class="w"> </span><span class="p">(</span><span class="n">use_trajectory_flag</span><span class="p">(</span><span class="n">source_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                                                </span><span class="c">!Calculate the minimum distance to the trajectory. Time consuming</span>
+<span class="w">                                                </span><span class="k">call </span><span class="n">uEMEP_minimum_distance_trajectory_fast</span><span class="p">(</span><span class="n">x_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">y_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                    </span><span class="n">traj_max_index</span><span class="p">,</span><span class="n">traj_step_size</span><span class="p">,</span><span class="n">trajectory_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:,</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">trajectory_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:,</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">x_loc</span><span class="p">,</span><span class="n">y_loc</span><span class="p">,</span><span class="n">valid_traj</span><span class="p">)</span>
+
+<span class="w">                                            </span><span class="k">else</span>
+
+<span class="w">                                                </span><span class="c">!Set the local wind cos and sin values</span>
+<span class="w">                                                </span><span class="n">cos_subgrid_loc</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">cos_subgrid_index</span><span class="p">)</span>
+<span class="w">                                                </span><span class="n">sin_subgrid_loc</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">sin_subgrid_index</span><span class="p">)</span>
+
+<span class="w">                                                </span><span class="c">!Determine the rotated along wind values</span>
+<span class="w">                                                </span><span class="n">x_loc</span><span class="o">=</span><span class="p">(</span><span class="n">x_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="o">-</span><span class="n">x_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span><span class="o">*</span><span class="n">cos_subgrid_loc</span><span class="o">+</span><span class="p">(</span><span class="n">y_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="o">-</span><span class="n">y_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span><span class="o">*</span><span class="n">sin_subgrid_loc</span>
+<span class="w">                                                </span><span class="n">y_loc</span><span class="o">=-</span><span class="p">(</span><span class="n">x_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="o">-</span><span class="n">x_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span><span class="o">*</span><span class="n">sin_subgrid_loc</span><span class="o">+</span><span class="p">(</span><span class="n">y_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="o">-</span><span class="n">y_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">source_index</span><span class="p">))</span><span class="o">*</span><span class="n">cos_subgrid_loc</span>
+
+<span class="w">                                                </span><span class="c">!If x is downwind then it is valid</span>
+<span class="w">                                                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x_loc</span><span class="p">.</span><span class="n">ge</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                                    </span><span class="n">valid_traj</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">                                                </span><span class="k">else</span>
+<span class="k">                                                    </span><span class="n">valid_traj</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">                                                </span><span class="k">endif</span>
+
+<span class="k">                                            endif</span>
+
+<span class="w">                                            </span><span class="c">!Calculate dispersion</span>
+<span class="w">                                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">valid_traj</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                                                </span><span class="c">!Set the mixing height at the average of the emission and target position</span>
+<span class="w">                                                </span><span class="n">h_mix_loc</span><span class="o">=</span><span class="p">(</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">hmix_subgrid_index</span><span class="p">)</span><span class="o">+</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_target_integral</span><span class="p">,</span><span class="n">j_cross_target_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">hmix_subgrid_index</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
+<span class="w">                                                </span><span class="c">!Set the local wind speed and other parameters at emission position</span>
+<span class="w">                                                </span><span class="n">FF_loc</span><span class="o">=</span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">)</span>
+<span class="w">                                                </span><span class="c">!L_loc=1./meteo_subgrid(i_cross_integral,j_cross_integral,tt,invL_subgrid_index)</span>
+<span class="w">                                                </span><span class="n">invL_loc</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">invL_subgrid_index</span><span class="p">)</span>
+<span class="w">                                                </span><span class="n">FFgrid_loc</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">FFgrid_subgrid_index</span><span class="p">)</span>
+<span class="w">                                                </span><span class="n">logz0_loc</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">logz0_subgrid_index</span><span class="p">)</span>
+<span class="w">                                                </span><span class="c">!u_star0_loc=max(meteo_subgrid(i_cross_integral,j_cross_integral,tt,ustar_subgrid_index),ustar_min)</span>
+<span class="w">                                                </span><span class="n">FF10_loc</span><span class="o">=</span><span class="n">meteo_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">FF10_subgrid_index</span><span class="p">)</span>
+<span class="w">                                                </span><span class="n">sig_y_00_loc</span><span class="o">=</span><span class="n">emission_properties_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">emission_sigy00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                                                </span><span class="n">sig_z_00_loc</span><span class="o">=</span><span class="n">emission_properties_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">emission_sigz00_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                                                </span><span class="n">h_emis_loc</span><span class="o">=</span><span class="n">emission_properties_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">emission_h_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">                                                </span><span class="c">!Set ustar 0 to be consistent with FF10 and z0</span>
+<span class="w">                                                </span><span class="k">call </span><span class="n">u_profile_neutral_val_func</span><span class="p">(</span><span class="mi">1</span><span class="mf">0.</span><span class="p">,</span><span class="n">FF10_loc</span><span class="p">,</span><span class="mi">1</span><span class="mf">0.</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="nb">exp</span><span class="p">(</span><span class="n">logz0_loc</span><span class="p">),</span><span class="n">FF10_loc</span><span class="p">,</span><span class="n">u_star0_loc</span><span class="p">)</span>
+<span class="w">                                                </span><span class="n">u_star0_loc</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">u_star0_loc</span><span class="p">,</span><span class="n">ustar_min</span><span class="p">)</span>
+
+<span class="w">                                                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                                    </span><span class="n">FF_loc</span><span class="o">=</span><span class="n">temp_FF_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">)</span>
+<span class="w">                                                </span><span class="k">endif</span>
+
+<span class="w">                                                </span><span class="c">!Select method for assigning sigma</span>
+<span class="w">                                                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stability_scheme_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                                    call </span><span class="n">uEMEP_set_dispersion_sigma_simple</span><span class="p">(</span><span class="n">sig_z_00_loc</span><span class="p">,</span><span class="n">sig_y_00_loc</span><span class="p">,</span><span class="n">sigy_0_subgid_width_scale</span><span class="p">,</span><span class="n">emission_subgrid_delta</span><span class="p">(:,</span><span class="n">source_index</span><span class="p">),</span><span class="n">angle_diff</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">),</span><span class="n">x_loc</span><span class="p">,</span><span class="n">sig_z_loc</span><span class="p">,</span><span class="n">sig_y_loc</span><span class="p">,</span><span class="n">sig_z_0_loc</span><span class="p">,</span><span class="n">sig_y_0_loc</span><span class="p">)</span>
+<span class="w">                                                </span><span class="k">endif</span>
+<span class="k">                                                if</span><span class="w"> </span><span class="p">(</span><span class="n">stability_scheme_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                                    call </span><span class="n">uEMEP_set_dispersion_params_PG</span><span class="p">(</span><span class="n">invL_loc</span><span class="p">,</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">                                                    </span><span class="n">ay_loc</span><span class="o">=</span><span class="n">ay</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">                                                    </span><span class="n">by_loc</span><span class="o">=</span><span class="n">by</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">                                                    </span><span class="n">az_loc</span><span class="o">=</span><span class="n">az</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">                                                    </span><span class="n">bz_loc</span><span class="o">=</span><span class="n">bz</span><span class="p">(</span><span class="n">source_index</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">)</span>
+<span class="w">                                                    </span><span class="k">call </span><span class="n">uEMEP_set_dispersion_sigma_PG</span><span class="p">(</span><span class="n">invL_loc</span><span class="p">,</span><span class="n">logz0_loc</span><span class="p">,</span><span class="n">sig_z_00_loc</span><span class="p">,</span><span class="n">sig_y_00_loc</span><span class="p">,</span><span class="n">sigy_0_subgid_width_scale</span><span class="p">,</span><span class="n">emission_subgrid_delta</span><span class="p">(:,</span><span class="n">source_index</span><span class="p">),</span><span class="n">angle_diff</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">),</span><span class="n">x_loc</span><span class="p">,</span><span class="n">sig_z_loc</span><span class="p">,</span><span class="n">sig_y_loc</span><span class="p">,</span><span class="n">sig_z_0_loc</span><span class="p">,</span><span class="n">sig_y_0_loc</span><span class="p">)</span>
+<span class="w">                                                </span><span class="k">endif</span>
+
+<span class="k">                                                if</span><span class="w"> </span><span class="p">(</span><span class="n">stability_scheme_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                                                    </span><span class="c">!Set initial values for sigma. Sig_y is set here</span>
+<span class="w">                                                    </span><span class="k">call </span><span class="n">uEMEP_set_dispersion_sigma_simple</span><span class="p">(</span><span class="n">sig_z_00_loc</span><span class="p">,</span><span class="n">sig_y_00_loc</span><span class="p">,</span><span class="n">sigy_0_subgid_width_scale</span><span class="p">,</span><span class="n">emission_subgrid_delta</span><span class="p">(:,</span><span class="n">source_index</span><span class="p">),</span><span class="n">angle_diff</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">),</span><span class="n">x_loc</span><span class="p">,</span><span class="n">sig_z_loc</span><span class="p">,</span><span class="n">sig_y_loc</span><span class="p">,</span><span class="n">sig_z_0_loc</span><span class="p">,</span><span class="n">sig_y_0_loc</span><span class="p">)</span>
+
+<span class="w">                                                    </span><span class="c">!write(*,*) &#39;IN:  &#39;,x_loc,sig_z_loc,FF_loc</span>
+<span class="w">                                                    </span><span class="k">call </span><span class="n">uEMEP_set_dispersion_sigma_Kz</span><span class="p">(</span><span class="n">Kz_scheme</span><span class="p">,</span><span class="n">x_loc</span><span class="p">,</span><span class="n">sig_z_0_loc</span><span class="p">,</span><span class="n">sig_y_0_loc</span><span class="p">,</span><span class="n">sigy_0_subgid_width_scale</span><span class="p">,</span><span class="n">sig_z_loc</span><span class="p">,</span><span class="n">h_emis_loc</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">invL_loc</span><span class="p">,</span><span class="n">FF10_loc</span><span class="p">,</span><span class="mi">1</span><span class="mf">0.</span><span class="p">,</span><span class="n">logz0_loc</span><span class="p">,</span><span class="n">emission_subgrid_delta</span><span class="p">(:,</span><span class="n">source_index</span><span class="p">),</span><span class="n">u_star0_loc</span><span class="p">,</span><span class="n">average_zc_h_in_Kz_flag</span><span class="p">,</span><span class="n">n_kz_iterations</span><span class="p">,</span><span class="n">sig_y_scaling_factor</span><span class="p">,</span><span class="n">sig_z_loc</span><span class="p">,</span><span class="n">sig_y_loc</span><span class="p">,</span><span class="n">FF_zc_loc</span><span class="p">)</span>
+<span class="w">                                                    </span><span class="c">!write(*,*) &#39;OUT: &#39;,x_loc,sig_z_loc,FF_loc</span>
+
+<span class="w">                                                    </span><span class="n">sig_y_loc</span><span class="o">=</span><span class="n">sig_y_loc</span><span class="o">+</span><span class="n">x_loc</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">angle_diff</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">))</span>
+
+<span class="w">                                                    </span><span class="c">!Use the average of the emisiion height and zc to determine wind speed. Is set to true if wind_level_flag=6</span>
+<span class="w">                                                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                                        </span><span class="n">FF_loc</span><span class="o">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">FF_zc_loc</span><span class="o">*</span><span class="n">FF_zc_loc</span><span class="o">+</span><span class="n">FF_min_dispersion</span><span class="o">*</span><span class="n">FF_min_dispersion</span><span class="p">)</span>
+<span class="w">                                                    </span><span class="k">endif</span>
+
+<span class="k">                                                endif</span>
+
+<span class="k">                                                if</span><span class="w"> </span><span class="p">(</span><span class="n">stability_scheme_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                                    call </span><span class="n">uEMEP_set_dispersion_sigma_Kz_emulator</span><span class="p">(</span><span class="n">h_emis_loc</span><span class="p">,</span><span class="n">invL_loc</span><span class="p">,</span><span class="n">logz0_loc</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">sig_z_00_loc</span><span class="p">,</span><span class="n">sig_y_00_loc</span><span class="p">,</span><span class="n">sigy_0_subgid_width_scale</span><span class="p">,</span><span class="n">emission_subgrid_delta</span><span class="p">(:,</span><span class="n">source_index</span><span class="p">),</span><span class="n">angle_diff</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">),</span><span class="n">x_loc</span><span class="p">,</span><span class="n">sig_z_loc</span><span class="p">,</span><span class="n">sig_y_loc</span><span class="p">,</span><span class="n">sig_z_0_loc</span><span class="p">,</span><span class="n">sig_y_0_loc</span><span class="p">)</span>
+<span class="w">                                                </span><span class="k">endif</span>
+
+<span class="k">                                                if</span><span class="w"> </span><span class="p">(</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mf">6.</span><span class="nb">and</span><span class="p">.</span><span class="n">stability_scheme_flag</span><span class="p">.</span><span class="n">ne</span><span class="p">.</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                                    call </span><span class="n">z_centremass_gauss_func</span><span class="p">(</span><span class="n">sig_z_loc</span><span class="p">,</span><span class="n">h_emis_loc</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">zc_loc</span><span class="p">)</span>
+<span class="w">                                                    </span><span class="n">zc_loc</span><span class="o">=</span><span class="p">(</span><span class="n">h_emis_loc</span><span class="o">+</span><span class="n">zc_loc</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
+<span class="w">                                                    </span><span class="k">call </span><span class="n">u_profile_neutral_val_func</span><span class="p">(</span><span class="n">zc_loc</span><span class="p">,</span><span class="n">FF10_loc</span><span class="p">,</span><span class="mi">1</span><span class="mf">0.</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="nb">exp</span><span class="p">(</span><span class="n">logz0_loc</span><span class="p">),</span><span class="n">FF_zc_loc</span><span class="p">,</span><span class="n">u_star0_loc</span><span class="p">)</span>
+<span class="w">                                                    </span><span class="n">FF_loc</span><span class="o">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">FF_zc_loc</span><span class="o">*</span><span class="n">FF_zc_loc</span><span class="o">+</span><span class="n">FF_min_dispersion</span><span class="o">*</span><span class="n">FF_min_dispersion</span><span class="p">)</span>
+<span class="w">                                                </span><span class="k">endif</span>
+
+<span class="w">                                                </span><span class="c">!Calculate the dispersion</span>
+<span class="w">                                                </span><span class="n">integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">hsurf_average_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span><span class="o">=</span><span class="n">integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">hsurf_average_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                    </span><span class="o">+</span><span class="w"> </span><span class="n">gauss_plume_cartesian_sigma_integral_func</span><span class="p">(</span><span class="n">x_loc</span><span class="p">,</span><span class="n">y_loc</span><span class="p">,</span><span class="n">h_emis_loc</span><span class="p">,</span><span class="n">sig_z_loc</span><span class="p">,</span><span class="n">sig_y_loc</span><span class="p">,</span><span class="n">h_mix_loc</span><span class="p">,</span><span class="n">FF_loc</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="n">H_emep</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                    </span><span class="o">*</span><span class="w"> </span><span class="n">emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span>
+
+<span class="w">                                                </span><span class="c">!write(*,*) i,j,integral_subgrid(i,j,tt,hsurf_average_subgrid_index,source_index,1)</span>
+<span class="w">                                            </span><span class="k">endif</span>
+
+<span class="k">                                        else</span>
+<span class="w">                                            </span><span class="c">!If annual calculations</span>
+<span class="w">                                            </span><span class="c">!Only works withthe simple dispersion parameters</span>
+<span class="w">                                            </span><span class="n">distance_subgrid</span><span class="o">=</span><span class="nb">sqrt</span><span class="p">((</span><span class="n">x_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">-</span><span class="n">x_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">-</span><span class="n">x_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">))</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                </span><span class="o">+</span><span class="p">(</span><span class="n">y_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">-</span><span class="n">y_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">y_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">source_index</span><span class="p">)</span><span class="o">-</span><span class="n">y_integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)))</span>
+
+<span class="w">                                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">wind_level_integral_flag</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                                </span><span class="n">FF_loc</span><span class="o">=</span><span class="n">temp_FF_emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">)</span>
+<span class="w">                                            </span><span class="k">else</span>
+<span class="k">                                                </span><span class="n">FF_loc</span><span class="o">=</span><span class="n">temp_FF_subgrid</span><span class="p">(</span><span class="n">i_cross_integral</span><span class="p">,</span><span class="n">j_cross_integral</span><span class="p">)</span>
+<span class="w">                                            </span><span class="k">endif</span>
+
+<span class="k">                                            </span><span class="n">integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">hsurf_average_subgrid_index</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span><span class="o">=</span><span class="n">integral_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">hsurf_average_subgrid_index</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                </span><span class="o">+</span><span class="n">emission_subgrid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="n">source_index</span><span class="p">,:)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                </span><span class="o">*</span><span class="n">gauss_plume_second_order_rotated_integral_func</span><span class="p">(</span><span class="n">distance_subgrid</span><span class="p">,</span><span class="n">ay_loc</span><span class="p">,</span><span class="n">by_loc</span><span class="p">,</span><span class="n">az_loc</span><span class="p">,</span><span class="n">bz_loc</span><span class="p">,</span><span class="n">sig_y_0_loc</span><span class="p">,</span><span class="n">sig_z_0_loc</span><span class="p">,</span><span class="n">h_emis_loc</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="n">H_emep</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                </span><span class="o">/</span><span class="n">FF_loc</span>
+
+<span class="w">                                        </span><span class="k">endif</span>
+
+<span class="k">                                    endif</span>
+
+<span class="k">                                endif</span>
+
+<span class="k">                            enddo</span>
+<span class="k">                        enddo</span>
+<span class="w">                        </span><span class="c">!write(*,&#39;(6i6,f)&#39;) i,j,i_start,i_end,j_start,j_end,integral_subgrid(i,j,tt,source_index,subsource_index)</span>
+<span class="w">                    </span><span class="k">enddo</span>
+<span class="w">                    </span><span class="c">!write(*,&#39;(3a,i5,a,i5,a,i3,a,i3)&#39;) &#39;Gridding &#39;,trim(source_file_str(source_index)),&#39; integral proxy&#39;,j,&#39; of &#39;,integral_subgrid_dim(y_dim_index),&#39; and &#39;,subsource_index,&#39; of &#39;,n_subsource(source_index)</span>
+<span class="w">                </span><span class="k">enddo</span>
+
+<span class="k">                if</span><span class="w"> </span><span class="p">(</span><span class="nb">mod</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s1">&#39;(3a,i5,a,i5,a,i3,a,i3)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Integral gridding &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">source_file_str</span><span class="p">(</span><span class="n">source_index</span><span class="p">)),</span><span class="s1">&#39; proxy for hour &#39;</span><span class="p">,</span><span class="n">tt</span><span class="p">,</span><span class="s1">&#39; of &#39;</span><span class="p">,</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">t_dim_index</span><span class="p">),</span><span class="s1">&#39; and &#39;</span><span class="p">,</span><span class="n">subsource_index</span><span class="p">,</span><span class="s1">&#39; of &#39;</span><span class="p">,</span><span class="n">n_subsource</span><span class="p">(</span><span class="n">source_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">enddo</span><span class="w"> </span><span class="c">!time loop</span>
+
+<span class="w">        </span><span class="k">enddo</span><span class="w"> </span><span class="c">!subsource_index</span>
+
+<span class="w">        </span><span class="c">!if (combine_emission_subsources_during_dispersion(source_index).and.n_subsource(source_index).gt.1) then</span>
+<span class="w">        </span><span class="c">!    do subsource_index=2,n_subsource(n_source_index)</span>
+<span class="w">        </span><span class="c">!        integral_subgrid(:,:,:,:,source_index,1)=integral_subgrid(:,:,:,:,source_index,1)+integral_subgrid(:,:,:,:,source_index,subsource_index)</span>
+<span class="w">        </span><span class="c">!    enddo</span>
+<span class="w">        </span><span class="c">!    n_subsource(source_index)=1</span>
+<span class="w">        </span><span class="c">!endif</span>
+
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">trajectory_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">trajectory_subgrid</span><span class="p">)</span>
+<span class="w">        </span><span class="c">!if (allocated(temp_emission_subgrid)) deallocate(temp_emission_subgrid)</span>
+<span class="w">        </span><span class="c">!if (allocated(temp_subgrid)) deallocate(temp_subgrid)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">temp_FF_subgrid</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">temp_FF_subgrid</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">end subroutine </span><span class="n">uEMEP_subgrid_dispersion_integral</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

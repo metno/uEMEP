@@ -1,0 +1,929 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_read_roadlink_data_ascii &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_read_roadlink_data_ascii
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 2.4% of total for procedures.">479 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_read_roadlink_data_ascii.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_read_roadlink_data_ascii.f90.html'>uEMEP_read_roadlink_data_ascii.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/read_roadlink_data_ascii.html'>read_roadlink_data_ascii</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_read_roadlink_data_ascii</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_read_roadlink_data_ascii.html#src">uEMEP_read_roadlink_data_ascii</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine uEMEP_read_roadlink_data_ascii()  
+</h2>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/uemep_definitions.html'>uEMEP_definitions</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+    <h3>Arguments</h3>
+    <em>None</em>
+    <br>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_read_roadlink_data_ascii</span>
+
+<span class="w">        </span><span class="k">use </span><span class="n">uEMEP_definitions</span>
+
+<span class="w">        </span><span class="k">implicit none</span>
+
+<span class="k">        </span><span class="kt">integer </span><span class="n">i</span><span class="p">,</span><span class="n">j</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">unit_in</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">rl_length_short</span>
+<span class="w">        </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">exists</span>
+<span class="w">        </span><span class="kt">logical </span><span class="n">nxtdat_flag</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">5000</span><span class="p">),</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">5000</span><span class="p">),</span><span class="n">sub_nodes_lon</span><span class="p">(</span><span class="mi">5000</span><span class="p">),</span><span class="n">sub_nodes_lat</span><span class="p">(</span><span class="mi">5000</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">temp_id</span><span class="p">,</span><span class="n">n_subnodes</span><span class="p">,</span><span class="n">temp_road_type</span><span class="p">,</span><span class="n">temp_nlanes</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">temp_adt</span><span class="p">,</span><span class="n">temp_hdv</span><span class="p">,</span><span class="n">temp_speed</span><span class="p">,</span><span class="n">temp_width</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">counter</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">size_major</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_loop</span><span class="p">,</span><span class="n">loop_step</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_grid_min</span><span class="p">,</span><span class="n">x_grid_max</span><span class="p">,</span><span class="n">y_grid_min</span><span class="p">,</span><span class="n">y_grid_max</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">counter_major</span><span class="p">,</span><span class="n">counter_sub</span>
+<span class="w">        </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">show_diagnostics</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">temp_category</span><span class="p">,</span><span class="n">temp_structure_type</span><span class="p">,</span><span class="n">temp_region_id</span><span class="p">,</span><span class="n">temp_surface_id</span><span class="p">,</span><span class="n">temp_route_id</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">temp_length</span><span class="p">,</span><span class="n">temp_tunnel_length</span>
+<span class="w">        </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">road_data_in_latlon</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">temp_real</span>
+
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inputdata_rl_temp</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inputdata_int_rl_temp</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inputdata_rl_multi</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inputdata_int_rl_multi</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inputdata_rl_multi_new</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">inputdata_int_rl_multi_new</span><span class="p">(:,:)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_multi_roadlinks_new</span><span class="p">,</span><span class="n">n_multi_roadlinks</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">m</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">n_road_link_file_loop</span>
+<span class="w">        </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">first_road_link_file_read</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">temp_int</span>
+<span class="w">        </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">io</span>
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Reading road link data ascii (uEMEP_read_roadlink_data_ascii)&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+
+
+<span class="w">        </span><span class="n">min_adt</span><span class="o">=</span><span class="mi">1</span><span class="mf">0.</span>
+<span class="w">        </span><span class="n">min_link_size</span><span class="o">=</span><span class="mf">1.</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">num_multiple_roadlink_files</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">n_road_link_file_loop</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            </span><span class="n">n_road_link_file_loop</span><span class="o">=</span><span class="n">num_multiple_roadlink_files</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!Start the file loop here</span>
+<span class="w">        </span><span class="c">!---------------------------</span>
+<span class="w">        </span><span class="n">n_multi_roadlinks_new</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="n">n_multi_roadlinks</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="n">first_road_link_file_read</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+
+<span class="w">        </span><span class="k">do </span><span class="n">m</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_road_link_file_loop</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">num_multiple_roadlink_files</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                </span><span class="c">!pathname_rl(1)=pathname_mrl(m)</span>
+<span class="w">                </span><span class="n">filename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="n">filename_mrl</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="n">n_road_link_file_loop</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">            </span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathname_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">            </span><span class="c">!write(*,*) pathname_rl(2),filename_rl(2),pathfilename_rl(2)</span>
+
+<span class="w">            </span><span class="c">!Test existence of the road link filename (2). If does not exist then stop</span>
+<span class="w">            </span><span class="k">inquire</span><span class="p">(</span><span class="k">file</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span><span class="n">exist</span><span class="o">=</span><span class="n">exists</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">exists</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; ERROR: Road link file ascii does not exist: &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                </span><span class="k">stop</span>
+<span class="k">            endif</span>
+
+<span class="w">            </span><span class="c">!Check filename for the string &#39;latlon&#39; that specifies if the data is in lat lon coordinates</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">index</span><span class="p">(</span><span class="n">filename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="s1">&#39;latlon&#39;</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">road_data_in_latlon</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Reading road data positions as lat lon: &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="w">            </span><span class="c">!Open the file for reading to test the available links in the region</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reduce_roadlink_region_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">unit_in</span><span class="o">=</span><span class="mi">20</span>
+<span class="w">                </span><span class="k">open</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="nb">access</span><span class="o">=</span><span class="s1">&#39;sequential&#39;</span><span class="p">,</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;old&#39;</span><span class="p">,</span><span class="n">readonly</span><span class="p">)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Opening road link file(ascii) &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="w">                </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">nxtdat</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="n">nxtdat_flag</span><span class="p">)</span>
+
+<span class="w">                </span><span class="c">!read the header to find out how many links there are</span>
+<span class="w">                </span><span class="c">!read(unit_in,&#39;(a)&#39;,ERR=20) temp_str</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">no_header_roadlink_data_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Reading road link file(ascii) without header: &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                    </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                    </span><span class="k">do</span>
+<span class="k">                        read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">temp_real</span><span class="p">,</span><span class="n">temp_adt</span><span class="p">,</span><span class="n">temp_hdv</span><span class="p">,</span><span class="n">temp_road_type</span><span class="p">,</span><span class="n">temp_speed</span><span class="p">,</span><span class="n">temp_width</span><span class="p">,</span><span class="n">temp_nlanes</span><span class="p">,</span><span class="n">n_subnodes</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            exit</span>
+<span class="k">                        else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                            </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                        </span><span class="k">end if</span>
+<span class="k">                        read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c">!Read x nodes</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            exit</span>
+<span class="k">                        else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                            </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                        </span><span class="k">end if</span>
+<span class="k">                        read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c">!Read y nodes</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            exit</span>
+<span class="k">                        else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                            </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                        </span><span class="k">end if</span>
+<span class="k">                        if</span><span class="w"> </span><span class="p">(</span><span class="n">temp_real</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                            </span><span class="n">n_roadlinks</span><span class="o">=</span><span class="n">n_roadlinks</span><span class="o">+</span><span class="n">n_subnodes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                        </span><span class="k">endif</span>
+<span class="k">                        if</span><span class="w"> </span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">temp_real</span><span class="p">).</span><span class="n">ne</span><span class="p">.</span><span class="n">temp_real</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i,f)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Problem with record at point with ID: &#39;</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">temp_real</span>
+<span class="w">                            </span><span class="k">stop</span>
+<span class="k">                        endif</span>
+<span class="k">                    enddo</span>
+
+<span class="k">                    </span><span class="n">n_roadlinks_major</span><span class="o">=</span><span class="n">i</span>
+<span class="w">                    </span><span class="c">!n_roadlinks=0</span>
+<span class="w">                    </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">nxtdat</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="w"> </span><span class="n">nxtdat_flag</span><span class="p">)</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="k">                    read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">ERR</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="n">n_roadlinks_major</span><span class="p">,</span><span class="n">n_roadlinks</span>
+<span class="w">                </span><span class="k">endif</span>
+
+<span class="k">                if</span><span class="w"> </span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Reading road link file(ascii) with header but without subnode counts: &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">nxtdat</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="n">nxtdat_flag</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">ERR</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="n">n_roadlinks_major</span><span class="p">,</span><span class="n">n_roadlinks</span>
+<span class="w">                    </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                    </span><span class="k">do</span>
+<span class="k">                        read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">temp_id</span><span class="p">,</span><span class="n">temp_adt</span><span class="p">,</span><span class="n">temp_hdv</span><span class="p">,</span><span class="n">temp_road_type</span><span class="p">,</span><span class="n">temp_speed</span><span class="p">,</span><span class="n">temp_width</span><span class="p">,</span><span class="n">temp_nlanes</span><span class="p">,</span><span class="n">n_subnodes</span><span class="w"> </span><span class="c">!Read attributes up to n_subnodes</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            exit</span>
+<span class="k">                        else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                            </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                        </span><span class="k">end if</span>
+<span class="k">                        read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c">!Read x nodes</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            exit</span>
+<span class="k">                        else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                            </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                        </span><span class="k">end if</span>
+<span class="k">                        read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c">!Read y nodes</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            exit</span>
+<span class="k">                        else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                            </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                        </span><span class="k">end if</span>
+<span class="k">                        if</span><span class="w"> </span><span class="p">(</span><span class="n">temp_id</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                            </span><span class="n">n_roadlinks</span><span class="o">=</span><span class="n">n_roadlinks</span><span class="o">+</span><span class="n">n_subnodes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                        </span><span class="k">endif</span>
+<span class="k">                    enddo</span>
+
+<span class="w">                    </span><span class="c">!Have commented out this in the cases where the number of links are not as written. Can happen with OSM data</span>
+<span class="w">                    </span><span class="c">!n_roadlinks_major=i</span>
+<span class="w">                    </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">call </span><span class="n">nxtdat</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="w"> </span><span class="n">nxtdat_flag</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">ERR</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="n">temp_int</span><span class="p">,</span><span class="n">temp_int</span>
+<span class="w">                </span><span class="k">endif</span>
+
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Number of major road links in header = &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">n_roadlinks_major</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Number of sub road links in header= &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">n_roadlinks</span>
+
+
+<span class="w">                </span><span class="c">!Allocate the arrays after reading in the number of roads</span>
+<span class="w">                </span><span class="c">!allocate (inputdata_rl_temp(n_roadlinks,num_var_rl))</span>
+<span class="w">                </span><span class="c">!allocate (inputdata_int_rl_temp(n_roadlinks,num_int_rl))</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">valid_link_flag</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">valid_link_flag</span><span class="p">)</span>
+<span class="w">                </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">valid_link_flag</span><span class="p">(</span><span class="n">n_roadlinks_major</span><span class="p">))</span>
+<span class="w">                </span><span class="n">valid_link_flag</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+
+<span class="w">                </span><span class="c">!Initialise</span>
+<span class="w">                </span><span class="c">!inputdata_rl_temp=0.</span>
+<span class="w">                </span><span class="c">!inputdata_int_rl_temp=0</span>
+
+<span class="w">                </span><span class="n">counter_major</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="n">counter_sub</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="c">!Read the data to find roads in the tile</span>
+<span class="w">                </span><span class="c">!x_grid_min=emission_subgrid_min(x_dim_index,traffic_index)</span>
+<span class="w">                </span><span class="c">!x_grid_max=emission_subgrid_min(x_dim_index,traffic_index)+(emission_subgrid_dim(x_dim_index,traffic_index)+1)*emission_subgrid_delta(x_dim_index,traffic_index)</span>
+<span class="w">                </span><span class="c">!y_grid_min=emission_subgrid_min(y_dim_index,traffic_index)</span>
+<span class="w">                </span><span class="c">!y_grid_max=emission_subgrid_min(y_dim_index,traffic_index)+(emission_subgrid_dim(y_dim_index,traffic_index)+1)*emission_subgrid_delta(y_dim_index,traffic_index)</span>
+
+<span class="w">                </span><span class="n">x_grid_min</span><span class="o">=</span><span class="n">init_emission_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">x_grid_max</span><span class="o">=</span><span class="n">init_emission_subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">init_emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">init_emission_subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">y_grid_min</span><span class="o">=</span><span class="n">init_emission_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">y_grid_max</span><span class="o">=</span><span class="n">init_emission_subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">init_emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">init_emission_subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">)</span>
+
+<span class="w">                </span><span class="c">!Under the special case where multiple roads are read from different countries then us the intital grid to determine which to keep</span>
+<span class="w">                </span><span class="c">!This is not implemented yet but needs to select the region when reading multiple files</span>
+<span class="w">                </span><span class="c">!if</span>
+<span class="w">                </span><span class="c">!init_subgrid_min(x_dim_index)=subgrid_min(x_dim_index)</span>
+<span class="w">                </span><span class="c">!init_subgrid_min(y_dim_index)=subgrid_min(y_dim_index)</span>
+<span class="w">                </span><span class="c">!init_subgrid_max(x_dim_index)=subgrid_max(x_dim_index)</span>
+<span class="w">                </span><span class="c">!init_subgrid_max(y_dim_index)=subgrid_max(y_dim_index)</span>
+<span class="w">                </span><span class="c">!endif</span>
+
+<span class="w">                </span><span class="c">!rewind(unit_in)</span>
+<span class="w">                </span><span class="c">!call nxtdat_modern(unit_in,nxtdat_flag)</span>
+<span class="w">                </span><span class="c">!read(unit_in,*,ERR=20) temp_int,temp_int</span>
+
+<span class="w">                </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_roadlinks_major</span>
+<span class="w">                    </span><span class="c">!ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS</span>
+<span class="w">                    </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">ERR</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="n">temp_id</span><span class="p">,</span><span class="n">temp_adt</span><span class="p">,</span><span class="n">temp_hdv</span><span class="p">,</span><span class="n">temp_road_type</span><span class="p">,</span><span class="n">temp_speed</span><span class="p">,</span><span class="n">temp_width</span><span class="p">,</span><span class="n">temp_nlanes</span><span class="p">,</span><span class="n">n_subnodes</span>
+<span class="w">                    </span><span class="c">!read(unit_in,*,ERR=20) !temp_id</span>
+<span class="w">                    </span><span class="c">!write(*,*) temp_id,temp_adt,n_subnodes</span>
+
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">road_data_in_latlon</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="c">!Order is reversed in these files</span>
+<span class="w">                        </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="w">                        </span><span class="k">if</span><span class="w">  </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">UTM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                            </span><span class="c">!write(*,*) i,sub_nodes_x(1),sub_nodes_y(1)</span>
+<span class="w">                            </span><span class="k">call </span><span class="n">ll2utm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">utm_zone</span><span class="p">,</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                            </span><span class="c">!write(*,*) i,sub_nodes_x(1),sub_nodes_y(1)</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w">  </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LTM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">ll2ltm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ltm_lon0</span><span class="p">,</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LCC_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        elseif</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">PS_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        elseif</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LAEA_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">LL2LAEA</span><span class="p">(</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">projection_attributes</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">endif</span>
+
+<span class="k">                    else</span>
+<span class="k">                        read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">endif</span>
+<span class="w">                    </span><span class="c">!Convert to EMEP coordinates from UTM to lambert. No choices here. Special case but should be changed</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">save_emissions_for_EMEP</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_lon</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_lat</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">projection_attributes</span><span class="p">,</span><span class="n">projection_type</span><span class="p">)</span>
+<span class="w">                        </span><span class="c">!call UTM2LL(utm_zone,sub_nodes_y(1),sub_nodes_x(1),sub_nodes_lat(1),sub_nodes_lon(1))</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LCC_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">lb2lambert2_uEMEP</span><span class="p">(</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_lon</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_lat</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">EMEP_projection_attributes</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">PS_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            call </span><span class="n">LL2PS_spherical</span><span class="p">(</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_lon</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sub_nodes_lat</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">EMEP_projection_attributes</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="w">                            </span><span class="c">!Remains as lat lon</span>
+<span class="w">                        </span><span class="k">endif</span>
+
+<span class="w">                        </span><span class="c">!write(*,*) sub_nodes_x(1),sub_nodes_y(1),sub_nodes_lon(1),sub_nodes_lat(1)</span>
+<span class="w">                    </span><span class="k">endif</span>
+<span class="w">                    </span><span class="c">!write(*,*) sub_nodes_x(1),sub_nodes_y(1)</span>
+<span class="w">                    </span><span class="c">!write(*,*) x_grid_min,x_grid_max,y_grid_min,y_grid_max</span>
+
+<span class="w">                    </span><span class="c">!Test position within emission region</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">ge</span><span class="p">.</span><span class="n">x_grid_min</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">x_grid_max</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">ge</span><span class="p">.</span><span class="n">y_grid_min</span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">le</span><span class="p">.</span><span class="n">y_grid_max</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">counter_major</span><span class="o">=</span><span class="n">counter_major</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                        </span><span class="n">counter_sub</span><span class="o">=</span><span class="n">counter_sub</span><span class="o">+</span><span class="n">n_subnodes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                        </span><span class="n">valid_link_flag</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">                    </span><span class="k">else</span>
+<span class="k">                        </span><span class="n">valid_link_flag</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">                    </span><span class="k">endif</span>
+
+<span class="k">                enddo</span>
+<span class="k">                close</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;keep&#39;</span><span class="p">)</span>
+
+
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Number of major and sub road links within the region = &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">counter_major</span><span class="p">,</span><span class="n">counter_sub</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="w">            </span><span class="c">!Open the file for reading</span>
+<span class="w">            </span><span class="n">unit_in</span><span class="o">=</span><span class="mi">20</span>
+<span class="w">            </span><span class="k">open</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="k">file</span><span class="o">=</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="nb">access</span><span class="o">=</span><span class="s1">&#39;sequential&#39;</span><span class="p">,</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;old&#39;</span><span class="p">,</span><span class="n">readonly</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Opening road link file(ascii) &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="w">            </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">nxtdat</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="w"> </span><span class="n">nxtdat_flag</span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!read the header to find out how many links there are</span>
+<span class="w">            </span><span class="c">!read(unit_in,&#39;(a)&#39;,ERR=20) temp_str</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">no_header_roadlink_data_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Reading road link file(ascii) without header: &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="k">do</span>
+<span class="k">                    read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">temp_id</span><span class="p">,</span><span class="n">temp_adt</span><span class="p">,</span><span class="n">temp_hdv</span><span class="p">,</span><span class="n">temp_road_type</span><span class="p">,</span><span class="n">temp_speed</span><span class="p">,</span><span class="n">temp_width</span><span class="p">,</span><span class="n">temp_nlanes</span><span class="p">,</span><span class="n">n_subnodes</span><span class="w"> </span><span class="c">!Read attributes</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        exit</span>
+<span class="k">                    else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                    read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c">!Read x nodes</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        exit</span>
+<span class="k">                    else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                    read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c">!Read y nodes</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        exit</span>
+<span class="k">                    else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                    if</span><span class="w"> </span><span class="p">(</span><span class="n">temp_id</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">endif</span>
+<span class="k">                enddo</span>
+<span class="k">                </span><span class="n">n_roadlinks_major</span><span class="o">=</span><span class="n">i</span>
+<span class="w">                </span><span class="n">n_roadlinks</span><span class="o">=</span><span class="n">n_roadlinks</span><span class="o">+</span><span class="n">n_subnodes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">nxtdat</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="n">nxtdat_flag</span><span class="p">)</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="k">                read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">ERR</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="n">n_roadlinks_major</span><span class="p">,</span><span class="n">n_roadlinks</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="mf">0.</span><span class="nb">and</span><span class="p">..</span><span class="nb">not</span><span class="p">.</span><span class="n">reduce_roadlink_region_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Reading road link file(ascii) with header but without subnode counts: &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">nxtdat</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="n">nxtdat_flag</span><span class="p">)</span>
+<span class="w">                </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">ERR</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="n">n_roadlinks_major</span><span class="p">,</span><span class="n">n_roadlinks</span>
+<span class="w">                </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="k">do</span>
+<span class="k">                    read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">temp_id</span><span class="p">,</span><span class="n">temp_adt</span><span class="p">,</span><span class="n">temp_hdv</span><span class="p">,</span><span class="n">temp_road_type</span><span class="p">,</span><span class="n">temp_speed</span><span class="p">,</span><span class="n">temp_width</span><span class="p">,</span><span class="n">temp_nlanes</span><span class="p">,</span><span class="n">n_subnodes</span><span class="w"> </span><span class="c">!Read attributes</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        exit</span>
+<span class="k">                    else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                    read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c">!Read x nodes</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        exit</span>
+<span class="k">                    else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                    read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c">!Read y nodes</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        exit</span>
+<span class="k">                    else if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="w">                    </span><span class="c">!write(*,*) temp_id</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">temp_id</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                        </span><span class="n">n_roadlinks</span><span class="o">=</span><span class="n">n_roadlinks</span><span class="o">+</span><span class="n">n_subnodes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">endif</span>
+<span class="k">                enddo</span>
+<span class="w">                </span><span class="c">!n_roadlinks_major=i</span>
+<span class="w">                </span><span class="k">rewind</span><span class="p">(</span><span class="n">unit_in</span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">nxtdat</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="w"> </span><span class="n">nxtdat_flag</span><span class="p">)</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Number of major road links= &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">n_roadlinks_major</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Number of sub road links= &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">n_roadlinks</span>
+
+<span class="w">            </span><span class="c">!Allocate the arrays after reading in the number of roads</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reduce_roadlink_region_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">n_roadlinks</span><span class="o">=</span><span class="n">counter_sub</span>
+<span class="w">                </span><span class="n">n_roadlinks_major_selected</span><span class="o">=</span><span class="n">counter_major</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="c">!Set all road links to valid when not regionally selecting. THis will fail because already allocated</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">valid_link_flag</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">valid_link_flag</span><span class="p">)</span>
+<span class="w">                </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">valid_link_flag</span><span class="p">(</span><span class="n">n_roadlinks_major</span><span class="p">))</span>
+<span class="w">                </span><span class="n">valid_link_flag</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl_temp</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl_temp</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_int_rl_temp</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_int_rl_temp</span><span class="p">)</span>
+<span class="w">            </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">,</span><span class="n">num_var_rl</span><span class="p">))</span>
+<span class="w">            </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_int_rl_temp</span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">,</span><span class="n">num_int_rl</span><span class="p">))</span>
+
+<span class="w">            </span><span class="c">!Initialise</span>
+<span class="w">            </span><span class="n">inputdata_rl_temp</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">            </span><span class="n">inputdata_int_rl_temp</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">            </span><span class="n">counter</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">            </span><span class="n">counter_major</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="w">            </span><span class="c">!rewind(unit_in)</span>
+<span class="w">            </span><span class="c">!call nxtdat_modern(unit_in,nxtdat_flag)</span>
+<span class="w">            </span><span class="c">!read(unit_in,*,ERR=20) temp_int,temp_int</span>
+<span class="w">            </span><span class="c">!Read the data</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_roadlinks_major</span>
+<span class="c">!    if (.not.valid_link_flag(i)) then</span>
+<span class="c">!        if (read_OSM_roadlink_data_flag) then</span>
+<span class="w">                </span><span class="c">!ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS</span>
+<span class="c">!            if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes</span>
+<span class="c">!        else</span>
+<span class="w">                </span><span class="c">!ID ADT HDV ROAD_ACTIVITY_TYPE SPEED ROAD_WIDTH N_LANES N_SUBNODES ROAD_CATEGORY ROAD_LENGTH ROAD_STRUCTURE_TYPE REGION_ID ROAD_SURFACE_ID TUNNEL_LENGTH ROUTE_ID</span>
+<span class="c">!            if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_id,temp_adt,temp_hdv,temp_road_type,temp_speed,temp_width,temp_nlanes,n_subnodes &amp;</span>
+<span class="c">!            ,temp_category,temp_length,temp_structure_type,temp_region_id,temp_surface_id,temp_tunnel_length,temp_route_id</span>
+<span class="c">!        endif</span>
+<span class="w">                </span><span class="c">!write(*,*) temp_id,temp_adt,n_subnodes</span>
+<span class="c">!        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_val</span>
+<span class="c">!        if (.not.eof(unit_in)) read(unit_in,*,ERR=20) temp_val</span>
+<span class="c">!    else</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">read_OSM_roadlink_data_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                    </span><span class="c">!ID ADT HDV ROAD_TYPE SPEED N_SUBLINKS</span>
+<span class="w">                    </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">temp_id</span><span class="p">,</span><span class="n">temp_adt</span><span class="p">,</span><span class="n">temp_hdv</span><span class="p">,</span><span class="n">temp_road_type</span><span class="p">,</span><span class="n">temp_speed</span><span class="p">,</span><span class="n">temp_width</span><span class="p">,</span><span class="n">temp_nlanes</span><span class="p">,</span><span class="n">n_subnodes</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                    </span><span class="n">temp_category</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">temp_length</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">temp_structure_type</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">temp_region_id</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">temp_surface_id</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">temp_tunnel_length</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">temp_route_id</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="w">                    </span><span class="c">!ID ADT HDV ROAD_ACTIVITY_TYPE SPEED ROAD_WIDTH N_LANES N_SUBNODES ROAD_CATEGORY ROAD_LENGTH ROAD_STRUCTURE_TYPE REGION_ID ROAD_SURFACE_ID TUNNEL_LENGTH ROUTE_ID</span>
+<span class="w">                    </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">temp_id</span><span class="p">,</span><span class="n">temp_adt</span><span class="p">,</span><span class="n">temp_hdv</span><span class="p">,</span><span class="n">temp_road_type</span><span class="p">,</span><span class="n">temp_speed</span><span class="p">,</span><span class="n">temp_width</span><span class="p">,</span><span class="n">temp_nlanes</span><span class="p">,</span><span class="n">n_subnodes</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                        </span><span class="p">,</span><span class="n">temp_category</span><span class="p">,</span><span class="n">temp_length</span><span class="p">,</span><span class="n">temp_structure_type</span><span class="p">,</span><span class="n">temp_region_id</span><span class="p">,</span><span class="n">temp_surface_id</span><span class="p">,</span><span class="n">temp_tunnel_length</span><span class="p">,</span><span class="n">temp_route_id</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                endif</span>
+
+<span class="w">                </span><span class="c">!write(*,*) i,temp_id,temp_adt,n_subnodes</span>
+<span class="w">                </span><span class="k">read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_subnodes</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                </span><span class="k">end if</span>
+<span class="k">                read</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">io</span><span class="p">)</span><span class="w"> </span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_subnodes</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">io</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s2">&quot;(2a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;ERROR reading road link file: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">stop </span><span class="mi">1</span>
+<span class="w">                </span><span class="k">end if</span>
+<span class="w">                </span><span class="c">!write(*,*) sub_nodes_x(1:n_subnodes),sub_nodes_y(1:n_subnodes)</span>
+<span class="w">                </span><span class="c">!put in the road link data</span>
+
+<span class="w">                </span><span class="c">!Test size of major link. If less than min_link_size then treat it as a single link from the start sub_node to the end sub_node</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">valid_link_flag</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">                    </span><span class="c">!Do not do this with latlon input data as it does not work</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">road_data_in_latlon</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">size_major</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="nb">maxval</span><span class="p">(</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_subnodes</span><span class="p">))</span><span class="o">-</span><span class="nb">minval</span><span class="p">(</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_subnodes</span><span class="p">))</span>
+<span class="w">                        </span><span class="n">size_major</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="nb">maxval</span><span class="p">(</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_subnodes</span><span class="p">))</span><span class="o">-</span><span class="nb">minval</span><span class="p">(</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_subnodes</span><span class="p">))</span>
+<span class="w">                        </span><span class="n">size_major</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">size_major</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">size_major</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">size_major</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="n">gt</span><span class="p">.</span><span class="n">min_link_size</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                            </span><span class="n">n_loop</span><span class="o">=</span><span class="n">n_subnodes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                            </span><span class="n">loop_step</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">                        </span><span class="k">else</span>
+<span class="k">                            </span><span class="n">n_loop</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">                            </span><span class="n">loop_step</span><span class="o">=</span><span class="n">n_subnodes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                            </span><span class="c">!write(*,*) size_major(3)</span>
+<span class="w">                        </span><span class="k">endif</span>
+<span class="k">                    else</span>
+<span class="k">                        </span><span class="n">n_loop</span><span class="o">=</span><span class="n">n_subnodes</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">                        </span><span class="n">loop_step</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">                    </span><span class="k">endif</span>
+
+<span class="k">                    </span><span class="n">counter_major</span><span class="o">=</span><span class="n">counter_major</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                    </span><span class="c">!if (n_subnodes.gt.5000) then</span>
+<span class="w">                    </span><span class="c">!    write(*,*) &#39;Greater than 5000 &#39;,i</span>
+<span class="w">                    </span><span class="c">!endif</span>
+
+<span class="w">                    </span><span class="c">!Place the data in the road links</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">temp_adt</span><span class="p">.</span><span class="n">ge</span><span class="p">.</span><span class="n">min_adt</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        do </span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_loop</span>
+<span class="w">                            </span><span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">counter</span><span class="p">.</span><span class="n">le</span><span class="p">.</span><span class="n">n_roadlinks</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                </span><span class="n">inputdata_int_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">major_index_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">counter_major</span>
+<span class="w">                                </span><span class="n">inputdata_int_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">id_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">temp_id</span>
+<span class="w">                                </span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">adt_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">temp_adt</span><span class="o">**</span><span class="n">osm_adt_power_scale</span>
+<span class="w">                                </span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">hdv_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">temp_hdv</span>
+<span class="w">                                </span><span class="n">inputdata_int_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">roadtype_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">temp_road_type</span>
+<span class="w">                                </span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">speed_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">temp_speed</span>
+<span class="w">                                </span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">width_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">temp_width</span>
+<span class="w">                                </span><span class="n">inputdata_int_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">nlanes_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">temp_nlanes</span>
+<span class="w">                                </span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                                </span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">x2_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">sub_nodes_x</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="n">loop_step</span><span class="p">)</span>
+<span class="w">                                </span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                                </span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">y2_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">sub_nodes_y</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="n">loop_step</span><span class="p">)</span>
+<span class="w">                                </span><span class="c">!write(*,*) inputdata_int_rl(counter,id_rl_index),inputdata_rl(counter,x1_rl_index),inputdata_rl(counter,y2_rl_index)</span>
+<span class="w">                                </span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">tunnel_length_rl_index</span><span class="p">)</span><span class="o">=</span><span class="n">temp_tunnel_length</span>
+<span class="w">                            </span><span class="k">endif</span>
+<span class="k">                        enddo</span>
+<span class="w">                        </span><span class="c">!write(*,*) counter, inputdata_int_rl_temp(counter,major_index_rl_index)</span>
+<span class="w">                    </span><span class="k">endif</span>
+
+<span class="k">                endif</span>
+<span class="k">            enddo</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Number of counted road links= &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">counter</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Number of road links allocated = &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">n_roadlinks</span>
+<span class="w">            </span><span class="n">n_roadlinks</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">n_roadlinks</span><span class="p">)</span>
+<span class="w">            </span><span class="k">close</span><span class="p">(</span><span class="n">unit_in</span><span class="p">,</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;keep&#39;</span><span class="p">)</span>
+
+<span class="w">            </span><span class="c">!Allocate the arrays after reading in the number of roads</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_int_rl</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_int_rl</span><span class="p">)</span>
+<span class="w">            </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">,</span><span class="n">num_var_rl</span><span class="p">))</span>
+<span class="w">            </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">,</span><span class="n">num_int_rl</span><span class="p">))</span>
+
+<span class="w">            </span><span class="n">inputdata_rl</span><span class="o">=</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_roadlinks</span><span class="p">,:)</span>
+<span class="w">            </span><span class="n">inputdata_int_rl</span><span class="o">=</span><span class="n">inputdata_int_rl_temp</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_roadlinks</span><span class="p">,:)</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">road_data_in_latlon</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                </span><span class="c">!Order is reversed in these files so they are reversed in the projection calls as well</span>
+
+<span class="w">                </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_roadlinks</span>
+<span class="w">                    </span><span class="k">if</span><span class="w">  </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">UTM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">ll2utm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">utm_zone</span><span class="p">,</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">call </span><span class="n">ll2utm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">utm_zone</span><span class="p">,</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x2_rl_index</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">elseif</span><span class="w">  </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LTM_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">ll2ltm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ltm_lon0</span><span class="p">,</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">call </span><span class="n">ll2ltm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ltm_lon0</span><span class="p">,</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x2_rl_index</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LCC_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    elseif</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">PS_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    elseif</span><span class="w"> </span><span class="p">(</span><span class="n">projection_type</span><span class="p">.</span><span class="n">eq</span><span class="p">.</span><span class="n">LAEA_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        call </span><span class="n">LL2LAEA</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">),</span><span class="n">projection_attributes</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">call </span><span class="n">LL2LAEA</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl_temp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x2_rl_index</span><span class="p">),</span><span class="n">projection_attributes</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">endif</span>
+<span class="k">                enddo</span>
+
+<span class="k">            endif</span>
+
+<span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">num_multiple_roadlink_files</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="k">                if</span><span class="w"> </span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="k">                    </span><span class="n">n_multi_roadlinks_new</span><span class="o">=</span><span class="n">n_multi_roadlinks</span><span class="o">+</span><span class="n">n_roadlinks</span>
+
+<span class="w">                    </span><span class="c">!For the first roadloop</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">first_road_link_file_read</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="c">!Allocate the multi road array for the first time</span>
+<span class="w">                        </span><span class="n">n_multi_roadlinks_new</span><span class="o">=</span><span class="n">n_roadlinks</span>
+<span class="w">                        </span><span class="n">n_multi_roadlinks</span><span class="o">=</span><span class="n">n_multi_roadlinks_new</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl_multi</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl_multi</span><span class="p">(</span><span class="n">n_multi_roadlinks</span><span class="p">,</span><span class="n">num_var_rl</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_int_rl_multi</span><span class="p">))</span><span class="w"> </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_int_rl_multi</span><span class="p">(</span><span class="n">n_multi_roadlinks</span><span class="p">,</span><span class="n">num_int_rl</span><span class="p">))</span>
+<span class="w">                        </span><span class="n">inputdata_rl_multi</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_multi_roadlinks</span><span class="p">,:)</span><span class="o">=</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_multi_roadlinks</span><span class="p">,:)</span>
+<span class="w">                        </span><span class="n">inputdata_int_rl_multi</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_multi_roadlinks</span><span class="p">,:)</span><span class="o">=</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_roadlinks</span><span class="p">,:)</span>
+<span class="w">                        </span><span class="n">first_road_link_file_read</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">                    </span><span class="k">else</span>
+
+<span class="w">                        </span><span class="c">!Allocate the new multi array with all roads so far</span>
+<span class="w">                        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl_multi_new</span><span class="p">(</span><span class="n">n_multi_roadlinks_new</span><span class="p">,</span><span class="n">num_var_rl</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_int_rl_multi_new</span><span class="p">(</span><span class="n">n_multi_roadlinks_new</span><span class="p">,</span><span class="n">num_int_rl</span><span class="p">))</span>
+
+<span class="w">                        </span><span class="c">!Place the current multi roads in the new multiroads</span>
+<span class="w">                        </span><span class="c">!NOTE: inputdata_rl_multi is not allocated until later, debugging error but do not use this anyway!</span>
+<span class="w">                        </span><span class="n">inputdata_rl_multi_new</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_multi_roadlinks</span><span class="p">,:)</span><span class="o">=</span><span class="n">inputdata_rl_multi</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_multi_roadlinks</span><span class="p">,:)</span>
+<span class="w">                        </span><span class="n">inputdata_int_rl_multi_new</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_multi_roadlinks</span><span class="p">,:)</span><span class="o">=</span><span class="n">inputdata_int_rl_multi</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_roadlinks</span><span class="p">,:)</span>
+
+<span class="w">                        </span><span class="c">!Place the last read road links in the new multiroads</span>
+<span class="w">                        </span><span class="n">inputdata_rl_multi_new</span><span class="p">(</span><span class="n">n_multi_roadlinks</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">n_multi_roadlinks_new</span><span class="p">,:)</span><span class="o">=</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_roadlinks</span><span class="p">,:)</span>
+<span class="w">                        </span><span class="n">inputdata_int_rl_multi_new</span><span class="p">(</span><span class="n">n_multi_roadlinks</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">n_multi_roadlinks_new</span><span class="p">,:)</span><span class="o">=</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_roadlinks</span><span class="p">,:)</span>
+
+<span class="w">                        </span><span class="c">!Deallocate the old multi road arrays</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl_multi</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_rl_multi</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_int_rl_multi</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_int_rl_multi</span><span class="p">)</span>
+
+<span class="w">                        </span><span class="n">n_multi_roadlinks</span><span class="o">=</span><span class="n">n_multi_roadlinks_new</span>
+
+<span class="w">                        </span><span class="c">!Allocate the multi road array</span>
+<span class="w">                        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl_multi</span><span class="p">(</span><span class="n">n_multi_roadlinks</span><span class="p">,</span><span class="n">num_var_rl</span><span class="p">))</span>
+<span class="w">                        </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_int_rl_multi</span><span class="p">(</span><span class="n">n_multi_roadlinks</span><span class="p">,</span><span class="n">num_int_rl</span><span class="p">))</span>
+
+<span class="w">                        </span><span class="c">!Put the new data in the old one</span>
+<span class="w">                        </span><span class="n">inputdata_rl_multi</span><span class="o">=</span><span class="n">inputdata_rl_multi_new</span>
+<span class="w">                        </span><span class="n">inputdata_int_rl_multi</span><span class="o">=</span><span class="n">inputdata_int_rl_multi_new</span>
+
+<span class="w">                        </span><span class="c">!Deallocate the new multi road arrays</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl_multi_new</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_rl_multi_new</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_int_rl_multi_new</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_int_rl_multi_new</span><span class="p">)</span>
+
+<span class="w">                    </span><span class="k">endif</span>
+
+<span class="k">                endif</span>
+
+<span class="w">                </span><span class="c">!Deallocate the other arrays as well</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_int_rl</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_int_rl</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl_temp</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl_temp</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_int_rl_temp</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_int_rl_temp</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">valid_link_flag</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">valid_link_flag</span><span class="p">)</span>
+
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Number of accumulated multi-road links used = &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">n_multi_roadlinks_new</span>
+
+<span class="w">            </span><span class="k">endif</span>
+
+<span class="w">            </span><span class="c">!End the multiloop here</span>
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">num_multiple_roadlink_files</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">n_multi_roadlinks</span><span class="p">,</span><span class="n">num_var_rl</span><span class="p">))</span>
+<span class="w">            </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="n">n_multi_roadlinks</span><span class="p">,</span><span class="n">num_int_rl</span><span class="p">))</span>
+<span class="w">            </span><span class="n">inputdata_rl</span><span class="o">=</span><span class="n">inputdata_rl_multi</span>
+<span class="w">            </span><span class="n">inputdata_int_rl</span><span class="o">=</span><span class="n">inputdata_int_rl_multi</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl_multi</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_rl_multi</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_int_rl_multi</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">inputdata_int_rl_multi</span><span class="p">)</span>
+<span class="w">            </span><span class="n">n_roadlinks</span><span class="o">=</span><span class="n">n_multi_roadlinks_new</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,i)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Number of accumulated multi-road links used = &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">n_multi_roadlinks</span>
+<span class="w">        </span><span class="k">endif</span>
+
+
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_rl_temp</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl_temp</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">inputdata_int_rl_temp</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_int_rl_temp</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!No speed in the files currently. Set all to 50 km/hr. Temporary</span>
+<span class="w">        </span><span class="c">!inputdata_rl(:,speed_rl_index)=50.</span>
+<span class="w">        </span><span class="c">!inputdata_rl(:,width_rl_index)=10.</span>
+<span class="w">        </span><span class="c">!inputdata_int_rl(:,nlanes_rl_index)=2</span>
+
+<span class="w">        </span><span class="c">!Set the road type, normal or tunnel (tunnel or jet). When a tunnel then there is no retention, always dry</span>
+<span class="w">        </span><span class="c">!do i=1,n_roadlinks</span>
+<span class="w">        </span><span class="c">!    if (inputdata_int_rl(i,roadtype_rl_index).eq.5.or.inputdata_int_rl(i,roadtype_rl_index).eq.6) then</span>
+<span class="w">        </span><span class="c">!        inputdata_int_rl(i,roadtype_rl_index)=tunnel_roadtype</span>
+<span class="w">        </span><span class="c">!    else</span>
+<span class="w">        </span><span class="c">!        inputdata_int_rl(i,roadtype_rl_index)=normal_roadtype</span>
+<span class="w">        </span><span class="c">!    endif</span>
+<span class="w">        </span><span class="c">!enddo</span>
+
+<span class="w">        </span><span class="c">!Calculate some additional values</span>
+<span class="w">        </span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">x0_rl_index</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">x1_rl_index</span><span class="p">)</span><span class="o">+</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">x2_rl_index</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
+<span class="w">        </span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">y0_rl_index</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">y1_rl_index</span><span class="p">)</span><span class="o">+</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">y2_rl_index</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
+<span class="w">        </span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">=</span><span class="nb">sqrt</span><span class="p">((</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">x1_rl_index</span><span class="p">)</span><span class="o">-</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">x2_rl_index</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">y1_rl_index</span><span class="p">)</span><span class="o">-</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">y2_rl_index</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!Calculate road orientation and check for range overflows for length as well</span>
+<span class="w">        </span><span class="c">!inputdata_rl(angle_rl_index,:)=180./3.14159*acos((inputdata_rl(y2_rl_index,:)-inputdata_rl(y1_rl_index,:))/inputdata_rl(length_rl_index,:))</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_roadlinks</span>
+<span class="w">            </span><span class="k">call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lon1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lat1_rl_index</span><span class="p">),</span><span class="n">projection_attributes</span><span class="p">,</span><span class="n">projection_type</span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lon2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lat2_rl_index</span><span class="p">),</span><span class="n">projection_attributes</span><span class="p">,</span><span class="n">projection_type</span><span class="p">)</span>
+<span class="w">            </span><span class="k">call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x0_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y0_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lon0_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lat0_rl_index</span><span class="p">),</span><span class="n">projection_attributes</span><span class="p">,</span><span class="n">projection_type</span><span class="p">)</span>
+<span class="w">            </span><span class="c">!call UTM2LL(utm_zone,inputdata_rl(i,y1_rl_index),inputdata_rl(i,x1_rl_index),inputdata_rl(i,lat1_rl_index),inputdata_rl(i,lon1_rl_index))</span>
+<span class="w">            </span><span class="c">!call UTM2LL(utm_zone,inputdata_rl(i,y2_rl_index),inputdata_rl(i,x2_rl_index),inputdata_rl(i,lat2_rl_index),inputdata_rl(i,lon2_rl_index))</span>
+<span class="w">            </span><span class="c">!call UTM2LL(utm_zone,inputdata_rl(i,y0_rl_index),inputdata_rl(i,x0_rl_index),inputdata_rl(i,lat0_rl_index),inputdata_rl(i,lon0_rl_index))</span>
+<span class="w">        </span><span class="k">enddo</span>
+
+<span class="w">        </span><span class="c">!Check lengths</span>
+<span class="w">        </span><span class="n">rl_length_short</span><span class="o">=</span><span class="mi">0</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_roadlinks</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">).</span><span class="n">eq</span><span class="p">.</span><span class="mf">0.0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                </span><span class="n">rl_length_short</span><span class="o">=</span><span class="n">rl_length_short</span><span class="o">+</span><span class="mi">1</span>
+<span class="w">                </span><span class="c">!write(unit_logfile,&#39;(a,2i,f12.5)&#39;) &#39; WARNING: Zero link length, setting to 1 m &#39;,i,inputdata_int_rl(i,id_rl_index),inputdata_rl(i,length_rl_index)</span>
+<span class="w">                </span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">=</span><span class="mf">1.</span>
+<span class="w">            </span><span class="k">endif</span>
+<span class="k">        enddo</span>
+<span class="w">        </span><span class="c">!write(*,*) &#39;Max length: &#39;,maxval(inputdata_rl(:,length_rl_index)),inputdata_rl(maxloc(inputdata_rl(:,length_rl_index)),lat0_rl_index),inputdata_rl(maxloc(inputdata_rl(:,length_rl_index)),lon0_rl_index)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Number of road links with 0 length: &#39;</span><span class="p">,</span><span class="n">rl_length_short</span><span class="p">,</span><span class="s1">&#39;  Setting to 1 m&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Max road link x and y: &#39;</span><span class="p">,</span><span class="nb">maxval</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">x0_rl_index</span><span class="p">)),</span><span class="nb">maxval</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">y0_rl_index</span><span class="p">))</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Min road link x and y: &#39;</span><span class="p">,</span><span class="nb">minval</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">x0_rl_index</span><span class="p">)),</span><span class="nb">minval</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(:,</span><span class="n">y0_rl_index</span><span class="p">))</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n_roadlinks</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a14,12a10)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; LINK &#39;</span><span class="p">,</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span><span class="s1">&#39;X1&#39;</span><span class="p">,</span><span class="s1">&#39;X2&#39;</span><span class="p">,</span><span class="s1">&#39;Y1&#39;</span><span class="p">,</span><span class="s1">&#39;Y2&#39;</span><span class="p">,</span><span class="s1">&#39;WIDTH&#39;</span><span class="p">,</span><span class="s1">&#39;LENGTH&#39;</span><span class="p">,</span><span class="s1">&#39;ADT&#39;</span><span class="p">,</span><span class="s1">&#39;LON&#39;</span><span class="p">,</span><span class="s1">&#39;LAT&#39;</span><span class="p">,</span><span class="s1">&#39;N_LANES&#39;</span><span class="p">,</span><span class="s1">&#39;TYPE&#39;</span>
+<span class="w">            </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a14,i10,7f10.1,2f10.4,2i10)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; First link = &#39;</span><span class="p">,</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">id_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x2_rl_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">width_rl_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">adt_rl_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lon0_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lat0_rl_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">nlanes_rl_index</span><span class="p">),</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">roadtype_rl_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">i</span><span class="o">=</span><span class="n">n_roadlinks</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a14,i10,7f10.1,2f10.4,2i10)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Last link = &#39;</span><span class="p">,</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">id_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x2_rl_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y1_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y2_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">width_rl_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">adt_rl_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lon0_rl_index</span><span class="p">),</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lat0_rl_index</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                </span><span class="p">,</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">nlanes_rl_index</span><span class="p">),</span><span class="n">inputdata_int_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">roadtype_rl_index</span><span class="p">)</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;No road links available in this region&#39;</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="w">        </span><span class="c">!Calculate the veh km totals</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">show_diagnostics</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">diagnostic_val</span><span class="o">=</span><span class="mf">0.</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n_roadlinks</span>
+<span class="w">                </span><span class="c">!Total kilometres</span>
+<span class="w">                </span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="mf">0.</span>
+<span class="w">                </span><span class="c">!Total veh kilometres</span>
+<span class="w">                </span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="mf">0.</span><span class="o">*</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">adt_rl_index</span><span class="p">)</span><span class="o">*</span><span class="mi">36</span><span class="mf">5.</span>
+<span class="w">                </span><span class="c">!Light veh kilometres</span>
+<span class="w">                </span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">=</span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">hdv_rl_index</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="mf">0.</span><span class="p">)</span><span class="o">*</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="mf">0.</span><span class="o">*</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">adt_rl_index</span><span class="p">)</span><span class="o">*</span><span class="mi">36</span><span class="mf">5.</span>
+<span class="w">                </span><span class="c">!Light veh kilometres</span>
+<span class="w">                </span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">=</span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">hdv_rl_index</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="mf">0.</span><span class="p">)</span><span class="o">*</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">length_rl_index</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="mf">0.</span><span class="o">*</span><span class="n">inputdata_rl</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">adt_rl_index</span><span class="p">)</span><span class="o">*</span><span class="mi">36</span><span class="mf">5.</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,es12.4)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Total km= &#39;</span><span class="p">,</span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,es12.4)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Total veh.km= &#39;</span><span class="p">,</span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,es12.4)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Total light veh.km= &#39;</span><span class="p">,</span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(a,es12.4)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Total heavy veh.km= &#39;</span><span class="p">,</span><span class="n">diagnostic_val</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">        </span><span class="k">endif</span>
+
+<span class="k">        return</span>
+<span class="mi">20</span><span class="w">      </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(2A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;ERROR reading road link file: &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_rl</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">        </span><span class="k">stop</span>
+
+
+<span class="k">    end subroutine </span><span class="n">uEMEP_read_roadlink_data_ascii</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

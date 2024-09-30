@@ -1,0 +1,747 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>uEMEP_region_mask_new &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>uEMEP_region_mask_new
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 1.9% of total for procedures.">376 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_auto_subgrid.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_auto_subgrid.f90.html'>uEMEP_auto_subgrid.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/auto_subgrid.html'>auto_subgrid</a></li>
+            <li class="breadcrumb-item active" aria-current="page">uEMEP_region_mask_new</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/uemep_region_mask_new.html#src">uEMEP_region_mask_new</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>public  subroutine uEMEP_region_mask_new()  
+</h2>
+    
+
+
+
+    <h3>Arguments</h3>
+    <em>None</em>
+    <br>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">uEMEP_region_mask_new</span><span class="p">()</span>
+
+<span class="w">        </span><span class="c">! Variables used for reading the region mask netcdf file</span>
+<span class="w">        </span><span class="c">! help-parameters for reading the file</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">pathfilename_region_mask</span>
+<span class="w">        </span><span class="kt">logical </span><span class="n">exists</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">status_nc</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">id_nc</span><span class="p">,</span><span class="n">var_id_nc</span><span class="p">,</span><span class="n">x_dim_id_nc</span><span class="p">,</span><span class="n">y_dim_id_nc</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">temp_num_dims</span>
+<span class="w">        </span><span class="c">! projection of the region mask</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">region_mask_projection_type</span>
+<span class="w">        </span><span class="kt">double precision </span><span class="n">region_mask_projection_attributes</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="w">        </span><span class="c">! the x and y coordinates</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">x_values_regionmask</span><span class="p">(:)</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">y_values_regionmask</span><span class="p">(:)</span>
+<span class="w">        </span><span class="c">! the region ID data themselves</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">region_mask</span><span class="p">(:,</span><span class="w"> </span><span class="p">:)</span>
+<span class="w">        </span><span class="c">! assumed names for dimensions of the region mask file</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span><span class="w"> </span><span class="n">x_dim_name_regionmask</span><span class="p">,</span><span class="n">y_dim_name_regionmask</span><span class="p">,</span><span class="n">dimname_temp</span>
+<span class="w">        </span><span class="c">! length of dimensions of the region mask</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">nx_regionmask</span><span class="p">,</span><span class="n">ny_regionmask</span>
+<span class="w">        </span><span class="c">! grid spacing of the region mask (to be verified is constant!)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">dx_regionmask</span><span class="p">,</span><span class="n">dy_regionmask</span>
+<span class="w">        </span><span class="c">! subset needed to read from the region mask file</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_min</span><span class="p">,</span><span class="n">x_max</span><span class="p">,</span><span class="n">y_min</span><span class="p">,</span><span class="n">y_max</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">x_min_index</span><span class="p">,</span><span class="n">x_max_index</span><span class="p">,</span><span class="n">y_min_index</span><span class="p">,</span><span class="n">y_max_index</span>
+<span class="w">        </span><span class="c">! grid dimension looping indices</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,</span><span class="n">j_sub</span><span class="p">,</span><span class="n">i_source</span>
+
+<span class="w">        </span><span class="c">! variables used for defining the extended EMEP grid</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">max_lf_distance</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">ii_nc</span><span class="p">,</span><span class="n">jj_nc</span>
+
+<span class="w">        </span><span class="c">! Variables used when applying the region mask to the EMEP and uEMEP grids</span>
+<span class="w">        </span><span class="c">! x and y value of current location in the region mask projection</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_location</span><span class="p">,</span><span class="n">y_location</span>
+<span class="w">        </span><span class="c">! index of closest grid-cell in the region mask to the current location</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">x_index</span><span class="p">,</span><span class="n">y_index</span>
+<span class="w">        </span><span class="c">! grid resolution in EMEP</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">dx_emep</span><span class="p">,</span><span class="n">dy_emep</span>
+<span class="w">        </span><span class="c">! x and y value of midpoint of an EMEP grid and of subsamples of the EMEP grid</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_emepmid</span><span class="p">,</span><span class="n">y_emepmid</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_emepsub</span><span class="p">,</span><span class="n">y_emepsub</span>
+<span class="w">        </span><span class="c">! corresponding lon and lat</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">lon_emepsub</span><span class="p">,</span><span class="n">lat_emepsub</span>
+<span class="w">        </span><span class="c">! current location in emission subgrid (x and y in uEMEP projection, longitude and latitude)</span>
+<span class="w">        </span><span class="kt">real </span><span class="n">x_emis</span><span class="p">,</span><span class="n">y_emis</span><span class="p">,</span><span class="n">lon_emis</span><span class="p">,</span><span class="n">lat_emis</span>
+
+<span class="w">        </span><span class="c">! Additional variables used for creating list of regions, calculating fraction of EMEP cells in each region and setting the use_subgrid array</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">i_region</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">temp_regionindex_loop_index</span><span class="p">(:)</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">counter</span>
+<span class="w">        </span><span class="kt">integer </span><span class="n">current_region_index</span><span class="p">,</span><span class="n">previous_region_index</span><span class="p">,</span><span class="n">region_select</span>
+<span class="w">        </span><span class="kt">logical </span><span class="n">outofbounds_warning_has_been_printed</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="p">(</span><span class="n">trace_emissions_from_in_region</span><span class="w"> </span><span class="p">.</span><span class="nb">or</span><span class="p">.</span><span class="w"> </span><span class="n">use_region_select_and_mask_flag</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            return</span>
+<span class="k">        end if</span>
+
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Creating region mask arrays (uEMEP_region_mask_new)&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;================================================================&#39;</span>
+
+<span class="w">        </span><span class="c">! Ensure arrays are not already allocated</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">subgrid_region_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            deallocate</span><span class="p">(</span><span class="n">subgrid_region_index</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end if</span>
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">regionindex_loop_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            deallocate</span><span class="p">(</span><span class="n">regionindex_loop_index</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end if</span>
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">emission_subgrid_region_index</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            deallocate</span><span class="p">(</span><span class="n">emission_subgrid_region_index</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end if</span>
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">EMEP_extended_subsample_region_id</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            deallocate</span><span class="p">(</span><span class="n">EMEP_extended_subsample_region_id</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end if</span>
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">regionfraction_per_EMEP_extended_grid</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            deallocate</span><span class="p">(</span><span class="n">regionfraction_per_EMEP_extended_grid</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end if</span>
+
+<span class="w">        </span><span class="c">! Read the region mask netcdf file (implementation based on uEMEP_read_EMEP)</span>
+
+<span class="w">        </span><span class="c">! determine full filename</span>
+<span class="w">        </span><span class="n">pathfilename_region_mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathname_region_mask</span><span class="p">)</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">filename_region_mask</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c">!Test existence of the region mask file. If does not exist then stop</span>
+<span class="w">        </span><span class="k">inquire</span><span class="p">(</span><span class="k">file</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_region_mask</span><span class="p">),</span><span class="n">exist</span><span class="o">=</span><span class="n">exists</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">exists</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; ERROR: Netcdf file does not exist: &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_region_mask</span><span class="p">)</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;  STOPPING&#39;</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+
+<span class="w">        </span><span class="c">!Open the netcdf file for reading</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(2A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Opening netcdf file: &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_region_mask</span><span class="p">)</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_OPEN</span><span class="w"> </span><span class="p">(</span><span class="n">pathfilename_region_mask</span><span class="p">,</span><span class="w"> </span><span class="n">nf90_nowrite</span><span class="p">,</span><span class="w"> </span><span class="n">id_nc</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status_nc</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">NF90_NOERR</span><span class="p">)</span><span class="w"> </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,I0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;ERROR opening netcdf file: &#39;</span><span class="p">,</span><span class="n">status_nc</span>
+
+<span class="w">        </span><span class="c">! Initialize projection type to longitude-latitude</span>
+<span class="w">        </span><span class="n">region_mask_projection_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LL_projection_index</span>
+
+<span class="w">        </span><span class="c">! Check if it is a UTM projection</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQ_VARID</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="s1">&#39;projection_utm&#39;</span><span class="p">,</span><span class="n">var_id_nc</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status_nc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">NF90_NOERR</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nf90_get_att</span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="w"> </span><span class="n">var_id_nc</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">region_mask_projection_attributes</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">            </span><span class="c">! calculate the UTM zone</span>
+<span class="w">            </span><span class="n">region_mask_projection_attributes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">region_mask_projection_attributes</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">180</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mi">6</span>
+<span class="w">            </span><span class="c">! verify this is an exact UTM zone</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">region_mask_projection_attributes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">floor</span><span class="p">(</span><span class="n">region_mask_projection_attributes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mf">0.1</span><span class="p">))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(3A,f,A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; ERROR during reading of attributes for &quot;projection_utm&quot; in file &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_region_mask</span><span class="p">),</span><span class="s1">&#39;: &quot;longitude_of_central_meridian&quot; = &#39;</span><span class="p">,</span><span class="n">region_mask_projection_attributes</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="s1">&#39;, which does not correspond to a UTM zone.&#39;</span>
+<span class="w">                </span><span class="c">! IS THIS STRING FORMATTED CORRECTLY?</span>
+<span class="w">                </span><span class="k">stop</span>
+<span class="k">            end if</span>
+<span class="k">            </span><span class="n">region_mask_projection_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UTM_projection_index</span>
+<span class="w">            </span><span class="n">x_dim_name_regionmask</span><span class="o">=</span><span class="s1">&#39;x&#39;</span>
+<span class="w">            </span><span class="n">y_dim_name_regionmask</span><span class="o">=</span><span class="s1">&#39;y&#39;</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,f3.0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Region mask file has projection UTM zone &#39;</span><span class="p">,</span><span class="n">region_mask_projection_attributes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end if</span>
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">region_mask_projection_type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">LL_projection_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">x_dim_name_regionmask</span><span class="o">=</span><span class="s1">&#39;lon&#39;</span>
+<span class="w">            </span><span class="n">y_dim_name_regionmask</span><span class="o">=</span><span class="s1">&#39;lat&#39;</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Assuming region mask file is in lon-lat, since it is variable projection_utm was not found. Other projections than UTM are not implemented&#39;</span>
+<span class="w">        </span><span class="k">end if</span>
+
+<span class="w">        </span><span class="c">!Read dimensions of the file (x,y)</span>
+<span class="w">        </span><span class="c">! x</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQ_DIMID</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="n">x_dim_name_regionmask</span><span class="p">,</span><span class="n">x_dim_id_nc</span><span class="p">)</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQUIRE_DIMENSION</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="n">x_dim_id_nc</span><span class="p">,</span><span class="n">dimname_temp</span><span class="p">,</span><span class="n">nx_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status_nc</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">NF90_NOERR</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,I0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;ERROR: Reading of x dimension failed with status: &#39;</span><span class="p">,</span><span class="n">status_nc</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+<span class="w">        </span><span class="c">! y</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQ_DIMID</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="n">y_dim_name_regionmask</span><span class="p">,</span><span class="n">y_dim_id_nc</span><span class="p">)</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQUIRE_DIMENSION</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="n">y_dim_id_nc</span><span class="p">,</span><span class="n">dimname_temp</span><span class="p">,</span><span class="n">ny_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status_nc</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">NF90_NOERR</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,I0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Reading of y dimension failed with status: &#39;</span><span class="p">,</span><span class="n">status_nc</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,I0,A,I0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Dimensions of full region mask (x,y): &#39;</span><span class="p">,</span><span class="n">nx_regionmask</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="n">ny_regionmask</span>
+
+<span class="w">        </span><span class="c">! Verify the dimensions are at least 2x2</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="p">(</span><span class="n">nx_regionmask</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">ny_regionmask</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;ERROR: Dimensions of regionmask are not at least 2x2&#39;</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+
+<span class="w">        </span><span class="c">! Allocate memory for the full coordinates of the region mask</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="n">nx_regionmask</span><span class="p">))</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="n">ny_regionmask</span><span class="p">))</span>
+<span class="w">        </span><span class="c">! NB: should I set these arrays to 0 before they are read from file?</span>
+
+<span class="w">        </span><span class="c">! Read coordinate values</span>
+<span class="w">        </span><span class="c">! x</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQ_VARID</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">x_dim_name_regionmask</span><span class="p">),</span><span class="w"> </span><span class="n">var_id_nc</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status_nc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">NF90_NOERR</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_GET_VAR</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="n">var_id_nc</span><span class="p">,</span><span class="n">x_values_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Error while reading x values from region mask&#39;</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+<span class="w">        </span><span class="c">! y</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQ_VARID</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">y_dim_name_regionmask</span><span class="p">),</span><span class="w"> </span><span class="n">var_id_nc</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status_nc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">NF90_NOERR</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_GET_VAR</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="n">var_id_nc</span><span class="p">,</span><span class="n">y_values_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Error while reading y values from region mask&#39;</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+
+<span class="w">        </span><span class="c">! Determine grid spacing and verify it is constant</span>
+<span class="w">        </span><span class="n">dx_regionmask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">nx_regionmask</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="p">(</span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">dx_regionmask</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Not constant spacing in x coordinate in region mask&#39;</span>
+<span class="w">                </span><span class="k">stop</span>
+<span class="k">            end if</span>
+<span class="k">        end do</span>
+<span class="k">        </span><span class="n">dy_regionmask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">ny_regionmask</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="p">(</span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">dy_regionmask</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Not constant spacing in y coordinate in region mask&#39;</span>
+<span class="w">                </span><span class="k">stop</span>
+<span class="k">            end if</span>
+<span class="k">        end do</span>
+
+<span class="w">        </span><span class="c">! Determine required subset of region mask to read (in the projection coordinates of the target grid)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Determining the subset of the region mask needed&#39;</span>
+
+<span class="w">        </span><span class="c">! First initialize both min and max value to the first value in the target subgrid</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Checking target subgrid&#39;</span>
+<span class="w">        </span><span class="k">call </span><span class="n">LL2PROJ</span><span class="p">(</span><span class="n">lon_subgrid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">lat_subgrid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">x_min</span><span class="p">,</span><span class="n">y_min</span><span class="p">,</span><span class="n">region_mask_projection_attributes</span><span class="p">,</span><span class="n">region_mask_projection_type</span><span class="p">)</span>
+<span class="w">        </span><span class="n">x_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_min</span>
+<span class="w">        </span><span class="n">y_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_min</span>
+<span class="w">        </span><span class="c">! Go through the target grid cells to update the range of x and y values</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">call </span><span class="n">LL2PROJ</span><span class="p">(</span><span class="n">lon_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">lat_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">x_location</span><span class="p">,</span><span class="n">y_location</span><span class="p">,</span><span class="n">region_mask_projection_attributes</span><span class="p">,</span><span class="n">region_mask_projection_type</span><span class="p">)</span>
+<span class="w">                </span><span class="n">x_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span><span class="w"> </span><span class="n">x_location</span><span class="p">)</span>
+<span class="w">                </span><span class="n">x_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">x_max</span><span class="p">,</span><span class="w"> </span><span class="n">x_location</span><span class="p">)</span>
+<span class="w">                </span><span class="n">y_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span><span class="w"> </span><span class="n">y_location</span><span class="p">)</span>
+<span class="w">                </span><span class="n">y_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">y_max</span><span class="p">,</span><span class="w"> </span><span class="n">y_location</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">        end do</span>
+<span class="w">        </span><span class="c">! If tracing in-region contributions, go through all cells to be traced from and update required range of x and y values</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">trace_emissions_from_in_region</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">! Emission subgrid</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Checking emission subgrids&#39;</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_source_index</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="w"> </span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="w"> </span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! get location in uEMEP projection of this emission subgrid</span>
+<span class="w">                            </span><span class="n">x_emis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">y_emis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! transform to the region mask projection</span>
+<span class="w">                            </span><span class="k">call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">x_emis</span><span class="p">,</span><span class="n">y_emis</span><span class="p">,</span><span class="n">lon_emis</span><span class="p">,</span><span class="n">lat_emis</span><span class="p">,</span><span class="n">projection_attributes</span><span class="p">,</span><span class="n">projection_type</span><span class="p">)</span>
+<span class="w">                            </span><span class="k">call </span><span class="n">LL2PROJ</span><span class="p">(</span><span class="n">lon_emis</span><span class="p">,</span><span class="n">lat_emis</span><span class="p">,</span><span class="n">x_location</span><span class="p">,</span><span class="n">y_location</span><span class="p">,</span><span class="n">region_mask_projection_attributes</span><span class="p">,</span><span class="n">region_mask_projection_type</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! update min and max</span>
+<span class="w">                            </span><span class="n">x_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span><span class="w"> </span><span class="n">x_location</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">x_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">x_max</span><span class="p">,</span><span class="w"> </span><span class="n">x_location</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">y_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span><span class="w"> </span><span class="n">y_location</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">y_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">y_max</span><span class="p">,</span><span class="w"> </span><span class="n">y_location</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">end do</span>
+<span class="k">                    end do</span>
+<span class="k">                end if</span>
+<span class="k">            end do</span>
+<span class="w">            </span><span class="c">! Extended EMEP grid for region masking of the EMEP LF data</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Checking extended EMEP grid&#39;</span>
+<span class="w">            </span><span class="c">! Determine how large the extended EMEP grid must be</span>
+<span class="w">            </span><span class="c">! We assume the reduced EMEP grid is just big enough to cover the &#39;normal&#39; LF contributions to the target grid</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_additional_grid_interpolation_size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                </span><span class="c">! We want to calculate additional. So we need to increase the grid to ensure it covers additial contributions to the target grid</span>
+<span class="w">                </span><span class="c">! First, calculate the max nr of LF cells that the source can be away from edge of target grid</span>
+<span class="w">                </span><span class="n">max_lf_distance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">xdist_dim_nc_index</span><span class="p">),</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">ydist_dim_nc_index</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">                </span><span class="c">! - assuming reduced EMEP grid already covers the small local fraction domain, this is the number of EMEP grid-cells we need to add to all sides in the extended grid</span>
+<span class="w">                </span><span class="n">ngrid_extended_margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">max_lf_distance</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2I6)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;  reduced EMEP grid dimensions: nx,ny =&#39;</span><span class="p">,</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">),</span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2I6)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;  max_lf_distance, ngrid_extended_margin =&quot;</span><span class="p">,</span><span class="n">max_lf_distance</span><span class="p">,</span><span class="w"> </span><span class="n">ngrid_extended_margin</span>
+<span class="w">                </span><span class="c">! Size of extended EMEP grid</span>
+<span class="w">                </span><span class="n">nx_EMEP_extended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="o">*</span><span class="n">ngrid_extended_margin</span>
+<span class="w">                </span><span class="n">ny_EMEP_extended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="o">*</span><span class="n">ngrid_extended_margin</span>
+<span class="w">                </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2I6)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;  -&gt; extended EMEP grid dimensions: nx,ny =&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">nx_EMEP_extended</span><span class="p">,</span><span class="n">ny_EMEP_extended</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="c">! We don&#39;t calculate additional. Then the extended EMEP grid can be the same size as the reduced EMEP grid</span>
+<span class="w">                </span><span class="n">ngrid_extended_margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">                </span><span class="n">nx_EMEP_extended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">x_dim_nc_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">ny_EMEP_extended</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dim_length_nc</span><span class="p">(</span><span class="n">y_dim_nc_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end if</span>
+<span class="w">            </span><span class="c">! Determine spacing in EMEP grid (NB: maybe this is alredy available somewhere?)</span>
+<span class="w">            </span><span class="c">! NB: I will not verify it is constant, but I will assume it is</span>
+<span class="w">            </span><span class="n">dx_emep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">var1d_nc</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">x_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">var1d_nc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">x_dim_nc_index</span><span class="p">)</span>
+<span class="w">            </span><span class="n">dy_emep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">var1d_nc</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">y_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">var1d_nc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">y_dim_nc_index</span><span class="p">)</span>
+<span class="w">            </span><span class="c">! loop over the extended EMEP grid to update range of x and y values we need from region mask</span>
+<span class="w">            </span><span class="k">do </span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nx_EMEP_extended</span>
+<span class="w">                </span><span class="k">do </span><span class="n">jj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ny_EMEP_extended</span>
+<span class="w">                    </span><span class="c">! calculate the corresponding index in the normal EMEP grid</span>
+<span class="w">                    </span><span class="n">ii_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ngrid_extended_margin</span>
+<span class="w">                    </span><span class="n">jj_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ngrid_extended_margin</span>
+<span class="w">                    </span><span class="c">! -&gt; deduce EMEP projection coordinate values at centre of this EMEP grid</span>
+<span class="w">                    </span><span class="n">x_emepmid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">var1d_nc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">x_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dx_emep</span><span class="o">*</span><span class="p">(</span><span class="n">ii_nc</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                    </span><span class="n">y_emepmid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">var1d_nc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">y_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dy_emep</span><span class="o">*</span><span class="p">(</span><span class="n">jj_nc</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                    </span><span class="c">! go through all subsamples of this EMEP grid</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">j_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                            </span><span class="c">! EMEP projection coordinate value at this subsample of the EMEP grid</span>
+<span class="w">                            </span><span class="n">x_emepsub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_emepmid</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">dx_emep</span><span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">i_sub</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="n">dx_emep</span><span class="o">/</span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                            </span><span class="n">y_emepsub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_emepmid</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">dy_emep</span><span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">j_sub</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="n">dy_emep</span><span class="o">/</span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                            </span><span class="c">! calculate longitude and latitude from the EMEP projection</span>
+<span class="w">                            </span><span class="k">call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">x_emepsub</span><span class="p">,</span><span class="n">y_emepsub</span><span class="p">,</span><span class="n">lon_emepsub</span><span class="p">,</span><span class="n">lat_emepsub</span><span class="p">,</span><span class="n">EMEP_projection_attributes</span><span class="p">,</span><span class="n">EMEP_projection_type</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! calculate projection coordinates in the region mask grid</span>
+<span class="w">                            </span><span class="k">call </span><span class="n">LL2PROJ</span><span class="p">(</span><span class="n">lon_emepsub</span><span class="p">,</span><span class="n">lat_emepsub</span><span class="p">,</span><span class="n">x_location</span><span class="p">,</span><span class="n">y_location</span><span class="p">,</span><span class="n">region_mask_projection_attributes</span><span class="p">,</span><span class="n">region_mask_projection_type</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! update min and max</span>
+<span class="w">                            </span><span class="n">x_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span><span class="w"> </span><span class="n">x_location</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">x_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">x_max</span><span class="p">,</span><span class="w"> </span><span class="n">x_location</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">y_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span><span class="w"> </span><span class="n">y_location</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">y_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">y_max</span><span class="p">,</span><span class="w"> </span><span class="n">y_location</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">end do</span>
+<span class="k">                    end do</span>
+<span class="k">                end do</span>
+<span class="k">            end do</span>
+<span class="k">        end if</span>
+
+<span class="w">        </span><span class="c">! Determine the subset of the region mask we need to read based on the range of x and y to use it for</span>
+<span class="w">        </span><span class="n">x_min_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nint</span><span class="p">((</span><span class="n">x_min</span><span class="o">-</span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dx_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="n">x_max_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nint</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">x_max</span><span class="o">-</span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dx_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="n">y_min_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nint</span><span class="p">((</span><span class="n">y_min</span><span class="o">-</span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dy_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="n">y_max_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nint</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">y_max</span><span class="o">-</span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dy_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="c">! ensure we don&#39;t go outside the boundaries of the region mask</span>
+<span class="w">        </span><span class="n">x_min_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">x_min_index</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="n">x_max_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">x_max_index</span><span class="p">,</span><span class="w"> </span><span class="n">nx_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="n">y_min_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">y_min_index</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">        </span><span class="n">y_max_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">(</span><span class="n">y_max_index</span><span class="p">,</span><span class="w"> </span><span class="n">ny_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="c">! Update region mask dimensions based on this subset</span>
+<span class="w">        </span><span class="n">nx_regionmask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_max_index</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">x_min_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">ny_regionmask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_max_index</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">y_min_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Required subset of region mask (in region mask projection):&#39;</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2e12.4,2i7)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;  x_min, x_max, x_min_index, x_max_index =&#39;</span><span class="p">,</span><span class="n">x_min</span><span class="p">,</span><span class="n">x_max</span><span class="p">,</span><span class="n">x_min_index</span><span class="p">,</span><span class="n">x_max_index</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2e12.4,2i7)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;  y_min, y_max, y_min_index, x_max_index =&#39;</span><span class="p">,</span><span class="n">y_min</span><span class="p">,</span><span class="n">y_max</span><span class="p">,</span><span class="n">y_min_index</span><span class="p">,</span><span class="n">y_max_index</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,2i7)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;-&gt; Dimensions of subset of region mask to be read (x,y):&#39;</span><span class="p">,</span><span class="n">nx_regionmask</span><span class="p">,</span><span class="n">ny_regionmask</span>
+
+<span class="w">        </span><span class="c">! Read region mask coordinates again, selecting only the required subset</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="p">(</span><span class="n">x_values_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="p">(</span><span class="n">y_values_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="n">nx_regionmask</span><span class="p">))</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="n">ny_regionmask</span><span class="p">))</span>
+<span class="w">        </span><span class="c">! x</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQ_VARID</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">x_dim_name_regionmask</span><span class="p">),</span><span class="w"> </span><span class="n">var_id_nc</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status_nc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">NF90_NOERR</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_GET_VAR</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="n">var_id_nc</span><span class="p">,</span><span class="n">x_values_regionmask</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">x_min_index</span><span class="o">/</span><span class="p">),</span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">nx_regionmask</span><span class="o">/</span><span class="p">))</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Error while reading x values from region mask&#39;</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+<span class="w">        </span><span class="c">! y</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQ_VARID</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">y_dim_name_regionmask</span><span class="p">),</span><span class="w"> </span><span class="n">var_id_nc</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status_nc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">NF90_NOERR</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_GET_VAR</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="n">var_id_nc</span><span class="p">,</span><span class="n">y_values_regionmask</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">y_min_index</span><span class="o">/</span><span class="p">),</span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">ny_regionmask</span><span class="o">/</span><span class="p">))</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Error while reading y values from region mask&#39;</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+<span class="w">        </span><span class="c">! Read the mask itself</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">region_mask</span><span class="p">(</span><span class="n">nx_regionmask</span><span class="p">,</span><span class="n">ny_regionmask</span><span class="p">))</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQ_VARID</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">varname_region_mask</span><span class="p">),</span><span class="w"> </span><span class="n">var_id_nc</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status_nc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">NF90_NOERR</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_INQUIRE_VARIABLE</span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="w"> </span><span class="n">var_id_nc</span><span class="p">,</span><span class="w"> </span><span class="n">ndims</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temp_num_dims</span><span class="p">)</span>
+<span class="w">            </span><span class="c">! NB: the following line fails if the region_mask subset is bigger than ca. 1 million elements when runnning interactively, but not as a qsub job (fix by increasing &#39;ulimit -s&#39;, e.g. &#39;ulimit -s unlimited&#39;)</span>
+<span class="w">            </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_GET_VAR</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">,</span><span class="w"> </span><span class="n">var_id_nc</span><span class="p">,</span><span class="w"> </span><span class="n">region_mask</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">x_min_index</span><span class="p">,</span><span class="w"> </span><span class="n">y_min_index</span><span class="o">/</span><span class="p">),</span><span class="w"> </span><span class="nb">count</span><span class="o">=</span><span class="p">(</span><span class="o">/</span><span class="n">nx_regionmask</span><span class="p">,</span><span class="n">ny_regionmask</span><span class="o">/</span><span class="p">))</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,i3,A,2A,2i16)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39; Reading: &#39;</span><span class="p">,</span><span class="n">temp_num_dims</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">varname_region_mask</span><span class="p">),</span><span class="s1">&#39; (min, max): &#39;</span><span class="p">,</span><span class="nb">minval</span><span class="p">(</span><span class="n">region_mask</span><span class="p">),</span><span class="nb">maxval</span><span class="p">(</span><span class="n">region_mask</span><span class="p">)</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Could not read region mask values from file&#39;</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+<span class="w">        </span><span class="c">! verify that no region index values in the file are negative or higher than the max allowed value</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">minval</span><span class="p">(</span><span class="n">region_mask</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Found negative values of region index in file&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_region_mask</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;. This is not allowed&#39;</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="nb">maxval</span><span class="p">(</span><span class="n">region_mask</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">maxvalue_region_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,i0,A,i0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Max value of region index in file &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">pathfilename_region_mask</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39; is&#39;</span><span class="p">,</span><span class="nb">maxval</span><span class="p">(</span><span class="n">region_mask</span><span class="p">),</span><span class="s1">&#39;, which is higher than the max allowed value: maxvalue_region_index=&#39;</span><span class="p">,</span><span class="n">maxvalue_region_index</span>
+<span class="w">            </span><span class="k">stop</span>
+<span class="k">        end if</span>
+
+<span class="w">        </span><span class="c">! Close the region mask netcdf file</span>
+<span class="w">        </span><span class="n">status_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NF90_CLOSE</span><span class="w"> </span><span class="p">(</span><span class="n">id_nc</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Done reading region mask.&#39;</span>
+
+<span class="w">        </span><span class="c">! Determine region ID of each cell of the uEMEP target subgrid</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Calculating region mask for the target grid&#39;</span>
+
+<span class="w">        </span><span class="c">! Allocate array for region mask on uEMEP target subgrid and initialize to 0 (no region)</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">subgrid_region_index</span><span class="p">(</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)))</span>
+<span class="w">        </span><span class="n">subgrid_region_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+
+<span class="w">        </span><span class="c">! Set region ID of each target subgrid</span>
+<span class="w">        </span><span class="n">outofbounds_warning_has_been_printed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="c">! calculate x- and y- position in the region mask projection</span>
+<span class="w">                </span><span class="k">call </span><span class="n">LL2PROJ</span><span class="p">(</span><span class="n">lon_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">lat_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span><span class="n">x_location</span><span class="p">,</span><span class="n">y_location</span><span class="p">,</span><span class="n">region_mask_projection_attributes</span><span class="p">,</span><span class="n">region_mask_projection_type</span><span class="p">)</span>
+<span class="w">                </span><span class="c">! Determine index in the region mask grid for this location</span>
+<span class="w">                </span><span class="n">x_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nint</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">x_location</span><span class="o">-</span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dx_regionmask</span><span class="p">)</span>
+<span class="w">                </span><span class="n">y_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nint</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">y_location</span><span class="o">-</span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dy_regionmask</span><span class="p">)</span>
+<span class="w">                </span><span class="c">! Verify that this index is inside the region mask grid and has a positive region ID</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x_index</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">x_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">nx_regionmask</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">y_index</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">y_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ny_regionmask</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    </span><span class="n">subgrid_region_index</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">region_mask</span><span class="p">(</span><span class="n">x_index</span><span class="p">,</span><span class="n">y_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="w">                    </span><span class="c">! this receptor location is not within the region mask grid</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">outofbounds_warning_has_been_printed</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;WARNING: The target subgrid extends outside the given region mask.&#39;</span>
+<span class="w">                        </span><span class="n">outofbounds_warning_has_been_printed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                end if</span>
+<span class="w">                </span><span class="c">!write(unit_logfile,&#39;(A,2i12,2f12.4,2f12.2,2i12,i4)&#39;) &#39;i,j,lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,x_index,y_index,region_index = &#39;,i,j,lon_subgrid(i,j),lat_subgrid(i,j),x_location,y_location,x_index,y_index,subgrid_region_index(i,j)</span>
+<span class="w">            </span><span class="k">end do</span>
+<span class="k">        end do</span>
+
+<span class="k">        write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Finding the regions occurring in the target grid&#39;</span>
+
+<span class="w">        </span><span class="c">! Determine which regions occur in the target grid</span>
+<span class="w">        </span><span class="c">! (NB: We don&#39;t care about regions occurring only in the EMEP grid but not in the target grid!)</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">temp_regionindex_loop_index</span><span class="p">(</span><span class="n">maxvalue_region_index</span><span class="p">))</span>
+<span class="w">        </span><span class="n">temp_regionindex_loop_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="n">regionindex_loop_back_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="n">previous_region_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="w">        </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">            </span><span class="k">do </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="n">current_region_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subgrid_region_index</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">current_region_index</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="p">.</span><span class="nb">not</span><span class="p">.</span><span class="w"> </span><span class="n">current_region_index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">previous_region_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                    </span><span class="c">! Region index is different from previous subgrid</span>
+<span class="w">                    </span><span class="c">! check if we have not already found it before</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">regionindex_loop_back_index</span><span class="p">(</span><span class="n">current_region_index</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="c">! new region ID found</span>
+<span class="w">                        </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                        </span><span class="n">temp_regionindex_loop_index</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_region_index</span>
+<span class="w">                        </span><span class="n">regionindex_loop_back_index</span><span class="p">(</span><span class="n">current_region_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                    </span><span class="n">previous_region_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_region_index</span>
+<span class="w">                </span><span class="k">end if</span>
+<span class="k">            end do</span>
+<span class="k">        end do</span>
+<span class="k">        </span><span class="n">n_regions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">regionindex_loop_index</span><span class="p">(</span><span class="n">n_regions</span><span class="p">))</span>
+<span class="w">        </span><span class="n">regionindex_loop_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temp_regionindex_loop_index</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_regions</span><span class="p">)</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="p">(</span><span class="n">temp_regionindex_loop_index</span><span class="p">)</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,I0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Number of regions within target grid: &#39;</span><span class="p">,</span><span class="n">n_regions</span>
+<span class="w">        </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,100I5)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;index of these regions are (printing max 100): &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">regionindex_loop_index</span>
+
+<span class="w">        </span><span class="c">! Determine which subgrid cells are inside the selected region</span>
+<span class="w">        </span><span class="c">! and use this to set use_subgrid</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_region_select_and_mask_flag</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">            </span><span class="c">! Set &#39;use_subgrid&#39;</span>
+<span class="w">            </span><span class="c">! NB: This will override previously set values for this array</span>
+<span class="w">            </span><span class="n">use_subgrid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">            </span><span class="n">region_select</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">region_index</span>
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A,I0)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Setting &quot;use_subgrid&quot; based on where in the target grid the region index is&#39;</span><span class="p">,</span><span class="n">region_select</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span>
+<span class="w">                </span><span class="k">do </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">subgrid_region_index</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">region_select</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                        </span><span class="n">use_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">                    </span><span class="k">else</span>
+<span class="k">                        </span><span class="n">use_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="w">                    </span><span class="k">end if</span>
+<span class="k">                end do</span>
+<span class="k">            end do</span>
+<span class="k">        end if</span>
+
+<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">trace_emissions_from_in_region</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+
+<span class="w">            </span><span class="c">! Set region ID of the emission subgrids</span>
+
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Setting region ID of the emission subgrids&#39;</span>
+<span class="w">            </span><span class="c">! initialize to -1 (&quot;no-region&quot;)</span>
+<span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">emission_subgrid_region_index</span><span class="p">(</span><span class="n">emission_max_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">),</span><span class="w"> </span><span class="n">emission_max_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">),</span><span class="n">n_source_index</span><span class="p">))</span>
+<span class="w">            </span><span class="n">emission_subgrid_region_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">            </span><span class="k">do </span><span class="n">i_source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_source_index</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">calculate_source</span><span class="p">(</span><span class="n">i_source</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                    do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">,</span><span class="w"> </span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">emission_subgrid_dim</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">,</span><span class="w"> </span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! get location in uEMEP projection of this emission subgrid</span>
+<span class="w">                            </span><span class="n">x_emis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">y_emis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_emission_subgrid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! transform to the region mask projection</span>
+<span class="w">                            </span><span class="k">call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">x_emis</span><span class="p">,</span><span class="n">y_emis</span><span class="p">,</span><span class="n">lon_emis</span><span class="p">,</span><span class="n">lat_emis</span><span class="p">,</span><span class="n">projection_attributes</span><span class="p">,</span><span class="n">projection_type</span><span class="p">)</span>
+<span class="w">                            </span><span class="k">call </span><span class="n">LL2PROJ</span><span class="p">(</span><span class="n">lon_emis</span><span class="p">,</span><span class="n">lat_emis</span><span class="p">,</span><span class="n">x_location</span><span class="p">,</span><span class="n">y_location</span><span class="p">,</span><span class="n">region_mask_projection_attributes</span><span class="p">,</span><span class="n">region_mask_projection_type</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! find nearest grid-cell in the region mask array to get the region ID of this emission subgrid</span>
+<span class="w">                            </span><span class="n">x_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nint</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">x_location</span><span class="o">-</span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dx_regionmask</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">y_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nint</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">y_location</span><span class="o">-</span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dy_regionmask</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! Check if this location is inside the region mask grid</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x_index</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">x_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">nx_regionmask</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">y_index</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">y_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ny_regionmask</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                </span><span class="n">emission_subgrid_region_index</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i_source</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">region_mask</span><span class="p">(</span><span class="n">x_index</span><span class="p">,</span><span class="n">y_index</span><span class="p">)</span>
+<span class="w">                            </span><span class="k">end if</span>
+<span class="w">                            </span><span class="c">! NB: contrary to the target grid, we will allow non-positive region ID in the emission subgrid, indicating &quot;no-region&quot;, and we will also allow that the emision subgrid extends beyond the boundaries of the region mask file</span>
+<span class="w">                        </span><span class="k">end do</span>
+<span class="k">                    end do</span>
+<span class="k">                end if</span>
+<span class="k">            end do</span>
+
+<span class="w">            </span><span class="c">! Set region ID of each subsample of the extended EMEP grid</span>
+
+<span class="w">            </span><span class="k">write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Calculating region mask for subsamples of the (extended) EMEP grid&#39;</span>
+
+<span class="w">            </span><span class="c">! Allocate array for region subsamples and initialize to -1 (no region)</span>
+<span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">EMEP_extended_subsample_region_id</span><span class="p">(</span><span class="n">n_subsamples_per_EMEP_grid</span><span class="p">,</span><span class="n">n_subsamples_per_EMEP_grid</span><span class="p">,</span><span class="n">nx_EMEP_extended</span><span class="p">,</span><span class="n">ny_EMEP_extended</span><span class="p">))</span>
+<span class="w">            </span><span class="n">EMEP_extended_subsample_region_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+
+<span class="w">            </span><span class="c">! loop over the extended EMEP grid and fill subsample region ID</span>
+<span class="w">            </span><span class="k">do </span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nx_EMEP_extended</span>
+<span class="w">                </span><span class="k">do </span><span class="n">jj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ny_EMEP_extended</span>
+<span class="w">                    </span><span class="c">! calculate the corresponding index in the normal EMEP grid</span>
+<span class="w">                    </span><span class="n">ii_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ngrid_extended_margin</span>
+<span class="w">                    </span><span class="n">jj_nc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ngrid_extended_margin</span>
+<span class="w">                    </span><span class="c">! -&gt; deduce EMEP projection coordinate values at centre of this EMEP grid</span>
+<span class="w">                    </span><span class="n">x_emepmid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">var1d_nc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">x_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dx_emep</span><span class="o">*</span><span class="p">(</span><span class="n">ii_nc</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                    </span><span class="n">y_emepmid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">var1d_nc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">y_dim_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dy_emep</span><span class="o">*</span><span class="p">(</span><span class="n">jj_nc</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                    </span><span class="c">! go through all subsamples of this EMEP grid</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">j_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                            </span><span class="c">! EMEP projection coordinate value at this subsample of the EMEP grid</span>
+<span class="w">                            </span><span class="n">x_emepsub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_emepmid</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">dx_emep</span><span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">i_sub</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="n">dx_emep</span><span class="o">/</span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                            </span><span class="n">y_emepsub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_emepmid</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">dy_emep</span><span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">j_sub</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="n">dy_emep</span><span class="o">/</span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                            </span><span class="c">! calculate longitude and latitude from the EMEP projection</span>
+<span class="w">                            </span><span class="k">call </span><span class="n">PROJ2LL</span><span class="p">(</span><span class="n">x_emepsub</span><span class="p">,</span><span class="n">y_emepsub</span><span class="p">,</span><span class="n">lon_emepsub</span><span class="p">,</span><span class="n">lat_emepsub</span><span class="p">,</span><span class="n">EMEP_projection_attributes</span><span class="p">,</span><span class="n">EMEP_projection_type</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! calculate projection coordinates in the region mask grid</span>
+<span class="w">                            </span><span class="k">call </span><span class="n">LL2PROJ</span><span class="p">(</span><span class="n">lon_emepsub</span><span class="p">,</span><span class="n">lat_emepsub</span><span class="p">,</span><span class="n">x_location</span><span class="p">,</span><span class="n">y_location</span><span class="p">,</span><span class="n">region_mask_projection_attributes</span><span class="p">,</span><span class="n">region_mask_projection_type</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! Determine index in the region mask grid for this location</span>
+<span class="w">                            </span><span class="n">x_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nint</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">x_location</span><span class="o">-</span><span class="n">x_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dx_regionmask</span><span class="p">)</span>
+<span class="w">                            </span><span class="n">y_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nint</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">y_location</span><span class="o">-</span><span class="n">y_values_regionmask</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">dy_regionmask</span><span class="p">)</span>
+<span class="w">                            </span><span class="c">! If this location is inside the region mask grid, then set the region ID</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x_index</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">x_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">nx_regionmask</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">y_index</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="n">y_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ny_regionmask</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                </span><span class="n">EMEP_extended_subsample_region_id</span><span class="p">(</span><span class="n">i_sub</span><span class="p">,</span><span class="n">j_sub</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">region_mask</span><span class="p">(</span><span class="n">x_index</span><span class="p">,</span><span class="n">y_index</span><span class="p">)</span>
+<span class="w">                            </span><span class="k">end if</span>
+<span class="w">                            </span><span class="c">! NB: if it is outside the region mask grid, the &#39;no-region&#39; value -1 is kept</span>
+<span class="w">                        </span><span class="k">end do</span>
+<span class="k">                    end do</span>
+<span class="k">                end do</span>
+<span class="k">            end do</span>
+
+<span class="k">            write</span><span class="p">(</span><span class="n">unit_logfile</span><span class="p">,</span><span class="s1">&#39;(A)&#39;</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;Calculating fraction of each cell in the (extended) EMEP grid that is in each region&#39;</span>
+
+<span class="w">            </span><span class="c">! Calculate the fraction of each EMEP grid (in the extended grid) that is within each region, by counting the subsamples</span>
+<span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">regionfraction_per_EMEP_extended_grid</span><span class="p">(</span><span class="n">nx_EMEP_extended</span><span class="p">,</span><span class="w"> </span><span class="n">ny_EMEP_extended</span><span class="p">,</span><span class="w"> </span><span class="n">n_regions</span><span class="p">))</span>
+<span class="w">            </span><span class="k">do </span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">nx_EMEP_extended</span>
+<span class="w">                </span><span class="k">do </span><span class="n">jj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ny_EMEP_extended</span>
+<span class="w">                    </span><span class="k">do </span><span class="n">i_region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_regions</span>
+<span class="w">                        </span><span class="n">current_region_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">regionindex_loop_index</span><span class="p">(</span><span class="n">i_region</span><span class="p">)</span>
+<span class="w">                        </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">                        </span><span class="k">do </span><span class="n">i_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                            </span><span class="k">do </span><span class="n">j_sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n_subsamples_per_EMEP_grid</span>
+<span class="w">                                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">EMEP_extended_subsample_region_id</span><span class="p">(</span><span class="n">i_sub</span><span class="p">,</span><span class="n">j_sub</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">current_region_index</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">                                    </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                                </span><span class="k">end if</span>
+<span class="k">                            end do</span>
+<span class="k">                        end do</span>
+<span class="k">                        </span><span class="n">regionfraction_per_EMEP_extended_grid</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,</span><span class="n">i_region</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="n">n_subsamples_per_EMEP_grid</span><span class="o">**</span><span class="mi">2</span>
+<span class="w">                    </span><span class="k">end do</span>
+<span class="k">                end do</span>
+<span class="k">            end do</span>
+<span class="k">        end if</span><span class="w"> </span><span class="c">!(trace_emissions_from_in_region)</span>
+
+<span class="w">        </span><span class="c">! Deallocate the region mask</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="p">(</span><span class="n">region_mask</span><span class="p">)</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="p">(</span><span class="n">x_values_regionmask</span><span class="p">)</span>
+<span class="w">        </span><span class="k">deallocate</span><span class="p">(</span><span class="n">y_values_regionmask</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">end subroutine </span><span class="n">uEMEP_region_mask_new</span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

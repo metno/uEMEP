@@ -1,0 +1,1141 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>read_landuse_rivm_data &ndash; Fortran Program</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Fortran Program </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>read_landuse_rivm_data
+      <small>Module</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 1.9% of total for modules and submodules.">414 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/uEMEP_read_landuse_rivm_data.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/uemep_read_landuse_rivm_data.f90.html'>uEMEP_read_landuse_rivm_data.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">read_landuse_rivm_data</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-continuous_urban_fabric_value">Continuous_urban_fabric_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-discontinuous_urban_fabric_value">Discontinuous_urban_fabric_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-industrial_or_commercial_units_value">Industrial_or_commercial_units_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-road_and_rail_networks_and_associated_land_value">Road_and_rail_networks_and_associated_land_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-port_areas_value">Port_areas_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-airports_value">Airports_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-mineral_extraction_sites_value">Mineral_extraction_sites_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-dump_sites_value">Dump_sites_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-construction_sites_value">Construction_sites_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-green_urban_areas_value">Green_urban_areas_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-sport_and_leisure_facilities_value">Sport_and_leisure_facilities_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-non_irrigated_arable_land_value">Non_irrigated_arable_land_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-permanently_irrigated_land_value">Permanently_irrigated_land_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-rice_fields_value">Rice_fields_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-vineyards_value">Vineyards_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-fruit_trees_and_berry_plantations_value">Fruit_trees_and_berry_plantations_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-olive_groves_value">Olive_groves_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-pastures_value">Pastures_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-annual_crops_associated_with_permanent_crops_value">Annual_crops_associated_with_permanent_crops_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-complex_cultivation_patterns_value">Complex_cultivation_patterns_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-land_principally_occupied_by_agriculture_value">Land_principally_occupied_by_agriculture_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-agro_forestry_areas_value">Agro_forestry_areas_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-broad_leaved_forest_value">Broad_leaved_forest_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-coniferous_forest_value">Coniferous_forest_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-mixed_forest_value">Mixed_forest_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-natural_grasslands_value">Natural_grasslands_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-moors_and_heathland_value">Moors_and_heathland_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-sclerophyllous_vegetation_value">Sclerophyllous_vegetation_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-transitional_woodland_shrub_value">Transitional_woodland_shrub_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-beaches_dunes_sands_value">Beaches_dunes_sands_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-bare_rocks_value">Bare_rocks_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-sparsely_vegetated_areas_value">Sparsely_vegetated_areas_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-burnt_areas_value">Burnt_areas_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-glaciers_and_perpetual_snow_value">Glaciers_and_perpetual_snow_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-inland_marshes_value">Inland_marshes_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-peat_bogs_value">Peat_bogs_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-salt_marshes_value">Salt_marshes_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-salines_value">Salines_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-intertidal_flats_value">Intertidal_flats_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-water_courses_value">Water_courses_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-water_bodies_value">Water_bodies_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-coastal_lagoons_value">Coastal_lagoons_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-estuaries_value">Estuaries_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-sea_and_ocean_value">Sea_and_ocean_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-nodata_clc_value">NODATA_clc_value</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-n_corine_landuse_index">n_corine_landuse_index</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#variable-corine_to_emep_landuse">Corine_to_EMEP_landuse</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#subs-0"
+         aria-expanded="false" aria-controls="subs-0">
+         <h4 class="card-header bg-primary text-white">Subroutines</h4>
+      </a>
+      <div id="subs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#proc-uemep_read_landuse_rivm_data">uEMEP_read_landuse_rivm_data</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#proc-uemep_read_netcdf_landuse_latlon">uEMEP_read_netcdf_landuse_latlon</a>
+            <a class="list-group-item" href="../module/read_landuse_rivm_data.html#proc-uemep_set_landuse_classes">uEMEP_set_landuse_classes</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      
+<br>          <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='crossreference_grids.html'>crossreference_grids</a></li>
+                  <li class="list-inline-item"><a href='mod_lambert_projection.html'>mod_lambert_projection</a></li>
+                  <li class="list-inline-item"><a href='uemep_definitions.html'>uEMEP_definitions</a></li>
+                  <li class="list-inline-item"><a href='uemep_configuration.html'>uemep_configuration</a></li>
+                  <li class="list-inline-item"><a href='mod_read_esri_ascii_file.html'>mod_read_esri_ascii_file</a></li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      
+      <br>
+
+
+        <section>
+          <h2>Variables</h2>
+            <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-continuous_urban_fabric_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Continuous_urban_fabric_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-discontinuous_urban_fabric_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Discontinuous_urban_fabric_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-industrial_or_commercial_units_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Industrial_or_commercial_units_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-road_and_rail_networks_and_associated_land_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Road_and_rail_networks_and_associated_land_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-port_areas_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Port_areas_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-airports_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Airports_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mineral_extraction_sites_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Mineral_extraction_sites_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dump_sites_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Dump_sites_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-construction_sites_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Construction_sites_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-green_urban_areas_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Green_urban_areas_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sport_and_leisure_facilities_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Sport_and_leisure_facilities_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-non_irrigated_arable_land_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Non_irrigated_arable_land_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-permanently_irrigated_land_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Permanently_irrigated_land_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rice_fields_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Rice_fields_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vineyards_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Vineyards_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-fruit_trees_and_berry_plantations_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Fruit_trees_and_berry_plantations_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-olive_groves_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Olive_groves_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pastures_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Pastures_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-annual_crops_associated_with_permanent_crops_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Annual_crops_associated_with_permanent_crops_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-complex_cultivation_patterns_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Complex_cultivation_patterns_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-land_principally_occupied_by_agriculture_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Land_principally_occupied_by_agriculture_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-agro_forestry_areas_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Agro_forestry_areas_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-broad_leaved_forest_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Broad_leaved_forest_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-coniferous_forest_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Coniferous_forest_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mixed_forest_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Mixed_forest_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-natural_grasslands_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Natural_grasslands_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-moors_and_heathland_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Moors_and_heathland_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sclerophyllous_vegetation_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Sclerophyllous_vegetation_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-transitional_woodland_shrub_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Transitional_woodland_shrub_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-beaches_dunes_sands_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Beaches_dunes_sands_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bare_rocks_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Bare_rocks_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sparsely_vegetated_areas_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Sparsely_vegetated_areas_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-burnt_areas_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Burnt_areas_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-glaciers_and_perpetual_snow_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Glaciers_and_perpetual_snow_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-inland_marshes_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Inland_marshes_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-peat_bogs_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Peat_bogs_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-salt_marshes_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Salt_marshes_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-salines_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Salines_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-intertidal_flats_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Intertidal_flats_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-water_courses_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Water_courses_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-water_bodies_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Water_bodies_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-coastal_lagoons_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Coastal_lagoons_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-estuaries_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Estuaries_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sea_and_ocean_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Sea_and_ocean_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nodata_clc_value"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>NODATA_clc_value</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n_corine_landuse_index"></span>
+              integer,
+            </td>
+              <td>private,</td>
+            <td>
+              parameter
+            </td>
+            <td>::</td>
+            <td><strong>n_corine_landuse_index</strong></td>
+<td> =</td>
+                <td>48</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-corine_to_emep_landuse"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Corine_to_EMEP_landuse</strong>(n_corine_landuse_index)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+        </section>
+        <br>
+
+
+
+
+
+
+        <section>
+          <h2>Subroutines</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-uemep_read_landuse_rivm_data"></span> <h3>public  subroutine <a href='../proc/uemep_read_landuse_rivm_data.html'>uEMEP_read_landuse_rivm_data</a>()  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+    <em>None</em>
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-uemep_read_netcdf_landuse_latlon"></span> <h3>public  subroutine <a href='../proc/uemep_read_netcdf_landuse_latlon.html'>uEMEP_read_netcdf_landuse_latlon</a>()  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+    <em>None</em>
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-uemep_set_landuse_classes"></span> <h3>public  subroutine <a href='../proc/uemep_set_landuse_classes.html'>uEMEP_set_landuse_classes</a>()  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+    <em>None</em>
+
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+
+
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Fortran Program
+              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>
