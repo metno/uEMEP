@@ -1,5 +1,5 @@
 ---
-title: uEMEP
+project: uEMEP
 summary: Air quality dispersion model for high resolution downscaling of EMEP-MSC-W
 project_github: https://https://github.com/metno/uEMEP
 src_dir: ./src
@@ -12,5 +12,6 @@ display: public
          private
          protected
 preprocess: false
+page_dir: ./docs
 ---
 
