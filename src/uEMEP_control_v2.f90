@@ -73,20 +73,19 @@ program uEMEP_v6
     integer :: source_index
     real :: start_time_cpu, end_time_cpu
     logical :: have_read_emep = .false.
-    character(len=64) :: logfile_name = "logfile.txt", program_name
 
     ! Start timer
     call cpu_Time(start_time_cpu)
 
+        ! Set model version
+    model_version_str='7.0.0'
+
     ! Check command line arguments and handle special cases that have to be printed to stdout
     call check_command_line()
 
-    ! Set model version
-    model_version_str='uEMEP_v6.3'
-
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
-    write(*,*) 'Starting program '//trim(model_version_str)
+    write(*,*) 'Starting program uEMEP v'//trim(model_version_str)
     write(*,*) '------------------------------------------------------------------------'
 
     ! Read the command line, assigning the configuration file names and the substitution date_str
