@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
-    <meta name="author" content="" >
+    <meta name="author" content="Norwegian Meteorological Institute" >
     <link rel="icon" href="./favicon.png">
 
     <title> uEMEP </title>
@@ -29,7 +29,7 @@
     <div class="container-fluid mb-sm-4 mb-xl-2">
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-          <a class="navbar-brand" href="./index.html">uEMEP </a>
+          <a class="navbar-brand" href="./index.html">uEMEP <small>7.0.0</small></a>
           <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
                   aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon">
@@ -37,7 +37,7 @@
 
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="page/index.html">Model Documentation</a></li>
+                <li class="nav-item"><a class="nav-link" href="page/index.html">Documentation</a></li>
                   <li class="nav-item">
                     <a class="nav-link" href="./lists/files.html">Source Files</a>
                   </li>
@@ -67,7 +67,7 @@
       <p>Air quality dispersion model for high resolution downscaling of EMEP-MSC-W</p>
         <p> Find us on&hellip;</p>
       <p>
-        <a class="btn btn-lg btn-primary" href="https://https://github.com/metno/uEMEP" role="button">GitHub</a>
+        <a class="btn btn-lg btn-primary" href="https://github.com/metno/uEMEP" role="button">GitHub</a>
         
         
         
@@ -76,17 +76,34 @@
     </div>
 
       <div class="row" id='text'>
-        <div class=col-md-12>
+        <div class=col-md-8>
           <h1>uEMEP</h1>
-          
+          <p>The uEMEP (urban EMEP) model was created to extend the EMEP MSC-W model's application to near-street-level air quality modeling. It uses a downscaling approach based on classical Gaussian plume modeling, which is combined with the physical parameterization and emission data from the EMEP MSC-W model.</p>
         </div>
+          <div class="col-md-4">
+            <div class="card card-body bg-light">
+              <h2 class="card-title">Developer Info</h2>
+              <h4 class="card-text">Norwegian Meteorological Institute</h4>
+              <p class="card-text"></p>
+                <div class="text-center"><div class="btn-group" role="group">
+                    <a class="btn btn-lg btn-primary" href="https://www.met.no/en"><i class="fa fa-globe fa-lg"></i></a>
+                    <a class="btn btn-lg btn-primary" href="https://github.com/metno"><i class="fa fa-github fa-lg"></i></a>
+                    
+                    
+                    
+                    
+                    
+                    <a class="btn btn-lg btn-primary" href="https://x.com/meteorologene"><i class="fa fa-twitter fa-lg"></i></a>
+                </div></div>
+            </div>
+          </div>
       </div>
         <div class="row">
           <hr>
           <div class="col-xs-6 col-sm-4">
             <div>
               <h3>Source Files</h3>
-              <ul><li><a href='sourcefile/area_weighted_interpolation_function.f90.html'>Area_weighted_interpolation_function.f90</a></li><li><a href='sourcefile/lambert_projection.f90.html'>lambert_projection.f90</a></li><li><a href='sourcefile/rargsort.f90.html'>rargsort.f90</a></li><li><a href='sourcefile/rdm2ll.f90.html'>rdm2ll.f90</a></li><li><a href='sourcefile/read_esri_ascii_file.f90.html'>read_esri_ascii_file.f90</a></li><li><a href='sourcefile/uemep_aggregate_proxy_emission_in_emep_grid.f90.html'>uEMEP_aggregate_proxy_emission_in_EMEP_grid.f90</a></li><li><a href='sourcefile/uemep_auto_subgrid.f90.html'>uEMEP_auto_subgrid.f90</a></li><li><a href='sourcefile/uemep_calculate_exposure.f90.html'>uEMEP_calculate_exposure.f90</a></li><li><a href='sourcefile/uemep_chemistry_no2.f90.html'>uEMEP_chemistry_NO2.f90</a></li><li><a href='sourcefile/uemep_configuration.f90.html'>uemep_configuration.f90</a></li></ul>
+              <ul><li><a href='sourcefile/area_weighted_interpolation_function.f90.html'>Area_weighted_interpolation_function.f90</a></li><li><a href='sourcefile/io_functions.f90.html'>io_functions.f90</a></li><li><a href='sourcefile/lambert_projection.f90.html'>lambert_projection.f90</a></li><li><a href='sourcefile/rargsort.f90.html'>rargsort.f90</a></li><li><a href='sourcefile/rdm2ll.f90.html'>rdm2ll.f90</a></li><li><a href='sourcefile/read_esri_ascii_file.f90.html'>read_esri_ascii_file.f90</a></li><li><a href='sourcefile/uemep_aggregate_proxy_emission_in_emep_grid.f90.html'>uEMEP_aggregate_proxy_emission_in_EMEP_grid.f90</a></li><li><a href='sourcefile/uemep_auto_subgrid.f90.html'>uEMEP_auto_subgrid.f90</a></li><li><a href='sourcefile/uemep_calculate_exposure.f90.html'>uEMEP_calculate_exposure.f90</a></li><li><a href='sourcefile/uemep_chemistry_no2.f90.html'>uEMEP_chemistry_NO2.f90</a></li></ul>
             </div>
             <div>
               <ul>
@@ -97,7 +114,7 @@
           <div class="col-xs-6 col-sm-4">
             <div>
               <h3>Modules</h3>
-              <ul><li><a href='module/aggregate_proxy_emission_in_emep_grid.html'>aggregate_proxy_emission_in_emep_grid</a></li><li><a href='module/auto_subgrid.html'>auto_subgrid</a></li><li><a href='module/calculate_exposure.html'>calculate_exposure</a></li><li><a href='module/chemistry_no2.html'>chemistry_no2</a></li><li><a href='module/crossreference_grids.html'>crossreference_grids</a></li><li><a href='module/define_subgrid.html'>define_subgrid</a></li><li><a href='module/dispersion_functions.html'>dispersion_functions</a></li><li><a href='module/grid_roads.html'>grid_roads</a></li><li><a href='module/kz_functions.html'>kz_functions</a></li><li><a href='module/local_trajectory.html'>local_trajectory</a></li></ul>
+              <ul><li><a href='module/aggregate_proxy_emission_in_emep_grid.html'>aggregate_proxy_emission_in_emep_grid</a></li><li><a href='module/auto_subgrid.html'>auto_subgrid</a></li><li><a href='module/calculate_exposure.html'>calculate_exposure</a></li><li><a href='module/chemistry_no2.html'>chemistry_no2</a></li><li><a href='module/crossreference_grids.html'>crossreference_grids</a></li><li><a href='module/define_subgrid.html'>define_subgrid</a></li><li><a href='module/dispersion_functions.html'>dispersion_functions</a></li><li><a href='module/grid_roads.html'>grid_roads</a></li><li><a href='module/io_functions.html'>io_functions</a></li><li><a href='module/kz_functions.html'>kz_functions</a></li></ul>
             </div>
             <div>
               <ul>
@@ -108,7 +125,7 @@
           <div class="col-xs-6 col-sm-4">
             <div>
               <h3>Procedures</h3>
-              <ul><li><a href='proc/area_weighted_extended_interpolation_function.html'>area_weighted_extended_interpolation_function</a></li><li><a href='proc/area_weighted_extended_vectorgrid_interpolation_function.html'>area_weighted_extended_vectorgrid_interpolation_function</a></li><li><a href='proc/area_weighted_interpolation_function.html'>area_weighted_interpolation_function</a></li><li><a href='proc/check.html'>check</a></li><li><a href='proc/check_command_line.html'>check_command_line</a></li><li><a href='proc/close_log_file.html'>close_log_file</a></li><li><a href='proc/correct_annual_mean_chemistry.html'>correct_annual_mean_chemistry</a></li><li><a href='proc/date_to_datestr.html'>date_to_datestr</a></li><li><a href='proc/date_to_datestr_bracket.html'>date_to_datestr_bracket</a></li><li><a href='proc/date_to_datestr_new.html'>date_to_datestr_new</a></li></ul>
+              <ul><li><a href='proc/area_weighted_extended_interpolation_function.html'>area_weighted_extended_interpolation_function</a></li><li><a href='proc/area_weighted_extended_vectorgrid_interpolation_function.html'>area_weighted_extended_vectorgrid_interpolation_function</a></li><li><a href='proc/area_weighted_interpolation_function.html'>area_weighted_interpolation_function</a></li><li><a href='proc/check.html'>check</a></li><li><a href='proc/check_command_line.html'>check_command_line</a></li><li><a href='proc/check_dir_exist.html'>check_dir_exist</a></li><li><a href='proc/close_log_file.html'>close_log_file</a></li><li><a href='proc/correct_annual_mean_chemistry.html'>correct_annual_mean_chemistry</a></li><li><a href='proc/date_to_datestr.html'>date_to_datestr</a></li><li><a href='proc/date_to_datestr_bracket.html'>date_to_datestr_bracket</a></li></ul>
             </div>
             <div>
               <ul>
@@ -125,7 +142,7 @@
           <div class="col">
             <p>
               uEMEP
-              &copy; 2024 
+ was developed by Norwegian Meteorological Institute<br>              &copy; 2024 
 </p>
           </div>
           <div class="col">

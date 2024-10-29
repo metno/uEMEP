@@ -1,0 +1,203 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="Norwegian Meteorological Institute" >
+    <link rel="icon" href="../../favicon.png">
+
+    <title>Configuration &ndash; uEMEP</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../../css/pygments.css" rel="stylesheet">
+    <link href="../../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../css/local.css" rel="stylesheet">
+      <link  href="../../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../../index.html">uEMEP <small>7.0.0</small></a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../index.html">Documentation</a></li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../../program/uemep_v6.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>Configuration</h1>
+    <div class="container p-2 mb-4 bg-light border rounded-3">
+      <div class="row align-items-center justify-content-between">
+        <div class="col">
+          <ul class="list-inline" style="margin-bottom:0px; display:inline">
+          </ul>
+        </div>
+        <div class="col">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../index.html'>Documentation</a></li>
+                <li class="breadcrumb-item"><a href='index.html'>User Guide</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Configuration</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+      <div class="col-3">
+        <div class="card card-body bg-light" id="sidebar-toc">
+          <ul class="nav flex-column align-items">
+            <li class="nav-item">
+              <a class="nav-link" href="../index.html">Documentation</a>
+            </li>
+          </ul>
+          <hr>
+          <nav class="nav nav-pills flex-column">
+              <a class="nav-link" href="index.html">User Guide</a>
+                <nav class="nav nav-pills flex-column">
+                                <a class="nav-link active disabled" href="configuration.html">Configuration</a>
+
+                </nav>
+          </nav>
+        </div>
+      </div>
+
+    <div class="col-9" id='text'>
+      <p>uEMEP is flexible and has a large amount of configuration options. The syntax follows Fortran syntax, similar to the use of namelists.</p>
+<h2>Contents:</h2>
+<ul>
+<li><a href="#file-tag">File tag</a></li>
+<li><a href="#temporal-scale">Temporal scale</a></li>
+<li><a href="#emission-sources">Emission sources</a></li>
+<li><a href="#emep-forcing-data">EMEP forcing data</a></li>
+</ul>
+<h2>File tag <a name="file-tag"></a></h2>
+<p>uEMEP writes the model output as NetCDF format and the file tag is used to create file names associated with the specific calculation.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">file_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;example&#39;</span>
+</code></pre></div>
+
+<h2>Temporal scale <a name="temporal-scale"></a></h2>
+<p>uEMEP can be run on either the hourly or the annual scale. By default, both of these options are set to false, and one must be set to true for uEMEP to run.</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set calculations to be performed at the hourly scale</span>
+<span class="n">hourly_calculations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set calculations to be performed at the annual scale</span>
+<span class="n">annual_calculations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+</code></pre></div>
+
+<p>Note that setting both to true will not work and will result in the model crashing.</p>
+<h2>Emission sources <a name="emission-sources"></a></h2>
+<p>uEMEP can include a number of emission sources, which by default are set to false. One or more emission sources should be set to true for uEMEP to run. In addition to setting the inclusion of the emission sources to true, valid proxy redistribution data is required. Currently, uEMEP includes procedures to include the following emission sources:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Include emissions from traffic in the calculations</span>
+<span class="n">calculate_source</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Include emissions from shipping in the calculations</span>
+<span class="n">calculate_source</span><span class="p">(</span><span class="n">shipping_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Include emissions from agriculture in the calculations</span>
+<span class="n">calculate_source</span><span class="p">(</span><span class="n">agriculture_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Include emissions from residential heating in the calculations</span>
+<span class="n">calculate_source</span><span class="p">(</span><span class="n">heating_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Include emissions from industrial sources in the calculations</span>
+<span class="n">calculate_source</span><span class="p">(</span><span class="n">industry_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+</code></pre></div>
+
+<h2>EMEP forcing data <a name="emep-forcing-data"></a></h2>
+<p>uEMEP will downscale output from the EMEP model, and thus requires an EMEP simulation with output from local fractions included to be present. The path and filename pointing to the EMEP model output should be provided for uEMEP to run.</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set the path and filename for the EMEP NetCDF files including meteorology</span>
+<span class="n">pathname_EMEP</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;path_to_emep_files&#39;</span>
+<span class="n">filename_EMEP</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;emep_file.nc&#39;</span>
+
+<span class="c">! Set the path and filename for the EMEP NetCDF files including local fractions</span>
+<span class="n">pathname_EMEP</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;path_to_emep_lf_files&#39;</span>
+<span class="n">filename_EMEP</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;emep_lf_file.nc&#39;</span>
+</code></pre></div>
+    </div>
+  </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              uEMEP
+ was developed by Norwegian Meteorological Institute<br>              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

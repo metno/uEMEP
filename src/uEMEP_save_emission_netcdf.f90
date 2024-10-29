@@ -18,6 +18,7 @@ module save_emission_netcdf
         datestr_to_date
     use grid_roads, only: uEMEP_grid_roads
     use mod_lambert_projection, only: lambert2lb2_uEMEP
+    use io_functions, only: check_dir_exist
 
     implicit none
     private
@@ -378,7 +379,7 @@ contains
         write(unit_logfile,'(A)') 'Saving emission netcdf data (uEMEP_save_emission_netcdf)'
         write(unit_logfile,'(A)') '================================================================'
 
-        inquire(file=trim(pathname_emissions_for_EMEP),exist=exists)
+        exists = check_dir_exist(path=trim(pathname_emissions_for_EMEP))
         if (.not.exists) then
             write(unit_logfile,'(A)')'ERROR: Path to EMEP emission output '//trim(pathname_emissions_for_EMEP)//' does not exist.'
             stop

@@ -7,6 +7,7 @@ module read_config
     use time_functions, only: date_to_datestr_bracket, date_to_number, &
         number_to_date, date_to_datestr_squarebracket, date_to_datestr, &
         datestr_to_date
+    use io_functions, only: check_dir_exist
 
     implicit none
     private
@@ -74,7 +75,7 @@ contains
                 if (len(trim(filename_log_file)).gt.0) then
                     unit_logfile=10
                     !Check existence of path
-                    inquire(file=trim(pathname_log_file),exist=exists)
+                    exists = check_dir_exist(path=trim(pathname_log_file))
                     if (.not.exists) then
                         write(unit_logfile,'(A)')'ERROR: Log file directory path '//trim(pathname_log_file)//' does not exist.'
                         stop
