@@ -1,4 +1,4 @@
 ---
-title: Model Documentation
+title: Documentation
 ---
 
