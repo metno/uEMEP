@@ -1,6 +1,6 @@
-program uEMEP_v6
+program uEMEP
     !! ****************************************************************************
-    !!   uEMEP control v2
+    !!   uEMEP
     !!
     !!   Bruce rolstad Denby (brucerd@met.no)
     !!   MET Norway
@@ -78,7 +78,7 @@ program uEMEP_v6
     call cpu_Time(start_time_cpu)
 
         ! Set model version
-    model_version_str='7.0.0'
+    model_version_str='7.0.1'
 
     ! Check command line arguments and handle special cases that have to be printed to stdout
     call check_command_line()
@@ -507,5 +507,5 @@ program uEMEP_v6
     write(*,'(a,i5,a,i2)') ' CPU time taken (MM:SS): ', floor((end_time_cpu - start_time_cpu)/60.0),':', floor(mod(end_time_cpu - start_time_cpu, 60.0))
     write(*,*) '------------------------------------------------------------------------'
 
-end program uEMEP_v6
+end program uEMEP
 
