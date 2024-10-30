@@ -1,4 +1,8 @@
-# uEMEP
+# Important
+
+This branch contains the legacy source code for uEMEP (version <= 6) and is no longer updated.
+
+## uEMEP
 Air quality dispersion model for high resolution downscaling of EMEP MSC-W
 
 Comments, questions to brucerd@met.no
