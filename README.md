@@ -4,7 +4,7 @@ Air quality dispersion model for high resolution downscaling of EMEP MSC-W
 This Github repository contains the source code for the uEMEP model.
 
 ## This version
-Version 7.0.0
+Version 7.0.1
 
 ## Installation
 

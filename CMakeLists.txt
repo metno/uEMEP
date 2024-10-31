@@ -46,6 +46,6 @@ add_library(uemeplib ${SOURCES})
 include(test/CMakeLists.txt)
 
 # Build and link main executable
-add_executable(uemep src/uEMEP_control_v2.f90)
+add_executable(uemep src/uEMEP_main.f90)
 target_link_libraries(uemep PRIVATE uemeplib ${NC_LIB})
 
