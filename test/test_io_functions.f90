@@ -15,7 +15,7 @@ program test_io_functions
     ! Test case 1 (check_dir_exist): Directory does not exist
     expected = .false.
     result = check_dir_exist(path=trim(pwd)//"/i_do_not_exist/")
-    if (result /= expected) then
+    if (result .neqv. expected) then
         ok = .false.
         print "(a)", "Test case 1 failed! Routine: check_dir_exist"
     end if
@@ -23,7 +23,7 @@ program test_io_functions
     ! Test case 2 (check_dir_exist): Directory exists
     expected = .true.
     result = check_dir_exist(path=trim(pwd))
-    if (result /= expected) then
+    if (result .neqv. expected) then
         ok = .false.
         print "(a)", "Test case 2 failed! Routine: check_dir_exist"
     end if
@@ -32,7 +32,7 @@ program test_io_functions
     ! This will fail is tests are run as root!
     expected = .false.
     result = check_dir_exist(path="/")
-    if (result /= expected) then
+    if (result .neqv. expected) then
         ok = .false.
         print "(a)", "Test case 3 failed! Routine: check_dir_exist"
     end if
