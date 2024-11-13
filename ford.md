@@ -18,7 +18,7 @@ display: public
 preprocess: false
 page_dir: ./docs
 sort: alpha
-version: 7.0.0
+version: 7.0.2
 parallel: 8
 ---
 
