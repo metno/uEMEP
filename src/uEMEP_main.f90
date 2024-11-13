@@ -1,6 +1,6 @@
-program uEMEP_v6
+program uEMEP
     !! ****************************************************************************
-    !!   uEMEP control v2
+    !!   uEMEP
     !!
     !!   Bruce rolstad Denby (brucerd@met.no)
     !!   MET Norway
@@ -73,20 +73,19 @@ program uEMEP_v6
     integer :: source_index
     real :: start_time_cpu, end_time_cpu
     logical :: have_read_emep = .false.
-    character(len=64) :: logfile_name = "logfile.txt", program_name
 
     ! Start timer
     call cpu_Time(start_time_cpu)
 
+        ! Set model version
+    model_version_str='7.0.2'
+
     ! Check command line arguments and handle special cases that have to be printed to stdout
     call check_command_line()
 
-    ! Set model version
-    model_version_str='uEMEP_v6.3'
-
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
-    write(*,*) 'Starting program '//trim(model_version_str)
+    write(*,*) 'Starting program uEMEP v'//trim(model_version_str)
     write(*,*) '------------------------------------------------------------------------'
 
     ! Read the command line, assigning the configuration file names and the substitution date_str
@@ -508,5 +507,5 @@ program uEMEP_v6
     write(*,'(a,i5,a,i2)') ' CPU time taken (MM:SS): ', floor((end_time_cpu - start_time_cpu)/60.0),':', floor(mod(end_time_cpu - start_time_cpu, 60.0))
     write(*,*) '------------------------------------------------------------------------'
 
-end program uEMEP_v6
+end program uEMEP
 
