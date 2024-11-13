@@ -891,34 +891,36 @@ contains
         end if
 
         ! Save EMEP allsources
-        ! NB: For now, this is always saved
-        write(unit_logfile,'(a)')'--------------------------'
-        write(unit_logfile,'(a)')'Saving EMEP allsources'
-        write(unit_logfile,'(a)')'--------------------------'
-        do i_pollutant=1,n_emep_pollutant_loop
-            !EMEP does not have all pollutants so only save to n_emep_pollutant_loop
-            !Only save the allsource value here 'EMEP_allsources'
-            variable_type='float'
-            i_file=emep_subgrid_file_index(allsource_index)
-            var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
-            unit_str='ug/m3'
-            if (save_netcdf_file_flag) then
-                write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
-                call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                    ,subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                    ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
-            endif
-            if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
-                write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
-                call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
-                    ,subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
-                    ,unit_str,title_str_rec,create_file_rec,valid_min &
-                    ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
-                    ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
-                    ,z_rec(allsource_index,1) &
-                    ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)
-            endif
-        end do
+        ! Save only if pure EMEP contributions are saved
+        if (save_emep_source_contributions .or. save_emep_additional_source_contributions) then
+            write(unit_logfile,'(a)')'--------------------------'
+            write(unit_logfile,'(a)')'Saving EMEP allsources'
+            write(unit_logfile,'(a)')'--------------------------'
+            do i_pollutant=1,n_emep_pollutant_loop
+                !EMEP does not have all pollutants so only save to n_emep_pollutant_loop
+                !Only save the allsource value here 'EMEP_allsources'
+                variable_type='float'
+                i_file=emep_subgrid_file_index(allsource_index)
+                var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))//'_'//trim(filename_grid(i_file))
+                unit_str='ug/m3'
+                if (save_netcdf_file_flag) then
+                    write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp),sum(subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+                    call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                        ,subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                        ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+                endif
+                if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                    write(unit_logfile,'(a,f12.3)')'Writing netcdf receptor variable: '//trim(var_name_temp),sum(subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant))/size(subgrid,1)/size(subgrid,2)/size(subgrid,3)
+                    call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                        ,subgrid(:,:,:,emep_subgrid_index,allsource_index,i_pollutant),x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                        ,unit_str,title_str_rec,create_file_rec,valid_min &
+                        ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                        ,z_rec(allsource_index,1) &
+                        ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)
+                endif
+            end do
+        end if
 
         !Save the EMEP data interpolated to the subgrid. These are based on the gridded concentrations
         ! Loop over 5 different verions

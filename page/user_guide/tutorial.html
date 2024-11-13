@@ -1,0 +1,650 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Air quality dispersion model for high resolution downscaling of EMEP-MSC-W">
+    <meta name="author" content="Norwegian Meteorological Institute" >
+    <link rel="icon" href="../../favicon.png">
+
+    <title>Tutorial &ndash; uEMEP</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../../css/pygments.css" rel="stylesheet">
+    <link href="../../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../css/local.css" rel="stylesheet">
+      <link  href="../../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../../index.html">uEMEP <small>7.0.2</small></a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../index.html">Documentation</a></li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../../program/uemep.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>Tutorial</h1>
+    <div class="container p-2 mb-4 bg-light border rounded-3">
+      <div class="row align-items-center justify-content-between">
+        <div class="col">
+          <ul class="list-inline" style="margin-bottom:0px; display:inline">
+          </ul>
+        </div>
+        <div class="col">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../index.html'>Documentation</a></li>
+                <li class="breadcrumb-item"><a href='index.html'>User Guide</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Tutorial</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+      <div class="col-3">
+        <div class="card card-body bg-light" id="sidebar-toc">
+          <ul class="nav flex-column align-items">
+            <li class="nav-item">
+              <a class="nav-link" href="../index.html">Documentation</a>
+            </li>
+          </ul>
+          <hr>
+          <nav class="nav nav-pills flex-column">
+              <a class="nav-link" href="index.html">User Guide</a>
+                <nav class="nav nav-pills flex-column">
+                                <a class="nav-link active disabled" href="tutorial.html">Tutorial</a>
+              <a class="nav-link" href="configuration.html">Configuration</a>
+
+                </nav>
+          </nav>
+        </div>
+      </div>
+
+    <div class="col-9" id='text'>
+      <p><strong>Contents:</strong></p>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#getting-started">Getting started</a><ul>
+<li><a href="#installing-uemep">Installing uEMEP</a></li>
+<li><a href="#the-configuration-file">The configuration file</a></li>
+<li><a href="#initial-configuration">Initial configuration</a></li>
+</ul>
+</li>
+<li><a href="#setting-the-spatial-extent">Setting the spatial extent</a></li>
+<li><a href="#emep-forcing-data">EMEP forcing data</a></li>
+<li><a href="#emission-redistribution-proxy-data">Emission redistribution proxy data</a><ul>
+<li><a href="#traffic-emissions">Traffic emissions</a></li>
+<li><a href="#residential-heating-emissions">Residential heating emissions</a></li>
+<li><a href="#shipping-emissions">Shipping emissions</a></li>
+</ul>
+</li>
+<li><a href="#uemep-processes">uEMEP processes</a><ul>
+<li><a href="#wind-and-dispersion">Wind and dispersion</a></li>
+<li><a href="#no2-chemistry">NO2 chemistry</a></li>
+<li><a href="#tunnels">Tunnels</a></li>
+</ul>
+</li>
+<li><a href="#finalize-configuration">Finalize configuration</a></li>
+<li><a href="#running-uemep">Running uEMEP</a><ul>
+<li><a href="#multiple-configuration-files">Multiple configuration files</a></li>
+<li><a href="#running-in-parallel">Running in parallel</a></li>
+</ul>
+</li>
+<li><a href="#references">References</a></li>
+</ul>
+<h2>Introduction <a name="introduction"></a></h2>
+<p>In general, uEMEP can be configured to run using two different downscaling methods. Both of these methods use Gaussian dispersion modeling to recalculate air pollutant concentrations in high resolution. The major difference between the methods is the origin and handling of emission sources:</p>
+<ol>
+<li>Emission redistribution of EMEP gridded emissions using proxy data</li>
+<li>Independent emissions data</li>
+</ol>
+<p>The Norwegian forecast system uses independent emission sources to deliver daily forcasts of air quality, covering the entire country in high resolution. However, independent emission data is not readily available across Europe, and instead redistribution of EMEP gridded emissions are used (Mu et al., 2022). </p>
+<p>For the scope of this tutorial, instructions will thus focus on method 2. Proxy data for the redistribution of emissions are based on openly available data sources and the tutorial allows uEMEP to be configured for downscaling pollutant anywhere within the EMEP domain. </p>
+<p>Disclaimer: The data and configuration provided in this tutorial is not necessarily the only or best way to configure uEMEP or downscale air quality in Europe in general. The purpose of this tutorial is to demonstrate the process of configuring uEMEP.</p>
+<h2>Getting started <a name="getting-started"></a></h2>
+<p>To follow this tutorial, it is assumed that the user has access to a relatively new Linux distribution with the necessary software installed or the rights to install the software. This guide has been tested using a virtual machine running Ubuntu 24.04 with 4 CPUs, 4GB memory and 40GB storage.</p>
+<p>The uEMEP model requires the output from an existing EMEP simulation with calculations of the local fractions. In addition, suitable redistribution proxy data is required. How to generate and/or acquire these data sources from scratch is beyond the scope of this tutorial. </p>
+<p>The data for following this tutorial is available at: </p>
+<p>The download is 5.1GB which will expand to 12.5 when extracted. Download and extract the data as:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Update and install necessary software</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>upgrade<span class="w"> </span>-y
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>wget<span class="w"> </span>unzip
+
+<span class="c1"># Download and extract the data</span>
+<span class="nb">cd</span><span class="w"> </span><span class="o">{</span>local_dir<span class="o">}</span>
+unzip<span class="w"> </span>uemep_demo.zip
+</code></pre></div>
+
+<h3>Installing uEMEP <a name="installing-uemep"></a></h3>
+<p>uEMEP is programmed using Fortran, and a compatible Fortran compiler is therefore necessary. In addition, as uEMEP reads and writes NetCDF files, a compatible NetCDF library should be installed. Currently, uEMEP supports the Intel (<code>ifort</code>) and GNU (<code>gfortran</code>) Fortran compilers.</p>
+<p>In this tutorial, we will use <code>gfortran</code> and the NetCDF libraries from the default Ubuntu repository as this is the easiest to setup. Note however that uEMEP is developed with Intel <code>ifort</code> as the default compiler and this setup is better tested. In Ubuntu, install the necessary dependencies as:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>build-essential<span class="w"> </span>git<span class="w"> </span>cmake<span class="w"> </span>gfortran<span class="w"> </span>libnetcdf-dev<span class="w"> </span>libnetcdff-dev
+</code></pre></div>
+
+<p>The uEMEP model code is open source, distributed under the LGPL-3.0 license. The latest release can be downloaded at github.com/metno/uEMEP/releases. Alternatively, the current stable version can be downloaded using git as:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="o">{</span>local_dir<span class="o">}</span>/uemep_demo/
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/metno/uEMEP.git
+</code></pre></div>
+
+<p>Since <code>ifort</code> is the default compiler, we need to change the compiler to <code>gfortran</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Open the CMakeLists.txt file</span>
+nano<span class="w"> </span><span class="o">{</span>local-dir<span class="o">}</span>/uemep_demo/uEMEP/CMakeLists.txt
+
+<span class="c1"># Change the compiler to gfortran by modifying lines 10-11:</span>
+<span class="c1">#set(CMAKE_Fortran_COMPILER &quot;ifort&quot;)</span>
+set<span class="o">(</span>CMAKE_Fortran_COMPILER<span class="w"> </span><span class="s2">&quot;gfortran&quot;</span><span class="o">)</span>
+</code></pre></div>
+
+<p>Then proceed to compile uEMEP as:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>uEMEP
+mkdir<span class="w"> </span>build
+<span class="nb">cd</span><span class="w"> </span>build
+cmake<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>..
+make<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+
+<p>Verify that uEMEP is running, which should return the following information (the printed version may differ):</p>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>./uemep<span class="w"> </span>--version
+<span class="w"> </span>uEMEP:<span class="w"> </span>Air<span class="w"> </span>quality<span class="w"> </span>dispersion<span class="w"> </span>model<span class="w"> </span><span class="k">for</span><span class="w"> </span>high<span class="w"> </span>resolution<span class="w"> </span>downscaling<span class="w"> </span>of<span class="w"> </span>EMEP<span class="w"> </span>MSC-W
+
+<span class="w"> </span>Version:<span class="w"> </span><span class="m">7</span>.0.1
+<span class="w"> </span>Copyright<span class="w"> </span><span class="o">(</span>C<span class="o">)</span><span class="w"> </span><span class="m">2007</span><span class="w"> </span>Free<span class="w"> </span>Software<span class="w"> </span>Foundation.
+<span class="w"> </span>License<span class="w"> </span>GNU<span class="w"> </span>LGPL-3.0<span class="w"> </span>&lt;https://www.gnu.org/licenses/lgpl-3.0.html&gt;.
+<span class="w"> </span>This<span class="w"> </span>is<span class="w"> </span>free<span class="w"> </span>software:<span class="w"> </span>you<span class="w"> </span>are<span class="w"> </span>free<span class="w"> </span>to<span class="w"> </span>change<span class="w"> </span>and<span class="w"> </span>redistribute<span class="w"> </span>it.
+
+<span class="w"> </span>Developed<span class="w"> </span>and<span class="w"> </span>maintained<span class="w"> </span>at<span class="w"> </span>the<span class="w"> </span>Norwegian<span class="w"> </span>Meteorological<span class="w"> </span>Institute.
+<span class="w"> </span>Contribute<span class="w"> </span>at:<span class="w"> </span>&lt;https://github.com/metno/uEMEP&gt;
+</code></pre></div>
+
+<p>Lastly, symlink or copy the executable to the bin folder:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="o">{</span>local_dir<span class="o">}</span>/uemep_demo/uEMEP/build
+cp<span class="w"> </span>uemep<span class="w"> </span>../../bin/
+</code></pre></div>
+
+<h3>The configuration file <a name="the-configuration-file"></a></h3>
+<p>The configuration of uEMEP is flexible and thus has a large number of configurable parameters. While most of these parameters have default values, uEMEP cannot produce any useable output without additional user input. Which parameters that are necessary to define depends on the intended configuration and cannot easily be generalized.</p>
+<p>In this tutorial, we will begin with an empty configuration file to demonstrate the various options requiring user input. A complete configuration file is provided with the downloaded data for reference. Create a new empty file as:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="o">{</span>local_dir<span class="o">}</span>/uemep_demo/config_files
+touch<span class="w"> </span>uemep_demo_config.txt
+</code></pre></div>
+
+<p>In the following sections, we will edit this file so uEMEP can run for any area in Europe.</p>
+<h3>Initial configuration <a name="initial-configuration"></a></h3>
+<p>uEMEP can run in two different time modes: hourly or annual. Since the EMEP output are annual averages, we set the uEMEP model to calculate annual average concentrations as well. In addition, we have to define which pollutants (i.e., compounds) we want to include:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">!---- Initial configuration ----!</span>
+
+<span class="c">! Set to calculate annual mean concentrations</span>
+<span class="n">annual_concentrations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set which compounds are calculated (gp_totals include NOx, NO2, PM25 and PM10)</span>
+<span class="n">input_comp_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gp_totals&quot;</span>
+</code></pre></div>
+
+<p>Next we specify some variables relating to how uEMEP handles path, files, and variable names.</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set the filename tag to be included in the output files</span>
+<span class="n">file_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;uemep_demo&quot;</span>
+
+<span class="c">! Set the hour string to be included in the output files</span>
+<span class="n">forecast_hour_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;00&quot;</span>
+
+<span class="c">! Set some replacement strings which are used internally while reading and/or writing</span>
+<span class="n">replacement_date_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;replace_date&gt;&quot;</span>
+<span class="n">replacement_yesterday_date_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;[replace_yesterday_date]&quot;</span>
+<span class="n">replacement_hour_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;replace_hour&gt;&quot;</span>
+
+<span class="c">! Set date string for output files</span>
+<span class="n">filename_date_output_grid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;yyyymmdd&gt;_&lt;replace_hour&gt;&quot;</span>
+</code></pre></div>
+
+<p>Lastly we need to specify where uEMEP should write output, what kind of output it should produce:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Force uEMEP to write log output to the terminal</span>
+<span class="n">filename_log_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c">! Set the output directory (all output will go here)</span>
+<span class="n">pathname_output_grid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;{local_dir}/uemep_demo/model_output/&quot;</span>
+
+<span class="c">! Set to save output as NetCDF (setting this to false will produce no output)</span>
+<span class="n">save_netcdf_file_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set to save downscaled and EMEP original pollutant concentrations</span>
+<span class="n">save_compounds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">save_emep_original</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set to save source contributions</span>
+<span class="n">save_source_contributions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="n">save_no2_source_contributions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<span class="n">save_o3_source_contributions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+
+<span class="c">! Set to turn off Norwegian air quality indicator output</span>
+<span class="n">save_aqi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+
+<span class="c">! Set to save EMEP species (currently required to be set to true)</span>
+<span class="n">save_emep_species</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+</code></pre></div>
+
+<h2>Setting the spatial extent <a name="setting-the-spatial-extent"></a></h2>
+<p>uEMEP can run in two different spatial modes: tiles or stations. When running tiles, the output will be gridded concentrations, whereas when running stations, the output will be the concentration at specific geographical locations. In both cases, some information on the spatial setup is necessary. </p>
+<p>Here we will downscale tiles, so we set the size of the tile (area) as well as the resolution within the tile.</p>
+<p>In this tutorial, the coordinates are defined to cover an area of 50x50 km in the Copenhagen-Malmö general area and with a horizontal resolution of 250 m. Coordinates uses the Lambert Azimuthal Equal Area (LAEA) projection <a href="https://epsg.io/3035"></a> and have the unit meters. As an approximation, LAEA coordinates for Europe can be extracted from here: <a href="https://epsg.io/map#srs=3035-1149"></a>. Click on "Reproject Map" in the upper right corner. Clicking anywhere in this map will provide the LAEA coordinates. For example, for modeling the city of Paris the lower left coordinate would be </p>
+<p><img alt="Paris example" src="../media/epsg_laea_paris_example.png" title="Paris example"></p>
+<p>Remember however that increasing the tile size will increase the execution time and memory use (see <a href="#running-in-parallel">Running in parallel</a> for modelling larger regions). </p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set the area to model</span>
+<span class="n">subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">446500</span><span class="mf">0.0</span>
+<span class="n">subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">359500</span><span class="mf">0.0</span>
+<span class="n">subgrid_max</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">451500</span><span class="mf">0.0</span>
+<span class="n">subgrid_max</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">364500</span><span class="mf">0.0</span>
+
+<span class="c">! Set the target resolution (in meters)</span>
+<span class="n">subgrid_delta</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="mf">0.0</span>
+<span class="n">subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="mf">0.0</span>
+</code></pre></div>
+
+<p>In addition, we provide information on the geographical projection that should be used. As mentioned above we use the Lambert Azimuthal Equal Area (LAEA) projection which is very useful because it is easy to define rectangular tiles which line up when a larger area is split into multiple smaller areas (tiles):</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set the projection type and attributes (5 = LAEA)</span>
+<span class="n">projection_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span>
+<span class="n">projection_attributes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="mf">0.0</span>
+<span class="n">projection_attributes</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="mf">2.0</span>
+<span class="n">projection_attributes</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">432100</span><span class="mf">0.0</span>
+<span class="n">projection_attributes</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">321000</span><span class="mf">0.0</span>
+<span class="n">projection_attributes</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">637813</span><span class="mf">7.0</span>
+<span class="n">projection_attributes</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">29</span><span class="mf">8.2572221</span>
+</code></pre></div>
+
+<h2>EMEP forcing data <a name="emep-forcing-data"></a></h2>
+<p>First set the path and filenames, and provide some general information about the EMEP data:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">!---- EMEP forcing data ----!</span>
+
+<span class="c">! Set path and filenames for the EMEP output</span>
+<span class="n">pathname_EMEP</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;{local_dir}/uemep_demo/model_input/emep/&quot;</span>
+<span class="n">filename_EMEP</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Base_fullrun.nc&quot;</span>
+<span class="n">pathname_EMEP</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;{local_dir}/uemep_demo/model_input/emep/&quot;</span>
+<span class="n">filename_EMEP</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Base_LF_full.nc&quot;</span>
+
+<span class="c">! Set the EMEP projection type</span>
+<span class="n">EMEP_projection_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span>
+
+<span class="c">! Set the EMEP aggregation period in hours (1 year = 8760 hours)</span>
+<span class="n">EMEP_emissions_aggregation_period</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8760</span>
+
+<span class="c">! Set the EMEP naming template to use the latest version</span>
+<span class="n">use_emission_naming_template_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">emission_naming_template_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;GNFR_&lt;n&gt;_Emis_mgm2_&quot;</span>
+
+<span class="c">! Set to use GNFR emission sectors</span>
+<span class="n">use_GNFR_emissions_from_EMEP_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">use_alphabetic_GNFR_emissions_from_EMEP_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set to use EMEP surface values instead of gridded to include deposition</span>
+<span class="n">use_EMEP_surface_ozone_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">use_EMEP_surface_compounds_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set to use EMEP surface PM including water</span>
+<span class="n">use_water_in_EMEP_surface_pm_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+</code></pre></div>
+
+<p>We then set some limits to the mixing and boundary layer conditions provided by EMEP:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set to contrain the minimum and maximum mixing heights</span>
+<span class="n">hmix_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="mf">0.0</span>
+<span class="n">hmix_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">200</span><span class="mf">0.0</span>
+
+<span class="c">! Set to contrain the minimum friction velocity</span>
+<span class="n">ustar_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.01</span>
+
+<span class="c">! Set to contrain the lower bound for stable Monin-Obukhov length</span>
+<span class="n">lowest_stable_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="mf">5.0</span>
+
+<span class="c">! Set to contrain the upper bound for unstable Monin-Obukhob length</span>
+<span class="n">lowest_unstable_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="mf">0.0</span>
+</code></pre></div>
+
+<p>Lastly, we provide information in the local fractions:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set naming template used in the NetCDF file</span>
+<span class="n">use_local_fraction_naming_template_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">use_local_fraction_grid_size_in_template_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">local_fraction_naming_template_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;sec&lt;n&gt;_fraction&#39;</span>
+</code></pre></div>
+
+<h2>Emission redistribution proxy data <a name="emission-redistribution-proxy-data"></a></h2>
+<p>In Mu et al. (2022), three GNFR sectors were downscaled including traffic, residential heating and shipping. Denby et al. (2024) extended this list to include aviation and off road emission sources. In this tutorial, we will use the simpler setup by Mu et al.</p>
+<p>In general, emission redistribution proxy data refers to high resolution spatiotemporal data which can represent the emissions sources. For example, emissions emissions from traffic is high associated with location and size of roads within an EMEP grid cell. Thus, we assume that the sub-grid cell distribution of emissions can be proxied by roadlink information. In the following sections, we present suitable redistribution proxies for traffic, residential heating and shipping.</p>
+<p>First we specify that local contribution should be calculated based on redistribution of EMEP emissions:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set to distribute EMEP grid emissions to the existing emission subgrid using proxy emission data</span>
+<span class="n">subgrid_emission_distribution_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set to downscale EMEP emissions using proxy data</span>
+<span class="n">local_subgrid_method_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
+</code></pre></div>
+
+<h3>Traffic emissions <a name="traffic-emissions"></a></h3>
+<p>As mentioned above, traffic emissions are associated with the location of roads, and to redistribute EMEP emissions, proxy data from Open Street Maps (OSM) is used. The implementation is discussed in Mu et al. (2022), and is based on the assumption that emissions are correlated with locations as well as traffic intensity (measured as average daily traffic, ADT). ADT is not provided in OSM, and instead a relative weighting scheme is used, ranging from the smallest (residential roads with a relative weight of 0.05) to the largest (highways with a relative weight of 2.0).</p>
+<p>To include traffic emissions, we set the emission height as well as the dispersion parameters necessary for the Gaussian plume model:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Include traffic emission source in the calculation</span>
+<span class="n">calculate_source</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set the traffic emission height</span>
+<span class="n">h_emis</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span>
+
+<span class="c">! Set dispersion parameters for the Gaussian plume model</span>
+<span class="n">sig_y_00</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0</span>
+<span class="n">sig_z_00</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span>
+</code></pre></div>
+
+<p>Then we specify that OSM should be used to redistribute traffic emissions as well as where this information is found:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set to use OSM data to redistribution traffic emissions</span>
+<span class="n">read_OSM_roadlink_data_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Specify the header type of the OSM data</span>
+<span class="n">no_header_roadlink_data_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
+
+<span class="c">! Set pathname for the OSM data</span>
+<span class="n">pathname_rl</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;{local_dir}/uemep_demo/model_input/traffic/&quot;</span>
+
+<span class="c">! Set to automatically select the OSM country based on grid position</span>
+<span class="n">auto_select_OSM_country_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set path and filename for the country bounding box data (used for auto country selection)</span>
+<span class="n">pathname_boundingbox</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;{local_dir}/uemep_demo/model_input/traffic/&quot;</span>
+<span class="n">filename_boundingbox</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;country_bounding_box.txt&quot;</span>
+</code></pre></div>
+
+<p>Lastly, we set the conversion factors for converting proxies to emissions:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set traffic emission conversion factors</span>
+<span class="n">emission_factor</span><span class="p">(</span><span class="n">nox_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span>
+<span class="n">emission_factor</span><span class="p">(</span><span class="n">no2_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.075</span>
+<span class="n">emission_factor</span><span class="p">(</span><span class="n">pm25_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.01</span>
+<span class="n">emission_factor</span><span class="p">(</span><span class="n">pm10_index</span><span class="p">,</span><span class="n">traffic_index</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.01</span>
+
+<span class="c">! Set the truck-car emission ratio</span>
+<span class="n">ratio_truck_car_emission</span><span class="p">(</span><span class="n">nox_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="mf">0.0</span>
+<span class="n">ratio_truck_car_emission</span><span class="p">(</span><span class="n">no2_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="mf">0.0</span>
+<span class="n">ratio_truck_car_emission</span><span class="p">(</span><span class="n">pm25_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="mf">0.0</span>
+<span class="n">ratio_truck_car_emission</span><span class="p">(</span><span class="n">pm10_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="mf">0.0</span>
+</code></pre></div>
+
+<h3>Residential heating emissions <a name="residential-heating-emissions"></a></h3>
+<p>Emissions from residential heating is redistributed using data on building density from GHS (ref). </p>
+<p>To include residential heating emissions, we set the emission height as well as the dispersion parameters necessary for the Gaussian plume model:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Include residential heating emission source in the calculations</span>
+<span class="n">calculate_source</span><span class="p">(</span><span class="n">heating_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set the residential heating emission height</span>
+<span class="n">h_emis</span><span class="p">(</span><span class="n">heating_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="mf">5.0</span>
+
+<span class="c">! Set dispersion parameters for the Gaussian plume model</span>
+<span class="n">sig_y_00</span><span class="p">(</span><span class="n">heating_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5.0</span>
+<span class="n">sig_z_00</span><span class="p">(</span><span class="n">heating_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="mf">0.0</span>
+</code></pre></div>
+
+<p>We then specify the path and filename of the heating emissions redistribution proxy data:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set path and filename for the heating proxy data</span>
+<span class="n">pathname_population</span><span class="p">(</span><span class="n">dwelling_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;{local_dir}/uemep_demo/model_input/heating/&quot;</span>
+<span class="n">filename_population</span><span class="p">(</span><span class="n">dwelling_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;europe_buildings_popmask_latlon_demo.nc&quot;</span>
+
+<span class="c">! Specify the proxy variable name in the NetCDF file</span>
+<span class="n">var_name_population_nc</span><span class="p">(</span><span class="n">dwelling_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;N_buildings&quot;</span>
+</code></pre></div>
+
+<h3>Shipping emissions <a name="shipping-emissions"></a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c">! Include shipping emission source in the calculations</span>
+<span class="n">calculate_source</span><span class="p">(</span><span class="n">shipping_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set the shipping emission height</span>
+<span class="n">h_emis</span><span class="p">(</span><span class="n">shipping_index</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="mf">5.0</span>
+
+<span class="c">! Set dispersion parameters for the Gaussian plume model</span>
+<span class="n">sig_y_00</span><span class="p">(</span><span class="n">shipping_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5.0</span>
+<span class="n">sig_z_00</span><span class="p">(</span><span class="n">shipping_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="mf">0.0</span>
+</code></pre></div>
+
+<p>Then we specify the path and filename, as well as the type of shipping redistribution data:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set to read the shipping proxy data as NetCDF</span>
+<span class="n">read_shipping_from_netcdf_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set data type to monthly</span>
+<span class="n">read_monthly_and_daily_shipping_data_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set path and filename for the shipping proxy data</span>
+<span class="n">pathname_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;{local_dir}/uemep_demo/model_input/shipping/&quot;</span>
+<span class="n">filename_ship</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;2017-2018_average_demo.nc&quot;</span>
+</code></pre></div>
+
+<h2>uEMEP processes <a name="uemep-processes"></a></h2>
+<h3>Moving window, integration and interpolation</h3>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set the moving windows size (EMEP grids)</span>
+<span class="n">EMEP_grid_interpolation_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0</span>
+<span class="n">EMEP_additional_grid_interpolation_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">4.0</span>
+
+<span class="c">! Set the EMEP grid interpolation method for the non-local contribution in the moving window</span>
+<span class="n">EMEP_grid_interpolation_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span>
+
+<span class="c">! Set the integral subgrid size scaling parameters</span>
+<span class="n">integral_subgrid_step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span>
+<span class="n">integral_subgrid_delta_ref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="mf">0.0</span>
+
+<span class="c">! Set the number and size of local fraction grid cells</span>
+<span class="n">n_local_fraction_grids</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+<span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">local_fraction_grid_size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span>
+
+<span class="c">! Set the local fraction grid interpolation method</span>
+<span class="n">local_fraction_grid_for_EMEP_grid_interpolation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">local_fraction_grid_for_EMEP_additional_grid_interpolation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+</code></pre></div>
+
+<h3>Wind and dispersion <a name="wind-and-dispersion"></a></h3>
+<p>First we define the type of wind data used for dispersion. </p>
+<div class="codehilite"><pre><span></span><code><span class="p">!</span><span class="w"> </span><span class="nx">Set</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">wind</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nx">used</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">dispersion</span>
+<span class="nx">wind_level_flag</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">6</span>
+<span class="nx">wind_level_integral_flag</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span>
+</code></pre></div>
+
+<p>Next we choose the dispersion scheme and set the parameters. Here we will use the default K scheme, using K from EMEP and variable height. </p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set to use the K dispersion scheme</span>
+<span class="n">stability_scheme_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
+
+<span class="c">! Set the number of iterations in the K scheme method</span>
+<span class="n">n_kz_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+
+<span class="c">! Set to use the average of the plume center of mass and emission height to calculate Kz</span>
+<span class="n">average_zc_h_in_Kz_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set to use changes in hourly wind direction to increase horizontal dispersion</span>
+<span class="n">use_last_meteo_in_dispersion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set to increase horizontal dispersion at low wind speeds, controlled by `FF_min_dispersion`:</span>
+<span class="n">use_meandering_in_dispersion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">FF_min_dispersion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span>
+
+<span class="c">! Set to scale initial horizontal standard deviation parameter to subgrid size</span>
+<span class="n">sigy_0_subgid_width_scale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.8</span>
+</code></pre></div>
+
+<h3>NO2 chemistry <a name="no2-chemistry"></a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set the no2 chemistry scheme</span>
+<span class="n">no2_chemistry_scheme_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+
+<span class="c">! Set the no2 background chemistry scheme</span>
+<span class="n">no2_background_chemistry_scheme_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+
+<span class="c">! Set the Romberg parameters</span>
+<span class="n">romberg_parameters</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="mf">0.0</span>
+<span class="n">romberg_parameters</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="mf">5.0</span>
+<span class="n">romberg_parameters</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.23</span>
+
+<span class="c">! Set to use annual NO2 and O3 pdf correction</span>
+<span class="n">use_annual_mean_pdf_chemistry_correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">quick_annual_mean_pdf_chemistry_correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set standard deviation for the pdf correction</span>
+<span class="n">nox_sigma_ratio_pdf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.14</span>
+<span class="n">ox_sigma_ratio_pdf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.21</span>
+</code></pre></div>
+
+<h3>Tunnels <a name="tunnels"></a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set to use tunnel deposition scheme</span>
+<span class="n">use_tunnel_deposition_scheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+</code></pre></div>
+
+<h2>Finalize configuration <a name="finalize-configuration"></a></h2>
+<p>Firstly, we will set some options to increase performance and decrease memory usage:</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set to avoid reading EMEP data outside the region necessary for the subgrid</span>
+<span class="n">reduce_EMEP_region_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+</code></pre></div>
+
+<p>At this point, the primary configuration parameters are set. To finalize the configuration we need to set a few more parameters which we will not categorize, but are necessary for various technical reasons.</p>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set the region subgrid resolution</span>
+<span class="n">region_subgrid_delta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="mf">0.0</span>
+
+<span class="c">! Set to adjust the wet deposition based on assumptions about the vertical distribution</span>
+<span class="n">adjust_wetdepo_integral_to_lowest_layer_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Set the population data type</span>
+<span class="n">population_data_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+
+<span class="c">! Set path and filenames for population density proxy data for calculation of exposure</span>
+<span class="n">read_population_from_netcdf_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">pathname_population</span><span class="p">(</span><span class="n">population_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;{local_dir}/uemep_demo/model_input/heating/&quot;</span>
+<span class="n">filename_population</span><span class="p">(</span><span class="n">population_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;europe_latlon_demo.nc&quot;</span>
+<span class="n">var_name_population_nc</span><span class="p">(</span><span class="n">population_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Band1&quot;</span>
+<span class="n">limit_population_delta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="mf">0.0</span>
+
+<span class="c">! Set to derive secondary organic aerosols</span>
+<span class="n">derive_SOA_from_other_species</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="c">! Include EMEP sources</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">traffic_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">shipping_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span><span class="w"> </span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">agriculture_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">heating_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">industry_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">publicpower_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">fugitive_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">solvents_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">aviation_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">offroad_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">waste_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">livestock_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">calculate_EMEP_source</span><span class="p">(</span><span class="n">other_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+
+<span class="n">use_phi_for_invL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="n">var_name_nc</span><span class="p">(</span><span class="n">phi_nc_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;phih_10m&#39;</span>
+</code></pre></div>
+
+<h2>Running uEMEP <a name="running-uemep"></a></h2>
+<p>uEMEP is now configured to calculate downscaled concentrations of NOx, NO2, PM25 and PM10, based on EMEP emission sources from traffic, residential heating and shipping.</p>
+<p>To run the uEMEP with this configuration, run the executable with the configuration file as the first argument, and a string for the intended date as the second string. In this case, the EMEP data are annual averages, and it is enough to provide the year followed by january 1st, i.e., <code>20220101</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="o">{</span>local_dir<span class="o">}</span>/uemep_demo/bin
+./uemep<span class="w"> </span>../config_files/uemep_demo_config.txt<span class="w"> </span><span class="s2">&quot;20220101&quot;</span>
+</code></pre></div>
+
+<p>As uEMEP runs, it will output details to the terminal.</p>
+<p>The output will be placed in <code>{local_dir}/uemep_demo/model_output/</code>. Further analyses of the output is beyond the scope of this tutorial, but <code>ncview</code> and <code>ncdump</code> are excellent applications to assess the content of the results:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Go to the results folder</span>
+<span class="nb">cd</span><span class="w"> </span><span class="o">{</span>local_dir<span class="o">}</span>/uemep_demo/model_output
+
+<span class="c1"># Install ncview and ncdump</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>ncview<span class="w"> </span>netcdf-bin
+
+<span class="c1"># Print the content of the netcdf </span>
+ncdump<span class="w"> </span>-h<span class="w"> </span>uEMEP_uemep_demo_20220101_00.nc
+
+<span class="c1"># Investigate the content of the netcdf using ncview</span>
+ncview<span class="w"> </span>uEMEP_uemep_demo_20220101_00.nc
+</code></pre></div>
+
+<h3>Multiple configuration files <a name="multiple-configuration-files"></a></h3>
+<h3>Running in parallel <a name="running-in-parallel"></a></h3>
+<h2>References</h2>
+<p>Denby, B.R., Gauss, M., Wind, P., Mu, Q., Wærsted, E.G., Fagerli, H., Valdebenito, A., Klein, H. 2020. Description of the uEMEP_v5 downscaling approach for the EMEP MSC-W chemistry transport model. Geoscientified Model Development 13, 6303-6323. https://doi.org/10.5194/gmd-13-6303-2020</p>
+<p>Denby, B.R., Klimont, Z., Nyiri, A., Kiesewetter, G., Heyes, C., Fagerli, H. 2024. Future scenarios for air quality in Europe, the Western Balkans and EECCA countries: An assessment for the Gothenburg protocol review. Atmospheric Environment 333, 120602. https://doi.org/10.1016/j.atmosenv.2024.120602</p>
+<p>Mu, Q., Denby, B.R., Wærsted, E.G., Fagerli, H. 2022. Downscaling of air pollutants in Europe using uEMEP_v6. Geoscientific Model Development 15, 449-465. https://doi.org/10.5194/gmd-15-449-2022</p>
+    </div>
+  </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              uEMEP
+ was developed by Norwegian Meteorological Institute<br>              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>
