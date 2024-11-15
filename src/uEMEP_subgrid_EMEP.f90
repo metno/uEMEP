@@ -530,7 +530,7 @@ contains
 
             subgrid(:,:,:,emep_local_subgrid_index,:,:)=0
             comp_EMEP_subgrid=0
-            species_EMEP_subgrid=0
+            if (save_emep_species) species_EMEP_subgrid = 0
 
             !Loop through the subgrids and allocate the temp_EMEP grids using area weighting
             do j=1,subgrid_dim(y_dim_index)
