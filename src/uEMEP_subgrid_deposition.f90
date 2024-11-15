@@ -10,7 +10,7 @@ module subgrid_deposition
         gauss_plume_cartesian_sigma_func
     use kz_functions, only: z_centremass_gauss_func, u_profile_neutral_val_func, &
         uEMEP_set_dispersion_sigma_Kz
-    use mod_area_interpolation, only: area_weighted_interpolation_function, &
+    use area_interpolation_functions, only: area_weighted_interpolation_function, &
         area_weighted_extended_interpolation_function
     use mod_rargsort, only: rargsort
 

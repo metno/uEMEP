@@ -2,7 +2,7 @@ module auto_subgrid
 
     use uemep_configuration
     use uEMEP_definitions
-    use mod_area_interpolation, only: area_weighted_interpolation_function
+    use area_interpolation_functions, only: area_weighted_interpolation_function
     use mod_lambert_projection, only: LL2PROJ, PROJ2LL
     use netcdf
 

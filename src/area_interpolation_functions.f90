@@ -1,4 +1,4 @@
-module mod_area_interpolation
+module area_interpolation_functions
 
     implicit none
     private
@@ -206,5 +206,5 @@ contains
         res = zval
     end function area_weighted_extended_vectorgrid_interpolation_function
 
-end module mod_area_interpolation
+end module area_interpolation_functions
 

@@ -3,7 +3,7 @@ module read_ssb_data
     use uemep_configuration
     use utility_functions, only: ll2utm, ll2ltm
     use mod_lambert_projection, only: LL2LAEA, PROJ2LL
-    use mod_area_interpolation, only: area_weighted_extended_vectorgrid_interpolation_function
+    use area_interpolation_functions, only: area_weighted_extended_vectorgrid_interpolation_function
 
     implicit none
     private
