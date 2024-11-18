@@ -1,4 +1,5 @@
 module area_interpolation_functions
+    !! The module provides functions for performing area-weighted intepolations on 2D grids.
 
     implicit none
     private
