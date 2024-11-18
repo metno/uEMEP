@@ -574,13 +574,19 @@ contains
                                     else
                                         f_no2_isource = f_no2_emep
                                     end if
-                                    ! calculate NO2/NOx ratio in the background
-                                    f_no2_bg = no2_bg / nox_bg
-                                    ! get semilocal contribution to NOx from this source
-                                    nox_semiloc_isource = subgrid_EMEP_semilocal_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_index))
-                                    ! calculate NO2 and O3 semilocal contribution from the source, assuming the NO2/NOx ratio is the same as in background
-                                    comp_semilocal_source_subgrid_from_in_region(i,j,t,no2_index,i_source) = f_no2_bg * nox_semiloc_isource
-                                    comp_semilocal_source_subgrid_from_in_region(i,j,t,o3_index,i_source) = -48./46.*(f_no2_bg - f_no2_isource) * nox_semiloc_isource
+                                    if (nox_bg > epsilon0) then
+                                        ! calculate NO2/NOx ratio in the background
+                                        f_no2_bg = min(1.0, max(0.0, no2_bg / nox_bg))
+                                        ! get semilocal contribution to NOx from this source
+                                        nox_semiloc_isource = subgrid_EMEP_semilocal_from_in_region(i,j,t,i_source,pollutant_loop_back_index(nox_index))
+                                        ! calculate NO2 and O3 semilocal contribution from the source, assuming the NO2/NOx ratio is the same as in background
+                                        comp_semilocal_source_subgrid_from_in_region(i,j,t,no2_index,i_source) = f_no2_bg * nox_semiloc_isource
+                                        comp_semilocal_source_subgrid_from_in_region(i,j,t,o3_index,i_source) = -48./46.*(f_no2_bg - f_no2_isource) * nox_semiloc_isource
+                                    else
+                                        ! special case: if NOx background is too small, set all semilocal contributions to zero too
+                                        comp_semilocal_source_subgrid_from_in_region(i,j,t,no2_index,i_source) = 0.0
+                                        comp_semilocal_source_subgrid_from_in_region(i,j,t,o3_index,i_source) = 0.0
+                                    end if
                                 end if
                             end do
 
