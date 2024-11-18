@@ -51,7 +51,7 @@ contains
             do jjj = j-1, j+1
                 do iii = i-1, i+1
                     jj = max(jjj,1); jj = min(jj,ydim)
-                    ii = max(iii,1); ii = min(jj,xdim)
+                    ii = max(iii,1); ii = min(ii,xdim)
                     xpos_min = max(xpos_area_min, xgrid(ii,jj) - delta(1)/2.0)
                     xpos_max = min(xpos_area_max, xgrid(ii,jj) + delta(1)/2.0)
                     ypos_min = max(ypos_area_min, ygrid(ii,jj) - delta(2)/2.0)
