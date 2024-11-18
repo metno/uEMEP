@@ -22,7 +22,7 @@ contains
         real :: sum_weight
 
         real :: weighting
-        integer :: i, j, ii, jj
+        integer :: i, j, ii, jj, iii, jjj
         real :: xpos_area_max, xpos_area_min, ypos_area_max, ypos_area_min
         real :: xpos_max, xpos_min, ypos_max, ypos_min
 
@@ -35,8 +35,6 @@ contains
         ! Find grid index for position val
         i = 1 + floor((xval - xgrid(1,1))/delta(1) + 0.5)
         j = 1 + floor((yval - ygrid(1,1))/delta(2) + 0.5)
-        i = max(1,i); i = min(xdim,i)
-        j = max(1,j); j = min(ydim,j)
 
         if (i .lt. 1 .or. j .lt. 1 .or. i .gt. xdim .or. j .gt. ydim) then
             write(*,'(A,4i6)') 'Interpolation out of range in area_weighted_interpolation_function. Stopping. (i,j,xdim,ydim)', i, j, xdim, ydim
@@ -50,9 +48,10 @@ contains
 
             zval = 0.0
             sum_weight = 0.0
-
-            do jj = j-1, j+1
-                do ii = i-1, i+1
+            do jjj = j-1, j+1
+                do iii = i-1, i+1
+                    jj = max(jjj,1); jj = min(jj,ydim)
+                    ii = max(iii,1); ii = min(jj,xdim)
                     xpos_min = max(xpos_area_min, xgrid(ii,jj) - delta(1)/2.0)
                     xpos_max = min(xpos_area_max, xgrid(ii,jj) + delta(1)/2.0)
                     ypos_min = max(ypos_area_min, ygrid(ii,jj) - delta(2)/2.0)
@@ -68,8 +67,11 @@ contains
                 enddo
             enddo
         endif
-
-        res = zval
+        if (sum_weight > 0.0) then
+            res = zval / sum_weight
+        else
+            res = 0.0
+        end if
     end function area_weighted_interpolation_function
 
     function area_weighted_extended_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval, delta_val) result(res)
@@ -98,8 +100,6 @@ contains
         ! Find grid index for position val
         i = 1 + floor((xval - xgrid(1,1))/delta(1) + 0.5)
         j = 1 + floor((yval - ygrid(1,1))/delta(2) + 0.5)
-        i = max(1,i); i = min(xdim,i)
-        j = max(1,j); j = min(ydim,j)
 
         if (i .lt. 1 .or. j .lt. 1 .or. i .gt. xdim .or. j .gt. ydim) then
             write(*,'(A,4i6)') 'Interpolation out of range in area_weighted_extended_interpolation_function. Stopping. (i,j,xdim,ydim)', i, j, xdim, ydim
@@ -135,7 +135,11 @@ contains
                 enddo
             enddo
         endif
-        res = zval
+        if (sum_weight > 0.0) then
+            res = zval / sum_weight
+        else
+            res = 0.0
+        endif
     end function area_weighted_extended_interpolation_function
 
     function area_weighted_extended_vectorgrid_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval, delta_val) result(res)
@@ -165,9 +169,6 @@ contains
         ! Find grid index for position val
         i = 1 + floor((xval-xgrid(1))/delta(1) + 0.5)
         j = 1 + floor((yval-ygrid(1))/delta(2) + 0.5)
-
-        i = max(1,i); i = min(xdim,i)
-        j = max(1,j); j = min(ydim,j)
 
         if (i .lt. 1 .or. j .lt. 1 .or. i .gt. xdim .or. j .gt. ydim) then
             write(*,'(A,4i6)') 'Interpolation out of range in area_weighted_extended_interpolation_function. Stopping. (i,j,xdim,ydim)', i, j, xdim, ydim
@@ -203,7 +204,11 @@ contains
                 enddo
             enddo
         endif
-        res = zval
+        if (sum_weight > 0.0) then
+            res = zval / sum_weight
+        else
+            res = 0.0
+        end if
     end function area_weighted_extended_vectorgrid_interpolation_function
 
 end module area_interpolation_functions
