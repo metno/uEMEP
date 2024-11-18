@@ -271,7 +271,7 @@ contains
                                                 end if
                                             end do
                                         end do
-                                        subgrid(i,j,t,proxy_subgrid_index,i_source,i_pollutant)=area_weighted_interpolation_function(xgrid,ygrid,zgrid,xdim,ydim,delta,xval,yval)
+                                        subgrid(i,j,t,proxy_subgrid_index,i_source,i_pollutant)=area_weighted_interpolation_function(xgrid,ygrid,zgrid,delta,xval,yval)
 
                                         ! Travel time interpolation as well
                                         do jj = 1, 3
@@ -284,7 +284,7 @@ contains
                                                 end if
                                             end do
                                         end do
-                                        traveltime_subgrid(i,j,t,1,i_pollutant) = area_weighted_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval)
+                                        traveltime_subgrid(i,j,t,1,i_pollutant) = area_weighted_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval)
 
                                         do jj = 1, 3
                                             do ii = 1, 3
@@ -296,7 +296,7 @@ contains
                                                 end if
                                             end do
                                         end do
-                                        traveltime_subgrid(i,j,t,2,i_pollutant) = area_weighted_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval)
+                                        traveltime_subgrid(i,j,t,2,i_pollutant) = area_weighted_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval)
                                     end do
                                 end do
                             end if

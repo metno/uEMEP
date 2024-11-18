@@ -119,9 +119,9 @@ contains
                     do i_pollutant=1,n_pollutant_loop
                         do tt=1,subgrid_dim(t_dim_index)
                             temp(tt,2)=area_weighted_extended_interpolation_function(x_integral_subgrid,y_integral_subgrid,integral_subgrid(:,:,tt,hmix_integral_subgrid_index,i_source,i_pollutant) &
-                                ,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_delta(x_dim_index),x_subgrid(i,j),y_subgrid(i,j),delta_area)
+                                ,integral_subgrid_delta(x_dim_index),x_subgrid(i,j),y_subgrid(i,j),delta_area)
                             temp(tt,1)=area_weighted_extended_interpolation_function(x_integral_subgrid,y_integral_subgrid,integral_subgrid(:,:,tt,hsurf_integral_subgrid_index,i_source,i_pollutant) &
-                                ,integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),integral_subgrid_delta(x_dim_index),x_subgrid(i,j),y_subgrid(i,j),delta_area)
+                                ,integral_subgrid_delta(x_dim_index),x_subgrid(i,j),y_subgrid(i,j),delta_area)
 
                             !ratio(tt,i_source,i_pollutant)=temp(tt,2)/temp(tt,1)*H_emep/h_mix_loc(tt)
                             ratio(tt,i_source,i_pollutant)=temp(tt,2)/temp(tt,1)*H_emep/h_mix_loc(tt)

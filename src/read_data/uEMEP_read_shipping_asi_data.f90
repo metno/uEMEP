@@ -725,7 +725,7 @@ contains
                     !Interpolate on same grid then scale, equivalent to interpolating density and then recalculating
                     proxy_emission_subgrid(i,j,source_index,:)=area_weighted_extended_vectorgrid_interpolation_function( &
                         real(var2d_nc_dp(1:dim_length_shipping_nc(x_dim_nc_index),x_dim_nc_index))*correct_lon(1),real(var2d_nc_dp(1:dim_length_shipping_nc(y_dim_nc_index),y_dim_nc_index)) &
-                        ,shipping_nc_dp(:,:,i_ship),dim_length_shipping_nc(x_dim_nc_index),dim_length_shipping_nc(y_dim_nc_index) &
+                        ,shipping_nc_dp(:,:,i_ship) &
                         ,delta_shipping_nc*correct_lon,temp_lon(1)*correct_lon(1),temp_lat(1),delta_shipping_nc*correct_lon)
 
                     temp_scale=(temp_delta(1)*correct_lon(1)*temp_delta(2)*correct_lon(2))/(delta_shipping_nc(1)*correct_lon(1)*delta_shipping_nc(2)*correct_lon(2))

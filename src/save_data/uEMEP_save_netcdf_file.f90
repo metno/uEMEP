@@ -2682,7 +2682,7 @@ contains
         delta(2)=(y_array(1,2)-y_array(1,1))
         do rr=1,nr
             do tr=1,nt
-                val_rec(rr,tr)=area_weighted_interpolation_function(x_array,y_array,val_array(:,:,tr),nx,ny,delta,x_rec(rr),y_rec(rr))
+                val_rec(rr,tr)=area_weighted_interpolation_function(x_array,y_array,val_array(:,:,tr),delta,x_rec(rr),y_rec(rr))
             enddo
         enddo
 

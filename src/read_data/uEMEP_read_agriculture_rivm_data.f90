@@ -199,7 +199,7 @@ contains
                     do i=i_start,i_end
                         do j=j_start,j_end
                             if (i.gt.1.and.i.lt.emission_subgrid_dim(x_dim_index,source_index).and.j.gt.1.and.j.lt.emission_subgrid_dim(y_dim_index,source_index)) then
-                                temp_emission=area_weighted_extended_interpolation_function(x_temp,y_temp,z_temp,3,3, &
+                                temp_emission=area_weighted_extended_interpolation_function(x_temp,y_temp,z_temp, &
                                     nh3_gridsize,x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index),emission_subgrid_delta(:,source_index))
                                 proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_nc_index))= &
                                     proxy_emission_subgrid(i,j,source_index,pollutant_loop_back_index(nh3_nc_index))+temp_emission*nh3emission_scale

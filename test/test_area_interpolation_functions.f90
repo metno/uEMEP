@@ -29,7 +29,7 @@ program test_area_interpolation_functions
     xval = 2.0
     yval = 2.0
     expected = 50.0
-    result = area_weighted_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval)
+    result = area_weighted_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 1 failed! Routine: area_weighted_interpolation_function"
@@ -39,7 +39,7 @@ program test_area_interpolation_functions
     xval = 0.50001
     yval = 0.50001
     expected = 10.0
-    result = area_weighted_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval)
+    result = area_weighted_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 2 failed! Routine: area_weighted_interpolation_function"
@@ -49,7 +49,7 @@ program test_area_interpolation_functions
     xval = 3.49999
     yval = 3.49999
     expected = 90.0
-    result = area_weighted_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval)
+    result = area_weighted_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 3 failed! Routine: area_weighted_interpolation_function"
@@ -60,7 +60,7 @@ program test_area_interpolation_functions
     yval = 2.0
     delta_val = [2.0, 2.0]
     expected = 50.0
-    result = area_weighted_extended_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval, delta_val)
+    result = area_weighted_extended_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval, delta_val)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 4 failed! Routine: area_weighted_extended_interpolation_function"
@@ -70,7 +70,7 @@ program test_area_interpolation_functions
     xval = 0.50001
     yval = 0.50001
     expected = 10.0002
-    result = area_weighted_extended_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval, delta_val)
+    result = area_weighted_extended_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval, delta_val)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 5 failed! Routine: area_weighted_extended_interpolation_function"
@@ -80,7 +80,7 @@ program test_area_interpolation_functions
     xval = 3.49999
     yval = 3.49999
     expected = 89.99980
-    result = area_weighted_extended_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval, delta_val)
+    result = area_weighted_extended_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval, delta_val)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 6 failed! Routine: area_weighted_extended_interpolation_function"
@@ -91,7 +91,7 @@ program test_area_interpolation_functions
     yval = 1.8
     delta_val = [1.0, 1.0]
     expected = 45.5
-    result = area_weighted_extended_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval, delta_val)
+    result = area_weighted_extended_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval, delta_val)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 7 failed! Routine: area_weighted_extended_interpolation_function"
@@ -102,7 +102,7 @@ program test_area_interpolation_functions
     yval = 2.0
     delta_val = [2.0, 2.0]
     expected = 50.0
-    result = area_weighted_extended_vectorgrid_interpolation_function(xgrid_vec, ygrid_vec, zgrid, xdim, ydim, delta, xval, yval, delta_val)
+    result = area_weighted_extended_vectorgrid_interpolation_function(xgrid_vec, ygrid_vec, zgrid, delta, xval, yval, delta_val)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 8 failed! Routine: area_weighted_extended_vectorgrid_interpolation_function"
@@ -112,7 +112,7 @@ program test_area_interpolation_functions
     xval = 0.50001
     yval = 0.50001
     expected = 10.0002
-    result = area_weighted_extended_vectorgrid_interpolation_function(xgrid_vec, ygrid_vec, zgrid, xdim, ydim, delta, xval, yval, delta_val)
+    result = area_weighted_extended_vectorgrid_interpolation_function(xgrid_vec, ygrid_vec, zgrid, delta, xval, yval, delta_val)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 9 failed! Routine: area_weighted_extended_vectorgrid_interpolation_function"
@@ -122,7 +122,7 @@ program test_area_interpolation_functions
     xval = 3.49999
     yval = 3.49999
     expected = 89.99980
-    result = area_weighted_extended_vectorgrid_interpolation_function(xgrid_vec, ygrid_vec, zgrid, xdim, ydim, delta, xval, yval, delta_val)
+    result = area_weighted_extended_vectorgrid_interpolation_function(xgrid_vec, ygrid_vec, zgrid, delta, xval, yval, delta_val)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 10 failed! Routine: area_weighted_extended_vectorgrid_interpolation_function"
@@ -133,7 +133,7 @@ program test_area_interpolation_functions
     yval = 1.93
     delta_val = [1.0, 1.0]
     expected = 46.7
-    result = area_weighted_extended_vectorgrid_interpolation_function(xgrid_vec, ygrid_vec, zgrid, xdim, ydim, delta, xval, yval, delta_val)
+    result = area_weighted_extended_vectorgrid_interpolation_function(xgrid_vec, ygrid_vec, zgrid, delta, xval, yval, delta_val)
     if (abs(result - expected) > 1.0e-5) then
         ok = .false.
         print "(a)", "Test case 11 failed! Routine: area_weighted_extended_vectorgrid_interpolation_function"
