@@ -5,6 +5,7 @@ module auto_subgrid
     use mod_area_interpolation, only: area_weighted_interpolation_function
     use mod_lambert_projection, only: LL2PROJ, PROJ2LL
     use netcdf
+    use uemep_constants, only: epsilon0
 
     implicit none
     private
@@ -474,8 +475,8 @@ contains
         integer region_mask_projection_type
         double precision region_mask_projection_attributes(10)
         ! the x and y coordinates
-        real, allocatable :: x_values_regionmask(:)
-        real, allocatable :: y_values_regionmask(:)
+        double precision, allocatable :: x_values_regionmask(:)
+        double precision, allocatable :: y_values_regionmask(:)
         ! the region ID data themselves
         integer, allocatable :: region_mask(:, :)
         ! assumed names for dimensions of the region mask file
@@ -483,7 +484,7 @@ contains
         ! length of dimensions of the region mask
         integer nx_regionmask,ny_regionmask
         ! grid spacing of the region mask (to be verified is constant!)
-        real dx_regionmask,dy_regionmask
+        double precision dx_regionmask,dy_regionmask
         ! subset needed to read from the region mask file
         real x_min,x_max,y_min,y_max
         integer x_min_index,x_max_index,y_min_index,y_max_index
@@ -636,14 +637,14 @@ contains
         ! Determine grid spacing and verify it is constant
         dx_regionmask = x_values_regionmask(2) - x_values_regionmask(1)
         do i = 2, nx_regionmask
-            if (.not. (x_values_regionmask(i) - x_values_regionmask(i-1) == dx_regionmask)) then
+            if (.not. (abs((x_values_regionmask(i) - x_values_regionmask(i-1) - dx_regionmask) / dx_regionmask) < epsilon0)) then
                 write(unit_logfile,'(A)') 'Not constant spacing in x coordinate in region mask'
                 stop
             end if
         end do
         dy_regionmask = y_values_regionmask(2) - y_values_regionmask(1)
         do i = 2, ny_regionmask
-            if (.not. (y_values_regionmask(i) - y_values_regionmask(i-1) == dy_regionmask)) then
+            if (.not. (abs((y_values_regionmask(i) - y_values_regionmask(i-1) - dy_regionmask) / dy_regionmask) < epsilon0)) then
                 write(unit_logfile,'(A)') 'Not constant spacing in y coordinate in region mask'
                 stop
             end if
