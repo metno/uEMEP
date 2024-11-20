@@ -1893,9 +1893,10 @@ contains
                 ! fractional position inside the EMEP grid (center is (0,0), lower-left corner is (-0.5,-0.5), upper-right corner is (+0.5,+0.5))
                 ii_frac_target = (x_temp-var1d_nc(ii,x_dim_nc_index))/dgrid_nc(x_dim_nc_index)
                 jj_frac_target = (y_temp-var1d_nc(jj,y_dim_nc_index))/dgrid_nc(y_dim_nc_index)
-                ! verify that this is within 0-1 (if not, crossreference has gone wrong...)
-                if (ii_frac_target < -0.5 .or. ii_frac_target > 0.5 .or. jj_frac_target < -0.5 .or. jj_frac_target > 0.5) then
-                    write(unit_logfile,'(A,2I12)') 'Something went wrong with locating target subgrid within EMEP grid!',ii_frac_target,jj_frac_target
+                ! verify that this is within [-0.5, 0.5] (if not, crossreference has gone wrong...)
+                ! However, allow for a bit of round-off error, so set limits to +/-0.51
+                if (abs(ii_frac_target) > 0.51 .or. abs(jj_frac_target) > 0.51) then
+                    write(unit_logfile,'(A,2I5,A,2F18.10)') 'Something went wrong with locating target subgrid within EMEP grid! At (i,j)=',i,j,'fractions are',ii_frac_target,jj_frac_target
                     stop
                 end if
 
