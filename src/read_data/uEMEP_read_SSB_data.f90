@@ -3,7 +3,7 @@ module read_ssb_data
     use uemep_configuration
     use utility_functions, only: ll2utm, ll2ltm
     use mod_lambert_projection, only: LL2LAEA, PROJ2LL
-    use mod_area_interpolation, only: area_weighted_extended_vectorgrid_interpolation_function
+    use area_interpolation_functions, only: area_weighted_extended_vectorgrid_interpolation_function
 
     implicit none
     private
@@ -837,7 +837,7 @@ contains
                         !Do the interpolation on the same grid then scale afterwards. Equivalent to interpolating density then rescaling with grid size
                         population_subgrid(i,j,SSB_data_type)=area_weighted_extended_vectorgrid_interpolation_function( &
                             real(var2d_nc_dp(1:dim_length_population_nc(x_dim_nc_index),x_dim_nc_index))*correct_lon(1),real(var2d_nc_dp(1:dim_length_population_nc(y_dim_nc_index),y_dim_nc_index)) &
-                            ,population_nc_dp(:,:,population_nc_index),dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index) &
+                            ,population_nc_dp(:,:,population_nc_index) &
                             ,delta_pop_nc*correct_lon,temp_lon(1)*correct_lon(1),temp_lat(1),delta_pop_nc*correct_lon)
 
                         temp_scale=(temp_delta(1)*correct_lon(1)*temp_delta(2)*correct_lon(2))/(delta_pop_nc(1)*correct_lon(1)*delta_pop_nc(2)*correct_lon(2))
@@ -884,7 +884,7 @@ contains
                         !Interpolate on same grid then scale, equivalent to interpolating density and then recalculating
                         proxy_emission_subgrid(i,j,source_index,:)=area_weighted_extended_vectorgrid_interpolation_function( &
                             real(var2d_nc_dp(1:dim_length_population_nc(x_dim_nc_index),x_dim_nc_index))*correct_lon(1),real(var2d_nc_dp(1:dim_length_population_nc(y_dim_nc_index),y_dim_nc_index)) &
-                            ,population_nc_dp(:,:,population_nc_index),dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index) &
+                            ,population_nc_dp(:,:,population_nc_index) &
                             ,delta_pop_nc*correct_lon,temp_lon(1)*correct_lon(1),temp_lat(1),delta_pop_nc*correct_lon)
 
                         temp_scale=(temp_delta(1)*correct_lon(1)*temp_delta(2)*correct_lon(2))/(delta_pop_nc(1)*correct_lon(1)*delta_pop_nc(2)*correct_lon(2))

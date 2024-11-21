@@ -2,7 +2,7 @@ module auto_subgrid
 
     use uemep_configuration
     use uEMEP_definitions
-    use mod_area_interpolation, only: area_weighted_interpolation_function
+    use area_interpolation_functions, only: area_weighted_interpolation_function
     use mod_lambert_projection, only: LL2PROJ, PROJ2LL
     use netcdf
     use uemep_constants, only: epsilon0, dp
@@ -272,7 +272,7 @@ contains
                                                 end if
                                             end do
                                         end do
-                                        subgrid(i,j,t,proxy_subgrid_index,i_source,i_pollutant)=area_weighted_interpolation_function(xgrid,ygrid,zgrid,xdim,ydim,delta,xval,yval)
+                                        subgrid(i,j,t,proxy_subgrid_index,i_source,i_pollutant)=area_weighted_interpolation_function(xgrid,ygrid,zgrid,delta,xval,yval)
 
                                         ! Travel time interpolation as well
                                         do jj = 1, 3
@@ -285,7 +285,7 @@ contains
                                                 end if
                                             end do
                                         end do
-                                        traveltime_subgrid(i,j,t,1,i_pollutant) = area_weighted_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval)
+                                        traveltime_subgrid(i,j,t,1,i_pollutant) = area_weighted_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval)
 
                                         do jj = 1, 3
                                             do ii = 1, 3
@@ -297,7 +297,7 @@ contains
                                                 end if
                                             end do
                                         end do
-                                        traveltime_subgrid(i,j,t,2,i_pollutant) = area_weighted_interpolation_function(xgrid, ygrid, zgrid, xdim, ydim, delta, xval, yval)
+                                        traveltime_subgrid(i,j,t,2,i_pollutant) = area_weighted_interpolation_function(xgrid, ygrid, zgrid, delta, xval, yval)
                                     end do
                                 end do
                             end if

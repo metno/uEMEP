@@ -2,7 +2,7 @@
 list(APPEND SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/utility_functions.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_definitions.f90
-  ${CMAKE_CURRENT_LIST_DIR}/Area_weighted_interpolation_function.f90
+  ${CMAKE_CURRENT_LIST_DIR}/area_interpolation_functions.f90
   ${CMAKE_CURRENT_LIST_DIR}/lambert_projection.f90
   ${CMAKE_CURRENT_LIST_DIR}/read_esri_ascii_file.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_aggregate_proxy_emission_in_EMEP_grid.f90
