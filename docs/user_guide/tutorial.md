@@ -277,7 +277,7 @@ ustar_min = 0.01
 ! Set to contrain the lower bound for stable Monin-Obukhov length
 lowest_stable_L = 25.0
 
-! Set to contrain the upper bound for unstable Monin-Obukhob length
+! Set to contrain the upper bound for unstable Monin-Obukhov length
 lowest_unstable_L = -10.0
 ```
 
@@ -294,7 +294,7 @@ local_fraction_naming_template_str = 'sec<n>_fraction'
 
 In Mu et al. (2022), three GNFR sectors were downscaled including traffic, residential heating and shipping. Denby et al. (2024) extended this list to include aviation and off road emission sources. In this tutorial, we will use the simpler setup by Mu et al.
 
-In general, emission redistribution proxy data refers to high resolution spatiotemporal data which can represent the emissions sources. For example, emissions emissions from traffic is high associated with location and size of roads within an EMEP grid cell. Thus, we assume that the sub-grid cell distribution of emissions can be proxied by roadlink information. In the following sections, we present suitable redistribution proxies for traffic, residential heating and shipping.
+In general, emission redistribution proxy data refers to high resolution spatiotemporal data which can represent the emissions sources. For example, emissions from traffic is high associated with location and size of roads within an EMEP grid cell. Thus, we assume that the sub-grid cell distribution of emissions can be proxied by roadlink information. In the following sections, we present suitable redistribution proxies for traffic, residential heating and shipping.
 
 First we specify that local contribution should be calculated based on redistribution of EMEP emissions:
 
@@ -447,7 +447,7 @@ local_fraction_grid_for_EMEP_additional_grid_interpolation = 2
 
 First we define the type of wind data used for dispersion. 
 
-```
+```fortran
 ! Set the wind type used for dispersion
 wind_level_flag = 6
 wind_level_integral_flag = 1
