@@ -13,7 +13,7 @@ list(APPEND SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_dispersion_functions.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_grid_roads.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_Kz_functions.f90
-  ${CMAKE_CURRENT_LIST_DIR}/uEMEP_local_trajectory.f90
+  ${CMAKE_CURRENT_LIST_DIR}/local_trajectory_functions.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_define_subgrid.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_redistribute_data.f90
   ${CMAKE_CURRENT_LIST_DIR}/uEMEP_set_constants.f90

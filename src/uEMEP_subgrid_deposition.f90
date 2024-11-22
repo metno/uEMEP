@@ -4,8 +4,8 @@ module subgrid_deposition
     use set_dispersion_parameters, only: delta_wind_direction, &
         uEMEP_set_dispersion_sigma_PG, uEMEP_set_dispersion_sigma_simple, &
         uEMEP_set_dispersion_params_PG, uEMEP_set_dispersion_params_simple
-    use local_trajectory, only: uEMEP_calculate_all_trajectory, &
-        uEMEP_minimum_distance_trajectory_fast
+    use local_trajectory_functions, only: calculate_all_trajectory, &
+        calculate_minimum_distance_trajectory
     use dispersion_functions, only: gauss_plume_cartesian_sigma_integral_func, &
         gauss_plume_cartesian_sigma_func
     use kz_functions, only: z_centremass_gauss_func, u_profile_neutral_val_func, &
@@ -293,13 +293,13 @@ contains
                             trajectory_vector=NODATA_value
 
                             !Calculate the trajectory for this emission grid
-                            call uEMEP_calculate_all_trajectory(x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
+                            call calculate_all_trajectory(x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
                                 traj_max_index,traj_step_size,trajectory_vector(:,x_dim_index),trajectory_vector(:,y_dim_index))
                         else
                             !Create an artificial trajectory here for the straight line case by making the trajectory step size half the size of the integral grid
                             !Not working!!!!
                             traj_step_size=min(integral_subgrid_max(x_dim_index)-integral_subgrid_min(x_dim_index),integral_subgrid_max(y_dim_index)-integral_subgrid_min(y_dim_index))/2.
-                            call uEMEP_calculate_all_trajectory(x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
+                            call calculate_all_trajectory(x_emission_subgrid(ii,jj,source_index),y_emission_subgrid(ii,jj,source_index),tt, &
                                 traj_max_index,traj_step_size,trajectory_vector(:,x_dim_index),trajectory_vector(:,y_dim_index))
 
                         endif
@@ -381,7 +381,7 @@ contains
                                     precip_loc=meteo_subgrid(i_cross_target_integral,j_cross_target_integral,tt,precip_subgrid_index)
 
                                     !Find the minimum distance to the trajectory and check it is valid (downwind)
-                                    call uEMEP_minimum_distance_trajectory_fast(x_target_subgrid(i,j),y_target_subgrid(i,j), &
+                                    call calculate_minimum_distance_trajectory(x_target_subgrid(i,j),y_target_subgrid(i,j), &
                                         traj_max_index,traj_step_size,trajectory_vector(:,x_dim_index),trajectory_vector(:,y_dim_index),x_loc,y_loc,valid_traj)
 
                                     !valid_traj=.false.
