@@ -4,7 +4,7 @@ module subgrid_deposition
     use set_dispersion_parameters, only: delta_wind_direction, &
         uEMEP_set_dispersion_sigma_PG, uEMEP_set_dispersion_sigma_simple, &
         uEMEP_set_dispersion_params_PG, uEMEP_set_dispersion_params_simple
-    use local_trajectory, only: uEMEP_calculate_all_trajectory, &
+    use local_trajectory_functions, only: uEMEP_calculate_all_trajectory, &
         uEMEP_minimum_distance_trajectory_fast
     use dispersion_functions, only: gauss_plume_cartesian_sigma_integral_func, &
         gauss_plume_cartesian_sigma_func

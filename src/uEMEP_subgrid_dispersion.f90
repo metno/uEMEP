@@ -5,7 +5,7 @@ module subgrid_dispersion
         uEMEP_set_dispersion_sigma_simple, uEMEP_set_dispersion_params_PG, &
         uEMEP_set_dispersion_sigma_Kz_emulator, uEMEP_set_dispersion_params_simple, &
         uEMEP_set_dispersion_sigma_PG
-    use local_trajectory, only: uEMEP_calculate_all_trajectory, &
+    use local_trajectory_functions, only: uEMEP_calculate_all_trajectory, &
         uEMEP_minimum_distance_trajectory_fast
     use dispersion_functions, only: gauss_plume_second_order_rotated_reflected_integral_func, &
         gauss_plume_second_order_rotated_reflected_func, gauss_plume_cartesian_sigma_func, &

@@ -1,4 +1,4 @@
-module local_trajectory
+module local_trajectory_functions
 
     use uemep_constants, only: NODATA_value
     use utility_functions, only: distrl_sqr
@@ -217,5 +217,5 @@ contains
 
     end subroutine uEMEP_minimum_distance_trajectory_fast
 
-end module local_trajectory
+end module local_trajectory_functions
 
