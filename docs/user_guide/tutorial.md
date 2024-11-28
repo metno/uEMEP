@@ -198,11 +198,11 @@ uEMEP can run in two different spatial modes: tiles or stations. When running ti
 
 Here we will downscale tiles, so we set the size of the tile (area) as well as the resolution within the tile.
 
-In this tutorial, the coordinates are defined to cover an area of 50x50 km in the Copenhagen-Malmö general area and with a horizontal resolution of 250 m. Coordinates uses the Lambert Azimuthal Equal Area (LAEA) projection [](https://epsg.io/3035) and have the unit meters. As an approximation, LAEA coordinates for Europe can be extracted from here: [](https://epsg.io/map#srs=3035-1149). Click on "Reproject Map" in the upper right corner. Clicking anywhere in this map will provide the LAEA coordinates. For example, for modeling the city of Paris the lower left coordinate would be 
+Coordinates uses the Lambert Azimuthal Equal Area (LAEA) projection [https://epsg.io/3035](https://epsg.io/3035) and have the unit meters. As an approximation, LAEA coordinates for Europe can be extracted from here: [https://epsg.io/map#srs=3035-1149](https://epsg.io/map#srs=3035-1149). Click on "Reproject Map" in the upper right corner. Clicking anywhere in this map will provide the LAEA coordinates. For example, for modeling the city of Paris the lower left coordinate would be the ones given in the screenshot below:
 
 ![Paris example](../media/epsg_laea_paris_example.png "Paris example")
 
-Remember however that increasing the tile size will increase the execution time and memory use (see [Running in parallel](#running-in-parallel) for modelling larger regions). 
+In this tutorial, the coordinates are defined to cover an area of 50x50 km in the Copenhagen-Malmö general area and with a horizontal resolution of 250 m. 
 
 ```fortran
 ! Set the area to model
@@ -215,6 +215,7 @@ subgrid_max(y_dim_index) = 3645000.0
 subgrid_delta(x_dim_index) = 250.0
 subgrid_delta(y_dim_index) = 250.0
 ```
+Remember that increasing the tile size will increase the execution time and memory use (see [Running in parallel](#running-in-parallel) for modelling larger regions). 
 
 In addition, we provide information on the geographical projection that should be used. As mentioned above we use the Lambert Azimuthal Equal Area (LAEA) projection which is very useful because it is easy to define rectangular tiles which line up when a larger area is split into multiple smaller areas (tiles):
 
@@ -591,8 +592,8 @@ ncview uEMEP_uemep_demo_20220101_00.nc
 
 ## References
 
-Denby, B.R., Gauss, M., Wind, P., Mu, Q., Wærsted, E.G., Fagerli, H., Valdebenito, A., Klein, H. 2020. Description of the uEMEP_v5 downscaling approach for the EMEP MSC-W chemistry transport model. Geoscientified Model Development 13, 6303-6323. https://doi.org/10.5194/gmd-13-6303-2020
+Denby, B.R., Gauss, M., Wind, P., Mu, Q., Wærsted, E.G., Fagerli, H., Valdebenito, A., Klein, H. 2020. Description of the uEMEP_v5 downscaling approach for the EMEP MSC-W chemistry transport model. Geoscientified Model Development 13, 6303-6323. [https://doi.org/10.5194/gmd-13-6303-2020](https://doi.org/10.5194/gmd-13-6303-2020)
 
-Denby, B.R., Klimont, Z., Nyiri, A., Kiesewetter, G., Heyes, C., Fagerli, H. 2024. Future scenarios for air quality in Europe, the Western Balkans and EECCA countries: An assessment for the Gothenburg protocol review. Atmospheric Environment 333, 120602. https://doi.org/10.1016/j.atmosenv.2024.120602
+Denby, B.R., Klimont, Z., Nyiri, A., Kiesewetter, G., Heyes, C., Fagerli, H. 2024. Future scenarios for air quality in Europe, the Western Balkans and EECCA countries: An assessment for the Gothenburg protocol review. Atmospheric Environment 333, 120602. [https://doi.org/10.1016/j.atmosenv.2024.120602](https://doi.org/10.1016/j.atmosenv.2024.120602)
 
-Mu, Q., Denby, B.R., Wærsted, E.G., Fagerli, H. 2022. Downscaling of air pollutants in Europe using uEMEP_v6. Geoscientific Model Development 15, 449-465. https://doi.org/10.5194/gmd-15-449-2022
+Mu, Q., Denby, B.R., Wærsted, E.G., Fagerli, H. 2022. Downscaling of air pollutants in Europe using uEMEP_v6. Geoscientific Model Development 15, 449-465. [https://doi.org/10.5194/gmd-15-449-2022](https://doi.org/10.5194/gmd-15-449-2022)
