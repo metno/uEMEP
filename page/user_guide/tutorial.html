@@ -268,9 +268,9 @@ touch<span class="w"> </span>uemep_demo_config.txt
 <h2>Setting the spatial extent <a name="setting-the-spatial-extent"></a></h2>
 <p>uEMEP can run in two different spatial modes: tiles or stations. When running tiles, the output will be gridded concentrations, whereas when running stations, the output will be the concentration at specific geographical locations. In both cases, some information on the spatial setup is necessary. </p>
 <p>Here we will downscale tiles, so we set the size of the tile (area) as well as the resolution within the tile.</p>
-<p>In this tutorial, the coordinates are defined to cover an area of 50x50 km in the Copenhagen-Malmö general area and with a horizontal resolution of 250 m. Coordinates uses the Lambert Azimuthal Equal Area (LAEA) projection <a href="https://epsg.io/3035"></a> and have the unit meters. As an approximation, LAEA coordinates for Europe can be extracted from here: <a href="https://epsg.io/map#srs=3035-1149"></a>. Click on "Reproject Map" in the upper right corner. Clicking anywhere in this map will provide the LAEA coordinates. For example, for modeling the city of Paris the lower left coordinate would be </p>
+<p>Coordinates uses the Lambert Azimuthal Equal Area (LAEA) projection <a href="https://epsg.io/3035">https://epsg.io/3035</a> and have the unit meters. As an approximation, LAEA coordinates for Europe can be extracted from here: <a href="https://epsg.io/map#srs=3035-1149">https://epsg.io/map#srs=3035-1149</a>. Click on "Reproject Map" in the upper right corner. Clicking anywhere in this map will provide the LAEA coordinates. For example, for modeling the city of Paris the lower left coordinate would be the ones given in the screenshot below:</p>
 <p><img alt="Paris example" src="../media/epsg_laea_paris_example.png" title="Paris example"></p>
-<p>Remember however that increasing the tile size will increase the execution time and memory use (see <a href="#running-in-parallel">Running in parallel</a> for modelling larger regions). </p>
+<p>In this tutorial, the coordinates are defined to cover an area of 50x50 km in the Copenhagen-Malmö general area and with a horizontal resolution of 250 m. </p>
 <div class="codehilite"><pre><span></span><code><span class="c">! Set the area to model</span>
 <span class="n">subgrid_min</span><span class="p">(</span><span class="n">x_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">446500</span><span class="mf">0.0</span>
 <span class="n">subgrid_min</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">359500</span><span class="mf">0.0</span>
@@ -282,6 +282,7 @@ touch<span class="w"> </span>uemep_demo_config.txt
 <span class="n">subgrid_delta</span><span class="p">(</span><span class="n">y_dim_index</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="mf">0.0</span>
 </code></pre></div>
 
+<p>Remember that increasing the tile size will increase the execution time and memory use (see <a href="#running-in-parallel">Running in parallel</a> for modelling larger regions). </p>
 <p>In addition, we provide information on the geographical projection that should be used. As mentioned above we use the Lambert Azimuthal Equal Area (LAEA) projection which is very useful because it is easy to define rectangular tiles which line up when a larger area is split into multiple smaller areas (tiles):</p>
 <div class="codehilite"><pre><span></span><code><span class="c">! Set the projection type and attributes (5 = LAEA)</span>
 <span class="n">projection_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span>
@@ -336,7 +337,7 @@ touch<span class="w"> </span>uemep_demo_config.txt
 <span class="c">! Set to contrain the lower bound for stable Monin-Obukhov length</span>
 <span class="n">lowest_stable_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="mf">5.0</span>
 
-<span class="c">! Set to contrain the upper bound for unstable Monin-Obukhob length</span>
+<span class="c">! Set to contrain the upper bound for unstable Monin-Obukhov length</span>
 <span class="n">lowest_unstable_L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="mf">0.0</span>
 </code></pre></div>
 
@@ -349,7 +350,7 @@ touch<span class="w"> </span>uemep_demo_config.txt
 
 <h2>Emission redistribution proxy data <a name="emission-redistribution-proxy-data"></a></h2>
 <p>In Mu et al. (2022), three GNFR sectors were downscaled including traffic, residential heating and shipping. Denby et al. (2024) extended this list to include aviation and off road emission sources. In this tutorial, we will use the simpler setup by Mu et al.</p>
-<p>In general, emission redistribution proxy data refers to high resolution spatiotemporal data which can represent the emissions sources. For example, emissions emissions from traffic is high associated with location and size of roads within an EMEP grid cell. Thus, we assume that the sub-grid cell distribution of emissions can be proxied by roadlink information. In the following sections, we present suitable redistribution proxies for traffic, residential heating and shipping.</p>
+<p>In general, emission redistribution proxy data refers to high resolution spatiotemporal data which can represent the emissions sources. For example, emissions from traffic is high associated with location and size of roads within an EMEP grid cell. Thus, we assume that the sub-grid cell distribution of emissions can be proxied by roadlink information. In the following sections, we present suitable redistribution proxies for traffic, residential heating and shipping.</p>
 <p>First we specify that local contribution should be calculated based on redistribution of EMEP emissions:</p>
 <div class="codehilite"><pre><span></span><code><span class="c">! Set to distribute EMEP grid emissions to the existing emission subgrid using proxy emission data</span>
 <span class="n">subgrid_emission_distribution_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
@@ -476,9 +477,9 @@ touch<span class="w"> </span>uemep_demo_config.txt
 
 <h3>Wind and dispersion <a name="wind-and-dispersion"></a></h3>
 <p>First we define the type of wind data used for dispersion. </p>
-<div class="codehilite"><pre><span></span><code><span class="p">!</span><span class="w"> </span><span class="nx">Set</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">wind</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nx">used</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">dispersion</span>
-<span class="nx">wind_level_flag</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">6</span>
-<span class="nx">wind_level_integral_flag</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set the wind type used for dispersion</span>
+<span class="n">wind_level_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span>
+<span class="n">wind_level_integral_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
 </code></pre></div>
 
 <p>Next we choose the dispersion scheme and set the parameters. Here we will use the default K scheme, using K from EMEP and variable height. </p>
@@ -598,9 +599,9 @@ ncview<span class="w"> </span>uEMEP_uemep_demo_20220101_00.nc
 <h3>Multiple configuration files <a name="multiple-configuration-files"></a></h3>
 <h3>Running in parallel <a name="running-in-parallel"></a></h3>
 <h2>References</h2>
-<p>Denby, B.R., Gauss, M., Wind, P., Mu, Q., Wærsted, E.G., Fagerli, H., Valdebenito, A., Klein, H. 2020. Description of the uEMEP_v5 downscaling approach for the EMEP MSC-W chemistry transport model. Geoscientified Model Development 13, 6303-6323. https://doi.org/10.5194/gmd-13-6303-2020</p>
-<p>Denby, B.R., Klimont, Z., Nyiri, A., Kiesewetter, G., Heyes, C., Fagerli, H. 2024. Future scenarios for air quality in Europe, the Western Balkans and EECCA countries: An assessment for the Gothenburg protocol review. Atmospheric Environment 333, 120602. https://doi.org/10.1016/j.atmosenv.2024.120602</p>
-<p>Mu, Q., Denby, B.R., Wærsted, E.G., Fagerli, H. 2022. Downscaling of air pollutants in Europe using uEMEP_v6. Geoscientific Model Development 15, 449-465. https://doi.org/10.5194/gmd-15-449-2022</p>
+<p>Denby, B.R., Gauss, M., Wind, P., Mu, Q., Wærsted, E.G., Fagerli, H., Valdebenito, A., Klein, H. 2020. Description of the uEMEP_v5 downscaling approach for the EMEP MSC-W chemistry transport model. Geoscientified Model Development 13, 6303-6323. <a href="https://doi.org/10.5194/gmd-13-6303-2020">https://doi.org/10.5194/gmd-13-6303-2020</a></p>
+<p>Denby, B.R., Klimont, Z., Nyiri, A., Kiesewetter, G., Heyes, C., Fagerli, H. 2024. Future scenarios for air quality in Europe, the Western Balkans and EECCA countries: An assessment for the Gothenburg protocol review. Atmospheric Environment 333, 120602. <a href="https://doi.org/10.1016/j.atmosenv.2024.120602">https://doi.org/10.1016/j.atmosenv.2024.120602</a></p>
+<p>Mu, Q., Denby, B.R., Wærsted, E.G., Fagerli, H. 2022. Downscaling of air pollutants in Europe using uEMEP_v6. Geoscientific Model Development 15, 449-465. <a href="https://doi.org/10.5194/gmd-15-449-2022">https://doi.org/10.5194/gmd-15-449-2022</a></p>
     </div>
   </div>
       <hr>
