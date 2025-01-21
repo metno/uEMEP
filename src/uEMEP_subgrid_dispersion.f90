@@ -5,8 +5,8 @@ module subgrid_dispersion
         uEMEP_set_dispersion_sigma_simple, uEMEP_set_dispersion_params_PG, &
         uEMEP_set_dispersion_sigma_Kz_emulator, uEMEP_set_dispersion_params_simple, &
         uEMEP_set_dispersion_sigma_PG
-    use local_trajectory, only: uEMEP_calculate_all_trajectory, &
-        uEMEP_minimum_distance_trajectory_fast
+    use local_trajectory_functions, only: calculate_all_trajectory, &
+        calculate_minimum_distance_trajectory
     use dispersion_functions, only: gauss_plume_second_order_rotated_reflected_integral_func, &
         gauss_plume_second_order_rotated_reflected_func, gauss_plume_cartesian_sigma_func, &
         gauss_plume_cartesian_sigma_integral_func, &
@@ -291,7 +291,7 @@ contains
                         do i=1,emission_subgrid_dim(x_dim_index,source_index)
 
                             if (sum(temp_emission_subgrid(i,j,:)).ne.0) then
-                                call uEMEP_calculate_all_trajectory(x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index),tt, &
+                                call calculate_all_trajectory(x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index),tt, &
                                     traj_max_index,traj_step_size,trajectory_subgrid(i,j,:,x_dim_index),trajectory_subgrid(i,j,:,y_dim_index))
                             endif
 
@@ -532,10 +532,10 @@ contains
 
                                                     !Calculate the minimum distance to the trajectory. Time consuming
                                                     if (use_target_subgrid) then
-                                                        call uEMEP_minimum_distance_trajectory_fast(x_target_subgrid(i,j),y_target_subgrid(i,j), &
+                                                        call calculate_minimum_distance_trajectory(x_target_subgrid(i,j),y_target_subgrid(i,j), &
                                                             traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                                     else
-                                                        call uEMEP_minimum_distance_trajectory_fast(x_subgrid(i,j),y_subgrid(i,j), &
+                                                        call calculate_minimum_distance_trajectory(x_subgrid(i,j),y_subgrid(i,j), &
                                                             traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
                                                     endif
 
@@ -1247,7 +1247,7 @@ contains
                         do i=1,emission_subgrid_dim(x_dim_index,source_index)
 
                             if (emission_subgrid(i,j,tt,source_index,subsource_index).ne.0) then
-                                call uEMEP_calculate_all_trajectory(x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index),tt, &
+                                call calculate_all_trajectory(x_emission_subgrid(i,j,source_index),y_emission_subgrid(i,j,source_index),tt, &
                                     traj_max_index,traj_step_size,trajectory_subgrid(i,j,:,x_dim_index),trajectory_subgrid(i,j,:,y_dim_index))
                             endif
 
@@ -1418,7 +1418,7 @@ contains
                                             if (use_trajectory_flag(source_index)) then
 
                                                 !Calculate the minimum distance to the trajectory. Time consuming
-                                                call uEMEP_minimum_distance_trajectory_fast(x_integral_subgrid(i,j),y_integral_subgrid(i,j), &
+                                                call calculate_minimum_distance_trajectory(x_integral_subgrid(i,j),y_integral_subgrid(i,j), &
                                                     traj_max_index,traj_step_size,trajectory_subgrid(ii,jj,:,x_dim_index),trajectory_subgrid(ii,jj,:,y_dim_index),x_loc,y_loc,valid_traj)
 
                                             else
