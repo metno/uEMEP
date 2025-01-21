@@ -10,7 +10,7 @@ module subgrid_deposition
         gauss_plume_cartesian_sigma_func
     use kz_functions, only: z_centremass_gauss_func, u_profile_neutral_val_func, &
         uEMEP_set_dispersion_sigma_Kz
-    use mod_area_interpolation, only: area_weighted_interpolation_function, &
+    use area_interpolation_functions, only: area_weighted_interpolation_function, &
         area_weighted_extended_interpolation_function
     use mod_rargsort, only: rargsort
 
@@ -257,7 +257,7 @@ contains
                             do i_pollutant=1,n_pollutant_loop
                                 target_deposition_subgrid(ii,jj,vd_index,i_pollutant)=target_deposition_subgrid(ii,jj,vd_index,i_pollutant)+ &
                                     area_weighted_extended_interpolation_function(x_deposition_subgrid,y_deposition_subgrid,deposition_subgrid(:,:,tt,vd_index,i_pollutant) &
-                                    ,deposition_subgrid_dim(x_dim_index),deposition_subgrid_dim(y_dim_index),deposition_subgrid_delta(:),x_target_subgrid(ii,jj),y_target_subgrid(ii,jj),target_subgrid_delta)
+                                    ,deposition_subgrid_delta(:),x_target_subgrid(ii,jj),y_target_subgrid(ii,jj),target_subgrid_delta)
                             enddo
                         enddo
                     enddo
@@ -619,20 +619,20 @@ contains
                             if (calculate_deposition_flag) then
                                 subgrid(i,j,tt,drydepo_local_subgrid_index,source_index,i_pollutant)=subgrid(i,j,tt,drydepo_local_subgrid_index,source_index,i_pollutant) &
                                     +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,target_deposition_subgrid(:,:,drydepo_index,i_pollutant) &
-                                    ,target_subgrid_dim(x_dim_index),target_subgrid_dim(y_dim_index),target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
+                                    ,target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
                                 subgrid(i,j,tt,wetdepo_local_subgrid_index,source_index,i_pollutant)=subgrid(i,j,tt,wetdepo_local_subgrid_index,source_index,i_pollutant) &
                                     +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,target_deposition_subgrid(:,:,wetdepo_index,i_pollutant) &
-                                    ,target_subgrid_dim(x_dim_index),target_subgrid_dim(y_dim_index),target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
+                                    ,target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
                             endif
                             subgrid(i,j,tt,proxy_subgrid_index,source_index,i_pollutant)=subgrid(i,j,tt,proxy_subgrid_index,source_index,i_pollutant) &
                                 +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,target_subgrid(:,:,i_pollutant) &
-                                ,target_subgrid_dim(x_dim_index),target_subgrid_dim(y_dim_index),target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
+                                ,target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
                             traveltime_subgrid(i,j,tt,1,i_pollutant)=traveltime_subgrid(i,j,tt,1,i_pollutant) &
                                 +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,traveltime_target_subgrid(:,:,1,i_pollutant) &
-                                ,target_subgrid_dim(x_dim_index),target_subgrid_dim(y_dim_index),target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
+                                ,target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
                             traveltime_subgrid(i,j,tt,2,i_pollutant)=traveltime_subgrid(i,j,tt,2,i_pollutant) &
                                 +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,traveltime_target_subgrid(:,:,2,i_pollutant) &
-                                ,target_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
+                                ,target_subgrid_delta(:),x_subgrid(i,j),y_subgrid(i,j))
                         enddo
                     else
                         subgrid(i,j,tt,proxy_subgrid_index,source_index,:)=NODATA_value
@@ -660,7 +660,7 @@ contains
                             do i_pollutant=1,n_pollutant_loop
                                 integral_subgrid(i,j,tt,i_integral,source_index,i_pollutant)=integral_subgrid(i,j,tt,i_integral,source_index,i_pollutant) &
                                     +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,target_vertical_integral_subgrid(:,:,i_integral) &
-                                    ,target_subgrid_dim(x_dim_index),target_subgrid_dim(y_dim_index),target_subgrid_delta(:),x_integral_subgrid(i,j),y_integral_subgrid(i,j))
+                                    ,target_subgrid_delta(:),x_integral_subgrid(i,j),y_integral_subgrid(i,j))
                                 !write(*,*) i,j,i_integral,integral_subgrid(i,j,tt,i_integral,source_index,i_pollutant)
                             enddo
                         enddo

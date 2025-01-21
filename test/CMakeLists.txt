@@ -4,6 +4,7 @@ foreach(execid
     time_functions
     uemep_logger
     io_functions
+    area_interpolation_functions
     )
 
     add_executable(test_${execid} test/test_${execid}.f90)

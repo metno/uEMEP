@@ -14,7 +14,7 @@ module subgrid_dispersion
         gauss_plume_second_order_rotated_integral_func
     use kz_functions, only: z_centremass_gauss_func, u_profile_neutral_val_func, &
         uEMEP_set_dispersion_sigma_Kz
-    use mod_area_interpolation, only: area_weighted_interpolation_function
+    use area_interpolation_functions, only: area_weighted_interpolation_function
 
     implicit none
     private
@@ -1024,13 +1024,13 @@ contains
                             if (use_subgrid(i,j,source_index)) then
                                 do i_pollutant=1,n_pollutant_loop
                                     temp_subgrid(i,j,i_pollutant)=area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,temp_target_subgrid(:,:,i_pollutant) &
-                                        ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
+                                        ,emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
                                     traveltime_subgrid(i,j,tt,1,i_pollutant)=traveltime_subgrid(i,j,tt,1,i_pollutant) &
                                         +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,traveltime_temp_target_subgrid(:,:,1,i_pollutant) &
-                                        ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
+                                        ,emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
                                     traveltime_subgrid(i,j,tt,2,i_pollutant)=traveltime_subgrid(i,j,tt,2,i_pollutant) &
                                         +area_weighted_interpolation_function(x_target_subgrid,y_target_subgrid,traveltime_temp_target_subgrid(:,:,2,i_pollutant) &
-                                        ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
+                                        ,emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
                                     !write(*,*) tt,i,j,temp_subgrid(i,j)
                                     ! New version of in-region, allowing target region to vary within the target grid
                                     ! ****************
@@ -1039,7 +1039,6 @@ contains
                                         i_region = regionindex_loop_back_index(subgrid_region_index(i,j))
                                         subgrid_from_in_region_new(i,j,i_pollutant) = area_weighted_interpolation_function( &
                                             x_target_subgrid,y_target_subgrid,temp_target_subgrid_per_source_region(:,:,i_pollutant,i_region) &
-                                            ,emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index) &
                                             ,emission_subgrid_delta(:,source_index),x_subgrid(i,j),y_subgrid(i,j))
                                     end if
                                     ! ***************
