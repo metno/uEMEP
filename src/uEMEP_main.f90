@@ -73,6 +73,7 @@ program uEMEP
     integer :: source_index
     real :: start_time_cpu, end_time_cpu
     logical :: have_read_emep = .false.
+    logical :: use_default_config = .false.
 
     ! Start timer
     call cpu_Time(start_time_cpu)
@@ -81,7 +82,7 @@ program uEMEP
     model_version_str='7.0.5'
 
     ! Check command line arguments and handle special cases that have to be printed to stdout
-    call check_command_line()
+    call check_command_line(use_default_config)
 
     write(*,*) ''
     write(*,*) '------------------------------------------------------------------------'
@@ -89,7 +90,7 @@ program uEMEP
     write(*,*) '------------------------------------------------------------------------'
 
     ! Read the command line, assigning the configuration file names and the substitution date_str
-    call uEMEP_read_command_line()
+    call uEMEP_read_command_line(use_default_config)
 
     ! Set constants and variable names to be read from EMEP and meteo files
     call uEMEP_set_constants()

@@ -12,12 +12,13 @@ module read_command_line
 
 contains
 
-    subroutine check_command_line()
+    subroutine check_command_line(use_default_config)
         !! Checks that a suitable number of command line arguments has been supplied
         !! and handles some special cases of command line inputs
         !!
         !! 'check_command_line' will write to stdout instead of the log file
         !! to give direct feedback to the user
+        logical, intent(out) :: use_default_config
 
         ! Local variables
         integer :: n_args, i
@@ -44,6 +45,18 @@ contains
             end select
         end do
 
+        ! If only the date is supplied, look for a config file in the current dir
+        if (n_args == 1) then
+            call get_command_argument(1, arg)
+            if (len_trim(arg) == 8) then
+                inquire(file="default_config.txt", exist=use_default_config)
+                if (use_default_config) then
+                    write(*,"(a)") "WARNING: No config files were supplied, using 'default_config.txt'"
+                    return
+                end if
+            end if
+        end if
+
         ! After checking that no special cases are found, check if the number of 
         ! arguments are within acceptable bounds (2:n_max_config_files+1)
         if (n_args < 2) then
@@ -57,11 +70,23 @@ contains
         end if
     end subroutine check_command_line
 
-    subroutine uEMEP_read_command_line()
+    subroutine uEMEP_read_command_line(use_default_config)
         !! Assigns the configuration file name(s) and substitution date_str from the command line
+        logical, intent(in) :: use_default_config
 
         ! Local variables
         integer :: n_args, i
+
+        ! Handle the special case where no config files are supplied, but a default config file is
+        ! present in the current directory
+        if (use_default_config) then
+            n_config_files = 1
+            name_config_file(1) = "default_config.txt"
+            write(*,"(2a)") "name_config_file(1) = ", trim(name_config_file(1))
+            call get_command_argument(1, config_date_str)
+            write(*,"(2a)") "config_date_str = ", trim(config_date_str)
+            return
+        end if
 
         ! Get number of command line arguments
         n_args = command_argument_count()
