@@ -32,6 +32,7 @@ module error_handling
     interface assert
         !! Asserts a condition, and raises an error if violated
         module procedure assert_true
+        module procedure assert_code
     end interface
 
     interface check_equality
@@ -133,5 +134,29 @@ contains
             stop error_code
         end if
     end subroutine assert_true
+
+    subroutine assert_code(code, message, no_error_code)
+        !! Asserts the error code, and terminates with an error message if different from no_error
+        integer, intent(in) :: code
+        character(len=*), intent(in), optional :: message
+        integer, intent(in), optional :: no_error_code
+
+        logical :: assert_condition
+
+        integer :: local_error_code
+        if (present(no_error_code)) then
+            local_error_code = no_error_code
+        else
+            local_error_code = no_error
+        end if
+
+        assert_condition = check_equality(code, local_error_code)
+
+        if (present(message)) then
+            call assert(assert_condition, message, code)
+        else
+            call assert(assert_condition, code=code)
+        end if
+    end subroutine assert_code
 
 end module error_handling
