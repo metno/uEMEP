@@ -19,6 +19,8 @@ module error_handling
     ! Error codes
     integer, parameter, public :: no_error = 0
     integer, parameter, public :: default_error = -1
+    integer, parameter, public :: file_not_found = -2
+    integer, parameter, public :: read_error = -3
 
     ! Precision tolerances
     real, parameter, public :: tol_real = 1.0e-5
