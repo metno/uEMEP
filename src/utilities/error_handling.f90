@@ -21,13 +21,16 @@ module error_handling
     integer, parameter, public :: default_error = -1
     integer, parameter, public :: file_not_found = -2
     integer, parameter, public :: read_error = -3
+    integer, parameter, public :: index_error = -4
+    integer, parameter, public :: allocation_error = -5
+    integer, parameter, public :: invalid_value = -6
 
     ! Precision tolerances
     real, parameter, public :: tol_real = 1.0e-5
     real, parameter, public :: tol_dp = 1.0e-12
 
     ! Public interfaces
-    public :: assert, check_equality
+    public :: assert, check_equality, is_between
 
     interface assert
         !! Asserts a condition, and raises an error if violated
