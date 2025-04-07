@@ -12,4 +12,5 @@ ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_roadlink_data_ascii.f90
 ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_RWC_heating_data.f90
 ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_shipping_asi_data.f90
 ${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_SSB_data.f90
-${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_time_profiles.f90)
+${CMAKE_CURRENT_LIST_DIR}/uEMEP_read_time_profiles.f90
+${CMAKE_CURRENT_LIST_DIR}/pollen_proxy_data.f90)

@@ -3,7 +3,7 @@ module uemep_configuration
     use uEMEP_definitions, only: n_population_index, num_var_nc_name, n_pollutant_nc_index, n_source_nc_index, &
         n_compound_nc_index, num_var_population_nc, num_var_landuse_nc, n_source_index, UTM_projection_index, &
         LCC_projection_index, population_index, max_n_local_fraction_grids, n_dim_index, n_possible_subsource, &
-        n_clc_landuse_index
+        n_clc_landuse_index, num_pollen_nc, num_var_pollen_nc
     use uemep_constants, only: NODATA_value
     use uemep_logger
 
@@ -59,6 +59,11 @@ module uemep_configuration
     character(256) :: filename_timeprofile ! File name for the time profile file
     character(256) :: pathname_timeprofile ! Path name for the time profile file
     character(256) :: pathfilename_timeprofile  ! Combined path and file name for the time profile file
+    character(256) :: filename_pollen(num_pollen_nc)
+    character(256) :: pathname_pollen(num_pollen_nc)
+    character(256) :: pathfilename_pollen(num_pollen_nc)
+    ! character(256) :: filename_pollen_proxy(10) ! File name for pollen proxy input
+    ! character(256) :: pathname_pollen_proxy(10) ! Path name for pollen proxy input
     character(256) :: alternative_meteorology_type = 'meps'
     character(256) :: pathname_region_id = ''
     character(256) :: filename_region_id = ''
@@ -82,6 +87,7 @@ module uemep_configuration
     character(256) :: filename_landuse = ''
     character(256) :: pathname_landuse = ''
     character(256) :: pathfilename_landuse = '' ! Combined path and filename
+    ! character(256) :: pathfilename_pollen_proxy ! Combined path and filename for pollen proxy data
     character(256) :: emission_naming_template_str = 'Sec<n>_Emis_mgm2_'
     character(256) :: pathname_boundingbox = ''
     character(256) :: filename_boundingbox = ''
@@ -89,6 +95,7 @@ module uemep_configuration
     character(256) :: select_country_by_name = ''
     character(256) :: comp_name_nc(n_compound_nc_index)
     character(256) :: var_name_population_nc(num_var_population_nc)
+    character(256) :: var_name_pollen_nc(num_var_pollen_nc)
     character(256) :: local_fraction_naming_template_str = 'sec<n>_local_fraction'
     character(256) :: finished_filename = ''
     character(256) :: finished_subpath = 'finished/'
@@ -97,7 +104,7 @@ module uemep_configuration
     character(256) :: pathname_region_mask = ''
     character(256) :: filename_region_mask = ''
     character(256) :: varname_region_mask = 'region_index'
-
+    ! character(len=256) :: var_name_pollen_proxy_nc(2)
 
     logical :: hourly_calculations = .false.
     logical :: annual_calculations = .false.
@@ -157,6 +164,7 @@ module uemep_configuration
     logical :: save_emissions = .false. ! Output data saving flags
     logical :: save_for_chemistry = .false. ! Output data saving flags
     logical :: save_population = .false. ! Output data saving flags
+    logical :: save_pollen = .false.
     logical :: save_aqi = .true. ! Output data saving flags
     logical :: save_emep_species = .false. ! Output data saving flags
     logical :: save_deposition = .false. ! Output data saving flags
@@ -306,6 +314,7 @@ module uemep_configuration
     real :: limit_shipping_delta = 250.0
     real :: limit_heating_delta = 250.0
     real :: limit_population_delta = 250.0
+    real :: limit_pollen_delta = 250.0
     real :: EMEP_emission_aggregation_period = 1.0
     real :: select_lat_centre_position = 60.0
     real :: select_lon_centre_position = 11.0

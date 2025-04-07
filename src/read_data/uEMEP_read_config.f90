@@ -469,6 +469,13 @@ contains
             filename_population(home_index)=read_name_char('filename_population(home_index)',filename_population(home_index),unit_in,unit_logfile)
             filename_population(municipality_index)=read_name_char('filename_population(municipality_index)',filename_population(municipality_index),unit_in,unit_logfile)
 
+            ! Pollen
+            pathname_pollen(birch_proxy_index) = read_name_char( &
+                "pathname_pollen(birch_proxy_index)", pathname_pollen(birch_proxy_index), unit_in, unit_logfile)
+            filename_pollen(birch_proxy_index) = read_name_char( &
+                "filename_pollen(birch_proxy_index)", filename_pollen(birch_proxy_index), unit_in, unit_logfile)
+            
+
             pathname_receptor=read_name_char('pathname_receptor',pathname_receptor,unit_in,unit_logfile)
             filename_receptor=read_name_char('filename_receptor',filename_receptor,unit_in,unit_logfile)
 
@@ -631,6 +638,7 @@ contains
             save_emep_species=read_name_logical('save_emep_species',save_emep_species,unit_in,unit_logfile)
             save_deposition=read_name_logical('save_deposition',save_deposition,unit_in,unit_logfile)
             save_seasalt=read_name_logical('save_seasalt',save_seasalt,unit_in,unit_logfile)
+            save_pollen=read_name_logical("save_pollen", save_pollen, unit_in, unit_logfile)
 
             lowest_stable_L=read_name_real('lowest_stable_L',lowest_stable_L,unit_in,unit_logfile)
             lowest_unstable_L=read_name_real('lowest_unstable_L',lowest_unstable_L,unit_in,unit_logfile)
@@ -701,6 +709,7 @@ contains
             limit_shipping_delta=read_name_real('limit_shipping_delta',limit_shipping_delta,unit_in,unit_logfile)
             limit_heating_delta=read_name_real('limit_heating_delta',limit_heating_delta,unit_in,unit_logfile)
             limit_population_delta=read_name_real('limit_population_delta',limit_population_delta,unit_in,unit_logfile)
+            limit_pollen_delta=read_name_real("limit_pollen_delta", limit_pollen_delta, unit_in, unit_logfile)
 
             use_user_specified_sectors_flag=read_name_logical('use_user_specified_sectors_flag',use_user_specified_sectors_flag,unit_in,unit_logfile)
             if (use_user_specified_sectors_flag) then
@@ -788,6 +797,10 @@ contains
             !Name of the netcdf variable read for population or dwelling proxy
             var_name_population_nc(population_nc_index)=read_name_char('var_name_population_nc(population_nc_index)',var_name_population_nc(population_nc_index),unit_in,unit_logfile)
             var_name_population_nc(dwelling_nc_index)=read_name_char('var_name_population_nc(dwelling_nc_index)',var_name_population_nc(dwelling_nc_index),unit_in,unit_logfile)
+
+            ! Pollen
+            var_name_pollen_nc(birch_proxy_index) = read_name_char( &
+                "var_name_pollen_nc(birch_proxy_index)", var_name_pollen_nc(birch_proxy_index), unit_in, unit_logfile)
 
             f_no2_emep=read_name_real('f_no2_emep',f_no2_emep,unit_in,unit_logfile)
 

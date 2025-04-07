@@ -111,19 +111,23 @@ module uEMEP_definitions
     integer, parameter :: comax_nc_index = 18
     integer, parameter :: o3max_nc_index = 19
     integer, parameter :: o3_26th_nc_index = 20
-    integer, parameter :: n_compound_nc_index = 20
+
+    ! Pollen "compounds"
+    integer, parameter :: birch_nc_index = 21
+    integer, parameter :: n_compound_nc_index = 21
 
     ! These are only used in names but need to change the variable n_pollutant_nc_index to fit these!
-    integer, parameter :: pmco_nc_index = 21
-    integer, parameter :: all_nc_index = 22
-    integer, parameter :: pm_nc_index = 23
-    integer, parameter :: all_sand_nc_index = 24
-    integer, parameter :: all_salt_nc_index = 25
-    integer, parameter :: all_sand_salt_nc_index = 26
-    integer, parameter :: all_totals_nc_index = 27
-    integer, parameter :: aaqd_totals_nc_index = 28
-    integer, parameter :: gp_totals_nc_index = 29
-    integer, parameter :: op_totals_nc_index = 30
+    integer, parameter :: pmco_nc_index = 22
+    integer, parameter :: all_nc_index = 23
+    integer, parameter :: pm_nc_index = 24
+    integer, parameter :: all_sand_nc_index = 25
+    integer, parameter :: all_salt_nc_index = 26
+    integer, parameter :: all_sand_salt_nc_index = 27
+    integer, parameter :: all_totals_nc_index = 28
+    integer, parameter :: aaqd_totals_nc_index = 29
+    integer, parameter :: gp_totals_nc_index = 30
+    integer, parameter :: op_totals_nc_index = 31
+    integer, parameter :: pollen_nc_index = 32
 
     ! These must be the same as the subgrid source indexes. Should probably just use the one
     integer, parameter :: allsource_nc_index = 1
@@ -150,13 +154,16 @@ module uEMEP_definitions
     integer, parameter :: publicpower_point_nc_index = 20
     integer, parameter :: publicpower_area_nc_index = 21
     integer, parameter :: extrasource_nc_index = 22
-    integer, parameter :: n_source_nc_index = 22
+
+    ! Pollen sources
+    integer, parameter :: birch_source_nc_index = 23
+    integer, parameter :: n_source_nc_index = 23
 
     integer :: convert_GNFR_to_uEMEP_sector_index(n_source_nc_index)
 
     ! Loop for all pollutants to be calculated
     integer :: pollutant_index
-    integer, parameter :: n_pollutant_nc_index = 30 ! Includes the addition naming indexes index
+    integer, parameter :: n_pollutant_nc_index = 32 ! Includes the addition naming indexes index
     integer :: n_pollutant_loop = 1
     integer :: n_emep_pollutant_loop = 1
     integer :: pollutant_loop_index(n_pollutant_nc_index)
@@ -190,6 +197,26 @@ module uEMEP_definitions
     character(256) :: dim_name_landuse_nc(num_dims_landuse_nc)
     integer :: dim_length_landuse_nc(num_dims_landuse_nc)
     integer :: dim_start_landuse_nc(num_dims_landuse_nc) = [1, 1] ! start at first value
+
+    logical :: downscale_pollen = .false.
+    integer, parameter :: num_pollen_nc = 1 !! Number of pollen proxy netcdf files
+    integer :: pollen_file_index(num_pollen_nc)
+    integer, parameter :: num_var_pollen_nc = 1 !! Number of pollen proxy variables in each netcdf file
+    integer, parameter :: num_dims_pollen_nc = 2 !! Number of pollen proxy dimension variables (lon/lat)
+    character(len=256) :: dim_name_pollen_nc(num_dims_pollen_nc) !! Dimension names in the pollen proxy netcdf files
+
+    ! Indices for individual pollen proxies
+    integer, parameter :: birch_proxy_index = 1
+
+    integer :: dim_length_pollen_nc(num_dims_pollen_nc)
+    integer :: dim_start_pollen_nc(num_dims_pollen_nc)
+
+    ! integer, parameter :: num_var_pollen_proxy_nc = 1 ! Assumes pollen proxy files in lat and lon
+    ! integer, parameter :: num_dims_pollen_proxy_nc = 2 ! lon and lat
+    ! character(len=256) :: dim_name_pollen_proxy_nc(num_dims_pollen_proxy_nc,num_pollen_proxy_nc)
+    
+    ! integer :: dim_length_pollen_proxy_nc(num_dims_pollen_proxy_nc,num_pollen_proxy_nc)
+    ! integer :: dim_start_pollen_proxy_nc(num_dims_pollen_proxy_nc,num_pollen_proxy_nc) = 1
 
     ! Dimension netcdf fields
     integer, parameter :: x_dim_nc_index = 1
@@ -364,7 +391,10 @@ module uEMEP_definitions
     integer, parameter :: comax_index = 18
     integer, parameter :: o3max_index = 19
     integer, parameter :: o3_26th_index = 20
-    integer, parameter :: n_compound_index = 20
+
+    ! Pollen "compounds"
+    integer, parameter :: birch_index = 21
+    integer, parameter :: n_compound_index = 21
 
     ! Declare source indexes (type_source) must be the same as source_nc_index
     integer, parameter :: allsource_index = 1
@@ -504,6 +534,18 @@ module uEMEP_definitions
     real, allocatable :: xproj_population_subgrid(:, :)
     real, allocatable :: yproj_population_subgrid(:, :)
 
+    integer :: pollen_subgrid_dim(2)
+    real :: pollen_subgrid_delta(2)
+    real :: pollen_subgrid_min(2)
+    real :: pollen_subgrid_max(2)
+    real, allocatable :: pollen_subgrid(:,:,:) ! i,j,pollen_species
+    real, allocatable :: x_pollen_subgrid(:,:)
+    real, allocatable :: y_pollen_subgrid(:,:)
+    real, allocatable :: lon_pollen_subgrid(:,:)
+    real, allocatable :: lat_pollen_subgrid(:,:)
+    real, allocatable :: xproj_pollen_subgrid(:,:)
+    real, allocatable :: yproj_pollen_subgrid(:,:)
+
     integer, allocatable :: crossreference_target_to_emep_subgrid(:, :, :) ! (i,j,dim)
     integer, allocatable :: crossreference_target_to_localfraction_subgrid(:, :, :, :) ! (i,j,dim,n_lf_grids)
     integer, allocatable :: crossreference_integral_to_emep_subgrid(:, :, :) ! (i,j,dim)
@@ -518,6 +560,7 @@ module uEMEP_definitions
     integer, allocatable :: crossreference_emission_to_landuse_subgrid(:, :, :, :) ! (i,j,dim,n_source)
     integer, allocatable :: crossreference_target_to_deposition_subgrid(:, :, :) ! (i,j,dim)
     integer, allocatable :: crossreference_deposition_to_emep_subgrid(:, :, :) ! (i,j,dim)
+    integer, allocatable :: crossreference_target_to_pollen_subgrid(:,:,:) ! (i,j,dim,pollen_species)
 
     real :: min_link_size = 50.0
     real :: min_adt = 1000.0
@@ -770,6 +813,12 @@ module uEMEP_definitions
     real :: landuse_subgrid_min(2)
     real :: landuse_subgrid_max(2) ! Only x and y
 
+    ! Pollen proxy data
+    ! logical :: read_pollen_proxy_flag(num_pollen_proxy_nc) = .false.
+    ! integer :: pollen_proxy_subgrid_dim(num_dims_pollen_proxy_nc,num_pollen_proxy_nc)
+    ! real :: pollen_proxy_subgrid_min(num_dims_pollen_proxy_nc,num_pollen_proxy_nc)
+    ! real :: pollen_proxy_subgrid_max(num_dims_pollen_proxy_nc,num_pollen_proxy_nc)
+
     integer, parameter :: temp_conif_index = 1
     integer, parameter :: temp_decid_index = 2
     integer, parameter :: med_needle_index = 3
@@ -801,6 +850,16 @@ module uEMEP_definitions
     integer :: landuse_buffer_index(2)
     real :: landuse_buffer_size(2)
 
+    ! real, allocatable :: pollen_proxy_subgrid(:,:,:) ! (i,j,source)
+    ! real, allocatable :: x_pollen_proxy_subgrid(:,:,:)
+    ! real, allocatable :: y_pollen_proxy_subgrid(:,:,:)
+    ! real, allocatable :: lon_pollen_proxy_subgrid(:,:,:)
+    ! real, allocatable :: lat_pollen_proxy_subgrid(:,:,:)
+    ! real, allocatable :: xproj_pollen_proxy_subgrid(:,:,:)
+    ! real, allocatable :: yproj_pollen_proxy_subgrid(:,:,:)
+
+    ! real, allocatable :: pollen_proxy_subgrid_delta(:,:)
+
     character(256) :: deposition_name_nc(n_landuse_index, n_compound_nc_index)
 
     real :: depo_scale_nc(n_compound_nc_index)
@@ -815,6 +874,8 @@ module uEMEP_definitions
     ! Define the aggregation period for EMEP emissions when these are to be used in calculations. Annual is 365*24=8760 or 8784 for leap years
 
     integer :: population_nc_projection_type = LL_projection_index
+
+    integer, parameter :: pollen_nc_projection_type = LL_projection_index
 
     ! Additional multiple local fraction variables
     integer, parameter :: max_n_local_fraction_grids = 3

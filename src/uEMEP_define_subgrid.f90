@@ -540,6 +540,51 @@ contains
             enddo
         enddo
 
+        ! Pollen
+        if (downscale_pollen) then
+            if (allocated(pollen_subgrid)) deallocate(pollen_subgrid)
+            allocate(pollen_subgrid(pollen_subgrid_dim(x_dim_index),pollen_subgrid_dim(y_dim_index),num_pollen_nc))
+            pollen_subgrid = 0.0
+
+            if (allocated(x_pollen_subgrid)) deallocate(x_pollen_subgrid)
+            if (allocated(y_pollen_subgrid)) deallocate(y_pollen_subgrid)
+            if (allocated(lon_pollen_subgrid)) deallocate(lon_pollen_subgrid)
+            if (allocated(lat_pollen_subgrid)) deallocate(lat_pollen_subgrid)
+            if (allocated(xproj_pollen_subgrid)) deallocate(xproj_pollen_subgrid)
+            if (allocated(yproj_pollen_subgrid)) deallocate(yproj_pollen_subgrid)
+
+            allocate(x_pollen_subgrid(pollen_subgrid_dim(x_dim_index),pollen_subgrid_dim(y_dim_index)))
+            allocate(y_pollen_subgrid(pollen_subgrid_dim(x_dim_index),pollen_subgrid_dim(y_dim_index)))
+            allocate(lon_pollen_subgrid(pollen_subgrid_dim(x_dim_index),pollen_subgrid_dim(y_dim_index)))
+            allocate(lat_pollen_subgrid(pollen_subgrid_dim(x_dim_index),pollen_subgrid_dim(y_dim_index)))
+            allocate(xproj_pollen_subgrid(pollen_subgrid_dim(x_dim_index),pollen_subgrid_dim(y_dim_index)))
+            allocate(yproj_pollen_subgrid(pollen_subgrid_dim(x_dim_index),pollen_subgrid_dim(y_dim_index)))
+
+            do j = 1, pollen_subgrid_dim(y_dim_index)
+                do i = 1, pollen_subgrid_dim(x_dim_index)
+                    x_pollen_subgrid(i,j) = pollen_subgrid_min(x_dim_index) + pollen_subgrid_delta(x_dim_index)*(i - 0.5)
+                    y_pollen_subgrid(i,j) = pollen_subgrid_min(y_dim_index) + pollen_subgrid_delta(y_dim_index)*(j - 0.5)
+
+                    call proj2ll(x_pollen_subgrid(i,j), y_pollen_subgrid(i,j), &
+                        lon_pollen_subgrid(i,j), lat_pollen_subgrid(i,j), &
+                        projection_attributes, projection_type)
+                    
+                    select case(EMEP_projection_type)
+                    case(LCC_projection_index)
+                        call lb2lambert2_uEMEP(xproj_pollen_subgrid(i,j), yproj_pollen_subgrid(i,j), &
+                            lon_pollen_subgrid(i,j), lat_pollen_subgrid(i,j), EMEP_projection_attributes)
+                    case(PS_projection_index)
+                        call LL2PS_spherical(xproj_pollen_subgrid(i,j), yproj_pollen_subgrid(i,j), &
+                            lon_pollen_subgrid(i,j), lat_pollen_subgrid(i,j), EMEP_projection_attributes)
+                    case default
+                        xproj_pollen_subgrid(i,j) = lon_pollen_subgrid(i,j)
+                        yproj_pollen_subgrid(i,j) = lat_pollen_subgrid(i,j)
+                    end select
+                end do
+            end do
+        end if
+
+
         !Place some properties in the emission properties subgrid
         do j=1,emission_max_subgrid_dim(y_dim_index)
             do i=1,emission_max_subgrid_dim(x_dim_index)

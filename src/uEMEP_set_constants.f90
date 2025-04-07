@@ -253,6 +253,10 @@ contains
         dim_name_shipping_nc(y_dim_nc_index)='lat'
         var_name_shipping_nc(population_nc_index)='nox'
 
+        ! Pollen
+        dim_name_pollen_nc(x_dim_nc_index) = "lon"
+        dim_name_pollen_nc(y_dim_nc_index) = "lat"
+
         !Additional compounds for chemistry and totals
         comp_name_nc=''
         comp_name_nc(o3_nc_index)='D3_ug_O3'
@@ -505,7 +509,11 @@ contains
         j=j+1;subgrid_t2m_file_index=j
         j=j+1;subgrid_J_file_index=j
         j=j+1;subgrid_meteo_file_index=j
-
+        
+        do i = 1, num_pollen_nc
+            j = j + 1
+            pollen_file_index(i) = j
+        end do
 
         !Set initial values  for the dispersion parameters
         sig_y_00=10.
@@ -787,6 +795,12 @@ contains
             pollutant_loop_index(2)=nh4_nc_index
             pollutant_loop_back_index(nh3_nc_index)=1
             pollutant_loop_back_index(nh4_nc_index)=2
+        elseif (pollutant_index.eq.pollen_nc_index) then
+            ! Included so it can be extended to include additional pollen species
+            n_emep_pollutant_loop=1
+            n_pollutant_loop=1
+            pollutant_loop_index(1)=birch_nc_index
+            pollutant_loop_back_index(birch_nc_index)=1
         else
             n_emep_pollutant_loop=1
             n_pollutant_loop=1
@@ -1350,6 +1364,10 @@ contains
         !save_emission_subgrid_min(y_dim_index)=-6.567275E+05
         !save_emission_subgrid_delta(y_dim_index)=2500.
         !save_emission_subgrid_dim(y_dim_index)=671
+
+        if (calculate_source(birch_index)) then
+            downscale_pollen = .true.
+        end if
 
     end subroutine uEMEP_reset_constants
 

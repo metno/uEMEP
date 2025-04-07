@@ -65,6 +65,7 @@ program uEMEP
     use define_subgrid, only: uEMEP_define_subgrid_extent, uEMEP_define_subgrid
     use calculate_exposure, only: uEMEP_calculate_exposure
     use auto_subgrid, only: uEMEP_region_mask_new
+    use pollen_proxy_data, only: read_pollen_proxy
 
     use uemep_logger
 
@@ -315,6 +316,12 @@ program uEMEP
 
                     if (use_landuse_as_proxy .or. read_landuse_flag) then
                         call uEMEP_read_netcdf_landuse_latlon()
+                    end if
+
+                    if (downscale_pollen) then
+                        do source_index = 1, num_pollen_nc
+                            call read_pollen_proxy(source_index)
+                        end do
                     end if
 
                     ! Autogrid setting for selecting which subgrids to calculate
