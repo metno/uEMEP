@@ -66,9 +66,6 @@ contains
                 deallocate (crossreference_emission_to_landuse_subgrid)
             end if
         end if
-        if (allocated(crossreference_target_to_pollen_subgrid)) then
-            deallocate(crossreference_target_to_pollen_subgrid)
-        end if
 
         ! Allocate arrays
         allocate (crossreference_target_to_emep_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2))
@@ -80,7 +77,6 @@ contains
         allocate (crossreference_integral_to_emission_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),2,n_source_index))
         allocate (crossreference_emission_to_integral_subgrid(emission_max_subgrid_dim(x_dim_index),emission_max_subgrid_dim(y_dim_index),2,n_source_index))
         allocate (crossreference_target_to_population_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2))
-        allocate (crossreference_target_to_pollen_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),2))
 
         if (use_alternative_meteorology_flag) then
             allocate (crossreference_integral_to_meteo_nc_subgrid(integral_subgrid_dim(x_dim_index),integral_subgrid_dim(y_dim_index),2))
@@ -159,13 +155,6 @@ contains
             do i = 1, subgrid_dim(x_dim_index)
                 crossreference_target_to_population_subgrid(i,j,x_dim_index) = 1 + floor((x_subgrid(i,j) - population_subgrid_min(x_dim_index))/population_subgrid_delta(x_dim_index))
                 crossreference_target_to_population_subgrid(i,j,y_dim_index) = 1 + floor((y_subgrid(i,j) - population_subgrid_min(y_dim_index))/population_subgrid_delta(y_dim_index))
-            end do
-        end do
-        write(unit_logfile,"(a)") "Allocation pollen grid index to subgrid index"
-        do j = 1, subgrid_dim(y_dim_index)
-            do i = 1, subgrid_dim(x_dim_index)
-                crossreference_target_to_pollen_subgrid(i,j,x_dim_index) = 1 + floor((x_subgrid(i,j) - pollen_subgrid_min(x_dim_index))/pollen_subgrid_delta(x_dim_index))
-                crossreference_target_to_pollen_subgrid(i,j,y_dim_index) = 1 + floor((y_subgrid(i,j) - pollen_subgrid_min(y_dim_index))/pollen_subgrid_delta(y_dim_index))
             end do
         end do
 
@@ -336,7 +325,68 @@ contains
             end do
         end if
 
+        if (downscale_pollen) then
+            call crossreference_pollen_grids()
+        end if
+
     end subroutine uEMEP_crossreference_grids
+
+    subroutine crossreference_pollen_grids()
+        !! Populate the pollen crossreference grid arrays for the target and emission subgrids
+
+        integer :: i_source, i, j
+
+        ! Target subgrid
+        write(unit_logfile,"(a)") "Allocation pollen grid index to subgrid index"
+        if (allocated(crossreference_target_to_pollen_subgrid)) then
+            deallocate(crossreference_target_to_pollen_subgrid)
+        end if
+        allocate(crossreference_target_to_pollen_subgrid( &
+            subgrid_dim(x_dim_index), subgrid_dim(y_dim_index), 2))
+
+        do j = 1, subgrid_dim(y_dim_index)
+            do i = 1, subgrid_dim(x_dim_index)
+                crossreference_target_to_pollen_subgrid(i,j,x_dim_index) = &
+                    1 + floor((x_subgrid(i,j) &
+                    - pollen_subgrid_min(x_dim_index))/pollen_subgrid_delta(x_dim_index))
+                crossreference_target_to_pollen_subgrid(i,j,y_dim_index) = &
+                    1 + floor((y_subgrid(i,j) &
+                    - pollen_subgrid_min(y_dim_index))/pollen_subgrid_delta(y_dim_index))
+            end do
+        end do
+
+        ! Emission subgrid
+        write(unit_logfile,"(a)") "Allocation pollen grid index to emission subgrid index"
+        if (allocated(crossreference_emission_to_pollen_subgrid)) then
+            deallocate(crossreference_emission_to_pollen_subgrid)
+        end if
+        allocate(crossreference_emission_to_pollen_subgrid( &
+            emission_max_subgrid_dim(x_dim_index), emission_max_subgrid_dim(y_dim_index), 2))
+
+        do i_source = 1, n_source_index
+            if (.not. calculate_source(i_source)) cycle
+            print *, i_source
+            do j = 1, emission_subgrid_dim(y_dim_index,i_source)
+                do i = 1, emission_subgrid_dim(x_dim_index,i_source)
+                    crossreference_emission_to_pollen_subgrid(i,j,x_dim_index) = &
+                        1 + floor((x_emission_subgrid(i,j,i_source) &
+                        - pollen_subgrid_min(x_dim_index))/pollen_subgrid_delta(x_dim_index))
+                    crossreference_emission_to_pollen_subgrid(i,j,y_dim_index) = &
+                        1 + floor((y_emission_subgrid(i,j,i_source) &
+                        - pollen_subgrid_min(y_dim_index))/pollen_subgrid_delta(y_dim_index))
+
+                    ! Constrain to avoid potential invalid values at the grid edge
+                    crossreference_emission_to_pollen_subgrid = max(min( &
+                        crossreference_emission_to_pollen_subgrid(i,j,x_dim_index), &
+                        pollen_subgrid_dim(x_dim_index)), 1)
+                    crossreference_emission_to_pollen_subgrid = max(min( &
+                        crossreference_emission_to_pollen_subgrid(i,j,y_dim_index), &
+                        pollen_subgrid_dim(y_dim_index)), 1)
+                end do
+            end do
+        end do
+
+    end subroutine crossreference_pollen_grids
 
 end module crossreference_grids
 
