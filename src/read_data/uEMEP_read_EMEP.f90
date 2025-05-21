@@ -531,6 +531,10 @@ contains
 
                             !Identify the variable name and ID in the nc file
                             var_name_nc_temp=var_name_nc(i,i_pollutant,i_source)
+
+                            ! if (i == conc_nc_index .and. i_source == 1 .and. i_pollutant == birch_nc_index) then
+                            !     print *, var_name_nc_temp
+                            ! end if
                             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                             !write(*,*) 'Status1: ',status_nc,var_id_nc,trim(var_name_nc_temp),i_source
                             !Exception for pm10: read pmco and pm25

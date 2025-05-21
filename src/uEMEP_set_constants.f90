@@ -121,6 +121,9 @@ contains
         var_name_nc(conc_nc_index,pm25_nc_index,extrasource_nc_index)='D3_ug_PPM25'
         var_name_nc(conc_nc_index,pmco_nc_index,extrasource_nc_index)='D3_ug_PPM_C'
 
+        var_name_nc(conc_nc_index,pollen_nc_index,allsource_nc_index) = "pollen"
+        
+
         !Local fractions
         var_name_nc(frac_nc_index,nox_nc_index,traffic_nc_index)='nox_sec07_local_fraction'
         var_name_nc(frac_nc_index,pmco_nc_index,traffic_nc_index)='pmco_sec07_local_fraction'
@@ -140,6 +143,9 @@ contains
         var_name_nc(frac_nc_index,nox_nc_index,industry_nc_index)='nox_sec04_local_fraction'
         var_name_nc(frac_nc_index,pm25_nc_index,industry_nc_index)='pm25_sec04_local_fraction'
         var_name_nc(frac_nc_index,pmco_nc_index,industry_nc_index)='pmco_sec04_local_fraction'
+
+        ! Pollen    qq
+
 
         !Total emissions. These arer reset later
         var_name_nc(emis_nc_index,nh3_nc_index,allsource_nc_index)='Emis_mgm2_nh3'
@@ -456,6 +462,8 @@ contains
         source_file_str(other_index)='other'
         source_file_str(traffic_exhaust_index)='traffic_exhaust'
         source_file_str(traffic_nonexhaust_index)='traffic_nonexhaust'
+
+        source_file_str(birch_source_index) = "birch_source"
 
         do i=1,n_pollutant_nc_index
             pollutant_file_str(i)=var_name_nc(conc_nc_index,i,allsource_nc_index)
@@ -1171,6 +1179,12 @@ contains
                                 var_name_nc(emis_nc_index,i,allsource_nc_index)=trim(prefix_str)//''//trim(postfix_str)//'voc'
                             endif
                         endif
+
+                        ! Fix for pollen
+                        if (i_source == birch_source_nc_index) then
+                            print *, "Setting pollen emission name"
+                            var_name_nc(emis_nc_index,i,birch_source_nc_index) = "Emis_PollenBirch"
+                        end if
                     enddo
                 enddo
             endif
@@ -1256,6 +1270,13 @@ contains
                             if (i_source.eq.allsource_nc_index) then
                                 var_name_nc(frac_nc_loop_index(j),i,allsource_nc_index)=trim(var_name_nc(conc_nc_index,i,allsource_nc_index))//trim(postfix_str)//trim(local_fraction_grid_size_str)
                             endif
+
+                            ! Fix for pollen
+                            if (i_source == birch_source_nc_index) then
+                                var_name_nc(frac_nc_loop_index(j),i,birch_source_nc_index) = "POLLEN_BIRCH_fraction_1x1"
+                                print *, "HEREHREHREHREHRHERHEHREHRHEHRHEHRHE"
+                                print *, i, birch_source_nc_index
+                            end if
                             write(unit_logfile,'(2i6,2a)') i,i_source,'  ',trim(var_name_nc(frac_nc_loop_index(j),i,i_source))
                         endif
                     enddo
@@ -1365,8 +1386,18 @@ contains
         !save_emission_subgrid_delta(y_dim_index)=2500.
         !save_emission_subgrid_dim(y_dim_index)=671
 
-        if (calculate_source(birch_index)) then
+        if (calculate_source(birch_source_index)) then
             downscale_pollen = .true.
+        end if
+
+        if (downscale_pollen) then
+            ! Emissions
+            var_name_nc(emis_nc_index,birch_index,birch_source_nc_index) = "Emis_PollenBirch"
+            write(unit_logfile,"(a,3i3)") " Setting emission name at index: ", emis_nc_index, birch_index, birch_source_nc_index
+
+            ! Concentrations
+            var_name_nc(conc_nc_index,birch_nc_index,allsource_nc_index) = "POLLEN_BIRCH"
+            
         end if
 
     end subroutine uEMEP_reset_constants

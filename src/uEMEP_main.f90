@@ -65,7 +65,7 @@ program uEMEP
     use define_subgrid, only: uEMEP_define_subgrid_extent, uEMEP_define_subgrid
     use calculate_exposure, only: uEMEP_calculate_exposure
     use auto_subgrid, only: uEMEP_region_mask_new
-    use pollen_proxy_data, only: read_pollen_proxy
+    use pollen_proxy_data, only: read_pollen_proxy, redistribute_pollen_emissions
 
     use uemep_logger
 
@@ -322,6 +322,8 @@ program uEMEP
                         do source_index = 1, num_pollen_nc
                             call read_pollen_proxy(source_index)
                         end do
+
+                        call redistribute_pollen_emissions()
                     end if
 
                     ! Autogrid setting for selecting which subgrids to calculate
@@ -361,7 +363,7 @@ program uEMEP
                 call uEMEP_read_time_profiles()
 
                 ! Call grid_roads again to include the time variation from NORTRIP
-                if ( .not. read_subgrid_emission_data) then
+                if ( .not. read_subgrid_emission_data .and. .not. downscale_pollen) then
                     call uEMEP_grid_roads()
                 end if
 

@@ -12,11 +12,12 @@ module pollen_proxy_data
     use error_handling
     use uemep_constants, only: dp, pi
     use uemep_configuration, only: pathfilename_pollen, pathname_pollen, filename_pollen, var_name_pollen_nc, &
-        projection_attributes, projection_type
+        projection_attributes, projection_type, calculate_source
     use uEMEP_definitions, only: unit_logfile, x_dim_nc_index, y_dim_nc_index, x_dim_index, y_dim_index, &
         num_dims_pollen_nc, dim_name_pollen_nc, dim_length_pollen_nc, dim_start_pollen_nc, &
         pollen_subgrid, pollen_subgrid_dim, x_pollen_subgrid, y_pollen_subgrid, &
-        pollen_subgrid_delta, pollen_subgrid_min, pollen_subgrid_max
+        pollen_subgrid_delta, pollen_subgrid_min, pollen_subgrid_max, birch_proxy_index, &
+        n_source_index, emission_subgrid_dim, crossreference_emission_to_pollen_subgrid, proxy_emission_subgrid
     use netcdf
     use mod_lambert_projection, only: proj2ll
 
@@ -24,7 +25,7 @@ module pollen_proxy_data
 
     private
 
-    public :: read_pollen_proxy
+    public :: read_pollen_proxy, redistribute_pollen_emissions
 
     interface read_pollen_proxy
         !! Read pollen proxy data from netcdf
@@ -135,11 +136,18 @@ contains
                 ! Find nearest neighbour and insert value in subgrid
                 i_nearest = 1 + floor((tmp_lon(1) - lonlat_nc(1,x_dim_nc_index))/delta_nc(1) + 0.5)
                 j_nearest = 1 + floor((tmp_lat(1) - lonlat_nc(1,y_dim_nc_index))/delta_nc(2) + 0.5)
-                pollen_subgrid(i,j,i_pollen) = pollen_nc(i_nearest,j_nearest)
+                pollen_subgrid(i,j,i_pollen) = pollen_nc(i_nearest,j_nearest)!/100.0
 
-                call assert(isnan(pollen_subgrid(i,j,i_pollen)), " NaN in pollen proxy subgrid", code=invalid_value)
-                cond = (pollen_subgrid(i,j,i_pollen) < 0.0)
-                call assert(cond, " Negative number of pollen proxy subgrid", code=invalid_value)
+                if (pollen_subgrid(i,j,i_pollen) > 0.5) print *, pollen_subgrid(i,j,i_pollen)
+
+                if (pollen_subgrid(i,j,i_pollen) < 0.0) pollen_subgrid(i,j,i_pollen) = 0.0
+
+                cond = .not. isnan(pollen_subgrid(i,j,i_pollen))
+                call assert(cond, " NaN in pollen proxy subgrid", code=invalid_value)
+
+                ! cond = (pollen_subgrid(i,j,i_pollen) > 0.0)
+                ! print *, cond
+                ! call assert(cond, " Negative number of pollen proxy subgrid", code=invalid_value)
             end do
         end do
 
@@ -167,7 +175,7 @@ contains
         call assert((ncid > 0), " NetCDF ID has to be positive", code=read_error)
         call assert((i_pollen > 0), " Invalid pollen index", code=index_error)
         call assert((buffer_delta >= 0.0), " Buffer delta cannot be a negative number", code=invalid_value)
-        call assert(allocated(lonlat), " Temporary reading array is already allocated", code=allocation_error)
+        call assert(.not. allocated(lonlat), " Temporary reading array is already allocated", code=allocation_error)
 
         write(unit_logfile, "(a)") " Reducing pollen domain for reading"
 
@@ -241,5 +249,28 @@ contains
 
         if (allocated(lonlat)) deallocate(lonlat)
     end subroutine reduce_pollen_proxy_region
+
+    subroutine redistribute_pollen_emissions()
+        integer :: i_source, i, j, i_pollen_index, j_pollen_index
+
+        do i_source = 1, n_source_index
+            if (calculate_source(i_source)) then
+                proxy_emission_subgrid(:,:,i_source,:) = 0.0
+                do j = 1, emission_subgrid_dim(y_dim_nc_index,i_source)
+                    do i = 1, emission_subgrid_dim(x_dim_nc_index,i_source)
+                        
+                        ! Note that this only works with birch as a source for now - extending later
+                        i_pollen_index = crossreference_emission_to_pollen_subgrid(i,j,x_dim_index)
+                        j_pollen_index = crossreference_emission_to_pollen_subgrid(i,j,y_dim_index)
+
+                        proxy_emission_subgrid(i,j,i_source,:) = pollen_subgrid(i_pollen_index,j_pollen_index,birch_proxy_index)
+                    end do
+                end do
+            end if
+        end do
+
+        write(unit_logfile,"(a,2f12.2)") " Pollen emission proxy min and max: ", &
+            minval(proxy_emission_subgrid(:,:,17,:)), maxval(proxy_emission_subgrid(:,:,17,:))
+    end subroutine redistribute_pollen_emissions
 
 end module pollen_proxy_data

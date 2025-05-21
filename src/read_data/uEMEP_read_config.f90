@@ -139,6 +139,9 @@ contains
             calculate_source(livestock_index)=read_name_logical('calculate_source(livestock_index)',calculate_source(livestock_index),unit_in,unit_logfile)
             calculate_source(other_index)=read_name_logical('calculate_source(other_index)',calculate_source(other_index),unit_in,unit_logfile)
 
+            ! Pollen "sources"
+            calculate_source(birch_source_index) = read_name_logical("calculate_source(birch_source_index)", calculate_source(birch_source_index), unit_in, unit_logfile)
+
             !Choose which EMEP sources to include/calculate. Will not be downscaled but will included as gridded source contributions
             !calculate_source(:)=read_name_logical('calculate_source(:)',calculate_source(allsource_index),unit_in,unit_logfile)
             calculate_EMEP_source(traffic_index)=read_name_logical('calculate_EMEP_source(traffic_index)',calculate_EMEP_source(traffic_index),unit_in,unit_logfile)

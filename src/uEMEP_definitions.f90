@@ -148,15 +148,17 @@ module uEMEP_definitions
     integer, parameter :: other_nc_index = 14
     integer, parameter :: traffic_exhaust_nc_index = 15
     integer, parameter :: traffic_nonexhaust_nc_index = 16
-    integer, parameter :: traffic_gasoline_nc_index = 17
-    integer, parameter :: traffic_diesel_nc_index = 18
-    integer, parameter :: traffic_gas_nc_index = 19
-    integer, parameter :: publicpower_point_nc_index = 20
-    integer, parameter :: publicpower_area_nc_index = 21
-    integer, parameter :: extrasource_nc_index = 22
+
+    integer, parameter :: birch_source_nc_index = 17
+
+    integer, parameter :: traffic_gasoline_nc_index = 18
+    integer, parameter :: traffic_diesel_nc_index = 19
+    integer, parameter :: traffic_gas_nc_index = 20
+    integer, parameter :: publicpower_point_nc_index = 21
+    integer, parameter :: publicpower_area_nc_index = 22
+    integer, parameter :: extrasource_nc_index = 23
 
     ! Pollen sources
-    integer, parameter :: birch_source_nc_index = 23
     integer, parameter :: n_source_nc_index = 23
 
     integer :: convert_GNFR_to_uEMEP_sector_index(n_source_nc_index)
@@ -415,7 +417,9 @@ module uEMEP_definitions
     integer, parameter :: other_index = 14
     integer, parameter :: traffic_exhaust_index = 15
     integer, parameter :: traffic_nonexhaust_index = 16
-    integer, parameter :: n_source_index = 16
+    integer, parameter :: birch_source_index = 17
+    !
+    integer, parameter :: n_source_index = 17
     integer, parameter :: n_source_calculate_index = 14
     integer :: compound_source_index(n_compound_index, n_source_index)
 
@@ -560,7 +564,8 @@ module uEMEP_definitions
     integer, allocatable :: crossreference_emission_to_landuse_subgrid(:, :, :, :) ! (i,j,dim,n_source)
     integer, allocatable :: crossreference_target_to_deposition_subgrid(:, :, :) ! (i,j,dim)
     integer, allocatable :: crossreference_deposition_to_emep_subgrid(:, :, :) ! (i,j,dim)
-    integer, allocatable :: crossreference_target_to_pollen_subgrid(:,:,:) ! (i,j,dim,pollen_species)
+    integer, allocatable :: crossreference_target_to_pollen_subgrid(:,:,:) ! (i,j,dim)
+    integer, allocatable :: crossreference_emission_to_pollen_subgrid(:,:,:) ! (i,j,dim)
 
     real :: min_link_size = 50.0
     real :: min_adt = 1000.0

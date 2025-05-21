@@ -1,5 +1,6 @@
 module set_emission_factors
 
+    use uEMEP_definitions
     use uemep_configuration
 
     implicit none
@@ -115,6 +116,12 @@ contains
                             !write(*,*) sum(proxy_emission_subgrid(:,:,i_source,i_subsource)),emission_factor_conversion(compound_index,i_source,i_subsource),sum(emission_time_profile_subgrid(:,:,tt,i_source,i_subsource))
                         enddo
                     endif
+
+                    if (downscale_pollen) then
+                        do tt = 1, subgrid_dim(t_dim_index)
+                            emission_subgrid(:,:,tt,i_source,i_pollutant) = proxy_emission_subgrid(:,:,i_source,i_pollutant)
+                        end do
+                    end if
 
                     sum_emission_subgrid=sum(emission_subgrid(:,:,:,i_source,i_pollutant))
                     write(unit_logfile,'(A,es12.2)') 'Sum of emissions for '//trim(source_file_str(i_source))//' '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//' over period (kg)=',sum_emission_subgrid*3600./1.e9
