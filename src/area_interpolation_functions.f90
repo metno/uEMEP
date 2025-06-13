@@ -47,6 +47,10 @@ contains
         i = 1 + floor((xval - xgrid(1,1))/delta(1) + 0.5)
         j = 1 + floor((yval - ygrid(1,1))/delta(2) + 0.5)
 
+        ! Constrain index to be within the grid
+        i = min(max(i, 1), xdim)
+        j = min(max(j, 1), ydim)
+
         if (i < 1 .or. j < 1 .or. i > xdim .or. j > ydim) then
             write(*,'(A,4i6)') 'Interpolation out of range in area_weighted_interpolation_function. Stopping. (i,j,xdim,ydim)', i, j, xdim, ydim
             write(*,'(4f12.2)') xval, yval, xgrid(1,1), ygrid(1,1)
@@ -124,6 +128,10 @@ contains
         ! Find grid index for position val
         i = 1 + floor((xval - xgrid(1,1))/delta(1) + 0.5)
         j = 1 + floor((yval - ygrid(1,1))/delta(2) + 0.5)
+
+        ! Constrain index to be within the grid
+        i = min(max(i, 1), xdim)
+        j = min(max(j, 1), ydim)
 
         if (i < 1 .or. j < 1 .or. i > xdim .or. j > ydim) then
             write(*,'(A,4i6)') 'Interpolation out of range in area_weighted_extended_interpolation_function. Stopping. (i,j,xdim,ydim)', i, j, xdim, ydim
@@ -204,6 +212,10 @@ contains
         ! Find grid index for position val
         i = 1 + floor((xval-xgrid(1))/delta(1) + 0.5)
         j = 1 + floor((yval-ygrid(1))/delta(2) + 0.5)
+
+        ! Constrain index to be within the grid
+        i = min(max(i, 1), xdim)
+        j = min(max(j, 1), ydim)
 
         if (i < 1 .or. j < 1 .or. i > xdim .or. j > ydim) then
             write(*,'(A,4i6)') 'Interpolation out of range in area_weighted_extended_interpolation_function. Stopping. (i,j,xdim,ydim)', i, j, xdim, ydim
