@@ -469,6 +469,8 @@ contains
             pollutant_file_str(i)=var_name_nc(conc_nc_index,i,allsource_nc_index)
         enddo
 
+        pollutant_file_str(21) = "POLLEN_BIRCH"
+
         !do i=1,n_possible_subsource
         !    write(str_temp,'(i1)') i
         !    subsource_str(i)='_'//trim(str_temp)
@@ -1397,6 +1399,7 @@ contains
 
             ! Concentrations
             var_name_nc(conc_nc_index,birch_nc_index,allsource_nc_index) = "POLLEN_BIRCH"
+            comp_name_nc(birch_nc_index) = "POLLEN_BIRCH"
             
         end if
 

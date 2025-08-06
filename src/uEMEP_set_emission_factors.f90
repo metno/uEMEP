@@ -73,6 +73,8 @@ contains
             emission_factor_conversion(:,:,:)=1.0
         endif
 
+        emission_factor_conversion(birch_index,birch_source_index,:) = 1.0e-2
+
 
     end subroutine uEMEP_set_emission_factors
 

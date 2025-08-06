@@ -94,10 +94,14 @@ contains
         pollen_subgrid_min = subgrid_min
         pollen_subgrid_max = subgrid_max
 
-        pollen_subgrid_dim(x_dim_index) = floor( &
-            (pollen_subgrid_max(x_dim_index) - pollen_subgrid_min(x_dim_index))/pollen_subgrid_delta(x_dim_index))
-        pollen_subgrid_dim(y_dim_index) = floor( &
-            (pollen_subgrid_max(y_dim_index) - pollen_subgrid_min(y_dim_index))/pollen_subgrid_delta(y_dim_index))
+        pollen_subgrid_dim(x_dim_index) = floor((pollen_subgrid_max(x_dim_index) - pollen_subgrid_min(x_dim_index))/pollen_subgrid_delta(x_dim_index))
+        pollen_subgrid_dim(y_dim_index) = floor((pollen_subgrid_max(y_dim_index) - pollen_subgrid_min(y_dim_index))/pollen_subgrid_delta(y_dim_index))
+
+        pollen_subgrid_dim(x_dim_index) = min(pollen_subgrid_dim(x_dim_index), subgrid_dim(x_dim_index))
+        pollen_subgrid_dim(y_dim_index) = min(pollen_subgrid_dim(y_dim_index), subgrid_dim(y_dim_index))
+
+        pollen_subgrid_dim(x_dim_index) = max(pollen_subgrid_dim(x_dim_index), 1)
+        pollen_subgrid_dim(y_dim_index) = max(pollen_subgrid_dim(y_dim_index), 1)
 
         ! Set all emission subgrids to be the same as the target subgrid
         emission_max_subgrid_dim = subgrid_dim
