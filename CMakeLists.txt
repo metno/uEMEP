@@ -17,7 +17,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 # Define compiler flags
 if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
   set(F90DIALECT "-free -implicitnone")
-  set(F90FLAGS "-O3 -march=core-avx2")
+  set(F90FLAGS "-O3 -traceback -march=core-avx2")
   set(F90DEBUGFLAGS "-O0 -g -debug all -traceback -init=snan,arrays -fpe1 -ftrapuv -check all -check bounds -warn all") # debug mode
   set(F90DISABLE "-diag-disable=10448")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
