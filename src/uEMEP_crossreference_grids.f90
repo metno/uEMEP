@@ -365,7 +365,6 @@ contains
 
         do i_source = 1, n_source_index
             if (.not. calculate_source(i_source)) cycle
-            print *, i_source
             do j = 1, emission_subgrid_dim(y_dim_index,i_source)
                 do i = 1, emission_subgrid_dim(x_dim_index,i_source)
                     crossreference_emission_to_pollen_subgrid(i,j,x_dim_index) = &
@@ -376,10 +375,10 @@ contains
                         - pollen_subgrid_min(y_dim_index))/pollen_subgrid_delta(y_dim_index))
 
                     ! Constrain to avoid potential invalid values at the grid edge
-                    crossreference_emission_to_pollen_subgrid = max(min( &
+                    crossreference_emission_to_pollen_subgrid(i,j,x_dim_index) = max(min( &
                         crossreference_emission_to_pollen_subgrid(i,j,x_dim_index), &
                         pollen_subgrid_dim(x_dim_index)), 1)
-                    crossreference_emission_to_pollen_subgrid = max(min( &
+                    crossreference_emission_to_pollen_subgrid(i,j,y_dim_index) = max(min( &
                         crossreference_emission_to_pollen_subgrid(i,j,y_dim_index), &
                         pollen_subgrid_dim(y_dim_index)), 1)
                 end do
