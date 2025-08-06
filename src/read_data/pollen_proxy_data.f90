@@ -100,8 +100,11 @@ contains
         ncstat = nf90_inq_varid(ncid, trim(varname), varid)
         call assert((ncstat == nf90_noerr), " No variable with name: "//trim(varname), code=read_error)
         ncstat = nf90_get_var(ncid, varid, pollen_nc, start=[dim_start_pollen_nc], count=[dim_length_pollen_nc])
+
+        where(pollen_nc < 0.0) pollen_nc = 0.0
+        
         call assert((ncstat == nf90_noerr), " Cannot read variable: "//trim(varname), code=read_error)
-        call assert((minval(pollen_nc) < 0.0), " Pollen proxy cannot contain negative values: "//trim(varname), code=invalid_value)
+        call assert((minval(pollen_nc) >= 0.0), " Pollen proxy cannot contain negative values: "//trim(varname), code=invalid_value)
 
         write(unit_logfile,"(3a,2f12.2)") " Pollen proxy min and max: ", trim(varname), " ", minval(pollen_nc), maxval(pollen_nc)
 
@@ -136,7 +139,7 @@ contains
                 ! Find nearest neighbour and insert value in subgrid
                 i_nearest = 1 + floor((tmp_lon(1) - lonlat_nc(1,x_dim_nc_index))/delta_nc(1) + 0.5)
                 j_nearest = 1 + floor((tmp_lat(1) - lonlat_nc(1,y_dim_nc_index))/delta_nc(2) + 0.5)
-                pollen_subgrid(i,j,i_pollen) = pollen_nc(i_nearest,j_nearest)!/100.0
+                pollen_subgrid(i,j,i_pollen) = pollen_nc(i_nearest,j_nearest)/100.0
 
                 if (pollen_subgrid(i,j,i_pollen) > 0.5) print *, pollen_subgrid(i,j,i_pollen)
 
@@ -150,6 +153,8 @@ contains
                 ! call assert(cond, " Negative number of pollen proxy subgrid", code=invalid_value)
             end do
         end do
+
+        write(unit_logfile,"(a,2f12.2)") " Pollen proxy min and max: ", minval(pollen_subgrid(:,:,i_pollen)), maxval(pollen_subgrid(:,:,i_pollen))
 
         if (allocated(lonlat_nc)) deallocate(lonlat_nc)
         if (allocated(pollen_nc)) deallocate(pollen_nc)
@@ -193,7 +198,7 @@ contains
         tmp_x = tmp_lon
         tmp_y = tmp_lat
         x_min = minval(tmp_x)
-        x_max = maxval(tmp_y)
+        x_max = maxval(tmp_x)
         y_min = minval(tmp_y)
         y_max = maxval(tmp_y)
 
