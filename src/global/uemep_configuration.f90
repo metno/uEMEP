@@ -278,7 +278,7 @@ module uemep_configuration
     real :: hmix_min = 25.0
     real :: hmix_max = 2000.0
     real :: emission_factor(n_compound_nc_index, n_source_index, n_possible_subsource) = 1.0
-    real :: ratio_truck_car_emission(n_compound_nc_index) = 10.0
+    real :: ratio_truck_car_emission(n_compound_nc_index) = 15.0
     real :: z_rec(n_source_index, n_possible_subsource) ! Pseudo dispersion parameters
     real :: ay(n_source_index, n_possible_subsource) ! Pseudo dispersion parameters
     real :: replace_invL = NODATA_value  ! Will not replace invL when it has a NODATA value
