@@ -568,13 +568,6 @@ contains
         emission_factor(nh3_index,agriculture_index,:)=1. !Agriculture data is in emissions [kg/yr]
         emission_factor(nh4_index,agriculture_index,:)=1. !Agriculture data is in emissions [kg/yr]
 
-        ! As of August 2025, no longer modify ratio_truck_car_emission for individual components. Let it stay at value 15 for all (as set in uemep_configuration.f90)
-        !ratio_truck_car_emission(nox_index)=12.5 !4.86/.318 !From excel sheet for NOx. 12.5 matches the values used in NORTRIP
-        !ratio_truck_car_emission(no2_index)=12.5 !4.86/.318 !Should perhaps be different but
-        !ratio_truck_car_emission(pm25_index)=10.
-        !ratio_truck_car_emission(pm10_index)=10.
-        !ratio_truck_car_emission(pmex_index)=10.
-
         !Set AQI thresholds
         aqi_hourly_limits(no2_index,1)=100.;aqi_hourly_limits(no2_index,2)=200.;aqi_hourly_limits(no2_index,3)=400.;
         !aqi_hourly_limits(pm10_index,1)=50.;aqi_hourly_limits(pm10_index,2)=80.;aqi_hourly_limits(pm10_index,3)=400.;
