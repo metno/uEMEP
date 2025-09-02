@@ -1105,6 +1105,7 @@ contains
             unit_str='seconds'
             do i_pollutant=1,n_pollutant_loop
                 !i_pollutant=pollutant_loop_back_index(nox_nc_index) !Only save the travel time for nox. Though this may be expanded for other compounds if necessary, like ammonia
+                var_name_temp=var_name_temp//'_'//trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index))
                 temp_subgrid=traveltime_subgrid(:,:,:,3,i_pollutant)
                 if (save_netcdf_file_flag) then
                     write(unit_logfile,'(a,es12.2)')'Writing netcdf variable: '//trim(var_name_temp),sum(temp_subgrid)/size(temp_subgrid,1)/size(temp_subgrid,2)/size(temp_subgrid,3)
