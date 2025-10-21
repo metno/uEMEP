@@ -62,7 +62,7 @@ contains
         !! Writes an error message to the log
         character(len=*), intent(in) :: message
 
-        write(unit_logfile, "(3a)") "ERROR: ", message
+        write(unit_logfile, "(2a)") "ERROR: ", message
     end subroutine print_error
 
     logical function check_equality_integer(first_value, second_value) result(are_equal)
