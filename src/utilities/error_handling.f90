@@ -21,9 +21,13 @@ module error_handling
     integer, parameter, public :: default_error = -1
     integer, parameter, public :: file_not_found = -2
     integer, parameter, public :: read_error = -3
-    integer, parameter, public :: index_error = -4
-    integer, parameter, public :: allocation_error = -5
-    integer, parameter, public :: invalid_value = -6
+    integer, parameter, public :: write_error = -4
+    integer, parameter, public :: index_error = -5
+    integer, parameter, public :: allocation_error = -6
+    integer, parameter, public :: invalid_value = -7
+    integer, parameter, public :: division_error = -8
+    integer, parameter, public :: config_error = -9
+    integer, parameter, public :: not_implemented = -10
 
     ! Precision tolerances
     real, parameter, public :: tol_real = 1.0e-5
