@@ -95,7 +95,7 @@ contains
         integer, intent(in) :: min_threshold
         integer, intent(in) :: max_threshold
 
-        call assert((min_threshold > max_threshold), "Minimum threshold cannot exceed maximum threshold")
+        call assert((min_threshold <= max_threshold), "Minimum threshold cannot exceed maximum threshold")
         is_within_range = (value >= min_threshold .and. value <= max_threshold)
     end function is_between_integer
 
@@ -105,7 +105,7 @@ contains
         real, intent(in) :: min_threshold
         real, intent(in) :: max_threshold
 
-        call assert((min_threshold > max_threshold), "Minimum threshold cannot exceed maximum threshold")
+        call assert((min_threshold <= max_threshold), "Minimum threshold cannot exceed maximum threshold")
         is_within_range = (value >= min_threshold .and. value <= max_threshold)
     end function is_between_real
 
@@ -115,7 +115,7 @@ contains
         real(dp), intent(in) :: min_threshold
         real(dp), intent(in) :: max_threshold
 
-        call assert((min_threshold > max_threshold), "Minimum threshold cannot exceed maximum threshold")
+        call assert((min_threshold <= max_threshold), "Minimum threshold cannot exceed maximum threshold")
         is_within_range = (value >= min_threshold .and. value <= max_threshold)
     end function is_between_dp
 
