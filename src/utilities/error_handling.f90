@@ -31,7 +31,7 @@ module error_handling
 
     ! Precision tolerances
     real, parameter, public :: tol_real = 1.0e-5
-    real, parameter, public :: tol_dp = 1.0e-12
+    real(dp), parameter, public :: tol_dp = 1.0e-12_dp
 
     ! Public interfaces
     public :: assert, check_equality, is_between
