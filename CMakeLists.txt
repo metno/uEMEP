@@ -6,9 +6,13 @@ project(uemep)
 # Enable testing
 enable_testing()
 
-# Hardcode ifort as the Fortran compiler (gfortran currently does not work)
-set(CMAKE_Fortran_COMPILER "ifort")
-#set(CMAKE_Fortran_COMPILER "gfortran")
+# Set fortran compiler
+if(DEFINED ENV{FF})
+  set(CMAKE_Fortran_COMPILER "$ENV{FF}" CACHE STRING "Fortran compiler set via FF environment variable" FORCE)
+else()
+  set(CMAKE_Fortran_COMPILER "ifort")
+endif()
+message(STATUS "Using Fortran compiler: ${CMAKE_Fortran_COMPILER}")
 enable_language(Fortran)
 
 # Append additional cmake modules
@@ -30,6 +34,15 @@ endif()
 # Set compiler flags
 set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} ${F90DEBUGFLAGS} ${F90DIALECT} ${F90DISABLE}")
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${F90FLAGS} ${F90DIALECT} ${F90DISABLE}")
+
+# Custom build type for coverage
+if(CMAKE_BUILD_TYPE MATCHES "Coverage")
+  if(CMAKE_Fortran_COMPILER MATCHES "gfortran")
+    set(CMAKE_Fortran_FLAGS "-ffree-form -fimplicit-none -O0 -fbacktrace -g -fprofile-arcs -ftest-coverage -fno-inline -ffree-line-length-none -fdec")
+  else()
+    message(FATAL_ERROR "The 'Coverage' build type currently requires the gfortran compiler")
+  endif()
+endif()
 
 # Import NetCDF
 find_package(NetCDF REQUIRED)
