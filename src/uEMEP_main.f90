@@ -319,10 +319,7 @@ program uEMEP
                     end if
 
                     if (downscale_pollen) then
-                        do source_index = 1, num_pollen_nc
-                            call read_pollen_proxy(source_index)
-                        end do
-
+                        call read_pollen_proxy()
                         call redistribute_pollen_emissions()
                     end if
 

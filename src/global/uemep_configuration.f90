@@ -59,9 +59,9 @@ module uemep_configuration
     character(256) :: filename_timeprofile ! File name for the time profile file
     character(256) :: pathname_timeprofile ! Path name for the time profile file
     character(256) :: pathfilename_timeprofile  ! Combined path and file name for the time profile file
-    character(256) :: filename_pollen(num_pollen_nc)
-    character(256) :: pathname_pollen(num_pollen_nc)
-    character(256) :: pathfilename_pollen(num_pollen_nc)
+    character(256) :: filename_pollen
+    character(256) :: pathname_pollen
+    character(256) :: pathfilename_pollen
     ! character(256) :: filename_pollen_proxy(10) ! File name for pollen proxy input
     ! character(256) :: pathname_pollen_proxy(10) ! Path name for pollen proxy input
     character(256) :: alternative_meteorology_type = 'meps'
@@ -95,7 +95,7 @@ module uemep_configuration
     character(256) :: select_country_by_name = ''
     character(256) :: comp_name_nc(n_compound_nc_index)
     character(256) :: var_name_population_nc(num_var_population_nc)
-    character(256) :: var_name_pollen_nc(num_var_pollen_nc)
+    character(256) :: var_name_pollen_nc
     character(256) :: local_fraction_naming_template_str = 'sec<n>_local_fraction'
     character(256) :: finished_filename = ''
     character(256) :: finished_subpath = 'finished/'

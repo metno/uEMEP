@@ -16,7 +16,7 @@ module pollen_proxy_data
     use uEMEP_definitions, only: unit_logfile, x_dim_nc_index, y_dim_nc_index, x_dim_index, y_dim_index, &
         num_dims_pollen_nc, dim_name_pollen_nc, dim_length_pollen_nc, dim_start_pollen_nc, &
         pollen_subgrid, pollen_subgrid_dim, x_pollen_subgrid, y_pollen_subgrid, &
-        pollen_subgrid_delta, pollen_subgrid_min, pollen_subgrid_max, birch_proxy_index, &
+        pollen_subgrid_delta, pollen_subgrid_min, pollen_subgrid_max, pollen_proxy_index, &
         n_source_index, emission_subgrid_dim, crossreference_emission_to_pollen_subgrid, proxy_emission_subgrid
     use netcdf
     use mod_lambert_projection, only: proj2ll
@@ -34,9 +34,8 @@ module pollen_proxy_data
 
 contains
 
-    subroutine read_pollen_proxy_data_latlon(i_pollen)
+    subroutine read_pollen_proxy_data_latlon()
         !! Read pollen proxy data from netcdf and puts it in the pollen proxy subgrid
-        integer, intent(in) :: i_pollen !! Pollen proxy index
 
         integer :: ncstat, ncid, dimid, varid
         integer :: i_dim, i, j, i_nearest, j_nearest
@@ -49,16 +48,16 @@ contains
 
         write(unit_logfile, "(a)") ""
         write(unit_logfile, "(a)") "================================================================"
-        write(unit_logfile, "(a,i0)") "Reading pollen proxy data for source number: ", i_pollen
+        write(unit_logfile, "(a,i0)") "Reading pollen proxy data"
         write(unit_logfile, "(a)") "================================================================"
 
-        pathfilename_pollen(i_pollen) = trim(pathname_pollen(i_pollen))//trim(filename_pollen(i_pollen))
-        inquire(file=trim(pathfilename_pollen(i_pollen)), exist=file_exists)
-        call assert(file_exists, " NetCDF file does not exist"//trim(pathfilename_pollen(i_pollen)), code=file_not_found)
+        pathfilename_pollen = trim(pathname_pollen)//trim(filename_pollen)
+        inquire(file=trim(pathfilename_pollen), exist=file_exists)
+        call assert(file_exists, " NetCDF file does not exist"//trim(pathfilename_pollen), code=file_not_found)
 
-        write(unit_logfile, "(2a)") " Opening NetCDF file: ", trim(pathfilename_pollen(i_pollen))
-        ncstat = nf90_open(pathfilename_pollen(i_pollen), nf90_nowrite, ncid)
-        call assert((ncstat == nf90_noerr), " Could not open NetCDF file: "//trim(pathfilename_pollen(i_pollen)), code=read_error)
+        write(unit_logfile, "(2a)") " Opening NetCDF file: ", trim(pathfilename_pollen)
+        ncstat = nf90_open(pathfilename_pollen, nf90_nowrite, ncid)
+        call assert((ncstat == nf90_noerr), " Could not open NetCDF file: "//trim(pathfilename_pollen), code=read_error)
 
         ! Get dimensions for the entire dataset from the NetCDF
         do i_dim = 1, num_dims_pollen_nc
@@ -73,7 +72,7 @@ contains
         write(unit_logfile,"(a,2i8)") " Size of pollen proxy dimensions (lon,lat): ", dim_length_pollen_nc
 
         ! We reduce the domain to read according to the target subgrid to reduce read time and memory use
-        call reduce_pollen_proxy_region(ncid, i_pollen, buffer_delta=10.0, padding=10)
+        call reduce_pollen_proxy_region(ncid, buffer_delta=10.0, padding=10)
 
         if (.not. allocated(lonlat_nc)) then
             allocate(lonlat_nc(max(dim_length_pollen_nc(x_dim_nc_index), dim_length_pollen_nc(y_dim_nc_index)), num_dims_pollen_nc))
@@ -96,7 +95,7 @@ contains
         delta_nc = lonlat_nc(2,:) - lonlat_nc(1,:)
 
         ! Then we read the pollen proxy data
-        varname = var_name_pollen_nc(i_pollen)
+        varname = var_name_pollen_nc
         ncstat = nf90_inq_varid(ncid, trim(varname), varid)
         call assert((ncstat == nf90_noerr), " No variable with name: "//trim(varname), code=read_error)
         ncstat = nf90_get_var(ncid, varid, pollen_nc, start=[dim_start_pollen_nc], count=[dim_length_pollen_nc])
@@ -110,7 +109,7 @@ contains
 
         ! Loop through the pollen proxy grid and put them in the pollen proxy subgrid grid
         ! Lat/lon is converted to subgrid coordinates and the inserted value is found using nearest neighbour
-        pollen_subgrid(:,:,i_pollen) = 0.0
+        pollen_subgrid(:,:) = 0.0
         do j = 1, pollen_subgrid_dim(y_dim_nc_index)
             do i = 1, pollen_subgrid_dim(x_dim_nc_index)
                 ! Project the center position to lon/lat
@@ -139,13 +138,13 @@ contains
                 ! Find nearest neighbour and insert value in subgrid
                 i_nearest = 1 + floor((tmp_lon(1) - lonlat_nc(1,x_dim_nc_index))/delta_nc(1) + 0.5)
                 j_nearest = 1 + floor((tmp_lat(1) - lonlat_nc(1,y_dim_nc_index))/delta_nc(2) + 0.5)
-                pollen_subgrid(i,j,i_pollen) = pollen_nc(i_nearest,j_nearest)/100.0
+                pollen_subgrid(i,j) = pollen_nc(i_nearest,j_nearest)/100.0
 
-                if (pollen_subgrid(i,j,i_pollen) > 0.5) print *, pollen_subgrid(i,j,i_pollen)
+                if (pollen_subgrid(i,j) > 0.5) print *, pollen_subgrid(i,j)
 
-                if (pollen_subgrid(i,j,i_pollen) < 0.0) pollen_subgrid(i,j,i_pollen) = 0.0
+                if (pollen_subgrid(i,j) < 0.0) pollen_subgrid(i,j) = 0.0
 
-                cond = .not. isnan(pollen_subgrid(i,j,i_pollen))
+                cond = .not. isnan(pollen_subgrid(i,j))
                 call assert(cond, " NaN in pollen proxy subgrid", code=invalid_value)
 
                 ! cond = (pollen_subgrid(i,j,i_pollen) > 0.0)
@@ -154,17 +153,16 @@ contains
             end do
         end do
 
-        write(unit_logfile,"(a,2f12.2)") " Pollen proxy min and max: ", minval(pollen_subgrid(:,:,i_pollen)), maxval(pollen_subgrid(:,:,i_pollen))
+        write(unit_logfile,"(a,2f12.2)") " Pollen proxy min and max: ", minval(pollen_subgrid(:,:)), maxval(pollen_subgrid(:,:))
 
         if (allocated(lonlat_nc)) deallocate(lonlat_nc)
         if (allocated(pollen_nc)) deallocate(pollen_nc)
     end subroutine read_pollen_proxy_data_latlon
 
 
-    subroutine reduce_pollen_proxy_region(ncid, i_pollen, buffer_delta, padding)
+    subroutine reduce_pollen_proxy_region(ncid, buffer_delta, padding)
         !! Reduce the area that should be read to the size of the target subgrid
         integer, intent(in) :: ncid !! ID of open NetCDF file
-        integer, intent(in) :: i_pollen !! Index of the pollen species
         real, intent(in) :: buffer_delta !! Relative buffer delta to add when reading the domain corner coordinates
         integer, intent(in) :: padding !! Number of grid cells to add as padding around the read area
 
@@ -178,7 +176,6 @@ contains
         real(dp), allocatable :: lonlat(:,:)
 
         call assert((ncid > 0), " NetCDF ID has to be positive", code=read_error)
-        call assert((i_pollen > 0), " Invalid pollen index", code=index_error)
         call assert((buffer_delta >= 0.0), " Buffer delta cannot be a negative number", code=invalid_value)
         call assert(.not. allocated(lonlat), " Temporary reading array is already allocated", code=allocation_error)
 
@@ -264,11 +261,10 @@ contains
                 do j = 1, emission_subgrid_dim(y_dim_nc_index,i_source)
                     do i = 1, emission_subgrid_dim(x_dim_nc_index,i_source)
                         
-                        ! Note that this only works with birch as a source for now - extending later
                         i_pollen_index = crossreference_emission_to_pollen_subgrid(i,j,x_dim_index)
                         j_pollen_index = crossreference_emission_to_pollen_subgrid(i,j,y_dim_index)
 
-                        proxy_emission_subgrid(i,j,i_source,:) = pollen_subgrid(i_pollen_index,j_pollen_index,birch_proxy_index)
+                        proxy_emission_subgrid(i,j,i_source,:) = pollen_subgrid(i_pollen_index,j_pollen_index)
                     end do
                 end do
             end if

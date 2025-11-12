@@ -463,7 +463,7 @@ contains
         source_file_str(traffic_exhaust_index)='traffic_exhaust'
         source_file_str(traffic_nonexhaust_index)='traffic_nonexhaust'
 
-        source_file_str(birch_source_index) = "birch_source"
+        source_file_str(pollen_source_index) = "birch_source"
 
         do i=1,n_pollutant_nc_index
             pollutant_file_str(i)=var_name_nc(conc_nc_index,i,allsource_nc_index)
@@ -678,6 +678,8 @@ contains
 
         integer p_loop
 
+        print *, pollutant_index
+
         !Set the pollutant index loops after reading in pollutant_index
         !Remove the sand and salt PM2.5, not necessary. Fixed ratio if needed n_pollutant_loop=6
         if (pollutant_index.eq.all_sand_salt_nc_index) then
@@ -806,11 +808,10 @@ contains
             pollutant_loop_back_index(nh3_nc_index)=1
             pollutant_loop_back_index(nh4_nc_index)=2
         elseif (pollutant_index.eq.pollen_nc_index) then
-            ! Included so it can be extended to include additional pollen species
             n_emep_pollutant_loop=1
             n_pollutant_loop=1
-            pollutant_loop_index(1)=birch_nc_index
-            pollutant_loop_back_index(birch_nc_index)=1
+            pollutant_loop_index(1)=pollen_nc_index
+            pollutant_loop_back_index(pollen_nc_index)=1
         else
             n_emep_pollutant_loop=1
             n_pollutant_loop=1
@@ -1183,9 +1184,9 @@ contains
                         endif
 
                         ! Fix for pollen
-                        if (i_source == birch_source_nc_index) then
+                        if (i_source == pollen_source_nc_index) then
                             print *, "Setting pollen emission name"
-                            var_name_nc(emis_nc_index,i,birch_source_nc_index) = "Emis_PollenBirch"
+                            var_name_nc(emis_nc_index,i,pollen_source_nc_index) = "Emis_PollenBirch"
                         end if
                     enddo
                 enddo
@@ -1274,10 +1275,10 @@ contains
                             endif
 
                             ! Fix for pollen
-                            if (i_source == birch_source_nc_index) then
-                                var_name_nc(frac_nc_loop_index(j),i,birch_source_nc_index) = "POLLEN_BIRCH_fraction_1x1"
+                            if (i_source == pollen_source_nc_index) then
+                                var_name_nc(frac_nc_loop_index(j),i,pollen_source_nc_index) = "POLLEN_BIRCH_fraction_1x1"
                                 print *, "HEREHREHREHREHRHERHEHREHRHEHRHEHRHE"
-                                print *, i, birch_source_nc_index
+                                print *, i, pollen_source_nc_index
                             end if
                             write(unit_logfile,'(2i6,2a)') i,i_source,'  ',trim(var_name_nc(frac_nc_loop_index(j),i,i_source))
                         endif
@@ -1388,18 +1389,18 @@ contains
         !save_emission_subgrid_delta(y_dim_index)=2500.
         !save_emission_subgrid_dim(y_dim_index)=671
 
-        if (calculate_source(birch_source_index)) then
+        if (calculate_source(pollen_source_index)) then
             downscale_pollen = .true.
         end if
 
         if (downscale_pollen) then
             ! Emissions
-            var_name_nc(emis_nc_index,birch_index,birch_source_nc_index) = "Emis_PollenBirch"
-            write(unit_logfile,"(a,3i3)") " Setting emission name at index: ", emis_nc_index, birch_index, birch_source_nc_index
+            var_name_nc(emis_nc_index,pollen_index,pollen_source_nc_index) = "Emis_PollenBirch"
+            write(unit_logfile,"(a,3i3)") " Setting emission name at index: ", emis_nc_index, pollen_index, pollen_source_nc_index
 
             ! Concentrations
-            var_name_nc(conc_nc_index,birch_nc_index,allsource_nc_index) = "POLLEN_BIRCH"
-            comp_name_nc(birch_nc_index) = "POLLEN_BIRCH"
+            var_name_nc(conc_nc_index,pollen_nc_index,allsource_nc_index) = "POLLEN_BIRCH"
+            comp_name_nc(pollen_nc_index) = "POLLEN_BIRCH"
             
         end if
 

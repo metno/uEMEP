@@ -113,7 +113,7 @@ module uEMEP_definitions
     integer, parameter :: o3_26th_nc_index = 20
 
     ! Pollen "compounds"
-    integer, parameter :: birch_nc_index = 21
+    integer, parameter :: pollen_nc_index = 21
     integer, parameter :: n_compound_nc_index = 21
 
     ! These are only used in names but need to change the variable n_pollutant_nc_index to fit these!
@@ -127,7 +127,7 @@ module uEMEP_definitions
     integer, parameter :: aaqd_totals_nc_index = 29
     integer, parameter :: gp_totals_nc_index = 30
     integer, parameter :: op_totals_nc_index = 31
-    integer, parameter :: pollen_nc_index = 32
+    integer, parameter :: emep_pollen_nc_index = 32
 
     ! These must be the same as the subgrid source indexes. Should probably just use the one
     integer, parameter :: allsource_nc_index = 1
@@ -149,7 +149,7 @@ module uEMEP_definitions
     integer, parameter :: traffic_exhaust_nc_index = 15
     integer, parameter :: traffic_nonexhaust_nc_index = 16
 
-    integer, parameter :: birch_source_nc_index = 17
+    integer, parameter :: pollen_source_nc_index = 17
 
     integer, parameter :: traffic_gasoline_nc_index = 18
     integer, parameter :: traffic_diesel_nc_index = 19
@@ -207,8 +207,7 @@ module uEMEP_definitions
     integer, parameter :: num_dims_pollen_nc = 2 !! Number of pollen proxy dimension variables (lon/lat)
     character(len=256) :: dim_name_pollen_nc(num_dims_pollen_nc) !! Dimension names in the pollen proxy netcdf files
 
-    ! Indices for individual pollen proxies
-    integer, parameter :: birch_proxy_index = 1
+    integer, parameter :: pollen_proxy_index = 1
 
     integer :: dim_length_pollen_nc(num_dims_pollen_nc)
     integer :: dim_start_pollen_nc(num_dims_pollen_nc)
@@ -395,7 +394,7 @@ module uEMEP_definitions
     integer, parameter :: o3_26th_index = 20
 
     ! Pollen "compounds"
-    integer, parameter :: birch_index = 21
+    integer, parameter :: pollen_index = 21
     integer, parameter :: n_compound_index = 21
 
     ! Declare source indexes (type_source) must be the same as source_nc_index
@@ -417,7 +416,7 @@ module uEMEP_definitions
     integer, parameter :: other_index = 14
     integer, parameter :: traffic_exhaust_index = 15
     integer, parameter :: traffic_nonexhaust_index = 16
-    integer, parameter :: birch_source_index = 17
+    integer, parameter :: pollen_source_index = 17
     !
     integer, parameter :: n_source_index = 17
     integer, parameter :: n_source_calculate_index = 14
@@ -542,7 +541,7 @@ module uEMEP_definitions
     real :: pollen_subgrid_delta(2)
     real :: pollen_subgrid_min(2)
     real :: pollen_subgrid_max(2)
-    real, allocatable :: pollen_subgrid(:,:,:) ! i,j,pollen_species
+    real, allocatable :: pollen_subgrid(:,:) ! i,j
     real, allocatable :: x_pollen_subgrid(:,:)
     real, allocatable :: y_pollen_subgrid(:,:)
     real, allocatable :: lon_pollen_subgrid(:,:)

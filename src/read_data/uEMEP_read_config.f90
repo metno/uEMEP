@@ -140,7 +140,7 @@ contains
             calculate_source(other_index)=read_name_logical('calculate_source(other_index)',calculate_source(other_index),unit_in,unit_logfile)
 
             ! Pollen "sources"
-            calculate_source(birch_source_index) = read_name_logical("calculate_source(birch_source_index)", calculate_source(birch_source_index), unit_in, unit_logfile)
+            calculate_source(pollen_source_index) = read_name_logical("calculate_source(pollen_source_index)", calculate_source(pollen_source_index), unit_in, unit_logfile)
 
             !Choose which EMEP sources to include/calculate. Will not be downscaled but will included as gridded source contributions
             !calculate_source(:)=read_name_logical('calculate_source(:)',calculate_source(allsource_index),unit_in,unit_logfile)
@@ -473,10 +473,8 @@ contains
             filename_population(municipality_index)=read_name_char('filename_population(municipality_index)',filename_population(municipality_index),unit_in,unit_logfile)
 
             ! Pollen
-            pathname_pollen(birch_proxy_index) = read_name_char( &
-                "pathname_pollen(birch_proxy_index)", pathname_pollen(birch_proxy_index), unit_in, unit_logfile)
-            filename_pollen(birch_proxy_index) = read_name_char( &
-                "filename_pollen(birch_proxy_index)", filename_pollen(birch_proxy_index), unit_in, unit_logfile)
+            pathname_pollen = read_name_char("pathname_pollen", pathname_pollen, unit_in, unit_logfile)
+            filename_pollen = read_name_char("filename_pollen", filename_pollen, unit_in, unit_logfile)
             
 
             pathname_receptor=read_name_char('pathname_receptor',pathname_receptor,unit_in,unit_logfile)
@@ -802,8 +800,7 @@ contains
             var_name_population_nc(dwelling_nc_index)=read_name_char('var_name_population_nc(dwelling_nc_index)',var_name_population_nc(dwelling_nc_index),unit_in,unit_logfile)
 
             ! Pollen
-            var_name_pollen_nc(birch_proxy_index) = read_name_char( &
-                "var_name_pollen_nc(birch_proxy_index)", var_name_pollen_nc(birch_proxy_index), unit_in, unit_logfile)
+            var_name_pollen_nc = read_name_char("var_name_pollen_nc", var_name_pollen_nc, unit_in, unit_logfile)
 
             f_no2_emep=read_name_real('f_no2_emep',f_no2_emep,unit_in,unit_logfile)
 

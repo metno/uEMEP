@@ -543,7 +543,7 @@ contains
         ! Pollen
         if (downscale_pollen) then
             if (allocated(pollen_subgrid)) deallocate(pollen_subgrid)
-            allocate(pollen_subgrid(pollen_subgrid_dim(x_dim_index),pollen_subgrid_dim(y_dim_index),num_pollen_nc))
+            allocate(pollen_subgrid(pollen_subgrid_dim(x_dim_index),pollen_subgrid_dim(y_dim_index)))
             pollen_subgrid = 0.0
 
             if (allocated(x_pollen_subgrid)) deallocate(x_pollen_subgrid)
