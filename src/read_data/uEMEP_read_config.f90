@@ -332,6 +332,9 @@ contains
             h_emis(livestock_index,1)=read_name_real('h_emis(livestock_index,1)',h_emis(livestock_index,1),unit_in,unit_logfile)
             h_emis(other_index,1)=read_name_real('h_emis(other_index,1)',h_emis(other_index,1),unit_in,unit_logfile)
 
+            !Pollen
+            h_emis(pollen_source_index,1)=read_name_real("h_emis(pollen_source_index,1)",h_emis(pollen_source_index,1),unit_in,unit_logfile)
+
             !These second subsources do not exist but still possible to implement
             h_emis(traffic_index,2)=read_name_real('h_emis(traffic_index,2)',h_emis(traffic_index,2),unit_in,unit_logfile)
             h_emis(shipping_index,2)=read_name_real('h_emis(shipping_index,2)',h_emis(shipping_index,2),unit_in,unit_logfile)
@@ -353,6 +356,9 @@ contains
             sig_y_00(waste_index,1)=read_name_real('sig_y_00(waste_index,1)',sig_y_00(waste_index,1),unit_in,unit_logfile)
             sig_y_00(livestock_index,1)=read_name_real('sig_y_00(livestock_index,1)',sig_y_00(livestock_index,1),unit_in,unit_logfile)
             sig_y_00(other_index,1)=read_name_real('sig_y_00(other_index,1)',sig_y_00(other_index,1),unit_in,unit_logfile)
+
+            !Pollen
+            sig_y_00(pollen_source_index,1)=read_name_real("sig_y_00(pollen_source_index,1)",sig_y_00(pollen_source_index,1),unit_in,unit_logfile)
 
             !These second subsources do not exist but still possible to implement
             sig_y_00(traffic_index,2)=read_name_real('sig_y_00(traffic_index,2)',sig_y_00(traffic_index,2),unit_in,unit_logfile)
@@ -378,6 +384,9 @@ contains
             sig_z_00(waste_index,1)=read_name_real('sig_z_00(waste_index,1)',sig_z_00(waste_index,1),unit_in,unit_logfile)
             sig_z_00(livestock_index,1)=read_name_real('sig_z_00(livestock_index,1)',sig_z_00(livestock_index,1),unit_in,unit_logfile)
             sig_z_00(other_index,1)=read_name_real('sig_z_00(other_index,1)',sig_z_00(other_index,1),unit_in,unit_logfile)
+
+            !Pollen
+            sig_z_00(pollen_source_index,1)=read_name_real("sig_z_00(pollen_source_index,1)",sig_z_00(pollen_source_index,1),unit_in,unit_logfile)
 
             !These second subsources do not exist but still possible to implement
             sig_z_00(traffic_index,2)=read_name_real('sig_z_00(traffic_index,2)',sig_z_00(traffic_index,2),unit_in,unit_logfile)
