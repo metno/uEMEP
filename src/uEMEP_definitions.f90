@@ -212,13 +212,6 @@ module uEMEP_definitions
     integer :: dim_length_pollen_nc(num_dims_pollen_nc)
     integer :: dim_start_pollen_nc(num_dims_pollen_nc)
 
-    ! integer, parameter :: num_var_pollen_proxy_nc = 1 ! Assumes pollen proxy files in lat and lon
-    ! integer, parameter :: num_dims_pollen_proxy_nc = 2 ! lon and lat
-    ! character(len=256) :: dim_name_pollen_proxy_nc(num_dims_pollen_proxy_nc,num_pollen_proxy_nc)
-    
-    ! integer :: dim_length_pollen_proxy_nc(num_dims_pollen_proxy_nc,num_pollen_proxy_nc)
-    ! integer :: dim_start_pollen_proxy_nc(num_dims_pollen_proxy_nc,num_pollen_proxy_nc) = 1
-
     ! Dimension netcdf fields
     integer, parameter :: x_dim_nc_index = 1
     integer, parameter :: y_dim_nc_index = 2
@@ -817,12 +810,6 @@ module uEMEP_definitions
     real :: landuse_subgrid_min(2)
     real :: landuse_subgrid_max(2) ! Only x and y
 
-    ! Pollen proxy data
-    ! logical :: read_pollen_proxy_flag(num_pollen_proxy_nc) = .false.
-    ! integer :: pollen_proxy_subgrid_dim(num_dims_pollen_proxy_nc,num_pollen_proxy_nc)
-    ! real :: pollen_proxy_subgrid_min(num_dims_pollen_proxy_nc,num_pollen_proxy_nc)
-    ! real :: pollen_proxy_subgrid_max(num_dims_pollen_proxy_nc,num_pollen_proxy_nc)
-
     integer, parameter :: temp_conif_index = 1
     integer, parameter :: temp_decid_index = 2
     integer, parameter :: med_needle_index = 3
@@ -853,16 +840,6 @@ module uEMEP_definitions
     integer :: landuse_subgrid_loop_index(2)
     integer :: landuse_buffer_index(2)
     real :: landuse_buffer_size(2)
-
-    ! real, allocatable :: pollen_proxy_subgrid(:,:,:) ! (i,j,source)
-    ! real, allocatable :: x_pollen_proxy_subgrid(:,:,:)
-    ! real, allocatable :: y_pollen_proxy_subgrid(:,:,:)
-    ! real, allocatable :: lon_pollen_proxy_subgrid(:,:,:)
-    ! real, allocatable :: lat_pollen_proxy_subgrid(:,:,:)
-    ! real, allocatable :: xproj_pollen_proxy_subgrid(:,:,:)
-    ! real, allocatable :: yproj_pollen_proxy_subgrid(:,:,:)
-
-    ! real, allocatable :: pollen_proxy_subgrid_delta(:,:)
 
     character(256) :: deposition_name_nc(n_landuse_index, n_compound_nc_index)
 
