@@ -840,6 +840,8 @@ module uEMEP_definitions
     integer :: landuse_subgrid_loop_index(2)
     integer :: landuse_buffer_index(2)
     real :: landuse_buffer_size(2)
+    integer :: pollen_buffer_index(2)
+    real :: pollen_buffer_size(2)
 
     character(256) :: deposition_name_nc(n_landuse_index, n_compound_nc_index)
 

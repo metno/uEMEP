@@ -161,6 +161,16 @@ contains
                 endif
 
             endif
+             
+            ! Set pollen bufferzone to be same as the emissions
+            if (downscale_pollen) then
+                pollen_buffer_index(x_dim_index) = floor(dx_temp/pollen_subgrid_delta(x_dim_index)*(buffer_index_scale + 0.5))
+                pollen_buffer_index(y_dim_index) = floor(dy_temp/pollen_subgrid_delta(y_dim_index)*(buffer_index_scale + 0.5))
+                if (local_subgrid_method_flag == 3) then
+                    pollen_buffer_index(x_dim_index) = floor(dx_temp/pollen_subgrid_delta(x_dim_index)*(buffer_index_scale + 1.0))
+                    pollen_buffer_index(y_dim_index) = floor(dy_temp/pollen_subgrid_delta(y_dim_index)*(buffer_index_scale + 1.0))
+                end if
+            end if
         else
             buffer_index=0
             emission_buffer_index=0
@@ -168,6 +178,7 @@ contains
             integral_buffer_index=0
             deposition_buffer_index=0
             landuse_buffer_index=0
+            pollen_buffer_index = 0
         endif
         buffer_size=buffer_index*subgrid_delta
         emission_buffer_size=emission_buffer_index*emission_subgrid_delta
@@ -179,6 +190,10 @@ contains
         if (read_landuse_flag) then
             landuse_buffer_size=landuse_buffer_index*landuse_subgrid_delta
         endif
+
+        if (downscale_pollen) then
+            pollen_buffer_size = pollen_buffer_index * pollen_subgrid_delta
+        end if
 
         do i_source=1,n_source_index
             if (calculate_source(i_source)) then
@@ -212,6 +227,11 @@ contains
             landuse_subgrid_min(1:2)=landuse_subgrid_min(1:2)-landuse_buffer_size(1:2)
             landuse_subgrid_max(1:2)=landuse_subgrid_max(1:2)+landuse_buffer_size(1:2)
         endif
+        if (downscale_pollen) then
+            pollen_subgrid_dim(1:2) = pollen_subgrid_dim(1:2) + pollen_buffer_index(1:2)*2
+            pollen_subgrid_min(1:2) = pollen_subgrid_min(1:2) - pollen_buffer_size(1:2)
+            pollen_subgrid_max(1:2) = pollen_subgrid_max(1:2) + pollen_buffer_size(1:2)
+        end if
 
         write(unit_logfile,'(A,2I5)')'Number of target grids to be looped for each EMEP grid:',subgrid_loop_index(1:2)
         write(unit_logfile,'(A,2I5)')'Number of integral grids to be looped for each EMEP grid:',integral_subgrid_loop_index(1:2)
