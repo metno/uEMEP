@@ -138,18 +138,15 @@ contains
                 ! Find nearest neighbour and insert value in subgrid
                 i_nearest = 1 + floor((tmp_lon(1) - lonlat_nc(1,x_dim_nc_index))/delta_nc(1) + 0.5)
                 j_nearest = 1 + floor((tmp_lat(1) - lonlat_nc(1,y_dim_nc_index))/delta_nc(2) + 0.5)
-                pollen_subgrid(i,j) = pollen_nc(i_nearest,j_nearest)/100.0
 
-                if (pollen_subgrid(i,j) > 0.5) print *, pollen_subgrid(i,j)
-
-                if (pollen_subgrid(i,j) < 0.0) pollen_subgrid(i,j) = 0.0
+                ! Cap negative values
+                if (pollen_subgrid(i,j) < 0.0) then
+                    write(unit_logfile,"(a,2i4,a)") "Warning: Pollen proxy in grid (i,j)", i, j, " is negative. Setting to 0.0"
+                    pollen_subgrid(i,j) = 0.0
+                end if
 
                 cond = .not. isnan(pollen_subgrid(i,j))
                 call assert(cond, " NaN in pollen proxy subgrid", code=invalid_value)
-
-                ! cond = (pollen_subgrid(i,j,i_pollen) > 0.0)
-                ! print *, cond
-                ! call assert(cond, " Negative number of pollen proxy subgrid", code=invalid_value)
             end do
         end do
 
