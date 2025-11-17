@@ -138,6 +138,7 @@ contains
                 ! Find nearest neighbour and insert value in subgrid
                 i_nearest = 1 + floor((tmp_lon(1) - lonlat_nc(1,x_dim_nc_index))/delta_nc(1) + 0.5)
                 j_nearest = 1 + floor((tmp_lat(1) - lonlat_nc(1,y_dim_nc_index))/delta_nc(2) + 0.5)
+                pollen_subgrid(i,j) = pollen_nc(i_nearest,j_nearest)
 
                 ! Cap negative values
                 if (pollen_subgrid(i,j) < 0.0) then
