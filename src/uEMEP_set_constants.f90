@@ -144,9 +144,6 @@ contains
         var_name_nc(frac_nc_index,pm25_nc_index,industry_nc_index)='pm25_sec04_local_fraction'
         var_name_nc(frac_nc_index,pmco_nc_index,industry_nc_index)='pmco_sec04_local_fraction'
 
-        ! Pollen    qq
-
-
         !Total emissions. These arer reset later
         var_name_nc(emis_nc_index,nh3_nc_index,allsource_nc_index)='Emis_mgm2_nh3'
         var_name_nc(emis_nc_index,nox_nc_index,allsource_nc_index)='Emis_mgm2_nox'
@@ -1277,8 +1274,6 @@ contains
                             ! Fix for pollen
                             if (i_source == pollen_source_nc_index) then
                                 var_name_nc(frac_nc_loop_index(j),i,pollen_source_nc_index) = "POLLEN_BIRCH_fraction_1x1"
-                                print *, "HEREHREHREHREHRHERHEHREHRHEHRHEHRHE"
-                                print *, i, pollen_source_nc_index
                             end if
                             write(unit_logfile,'(2i6,2a)') i,i_source,'  ',trim(var_name_nc(frac_nc_loop_index(j),i,i_source))
                         endif

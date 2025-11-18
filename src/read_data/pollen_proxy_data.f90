@@ -258,10 +258,8 @@ contains
                 proxy_emission_subgrid(:,:,i_source,:) = 0.0
                 do j = 1, emission_subgrid_dim(y_dim_nc_index,i_source)
                     do i = 1, emission_subgrid_dim(x_dim_nc_index,i_source)
-                        
                         i_pollen_index = crossreference_emission_to_pollen_subgrid(i,j,x_dim_index)
                         j_pollen_index = crossreference_emission_to_pollen_subgrid(i,j,y_dim_index)
-
                         proxy_emission_subgrid(i,j,i_source,:) = pollen_subgrid(i_pollen_index,j_pollen_index)
                     end do
                 end do

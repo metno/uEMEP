@@ -62,8 +62,6 @@ module uemep_configuration
     character(256) :: filename_pollen
     character(256) :: pathname_pollen
     character(256) :: pathfilename_pollen
-    ! character(256) :: filename_pollen_proxy(10) ! File name for pollen proxy input
-    ! character(256) :: pathname_pollen_proxy(10) ! Path name for pollen proxy input
     character(256) :: alternative_meteorology_type = 'meps'
     character(256) :: pathname_region_id = ''
     character(256) :: filename_region_id = ''
@@ -87,7 +85,6 @@ module uemep_configuration
     character(256) :: filename_landuse = ''
     character(256) :: pathname_landuse = ''
     character(256) :: pathfilename_landuse = '' ! Combined path and filename
-    ! character(256) :: pathfilename_pollen_proxy ! Combined path and filename for pollen proxy data
     character(256) :: emission_naming_template_str = 'Sec<n>_Emis_mgm2_'
     character(256) :: pathname_boundingbox = ''
     character(256) :: filename_boundingbox = ''
@@ -104,7 +101,6 @@ module uemep_configuration
     character(256) :: pathname_region_mask = ''
     character(256) :: filename_region_mask = ''
     character(256) :: varname_region_mask = 'region_index'
-    ! character(len=256) :: var_name_pollen_proxy_nc(2)
 
     logical :: hourly_calculations = .false.
     logical :: annual_calculations = .false.
