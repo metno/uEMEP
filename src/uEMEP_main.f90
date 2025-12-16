@@ -66,7 +66,8 @@ program uEMEP
     use calculate_exposure, only: uEMEP_calculate_exposure
     use auto_subgrid, only: uEMEP_region_mask_new
     use uemep_indices
-
+    use plugin_registry
+    use enable_plugins
     use uemep_logger
 
     implicit none
@@ -92,6 +93,14 @@ program uEMEP
 
     ! Set global index values that are necessary for all simulation configurations
     call set_indices()
+
+    ! Initialize plugins
+    call init_registry()
+    call init_plugins()
+    call set_plugin_indices()
+    call set_additional_indices()
+
+    ! Allocate arrays
     call allocate_working_arrays()
     call allocate_config_arrays()
 

@@ -1,6 +1,7 @@
 module uemep_indices
 
     use index_tables
+    use plugin_registry
 
     implicit none
 
@@ -59,6 +60,33 @@ contains
         call nc_idx%add("other")
         call nc_idx%add("traffic_exhaust")
         call nc_idx%add("traffic_nonexhaust")
+
+    end subroutine set_indices
+
+    subroutine set_plugin_indices()
+
+        integer :: i, j
+        integer :: n_plugins
+
+        n_plugins = 0
+        do i = 1, size(registry)
+            if (associated(registry(i)%inst)) then
+                n_plugins = n_plugins + 1
+            end if
+        end do
+
+        print *, "Number of plugins: ", n_plugins
+
+        do i = 1, n_plugins
+            print *, trim(registry(i)%inst%source_name)
+            call source_idx%add(trim(registry(i)%inst%source_name))
+            call nc_idx%add(trim(registry(i)%inst%source_name))
+        end do
+
+    end subroutine set_plugin_indices
+
+    subroutine set_additional_indices()
+
         call nc_idx%add("traffic_gasoline")
         call nc_idx%add("traffic_diesel")
         call nc_idx%add("traffic_gas")
@@ -68,7 +96,7 @@ contains
 
         call set_legacy_indices()
 
-    end subroutine set_indices
+    end subroutine set_additional_indices
 
     subroutine set_legacy_indices()
         
@@ -90,6 +118,7 @@ contains
         traffic_nonexhaust_index = source_idx%get("traffic_nonexhaust")
 
         n_source_index = source_idx%n
+        print *, "n_source_index: ", n_source_index
 
         allsource_nc_index = nc_idx%get("allsource")
         traffic_nc_index = nc_idx%get("traffic")
@@ -115,7 +144,26 @@ contains
         extrasource_nc_index = nc_idx%get("extrasource")
 
         n_source_nc_index = nc_idx%n
+        print *, "n_source_nc_index: ", n_source_nc_index
 
     end subroutine set_legacy_indices
+
+    subroutine print_indices()
+
+        integer :: i
+
+        print *, ""
+        print *, "Source indices:"
+        do i = 1, source_idx%n
+            write(*,"(2a,i0)") trim(source_idx%keys(i)), ": ", source_idx%vals(i)
+        end do
+        
+        print *, ""
+        print *, "Source nc indices:"
+        do i = 1, nc_idx%n
+            write(*,"(2a,i0)") trim(nc_idx%keys(i)), ": ", nc_idx%vals(i)
+        end do
+
+    end subroutine print_indices
 
 end module uemep_indices
