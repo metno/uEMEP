@@ -3,6 +3,8 @@ module uEMEP_definitions
 !Defines variables and indexes used in the uEMEP routines
 !Bruce Rolstad Denby 09.11.2016
 
+    use uemep_indices
+
     implicit none
 
     ! Directory seperator for linux (/) or windows (\)
@@ -125,34 +127,34 @@ module uEMEP_definitions
     integer, parameter :: gp_totals_nc_index = 29
     integer, parameter :: op_totals_nc_index = 30
 
-    ! These must be the same as the subgrid source indexes. Should probably just use the one
-    integer, parameter :: allsource_nc_index = 1
-    integer, parameter :: traffic_nc_index = 2
-    integer, parameter :: shipping_nc_index = 3
-    integer, parameter :: heating_nc_index = 4
-    integer, parameter :: agriculture_nc_index = 5
-    integer, parameter :: industry_nc_index = 6
+    ! ! These must be the same as the subgrid source indexes. Should probably just use the one
+    ! integer, parameter :: allsource_nc_index = 1
+    ! integer, parameter :: traffic_nc_index = 2
+    ! integer, parameter :: shipping_nc_index = 3
+    ! integer, parameter :: heating_nc_index = 4
+    ! integer, parameter :: agriculture_nc_index = 5
+    ! integer, parameter :: industry_nc_index = 6
 
-    ! All the other GNFR emissions
-    integer, parameter :: publicpower_nc_index = 7
-    integer, parameter :: fugitive_nc_index = 8
-    integer, parameter :: solvents_nc_index = 9
-    integer, parameter :: aviation_nc_index = 10
-    integer, parameter :: offroad_nc_index = 11
-    integer, parameter :: waste_nc_index = 12
-    integer, parameter :: livestock_nc_index = 13
-    integer, parameter :: other_nc_index = 14
-    integer, parameter :: traffic_exhaust_nc_index = 15
-    integer, parameter :: traffic_nonexhaust_nc_index = 16
-    integer, parameter :: traffic_gasoline_nc_index = 17
-    integer, parameter :: traffic_diesel_nc_index = 18
-    integer, parameter :: traffic_gas_nc_index = 19
-    integer, parameter :: publicpower_point_nc_index = 20
-    integer, parameter :: publicpower_area_nc_index = 21
-    integer, parameter :: extrasource_nc_index = 22
-    integer, parameter :: n_source_nc_index = 22
+    ! ! All the other GNFR emissions
+    ! integer, parameter :: publicpower_nc_index = 7
+    ! integer, parameter :: fugitive_nc_index = 8
+    ! integer, parameter :: solvents_nc_index = 9
+    ! integer, parameter :: aviation_nc_index = 10
+    ! integer, parameter :: offroad_nc_index = 11
+    ! integer, parameter :: waste_nc_index = 12
+    ! integer, parameter :: livestock_nc_index = 13
+    ! integer, parameter :: other_nc_index = 14
+    ! integer, parameter :: traffic_exhaust_nc_index = 15
+    ! integer, parameter :: traffic_nonexhaust_nc_index = 16
+    ! integer, parameter :: traffic_gasoline_nc_index = 17
+    ! integer, parameter :: traffic_diesel_nc_index = 18
+    ! integer, parameter :: traffic_gas_nc_index = 19
+    ! integer, parameter :: publicpower_point_nc_index = 20
+    ! integer, parameter :: publicpower_area_nc_index = 21
+    ! integer, parameter :: extrasource_nc_index = 22
+    ! integer, parameter :: n_source_nc_index = 22
 
-    integer :: convert_GNFR_to_uEMEP_sector_index(n_source_nc_index)
+    integer, allocatable :: convert_GNFR_to_uEMEP_sector_index(:)
 
     ! Loop for all pollutants to be calculated
     integer :: pollutant_index
@@ -367,30 +369,30 @@ module uEMEP_definitions
     integer, parameter :: n_compound_index = 20
 
     ! Declare source indexes (type_source) must be the same as source_nc_index
-    integer, parameter :: allsource_index = 1
-    integer, parameter :: traffic_index = 2
-    integer, parameter :: shipping_index = 3
-    integer, parameter :: heating_index = 4
-    integer, parameter :: agriculture_index = 5
-    integer, parameter :: industry_index = 6
+    ! integer, parameter :: allsource_index = 1
+    ! integer, parameter :: traffic_index = 2
+    ! integer, parameter :: shipping_index = 3
+    ! integer, parameter :: heating_index = 4
+    ! integer, parameter :: agriculture_index = 5
+    ! integer, parameter :: industry_index = 6
 
-    ! All the other GNFR emissions
-    integer, parameter :: publicpower_index = 7
-    integer, parameter :: fugitive_index = 8
-    integer, parameter :: solvents_index = 9
-    integer, parameter :: aviation_index = 10
-    integer, parameter :: offroad_index = 11
-    integer, parameter :: waste_index = 12
-    integer, parameter :: livestock_index = 13
-    integer, parameter :: other_index = 14
-    integer, parameter :: traffic_exhaust_index = 15
-    integer, parameter :: traffic_nonexhaust_index = 16
-    integer, parameter :: n_source_index = 16
-    integer, parameter :: n_source_calculate_index = 14
-    integer :: compound_source_index(n_compound_index, n_source_index)
+    ! ! All the other GNFR emissions
+    ! integer, parameter :: publicpower_index = 7
+    ! integer, parameter :: fugitive_index = 8
+    ! integer, parameter :: solvents_index = 9
+    ! integer, parameter :: aviation_index = 10
+    ! integer, parameter :: offroad_index = 11
+    ! integer, parameter :: waste_index = 12
+    ! integer, parameter :: livestock_index = 13
+    ! integer, parameter :: other_index = 14
+    ! integer, parameter :: traffic_exhaust_index = 15
+    ! integer, parameter :: traffic_nonexhaust_index = 16
+    ! integer, parameter :: n_source_index = 16
+    ! integer, parameter :: n_source_calculate_index = 14
+    integer, allocatable :: compound_source_index(:,:)
 
-    character(256) :: source_file_postfix(n_source_nc_index)
-    logical :: save_EMEP_source(n_source_nc_index) = .false.
+    character(256), allocatable :: source_file_postfix(:)
+    logical, allocatable :: save_EMEP_source(:)
 
     integer, parameter :: x_dim_index = 1
     integer, parameter :: y_dim_index = 2
@@ -418,12 +420,12 @@ module uEMEP_definitions
     real, allocatable :: exposure_subgrid(:, :, :, :, :)
     integer :: subgrid_loop_index(2) ! Number of target subgrids to loop through, limitted by the size of the EMEP grid
     integer :: integral_subgrid_loop_index(2) ! Number of integral subgrids to loop through, limitted by the size of the EMEP grid
-    integer :: emission_subgrid_loop_index(2, n_source_index) ! Number of emission subgrids to loop through, limitted by the size of the EMEP grid
-    integer :: init_emission_subgrid_loop_index(2, n_source_index) ! Number of emission subgrids to loop through, limitted by the size of the EMEP grid
+    integer, allocatable :: emission_subgrid_loop_index(:,:) ! Number of emission subgrids to loop through, limitted by the size of the EMEP grid
+    integer, allocatable :: init_emission_subgrid_loop_index(:,:) ! Number of emission subgrids to loop through, limitted by the size of the EMEP grid
     logical, allocatable :: use_subgrid(:, :, :) ! Specifies if calculations are to be made at a particular set of target subgrids or not
     integer, allocatable :: use_subgrid_val(:, :, :) ! Same as use_subgrid but given a value to indicate if it is in the buffer zone of a region ore not (CURRENTLY DEACTIVATED)
     integer, allocatable :: use_subgrid_interpolation_index(:, :, :) ! Assigns the resolution level for auto gridding to the target grid
-    integer :: n_use_subgrid_levels(n_source_index)
+    integer, allocatable :: n_use_subgrid_levels(:)
 
     real :: loop_index_scale = 1.5
     real :: buffer_index_scale = 1.5
@@ -441,15 +443,15 @@ module uEMEP_definitions
     integer, parameter :: emission_minFF_index = 4
     integer, parameter :: n_emission_index = 4
 
-    integer :: emission_subgrid_dim(n_dim_index, n_source_index)
+    integer, allocatable :: emission_subgrid_dim(:,:)
     integer :: emission_max_subgrid_dim(n_dim_index)
-    real :: emission_subgrid_delta(2, n_source_index)
-    real :: emission_subgrid_min(2, n_source_index)
-    real :: emission_subgrid_max(2, n_source_index)
-    integer :: init_emission_subgrid_dim(n_dim_index, n_source_index)
-    real :: init_emission_subgrid_delta(2, n_source_index)
-    real :: init_emission_subgrid_min(2, n_source_index)
-    real :: init_emission_subgrid_max(2, n_source_index)
+    real, allocatable :: emission_subgrid_delta(:,:)
+    real, allocatable :: emission_subgrid_min(:,:)
+    real, allocatable :: emission_subgrid_max(:,:)
+    integer, allocatable :: init_emission_subgrid_dim(:,:)
+    real, allocatable :: init_emission_subgrid_delta(:,:)
+    real, allocatable :: init_emission_subgrid_min(:,:)
+    real, allocatable :: init_emission_subgrid_max(:,:)
 
     real, allocatable :: emission_subgrid(:, :, :, :, :) ! emission_subgrid (i,j,t,n_source,n_subsource)
     real, allocatable :: proxy_emission_subgrid(:, :, :, :) ! No time dependence
@@ -466,10 +468,10 @@ module uEMEP_definitions
     logical :: use_buffer_zone = .true.
     integer :: buffer_index(2)
     real :: buffer_size(2)
-    integer :: emission_buffer_index(2, n_source_index)
-    real :: emission_buffer_size(2, n_source_index)
-    integer :: init_emission_buffer_index(2, n_source_index)
-    real :: init_emission_buffer_size(2, n_source_index)
+    integer, allocatable :: emission_buffer_index(:,:)
+    real, allocatable :: emission_buffer_size(:,:)
+    integer, allocatable :: init_emission_buffer_index(:,:)
+    real, allocatable :: init_emission_buffer_size(:,:)
     integer :: integral_buffer_index(2)
     real :: integral_buffer_size(2)
 
@@ -527,11 +529,11 @@ module uEMEP_definitions
     integer :: end_month_in_annual_calculations = 12
 
     ! Pseudo dispersion parameters
-    real :: by(n_source_index, n_possible_subsource)
-    real :: az(n_source_index, n_possible_subsource)
-    real :: bz(n_source_index, n_possible_subsource)
-    real :: sig_y_0(n_source_index, n_possible_subsource)
-    real :: sig_z_0(n_source_index, n_possible_subsource)
+    real, allocatable :: by(:,:)
+    real, allocatable :: az(:,:)
+    real, allocatable :: bz(:,:)
+    real, allocatable :: sig_y_0(:,:)
+    real, allocatable :: sig_z_0(:,:)
 
     integer, parameter :: UTM_projection_index = 1
     integer, parameter :: RDM_projection_index = 2
@@ -546,21 +548,21 @@ module uEMEP_definitions
     logical :: use_alternative_LCC_projection_flag = .false.
 
     ! Filename index for files produced by uEMEP
-    integer :: proxy_emission_file_index(n_source_index)
-    integer :: emission_file_index(n_source_index)
-    integer :: proxy_file_index(n_source_index)
-    integer :: proxy_integral_file_index(n_source_index)
-    integer :: emep_subgrid_file_index(n_source_index)
-    integer :: emep_subgrid_nonlocal_file_index(n_source_index)
-    integer :: emep_subgrid_local_file_index(n_source_index)
-    integer :: emep_subgrid_frac_file_index(n_source_index)
-    integer :: subgrid_local_file_index(n_source_index)
-    integer :: subgrid_total_file_index(n_source_index)
-    integer :: emep_additional_subgrid_nonlocal_file_index(n_source_index)
-    integer :: emep_additional_subgrid_local_file_index(n_source_index)
-    integer :: emep_subgrid_semilocal_file_index(n_source_index)
-    integer :: subgrid_sourcetotal_inregion_file_index(n_source_index)
-    integer :: subgrid_sourcetotal_file_index(n_source_index)
+    integer, allocatable :: proxy_emission_file_index(:)
+    integer, allocatable :: emission_file_index(:)
+    integer, allocatable :: proxy_file_index(:)
+    integer, allocatable :: proxy_integral_file_index(:)
+    integer, allocatable :: emep_subgrid_file_index(:)
+    integer, allocatable :: emep_subgrid_nonlocal_file_index(:)
+    integer, allocatable :: emep_subgrid_local_file_index(:)
+    integer, allocatable :: emep_subgrid_frac_file_index(:)
+    integer, allocatable :: subgrid_local_file_index(:)
+    integer, allocatable :: subgrid_total_file_index(:)
+    integer, allocatable :: emep_additional_subgrid_nonlocal_file_index(:)
+    integer, allocatable :: emep_additional_subgrid_local_file_index(:)
+    integer, allocatable :: emep_subgrid_semilocal_file_index(:)
+    integer, allocatable :: subgrid_sourcetotal_inregion_file_index(:)
+    integer, allocatable :: subgrid_sourcetotal_file_index(:)
 
     ! Filename index for meteorological parameters
     integer :: subgrid_ugrid_file_index
@@ -583,13 +585,13 @@ module uEMEP_definitions
     integer :: subgrid_t2m_file_index
 
     ! Filename index for grid auto grid parameters
-    integer :: use_subgrid_file_index(n_source_index)
-    integer :: emep_emission_subgrid_file_index(n_source_index)
+    integer, allocatable :: use_subgrid_file_index(:)
+    integer, allocatable :: emep_emission_subgrid_file_index(:)
 
-    character(256) :: source_file_str(n_source_nc_index) = ''
-    real :: unit_conversion(n_source_index) = 1.0
+    character(256), allocatable :: source_file_str(:)
+    real, allocatable :: unit_conversion(:)
 
-    real :: emission_factor_conversion(n_compound_nc_index, n_source_index, n_possible_subsource) = 0.0
+    real, allocatable :: emission_factor_conversion(:,:,:)
 
     integer :: weighting_step = 1
 
@@ -808,9 +810,9 @@ module uEMEP_definitions
     logical :: first_g_loop = .true.
 
     ! Define the source sector match between uEMEP and EMEP
-    integer :: uEMEP_to_EMEP_sector(n_source_nc_index) = 0
-    character(2) :: uEMEP_to_EMEP_sector_str(n_source_nc_index) = ''
-    character(2) :: uEMEP_to_EMEP_emis_sector_str(n_source_nc_index) = ''
+    integer, allocatable :: uEMEP_to_EMEP_sector(:)
+    character(2), allocatable :: uEMEP_to_EMEP_sector_str(:)
+    character(2), allocatable :: uEMEP_to_EMEP_emis_sector_str(:)
 
     ! Define the aggregation period for EMEP emissions when these are to be used in calculations. Annual is 365*24=8760 or 8784 for leap years
 
@@ -828,10 +830,10 @@ module uEMEP_definitions
     integer :: max_lc_frac_nc_loop_index
     integer :: convert_frac_to_lc_frac_loop_index(num_var_nc_name)
 
-    integer :: local_fraction_grid_for_EMEP_grid_interpolation_source(n_source_index) = 1
+    integer, allocatable :: local_fraction_grid_for_EMEP_grid_interpolation_source(:)
     real :: local_fraction_grid_size_scaling = 1.0
     real :: EMEP_grid_interpolation_size_original = 1.0
-    real :: EMEP_grid_interpolation_size_source(n_source_index) = 1.0
+    real, allocatable:: EMEP_grid_interpolation_size_source(:)
     real :: local_fraction_additional_grid_size_scaling = 1.0
     real :: EMEP_additional_grid_interpolation_size_original = 0.0
 
@@ -897,6 +899,78 @@ module uEMEP_definitions
     real, allocatable :: subgrid_EMEP_local_from_in_region(:, :, :, :, :)
     ! - In-region contribution from outside the moving window, out to the very edge of the LF grid domain
     real, allocatable :: subgrid_EMEP_semilocal_from_in_region(:, :, :, :, :)
+
+contains
+
+    subroutine allocate_working_arrays()
+
+        allocate(compound_source_index(n_compound_index, n_source_index))
+        allocate(unit_conversion(n_source_index))
+        allocate(emission_factor_conversion(n_compound_nc_index, n_source_index, n_possible_subsource)) 
+        allocate(local_fraction_grid_for_EMEP_grid_interpolation_source(n_source_index))
+        allocate(EMEP_grid_interpolation_size_source(n_source_index))
+        allocate(emission_subgrid_loop_index(2, n_source_index))
+        allocate(init_emission_subgrid_loop_index(2, n_source_index))
+        allocate(n_use_subgrid_levels(n_source_index))
+        allocate(emission_subgrid_dim(n_dim_index, n_source_index))
+        allocate(emission_subgrid_delta(2, n_source_index))
+        allocate(emission_subgrid_min(2, n_source_index))
+        allocate(emission_subgrid_max(2, n_source_index))
+        allocate(init_emission_subgrid_dim(n_dim_index, n_source_index))
+        allocate(init_emission_subgrid_delta(2, n_source_index))
+        allocate(init_emission_subgrid_min(2, n_source_index))
+        allocate(init_emission_subgrid_max(2, n_source_index))
+        allocate(emission_buffer_index(2, n_source_index))
+        allocate(emission_buffer_size(2, n_source_index))
+        allocate(init_emission_buffer_index(2, n_source_index))
+        allocate(init_emission_buffer_size(2, n_source_index))
+        allocate(by(n_source_index, n_possible_subsource))
+        allocate(az(n_source_index, n_possible_subsource))
+        allocate(bz(n_source_index, n_possible_subsource))
+        allocate(sig_y_0(n_source_index, n_possible_subsource))
+        allocate(sig_z_0(n_source_index, n_possible_subsource))
+        allocate(proxy_emission_file_index(n_source_index))
+        allocate(emission_file_index(n_source_index))
+        allocate(proxy_file_index(n_source_index))
+        allocate(proxy_integral_file_index(n_source_index))
+        allocate(emep_subgrid_file_index(n_source_index))
+        allocate(emep_subgrid_nonlocal_file_index(n_source_index))
+        allocate(emep_subgrid_local_file_index(n_source_index))
+        allocate(emep_subgrid_frac_file_index(n_source_index))
+        allocate(subgrid_local_file_index(n_source_index))
+        allocate(subgrid_total_file_index(n_source_index))
+        allocate(emep_additional_subgrid_nonlocal_file_index(n_source_index))
+        allocate(emep_additional_subgrid_local_file_index(n_source_index))
+        allocate(emep_subgrid_semilocal_file_index(n_source_index))
+        allocate(subgrid_sourcetotal_inregion_file_index(n_source_index))
+        allocate(subgrid_sourcetotal_file_index(n_source_index))
+        allocate(use_subgrid_file_index(n_source_index))
+        allocate(emep_emission_subgrid_file_index(n_source_index))
+
+        allocate(save_EMEP_source(n_source_nc_index))
+        allocate(source_file_str(n_source_nc_index))
+        allocate(uEMEP_to_EMEP_sector(n_source_nc_index))
+        allocate(uEMEP_to_EMEP_sector_str(n_source_nc_index))
+        allocate(uEMEP_to_EMEP_emis_sector_str(n_source_nc_index))
+        allocate(convert_GNFR_to_uEMEP_sector_index(n_source_nc_index))
+        allocate(source_file_postfix(n_source_nc_index))
+
+    end subroutine allocate_working_arrays
+
+    subroutine set_working_arrays_initial_values()
+
+        unit_conversion = 1.0
+        emission_factor_conversion = 0.0
+        local_fraction_grid_for_EMEP_grid_interpolation_source = 1
+        EMEP_grid_interpolation_size_source = 1.0
+
+        save_EMEP_source = .false.
+        source_file_str = ""
+        uEMEP_to_EMEP_sector = 0
+        uEMEP_to_EMEP_sector_str = ""
+        uEMEP_to_EMEP_emis_sector_str = ""
+
+    end subroutine
 
 
 end module uEMEP_definitions

@@ -3,6 +3,7 @@ module read_industry_data
     use uemep_configuration
     use mod_lambert_projection, only: LL2LAEA, lb2lambert2_uEMEP, LL2PS_spherical
     use utility_functions, only: ll2utm, ll2ltm
+    use uemep_indices
 
     implicit none
     private

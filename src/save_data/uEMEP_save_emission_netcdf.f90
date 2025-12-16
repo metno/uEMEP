@@ -19,6 +19,7 @@ module save_emission_netcdf
     use grid_roads, only: uEMEP_grid_roads
     use mod_lambert_projection, only: lambert2lb2_uEMEP
     use io_functions, only: check_dir_exist
+    use uemep_indices
 
     implicit none
     private

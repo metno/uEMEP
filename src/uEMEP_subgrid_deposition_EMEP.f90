@@ -2,6 +2,7 @@ module subgrid_deposition_emep
 
     use uemep_configuration
     use area_interpolation_functions, only: area_weighted_extended_interpolation_function
+    use uemep_indices
 
     implicit none
     private

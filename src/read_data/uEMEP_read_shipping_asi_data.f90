@@ -5,6 +5,7 @@ module read_shipping_asi_data
     use time_functions, only: datestr_to_date, date_to_number, number_to_date
     use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical, LL2LAEA
     use area_interpolation_functions, only: area_weighted_extended_vectorgrid_interpolation_function
+    use uemep_indices
 
     implicit none
     private

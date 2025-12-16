@@ -2,6 +2,7 @@ module read_time_profiles
 
     use uemep_configuration
     use time_functions, only: day_of_week, summer_time_europe, number_to_date
+    use uemep_indices
 
     implicit none
     private

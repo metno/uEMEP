@@ -4,6 +4,7 @@ module set_subgrids
     use uEMEP_definitions
     use utility_functions, only: ll2utm, ll2ltm
     use mod_lambert_projection, only: LL2LAEA
+    use uemep_indices
 
     implicit none
     private

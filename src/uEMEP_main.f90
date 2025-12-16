@@ -65,6 +65,7 @@ program uEMEP
     use define_subgrid, only: uEMEP_define_subgrid_extent, uEMEP_define_subgrid
     use calculate_exposure, only: uEMEP_calculate_exposure
     use auto_subgrid, only: uEMEP_region_mask_new
+    use uemep_indices
 
     use uemep_logger
 
@@ -88,6 +89,11 @@ program uEMEP
     write(*,*) '------------------------------------------------------------------------'
     write(*,*) 'Starting program uEMEP v'//trim(model_version_str)
     write(*,*) '------------------------------------------------------------------------'
+
+    ! Set global index values that are necessary for all simulation configurations
+    call set_indices()
+    call allocate_working_arrays()
+    call allocate_config_arrays()
 
     ! Read the command line, assigning the configuration file names and the substitution date_str
     call uEMEP_read_command_line(use_default_config)

@@ -4,6 +4,7 @@ module subgrid_emep
     use uemep_constants, only: pi
     use uemep_configuration
     use mod_lambert_projection, only: LL2PROJ, PROJ2LL
+    use uemep_indices
 
     implicit none
     private

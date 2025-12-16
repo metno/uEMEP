@@ -2,6 +2,7 @@ module redistribute_data
 
     use uemep_configuration
     use save_netcdf_file, only: mean_mask
+    use uemep_indices
 
     implicit none
     private

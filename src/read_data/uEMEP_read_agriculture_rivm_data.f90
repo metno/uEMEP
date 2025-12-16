@@ -3,6 +3,7 @@ module read_agriculture_asi_data
     use uemep_configuration
     use mod_lambert_projection, only: lb2lambert2_uEMEP, LL2PS_spherical
     use area_interpolation_functions, only: area_weighted_extended_interpolation_function
+    use uemep_indices
 
     implicit none
     private
@@ -302,9 +303,13 @@ contains
         integer snap, compound_nc_index
         integer i_pollutant
         integer, allocatable :: count_subgrid(:,:,:)
-        real :: height_mean(n_source_index)=0
-        integer :: count_mean(n_source_index)=0
+        real, allocatable :: height_mean(:)
+        integer, allocatable :: count_mean(:)
         integer :: io
+
+        allocate(height_mean(n_source_index), count_mean(n_source_index))
+        height_mean = 0.0
+        count_mean = 0
 
         write(unit_logfile,'(A)') ''
         write(unit_logfile,'(A)') '================================================================'

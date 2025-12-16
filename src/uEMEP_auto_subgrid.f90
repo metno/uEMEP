@@ -6,6 +6,7 @@ module auto_subgrid
     use mod_lambert_projection, only: LL2PROJ, PROJ2LL
     use netcdf
     use uemep_constants, only: epsilon0, dp
+    use uemep_indices
 
     implicit none
     private

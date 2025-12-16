@@ -13,6 +13,7 @@ module subgrid_deposition
     use area_interpolation_functions, only: area_weighted_interpolation_function, &
         area_weighted_extended_interpolation_function
     use mod_rargsort, only: rargsort
+    use uemep_indices
 
     implicit none
     private

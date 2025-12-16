@@ -2,6 +2,7 @@ module calculate_exposure
 
     use uemep_configuration
     use uEMEP_definitions
+    use uemep_indices
 
     implicit none
     private

@@ -3,6 +3,7 @@ module subgrid_meteo_emep
     use uEMEP_definitions
     use uemep_constants, only: pi
     use uemep_configuration
+    use uemep_indices
     
     implicit none
     private

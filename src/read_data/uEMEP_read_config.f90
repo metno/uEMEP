@@ -8,6 +8,7 @@ module read_config
         number_to_date, date_to_datestr_squarebracket, date_to_datestr, &
         datestr_to_date
     use io_functions, only: check_dir_exist
+    use uemep_indices
 
     implicit none
     private

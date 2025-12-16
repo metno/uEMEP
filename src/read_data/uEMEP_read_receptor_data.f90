@@ -3,6 +3,7 @@ module read_receptor_data
     use uemep_configuration
     use utility_functions, only: ll2utm, ll2ltm
     use mod_lambert_projection, only: LL2LAEA
+    use uemep_indices
 
     implicit none
     private

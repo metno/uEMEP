@@ -7,6 +7,7 @@ module read_meteo_nc
         date_to_datestr_bracket, datestr_to_date
     use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
     use netcdf
+    use uemep_indices
 
     implicit none
     private

@@ -4,6 +4,7 @@ module read_roadlink_data_ascii
     use utility_functions, only: nxtdat, ll2utm, ll2ltm
     use time_functions, only: date_to_number, number_to_date, datestr_to_date
     use mod_lambert_projection, only: LL2LAEA, PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
+    use uemep_indices
 
     implicit none
     private

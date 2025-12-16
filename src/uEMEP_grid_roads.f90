@@ -2,6 +2,7 @@ module grid_roads
 
     use uemep_configuration
     use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
+    use uemep_indices
 
     implicit none
     private

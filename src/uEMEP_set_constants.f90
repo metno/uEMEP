@@ -1,6 +1,7 @@
 module set_constants
 
     use uemep_configuration
+    use uemep_indices
 
     implicit none
     private

@@ -4,6 +4,7 @@ module aggregate_proxy_emission_in_emep_grid
     use uemep_configuration
     use uEMEP_definitions
     use mod_read_esri_ascii_file, only: write_esri_ascii_file
+    use uemep_indices
 
     implicit none
     private

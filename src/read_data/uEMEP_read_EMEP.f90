@@ -4,6 +4,7 @@ module read_emep
     use time_functions, only: number_to_date, date_to_number
     use kz_functions, only: TROENKz_invL_from_phi
     use mod_lambert_projection, only: PROJ2LL, lb2lambert2_uEMEP, LL2PS_spherical
+    use uemep_indices
 
     implicit none
     private
