@@ -65,6 +65,7 @@ program uEMEP
     use define_subgrid, only: uEMEP_define_subgrid_extent, uEMEP_define_subgrid
     use calculate_exposure, only: uEMEP_calculate_exposure
     use auto_subgrid, only: uEMEP_region_mask_new
+    use mod_livestock
 
     use uemep_logger
 
@@ -282,6 +283,11 @@ program uEMEP
                                 call uEMEP_read_SSB_data()
                             end if
                         end if
+                    end if
+
+                    ! Read livestock data
+                    if (calculate_source(livestock_index)) then
+                        call initialize_livestock()
                     end if
 
                     ! Read and subgrid agriculture data

@@ -899,6 +899,8 @@ contains
             filename_region_mask=read_name_char('filename_region_mask',filename_region_mask,unit_in,unit_logfile)
             varname_region_mask=read_name_char('varname_region_mask',varname_region_mask,unit_in,unit_logfile)
 
+            call read_livestock_config()
+
             close (unit_in)
 
         enddo !End configuration file number loop
@@ -1030,7 +1032,18 @@ contains
             file_tag=trim(file_tag)//'_'//trim(tile_tag)
         endif
 
+    contains
+
+        subroutine read_livestock_config()
+            pathname_livestock = read_name_char("pathname_livestock", pathname_livestock, unit_in, unit_logfile)
+            filename_livestock = read_name_char("filename_livestock", filename_livestock, unit_in, unit_logfile)
+            livestock_var_name = read_name_char("livestock_var_name", livestock_var_name, unit_in, unit_logfile)
+            limit_livestock_delta = read_name_real("limit_livestock_delta", limit_livestock_delta, unit_in, unit_logfile)
+        end subroutine read_livestock_config
+
     end subroutine uEMEP_read_config
+
+
 
 
 !----------------------------------------------------------------------

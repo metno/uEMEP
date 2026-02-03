@@ -334,6 +334,11 @@ module uemep_configuration
     real :: save_emission_subgrid_min(2)  !Only x and y
     real :: save_emission_subgrid_delta(2)
 
+    ! Livestock
+    character(len=256) :: filename_livestock !! Filename of livestock netcdf file
+    character(len=256) :: pathname_livestock !! Directory path to the livestock netcdf file
+    character(len=256) :: livestock_var_name !! Name of livestock variable in netcdf file
+    real :: limit_livestock_delta = 250.0 !! Lower spatial resolution limit of livestock downscaling
 
     double precision :: projection_attributes(10)
     double precision :: EMEP_projection_attributes(10)

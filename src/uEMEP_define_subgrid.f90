@@ -8,6 +8,7 @@ module define_subgrid
     private
 
     public :: uEMEP_define_subgrid, uEMEP_define_subgrid_extent
+    real, public, protected :: dx_temp, dy_temp
 
 contains
 
@@ -20,7 +21,6 @@ contains
 
         integer i_source
         !integer ii,jj
-        real dx_temp,dy_temp
         real lon_temp,lat_temp
 
         write(unit_logfile,'(A)') ''
