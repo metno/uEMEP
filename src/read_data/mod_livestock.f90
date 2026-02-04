@@ -37,9 +37,9 @@ contains
 
     subroutine setup_livestock_arrays_and_variables()
 
-        call setup_subgrid_dimensions(sector_name, livestock_subgrid_delta, livestock_subgrid_min, &
+        call set_subgrid_dimensions(sector_name, livestock_subgrid_delta, livestock_subgrid_min, &
             livestock_subgrid_max, livestock_subgrid_dim, limit_livestock_delta)
-        call setup_buffer_zone(sector_name, livestock_buffer_index, livestock_buffer_size, &
+        call set_buffer_zone(sector_name, livestock_buffer_index, livestock_buffer_size, &
             livestock_subgrid_delta, livestock_subgrid_min, livestock_subgrid_max, livestock_subgrid_dim)
         
         if (allocated(livestock_subgrid)) deallocate(livestock_subgrid)
@@ -57,7 +57,7 @@ contains
 
         call set_subgrid_xy(sector_name, livestock_subgrid_dim, livestock_subgrid_min, &
             livestock_subgrid_delta, x_livestock_subgrid, y_livestock_subgrid)
-        call setup_crossref_grid(sector_name, crossref_emission_to_livestock_subgrid, &
+        call set_crossref_grid(sector_name, crossref_emission_to_livestock_subgrid, &
             livestock_subgrid_delta, livestock_subgrid_min, livestock_subgrid_dim)
     end subroutine setup_livestock_arrays_and_variables
 

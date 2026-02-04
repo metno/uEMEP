@@ -37,9 +37,9 @@ contains
 
     subroutine setup_agriculture_arrays_and_variables()
 
-        call setup_subgrid_dimensions(sector_name, agriculture_subgrid_delta, agriculture_subgrid_min, &
+        call set_subgrid_dimensions(sector_name, agriculture_subgrid_delta, agriculture_subgrid_min, &
             agriculture_subgrid_max, agriculture_subgrid_dim, limit_agriculture_delta)
-        call setup_buffer_zone(sector_name, agriculture_buffer_index, agriculture_buffer_size, &
+        call set_buffer_zone(sector_name, agriculture_buffer_index, agriculture_buffer_size, &
             agriculture_subgrid_delta, agriculture_subgrid_min, agriculture_subgrid_max, agriculture_subgrid_dim)
         
         if (allocated(agriculture_subgrid)) deallocate(agriculture_subgrid)
@@ -57,7 +57,7 @@ contains
         
         call set_subgrid_xy(sector_name, agriculture_subgrid_dim, agriculture_subgrid_min, &
             agriculture_subgrid_delta, x_agriculture_subgrid, y_agriculture_subgrid)
-        call setup_crossref_grid(sector_name, crossref_emission_to_agriculture_subgrid, &
+        call set_crossref_grid(sector_name, crossref_emission_to_agriculture_subgrid, &
             agriculture_subgrid_delta, agriculture_subgrid_min, agriculture_subgrid_dim)
     end subroutine setup_agriculture_arrays_and_variables
 

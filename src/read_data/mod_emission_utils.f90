@@ -1,4 +1,5 @@
 module mod_emission_utils
+    !! The module contains procedures for setting up and reading data for emission proxy subgrids
 
     use uemep_constants, only: dp
     use uEMEP_definitions, only: unit_logfile, x_dim_index, y_dim_index, x_dim_nc_index, y_dim_nc_index
@@ -9,12 +10,12 @@ module mod_emission_utils
     implicit none
     private
 
-    public :: open_netcdf_file, read_netcdf_data, setup_subgrid_dimensions, setup_buffer_zone, setup_crossref_grid, &
-        set_subgrid_xy
+    public :: read_netcdf_data, set_subgrid_dimensions, set_buffer_zone, set_crossref_grid, set_subgrid_xy
 
 contains
 
     function open_netcdf_file(dirname, filename) result(ncid)
+        !! Opens a netcdf file
         character(len=*), intent(in) :: dirname
         character(len=*), intent(in) :: filename
         integer :: ncid, ncstat
@@ -37,7 +38,9 @@ contains
         end if
     end function open_netcdf_file
 
-    subroutine read_netcdf_data(data_name, dirname, filename, subgrid, subgrid_min, subgrid_max, subgrid_delta, subgrid_dim, x_subgrid, y_subgrid, var_name)
+    subroutine read_netcdf_data(data_name, dirname, filename, subgrid, subgrid_min, subgrid_max, subgrid_delta, subgrid_dim, &
+            x_subgrid, y_subgrid, var_name)
+        !! Reads in emission data from a netcdf file
         character(len=*), intent(in) :: data_name
         character(len=*), intent(in) :: dirname
         character(len=*), intent(in) :: filename
@@ -174,7 +177,9 @@ contains
         if (allocated(ncdata)) deallocate(ncdata)
     end subroutine read_netcdf_data
 
-    subroutine reduce_data_to_target_subgrid(data_name, ncid, buffer_delta, padding, dim_names, dim_start, dim_length, subgrid_min, subgrid_max, subgrid_delta)
+    subroutine reduce_data_to_target_subgrid(data_name, ncid, buffer_delta, padding, dim_names, dim_start, dim_length, &
+            subgrid_min, subgrid_max, subgrid_delta)
+        !! Reduces the size of the domain to read so it corresponds to the target subgrid
         character(len=*), intent(in) :: data_name
         integer, intent(in) :: ncid
         real, intent(in) :: buffer_delta
@@ -285,7 +290,7 @@ contains
         if (allocated(lonlat)) deallocate(lonlat)
     end subroutine reduce_data_to_target_subgrid
 
-    subroutine setup_subgrid_dimensions(name, sg_delta, sg_min, sg_max, sg_dim, delta_limit)
+    subroutine set_subgrid_dimensions(name, sg_delta, sg_min, sg_max, sg_dim, delta_limit)
         !! Sets up the dimensions of the proxy subgrid
         use uemep_configuration, only: subgrid_delta, subgrid_min, subgrid_max
         use uemep_definitions, only: subgrid_dim
@@ -305,9 +310,10 @@ contains
         sg_dim(y_dim_index) = floor((sg_max(y_dim_index) - sg_min(y_dim_index))/sg_delta(y_dim_index))
         sg_dim(x_dim_index) = max(min(sg_dim(x_dim_index), subgrid_dim(x_dim_index)), 1)
         sg_dim(y_dim_index) = max(min(sg_dim(y_dim_index), subgrid_dim(y_dim_index)), 1)
-    end subroutine setup_subgrid_dimensions
+    end subroutine set_subgrid_dimensions
 
-    subroutine setup_buffer_zone(name, b_index, b_size, sg_delta, sg_min, sg_max, sg_dim)
+    subroutine set_buffer_zone(name, b_index, b_size, sg_delta, sg_min, sg_max, sg_dim)
+        !! Sets up a buffer zone around the proxy subgrid
         use uemep_configuration, only: local_subgrid_method_flag
         use uemep_definitions, only: use_buffer_zone, buffer_index_scale
         use define_subgrid, only: dx => dx_temp, dy => dy_temp
@@ -339,9 +345,10 @@ contains
         sg_dim(1:2) = sg_dim(1:2) + b_index(1:2)*2
         sg_min(1:2) = sg_min(1:2) - b_size(1:2)
         sg_max(1:2) = sg_max(1:2) + b_size(1:2)
-    end subroutine setup_buffer_zone
+    end subroutine set_buffer_zone
 
-    subroutine setup_crossref_grid(name, crossref_sg, sg_delta, sg_min, sg_dim)
+    subroutine set_crossref_grid(name, crossref_sg, sg_delta, sg_min, sg_dim)
+        !! Sets up a crossreference grid to map between the emissions and proxy subgrids
         use uemep_definitions, only: livestock_index, emission_subgrid_dim, x_emission_subgrid, y_emission_subgrid
         character(len=*), intent(in) :: name
         integer, allocatable, intent(inout) :: crossref_sg(:,:,:)
@@ -377,9 +384,10 @@ contains
                     sg_dim(y_dim_index)), 1)
             end do
         end do
-    end subroutine setup_crossref_grid
+    end subroutine set_crossref_grid
 
     subroutine set_subgrid_xy(name, sg_dim, sg_min, sg_delta, x_sg, y_sg)
+        !! Sets up the proxy subgrid x and y values
         character(len=*), intent(in) :: name
         integer, intent(in) :: sg_dim(:)
         real, intent(in) :: sg_min(:)
