@@ -432,11 +432,6 @@ contains
             filename_ship(1)=read_name_char('filename_ship(1)',filename_ship(1),unit_in,unit_logfile)
             filename_ship(2)=read_name_char('filename_ship(2)',filename_ship(2),unit_in,unit_logfile)
 
-            pathname_agriculture(1)=read_name_char('pathname_agriculture(1)',pathname_agriculture(1),unit_in,unit_logfile)
-            pathname_agriculture(2)=read_name_char('pathname_agriculture(2)',pathname_agriculture(2),unit_in,unit_logfile)
-            filename_agriculture(1)=read_name_char('filename_agriculture(1)',filename_agriculture(1),unit_in,unit_logfile)
-            filename_agriculture(2)=read_name_char('filename_agriculture(2)',filename_agriculture(2),unit_in,unit_logfile)
-
             pathname_emission_rivm(1)=read_name_char('pathname_emission_rivm(1)',pathname_emission_rivm(1),unit_in,unit_logfile)
             pathname_emission_rivm(2)=read_name_char('pathname_emission_rivm(2)',pathname_emission_rivm(2),unit_in,unit_logfile)
             filename_emission_rivm(1)=read_name_char('filename_emission_rivm(1)',filename_emission_rivm(1),unit_in,unit_logfile)
@@ -900,6 +895,7 @@ contains
             varname_region_mask=read_name_char('varname_region_mask',varname_region_mask,unit_in,unit_logfile)
 
             call read_livestock_config()
+            call read_agriculture_config()
 
             close (unit_in)
 
@@ -1040,6 +1036,13 @@ contains
             livestock_var_name = read_name_char("livestock_var_name", livestock_var_name, unit_in, unit_logfile)
             limit_livestock_delta = read_name_real("limit_livestock_delta", limit_livestock_delta, unit_in, unit_logfile)
         end subroutine read_livestock_config
+
+        subroutine read_agriculture_config()
+            pathname_agriculture = read_name_char("pathname_agriculture", pathname_agriculture, unit_in, unit_logfile)
+            filename_agriculture = read_name_char("filename_agriculture", filename_agriculture, unit_in, unit_logfile)
+            agriculture_var_name = read_name_char("agriculture_var_name", agriculture_var_name, unit_in, unit_logfile)
+            limit_agriculture_delta = read_name_real("limit_agriculture_delta", limit_agriculture_delta, unit_in, unit_logfile)
+        end subroutine read_agriculture_config
 
     end subroutine uEMEP_read_config
 

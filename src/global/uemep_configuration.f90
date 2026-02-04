@@ -38,9 +38,6 @@ module uemep_configuration
     character(256) :: filename_ship(2) ! File name for shipping ais files
     character(256) :: pathname_ship(2) ! Path name for shipping ais files
     character(256) :: pathfilename_ship(2) ! Combined path and file name for shipping ais files
-    character(256) :: filename_agriculture(2) ! File name for input agriculture rivm files
-    character(256) :: pathname_agriculture(2) ! Path name for input agriculture rivm files
-    character(256) :: pathfilename_agriculture(2) ! Combined path and file name for input agriculture rivm files
     character(256) :: filename_emission_rivm(2) ! File name for input emission rivm files
     character(256) :: pathname_emission_rivm(2) ! Path name for input emission rivm files
     character(256) :: pathfilename_emission_rivm(2) ! Combined path and file name for input emission rivm files
@@ -339,6 +336,12 @@ module uemep_configuration
     character(len=256) :: pathname_livestock !! Directory path to the livestock netcdf file
     character(len=256) :: livestock_var_name !! Name of livestock variable in netcdf file
     real :: limit_livestock_delta = 250.0 !! Lower spatial resolution limit of livestock downscaling
+
+    ! Agriculture
+    character(len=256) :: filename_agriculture !! Filename of agriculture netcdf file
+    character(len=256) :: pathname_agriculture !! Directory path to agriculture netcdf file
+    character(len=256) :: agriculture_var_name !! Name of agriculture variable in netcdf file
+    real :: limit_agriculture_delta = 250.0 !! Lower spatial resolution limit of agriculture downscaling
 
     double precision :: projection_attributes(10)
     double precision :: EMEP_projection_attributes(10)

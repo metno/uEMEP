@@ -39,8 +39,6 @@ program uEMEP
         uEMEP_grid_receptor_data
     use read_ssb_data, only: uEMEP_read_netcdf_population, uEMEP_read_SSB_data, &
         uEMEP_read_netcdf_population_latlon
-    use read_agriculture_asi_data, only: uEMEP_read_agriculture_rivm_data, &
-        uEMEP_read_emission_rivm_data
     use read_industry_data, only: uEMEP_read_industry_data
     use read_shipping_asi_data, only: uEMEP_preaggregate_shipping_asi_data, &
         uEMEP_read_netcdf_shipping_latlon, uEMEP_read_weekly_shipping_asi_data, &
@@ -66,6 +64,7 @@ program uEMEP
     use calculate_exposure, only: uEMEP_calculate_exposure
     use auto_subgrid, only: uEMEP_region_mask_new
     use mod_livestock
+    use mod_agriculture
 
     use uemep_logger
 
@@ -291,20 +290,8 @@ program uEMEP
                     end if
 
                     ! Read and subgrid agriculture data
-                    if (calculate_source(agriculture_index) .and. use_rivm_agricuture_emission_data .and. .not. read_subgrid_emission_data) then
-                        ! Currently only data from RIVM here
-                        call uEMEP_read_agriculture_rivm_data()
-                    end if
                     if (read_rivm_landuse_flag) then
                         call uEMEP_read_landuse_rivm_data()
-                    end if
-                    if (read_subgrid_emission_data) then
-                        ! Special routine for reading in RIVM point source emission data
-                        if (use_rivm_subgrid_emission_format) then
-                            call uEMEP_read_emission_rivm_data()
-                        else
-                            ! Nothing else available yet
-                        end if
                     end if
 
                     ! Read in population data

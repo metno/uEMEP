@@ -6,7 +6,6 @@ module save_emission_netcdf
     use read_meteo_nc, only: uEMEP_read_meteo_nc
     use read_roadlink_data_ascii, only: uEMEP_read_roadlink_data_ascii, &
         uEMEP_read_roadlink_emission_data
-    use read_agriculture_asi_data, only: uEMEP_read_agriculture_rivm_data
     use read_industry_data, only: uEMEP_read_industry_data
     use read_shipping_asi_data, only: uEMEP_read_weekly_shipping_asi_data, &
         uEMEP_read_monthly_and_daily_shipping_asi_data, uEMEP_read_shipping_asi_data
@@ -228,14 +227,6 @@ contains
                     call uEMEP_set_emission_factors
                     call uEMEP_convert_proxy_to_emissions
 
-                endif
-                if (i_source.eq.agriculture_index) then
-                    !Read agriculture data
-                    call uEMEP_read_agriculture_rivm_data
-
-                    call uEMEP_read_time_profiles
-                    call uEMEP_set_emission_factors
-                    call uEMEP_convert_proxy_to_emissions
                 endif
                 if (i_source.eq.traffic_index) then
                     g_loop=1
