@@ -1,19 +1,16 @@
 module mod_livestock
 
-    use mod_emission_utils, only: open_netcdf_file, read_netcdf_data, setup_subgrid_dimensions, setup_buffer_zone, &
-        setup_crossref_grid, set_subgrid_xy
-    use uemep_configuration, only: filename_livestock, pathname_livestock, local_subgrid_method_flag, &
-        subgrid_min, subgrid_max, subgrid_delta, limit_livestock_delta, livestock_var_name
-    use uEMEP_definitions, only: x_dim_index, y_dim_index, livestock_index, &
-        emission_subgrid_dim, x_emission_subgrid, y_emission_subgrid, proxy_emission_subgrid, &
-        emission_max_subgrid_dim, buffer_index_scale, subgrid_dim, use_buffer_zone
-    use define_subgrid, only: dx_temp, dy_temp
+    use uEMEP_definitions, only: unit_logfile, x_dim_index, y_dim_index, emission_max_subgrid_dim, livestock_index, &
+        proxy_emission_subgrid, emission_subgrid_dim
+    use uemep_configuration, only: filename_livestock, pathname_livestock, limit_livestock_delta, livestock_var_name
+    use mod_emission_utils
 
     implicit none
     private
 
     public :: initialize_livestock
 
+    character(len=9), parameter :: sector_name = "livestock"
     real, allocatable :: livestock_subgrid(:,:) ! Array to read in livestock (proxy) data
     integer, allocatable :: crossref_emission_to_livestock_subgrid(:,:,:)
     integer :: livestock_subgrid_dim(2)
@@ -28,7 +25,6 @@ module mod_livestock
 contains
 
     subroutine initialize_livestock()
-        use uemep_definitions, only: unit_logfile
         write(unit_logfile, "(a)") ""
         write(unit_logfile, "(a)") "================================================================"
         write(unit_logfile, "(a)") "Initializing livestock emissions (GNFR sector 11 (K))"
@@ -40,13 +36,12 @@ contains
     end subroutine initialize_livestock
 
     subroutine setup_livestock_arrays_and_variables()
-        ! Setup subgrid
-        call setup_subgrid_dimensions("livestock", livestock_subgrid_delta, livestock_subgrid_min, &
+
+        call setup_subgrid_dimensions(sector_name, livestock_subgrid_delta, livestock_subgrid_min, &
             livestock_subgrid_max, livestock_subgrid_dim, limit_livestock_delta)
-        call setup_buffer_zone("livestock", livestock_buffer_index, livestock_buffer_size, &
+        call setup_buffer_zone(sector_name, livestock_buffer_index, livestock_buffer_size, &
             livestock_subgrid_delta, livestock_subgrid_min, livestock_subgrid_max, livestock_subgrid_dim)
         
-        ! Allocate arrays 
         if (allocated(livestock_subgrid)) deallocate(livestock_subgrid)
         allocate(livestock_subgrid(livestock_subgrid_dim(x_dim_index),livestock_subgrid_dim(y_dim_index)))
         livestock_subgrid = 0.0
@@ -60,13 +55,14 @@ contains
         allocate(crossref_emission_to_livestock_subgrid(emission_max_subgrid_dim(x_dim_index), &
             emission_max_subgrid_dim(y_dim_index), 2))
 
-        ! Setup crossrefence subgrids
-        call set_subgrid_xy("livestock", livestock_subgrid_dim, livestock_subgrid_min, livestock_subgrid_delta, x_livestock_subgrid, y_livestock_subgrid)
-        call setup_crossref_grid("livestock", crossref_emission_to_livestock_subgrid, livestock_subgrid_delta, livestock_subgrid_min, livestock_subgrid_dim)
+        call set_subgrid_xy(sector_name, livestock_subgrid_dim, livestock_subgrid_min, &
+            livestock_subgrid_delta, x_livestock_subgrid, y_livestock_subgrid)
+        call setup_crossref_grid(sector_name, crossref_emission_to_livestock_subgrid, &
+            livestock_subgrid_delta, livestock_subgrid_min, livestock_subgrid_dim)
     end subroutine setup_livestock_arrays_and_variables
 
     subroutine read_livestock_data()
-        call read_netcdf_data("livestock", pathname_livestock, filename_livestock, livestock_subgrid, &
+        call read_netcdf_data(sector_name, pathname_livestock, filename_livestock, livestock_subgrid, &
             livestock_subgrid_min, livestock_subgrid_max, livestock_subgrid_delta, livestock_subgrid_dim, &
             x_livestock_subgrid, y_livestock_subgrid, livestock_var_name)
     end subroutine read_livestock_data
