@@ -82,7 +82,8 @@ contains
         write(unit_logfile, "(3a,2i8)") "Size of ", trim(data_name), " data (lon,lat): ", dim_length(1), dim_length(2)
 
         ! Reduce domain size
-        call reduce_data_to_target_subgrid(data_name, ncid, 10.0, 10, dim_names, dim_start, dim_length, subgrid_min, subgrid_max, subgrid_delta)
+        call reduce_data_to_target_subgrid(data_name, ncid, 10.0, 10, dim_names, dim_start, dim_length, subgrid_min, &
+            subgrid_max, subgrid_delta)
 
         ! Allocate working arrays
         if (allocated(lonlat)) deallocate(lonlat)
@@ -171,7 +172,8 @@ contains
                 end if
             end do
         end do
-        write(unit_logfile, "(5a,2f12.2)") "Data range for variable: ", trim(var_name), " in ", trim(data_name), " subgrid (min/max): ", minval(subgrid), maxval(subgrid)
+        write(unit_logfile, "(5a,2f12.2)") "Data range for variable: ", trim(var_name), " in ", trim(data_name), &
+            " subgrid (min/max): ", minval(subgrid), maxval(subgrid)
 
         if (allocated(lonlat)) deallocate(lonlat)
         if (allocated(ncdata)) deallocate(ncdata)
