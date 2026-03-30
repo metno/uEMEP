@@ -1035,6 +1035,10 @@ contains
         integer :: no2_count
         logical :: run_all_flag
 
+        ! Ratio of corrected concentrations to original uncorrected concentrations (needed for scaling source contributions)
+        ! NB: for convenience, this array has a source dimension, but the scale factor will not vary along this dimension
+        real, allocatable :: comp_source_subgrid_scalefactor(:, :, :, :, :)
+
         write(unit_logfile,'(A)') ''
         write(unit_logfile,'(A)') '================================================================'
         write(unit_logfile,'(A)') 'Correcting annual mean NO2 and O3 (correct_annual_mean_chemistry)'
@@ -1070,6 +1074,12 @@ contains
                 run_all_flag = .true.
             end if
 
+            ! Initialize scale factor to 1 everywhere
+            if (save_no2_source_contributions .or. save_o3_source_contributions) then
+                allocate(comp_source_subgrid_scalefactor(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index,n_source_index))
+                comp_source_subgrid_scalefactor = 1
+            end if
+
             do j = 1, subgrid_dim(y_dim_index)
                 do i = 1, subgrid_dim(x_dim_index)
 
@@ -1096,6 +1106,10 @@ contains
 
                     comp_subgrid(i,j,t,o3_index) = o3_out
                     comp_subgrid(i,j,t,no2_index) = no2_out
+                    if (save_no2_source_contributions .or. save_o3_source_contributions) then
+                        if (abs(o3_in) > epsilon0) comp_source_subgrid_scalefactor(i,j,t,o3_index,:) = o3_out/o3_in
+                        if (abs(no2_in) > epsilon0) comp_source_subgrid_scalefactor(i,j,t,no2_index,:) = no2_out/no2_in
+                    end if
                     sum_no2_in = sum_no2_in + no2_in
                     sum_no2_out = sum_no2_out + no2_out
                     no2_count = no2_count + 1
@@ -1109,6 +1123,19 @@ contains
         end do
 
         write(unit_logfile,'(a,f12.4)') 'Average NO2 scaling with pdf correction = ',sum_no2_out/sum_no2_in
+
+        ! Renormalize NO2 and O3 source contributions to the new total concentrations
+        ! by applying the same scaling factor to all sources, both local and nonlocal
+        if (save_no2_source_contributions .or. save_o3_source_contributions) then
+            if (allocated(comp_source_subgrid)) comp_source_subgrid = comp_source_subgrid * comp_source_subgrid_scalefactor
+            if (allocated(comp_source_subgrid_from_in_region)) comp_source_subgrid_from_in_region = comp_source_subgrid_from_in_region * comp_source_subgrid_scalefactor
+            if (allocated(comp_source_additional_subgrid)) comp_source_additional_subgrid = comp_source_additional_subgrid * comp_source_subgrid_scalefactor
+            if (allocated(comp_source_EMEP_subgrid)) comp_source_EMEP_subgrid = comp_source_EMEP_subgrid * comp_source_subgrid_scalefactor
+            if (allocated(comp_source_EMEP_additional_subgrid)) comp_source_EMEP_additional_subgrid = comp_source_EMEP_additional_subgrid * comp_source_subgrid_scalefactor
+            if (allocated(comp_semilocal_source_subgrid_from_in_region)) comp_semilocal_source_subgrid_from_in_region = comp_semilocal_source_subgrid_from_in_region * comp_source_subgrid_scalefactor
+            if (allocated(comp_source_subgrid_scalefactor)) deallocate(comp_source_subgrid_scalefactor)
+        end if
+
     end subroutine correct_annual_mean_chemistry
 
     subroutine uEMEP_annual_mean_pdf_correction_NO2_O3(bin_min, bin_max, delta_log10_bin, run_all, no2_in, nox_in, o3_in, J_photo_in, temperature_in, ox_sigma_ratio_in, nox_sigma_ratio_in, lon_in, lat_in, no2_out, o3_out)

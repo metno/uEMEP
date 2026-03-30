@@ -59,7 +59,7 @@ program uEMEP
     use subgrid_emission_emep, only: uEMEP_subgrid_emission_EMEP
     use subgrid_meteo_emep, only: uEMEP_subgrid_meteo_EMEP
     use tiling_routines, only: uEMEP_set_tile_grids, uEMEP_set_region_tile_grids
-    use chemistry_no2, only: uEMEP_chemistry, correct_annual_mean_chemistry
+    use chemistry_no2, only: uEMEP_chemistry, uEMEP_source_fraction_chemistry, correct_annual_mean_chemistry
     use crossreference_grids, only: uEMEP_crossreference_grids
     use grid_roads, only: uEMEP_grid_roads
     use define_subgrid, only: uEMEP_define_subgrid_extent, uEMEP_define_subgrid
@@ -450,6 +450,15 @@ program uEMEP
 
                 ! Calculate chemistry for NO2 and O3
                 call uEMEP_chemistry()
+                ! Calculate NO2 and O3 source contributions
+                if (save_no2_source_contributions .or. save_o3_source_contributions) then
+                    if (EMEP_additional_grid_interpolation_size.gt.0) then
+                        calculate_EMEP_additional_grid_flag=.true.
+                        call uEMEP_source_fraction_chemistry
+                    endif
+                    calculate_EMEP_additional_grid_flag=.false.
+                    call uEMEP_source_fraction_chemistry
+                end if
 
                 ! Correct annual mean chemistry for pdf
                 if (use_annual_mean_pdf_chemistry_correction) then
