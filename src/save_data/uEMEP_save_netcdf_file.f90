@@ -1,7 +1,6 @@
 module save_netcdf_file
 
     use uemep_configuration
-    use chemistry_no2, only: uEMEP_source_fraction_chemistry
     use mod_read_esri_ascii_file, only: write_esri_ascii_file
     use area_interpolation_functions, only: area_weighted_interpolation_function
 
@@ -546,19 +545,10 @@ contains
         end do  ! source_domain_loop
 
 
-        ! Calculate and save NO2 and O3 source contributions
+        ! Save NO2 and O3 source contributions
         if (save_no2_source_contributions .or. save_o3_source_contributions) then
 
-            ! Calculate NO2 and O3 source contributions
-            if (EMEP_additional_grid_interpolation_size.gt.0) then
-                calculate_EMEP_additional_grid_flag=.true.
-                call uEMEP_source_fraction_chemistry
-            endif
-
-            calculate_EMEP_additional_grid_flag=.false.
-            call uEMEP_source_fraction_chemistry
-
-            ! Save the contributions to file
+            ! Save different versions of the source contributions to file
             ! 1 = normal source contributions from within moving window
             ! 2 = source contributions cut down to region
             ! 3 = additional nonlocal
@@ -923,7 +913,7 @@ contains
         end if
 
         !Save the EMEP data interpolated to the subgrid. These are based on the gridded concentrations
-        ! Loop over 5 different verions
+        ! Loop over 6 different verions
         ! 1 = emep local contributions from the moving-window (downscaling domain)
         ! 2 = As 1, but only the part of the moving window that is within the receptor region
         ! 3 = emep additional local contributions, extending further using larger LF grid
