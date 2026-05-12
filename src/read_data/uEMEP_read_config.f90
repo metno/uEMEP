@@ -775,6 +775,9 @@ contains
             read_RWC_file_with_extra_HDD=read_name_logical('read_RWC_file_with_extra_HDD',read_RWC_file_with_extra_HDD,unit_in,unit_logfile)
             read_RWC_file_with_extra_HDD_and_height=read_name_logical('read_RWC_file_with_extra_HDD_and_height',read_RWC_file_with_extra_HDD_and_height,unit_in,unit_logfile)
 
+            ! Benzene splits from VOC
+            benzene_split_voc_in_GNFR_sectors(13) = read_name_real("benzene_split_voc_in_GNFR_sectors(13)", benzene_split_voc_in_GNFR_sectors(13), unit_in, unit_logfile)
+
             !Allows a scaling of EMEP input ozone. For testing.
             comp_scale_nc(o3_nc_index)=read_name_real('comp_scale_nc(o3_nc_index)',comp_scale_nc(o3_nc_index),unit_in,unit_logfile)
             comp_scale_nc(nox_nc_index)=read_name_real('comp_scale_nc(nox_nc_index)',comp_scale_nc(nox_nc_index),unit_in,unit_logfile)
