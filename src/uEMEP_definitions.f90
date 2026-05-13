@@ -72,15 +72,16 @@ module uEMEP_definitions
     integer, parameter :: phi_nc_index = 31
     integer :: num_var_nc  !This will be set later when the number local fraction grids is known
     integer, parameter :: num_var_nc_start = 31 ! number of readable variables
-    integer, parameter :: num_var_nc_name = 51 ! number of possible variable names, add 20 to include any extra local fraction grids
+    integer, parameter :: num_var_nc_name = 71 ! number of possible variable names, add 40 to include any extra local fraction grids
     integer, parameter :: num_var_meteo_nc = num_var_nc_start
 
-    integer, parameter :: num_lc_var_nc_start = 2 ! number of readable local contribution variables
+    integer, parameter :: num_lc_var_nc_start = 3 ! number of readable local contribution variables
 
     integer :: frac_nc_index = num_var_nc_start + 1
     integer :: local_nc_index = num_var_nc_start + 2
     integer :: lc_frac_nc_index = 1
     integer :: lc_local_nc_index = 2
+    integer :: lc_drydepo_frac_nc_index = 3
     integer :: num_lc_var_nc = num_lc_var_nc_start
 
     integer :: compound_index
@@ -824,6 +825,8 @@ module uEMEP_definitions
     integer :: local_nc_loop_index(max_n_local_fraction_grids)
     integer :: lc_frac_nc_loop_index(max_n_local_fraction_grids)
     integer :: lc_local_nc_loop_index(max_n_local_fraction_grids)
+    integer :: lc_drydepo_frac_nc_loop_index(max_n_local_fraction_grids)
+    integer :: drydepo_frac_nc_loop_index(max_n_local_fraction_grids)
     integer :: min_frac_nc_loop_index
     integer :: max_frac_nc_loop_index
     integer :: min_lc_frac_nc_loop_index
