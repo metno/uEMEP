@@ -103,6 +103,12 @@ program uEMEP
         call uEMEP_set_subgrid_select_latlon_centre()
     end if
 
+    ! We force setting landuse if agriculture or livestock is calculated
+    if (calculate_source(agriculture_index) .or. calculate_source(livestock_index)) then
+        read_landuse_flag = .true.
+        use_landuse_as_proxy = .true.
+    end if
+
     ! Set the landuse if required
     if (use_landuse_as_proxy .or. read_landuse_flag) then
         call uEMEP_set_landuse_classes()
@@ -292,6 +298,10 @@ program uEMEP
                     ! Read and subgrid agriculture data
                     if (read_rivm_landuse_flag) then
                         call uEMEP_read_landuse_rivm_data()
+                    end if
+
+                    if (read_subgrid_emission_data) then
+                        ! Nothing else available yet
                     end if
 
                     ! Read in population data

@@ -228,6 +228,13 @@ contains
                     call uEMEP_convert_proxy_to_emissions
 
                 endif
+                if (i_source.eq.agriculture_index) then
+                    !Read agriculture data
+
+                    call uEMEP_read_time_profiles
+                    call uEMEP_set_emission_factors
+                    call uEMEP_convert_proxy_to_emissions
+                endif
                 if (i_source.eq.traffic_index) then
                     g_loop=1
                     !Read inthe road data
