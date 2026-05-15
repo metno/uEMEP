@@ -432,11 +432,6 @@ contains
             filename_ship(1)=read_name_char('filename_ship(1)',filename_ship(1),unit_in,unit_logfile)
             filename_ship(2)=read_name_char('filename_ship(2)',filename_ship(2),unit_in,unit_logfile)
 
-            pathname_emission_rivm(1)=read_name_char('pathname_emission_rivm(1)',pathname_emission_rivm(1),unit_in,unit_logfile)
-            pathname_emission_rivm(2)=read_name_char('pathname_emission_rivm(2)',pathname_emission_rivm(2),unit_in,unit_logfile)
-            filename_emission_rivm(1)=read_name_char('filename_emission_rivm(1)',filename_emission_rivm(1),unit_in,unit_logfile)
-            filename_emission_rivm(2)=read_name_char('filename_emission_rivm(2)',filename_emission_rivm(2),unit_in,unit_logfile)
-
             pathname_industry(1)=read_name_char('pathname_industry(1)',pathname_industry(1),unit_in,unit_logfile)
             pathname_industry(2)=read_name_char('pathname_industry(2)',pathname_industry(2),unit_in,unit_logfile)
             filename_industry(1)=read_name_char('filename_industry(1)',filename_industry(1),unit_in,unit_logfile)

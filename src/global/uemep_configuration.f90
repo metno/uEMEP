@@ -38,9 +38,6 @@ module uemep_configuration
     character(256) :: filename_ship(2) ! File name for shipping ais files
     character(256) :: pathname_ship(2) ! Path name for shipping ais files
     character(256) :: pathfilename_ship(2) ! Combined path and file name for shipping ais files
-    character(256) :: filename_emission_rivm(2) ! File name for input emission rivm files
-    character(256) :: pathname_emission_rivm(2) ! Path name for input emission rivm files
-    character(256) :: pathfilename_emission_rivm(2) ! Combined path and file name for input emission rivm files
     character(256) :: filename_industry(10) ! File name for input industry files
     character(256) :: pathname_industry(10) ! Path name for input industry files
     character(256) :: pathfilename_industry(10) ! Combined path and file name for input industry files

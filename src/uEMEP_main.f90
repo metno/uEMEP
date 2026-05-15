@@ -30,8 +30,7 @@ program uEMEP
     use read_rwc_heating_data, only: uEMEP_read_RWC_heating_data
     use save_emission_netcdf, only: uEMEP_calculate_emissions_for_EMEP
     use set_subgrids, only: uEMEP_set_subgrids, uEMEP_set_subgrid_select_latlon_centre
-    use read_landuse_rivm_data, only: uEMEP_read_landuse_rivm_data, &
-        uEMEP_set_landuse_classes, uEMEP_read_netcdf_landuse_latlon
+    use read_landuse_data, only: uEMEP_set_landuse_classes, uEMEP_read_netcdf_landuse_latlon
     use read_roadlink_data_ascii, only: read_country_bounding_box_data, &
         uEMEP_read_roadlink_data_ascii, uEMEP_change_road_data, uEMEP_read_roadlink_emission_data
     use set_filenames, only: uEMEP_set_filenames
