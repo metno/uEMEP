@@ -191,7 +191,6 @@ module uemep_configuration
     logical :: use_annual_mean_pdf_chemistry_correction = .false.
     logical :: quick_annual_mean_pdf_chemistry_correction = .true.
     logical :: use_landuse_as_proxy = .false.
-    logical :: read_subgrid_emission_data = .false.
     logical :: save_EMEP_somo35 = .false.
     logical :: save_EMEP_comax = .false.
     logical :: save_EMEP_o3max = .false.
