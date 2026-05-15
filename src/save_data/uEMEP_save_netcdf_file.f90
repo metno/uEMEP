@@ -1315,6 +1315,48 @@ contains
             enddo
         endif
 
+        !Save the original EMEP emissions per sector
+        if (save_emep_original_emissions) then
+            write(unit_logfile,'(a)')'--------------------------'
+            write(unit_logfile,'(a)')'Saving original EMEP emissions'
+            write(unit_logfile,'(a)')'--------------------------'
+            variable_type='float'
+            unit_str="g/s"
+            do i_pollutant=1,n_pollutant_loop
+                do i_source=1,n_source_index
+                    if (calculate_source(i_source)) then
+                        var_name_temp=trim(var_name_nc(conc_nc_index,pollutant_loop_index(i_pollutant),allsource_index)) &
+                            //'_original_EMEP_emission_'//trim(source_file_str(i_source))
+                        !Convert from mg/m2/h(year) to g/s per subgrid cell
+                        if (hourly_calculations) temp_subgrid=orig_EMEP_emission_subgrid(:,:,:,i_source,i_pollutant) &
+                            *subgrid_delta(x_dim_index)*subgrid_delta(y_dim_index)/3600./1000.
+                        if (annual_calculations) temp_subgrid=orig_EMEP_emission_subgrid(:,:,:,i_source,i_pollutant) &
+                            *subgrid_delta(x_dim_index)*subgrid_delta(y_dim_index)/3600./1000./EMEP_emission_aggregation_period
+                        if (save_netcdf_file_flag) then
+                            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), &
+                                mean_mask(temp_subgrid,use_subgrid(:,:,allsource_index), &
+                                size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
+                            call uEMEP_save_netcdf_file(unit_logfile,temp_name,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                                ,unit_str,title_str,create_file,valid_min,variable_type,scale_factor)
+                        endif
+                        if (save_netcdf_receptor_flag.and.n_valid_receptor.ne.0) then
+                            write(unit_logfile,'(a,f12.3)')'Writing netcdf variable: '//trim(var_name_temp), &
+                                mean_mask(temp_subgrid,use_subgrid(:,:,allsource_index), &
+                                size(temp_subgrid,1),size(temp_subgrid,2),size(temp_subgrid,3))
+                            call uEMEP_save_netcdf_receptor_file(unit_logfile,temp_name_rec,subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index) &
+                                ,temp_subgrid,x_subgrid,y_subgrid,lon_subgrid,lat_subgrid,var_name_temp &
+                                ,unit_str,title_str_rec,create_file_rec,valid_min &
+                                ,x_receptor(valid_receptor_index(1:n_valid_receptor)),y_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                                ,lon_receptor(valid_receptor_index(1:n_valid_receptor)),lat_receptor(valid_receptor_index(1:n_valid_receptor)) &
+                                ,z_rec(allsource_index,1) &
+                                ,name_receptor(valid_receptor_index(1:n_valid_receptor),1),n_valid_receptor,variable_type,scale_factor)
+                        endif
+                    endif
+                enddo
+            enddo
+        endif
+
         !Save AQI
         if (save_aqi) then
             write(unit_logfile,'(a)')'--------------------------'

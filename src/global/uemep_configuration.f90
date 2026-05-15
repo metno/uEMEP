@@ -151,6 +151,7 @@ module uemep_configuration
     logical :: save_wind_vectors = .false. ! Output data saving flags
     logical :: save_other_meteo = .false. ! Output data saving flags
     logical :: save_emep_original = .true. ! Output data saving flags
+    logical :: save_emep_original_emissions = .false.
     logical :: save_emissions = .false. ! Output data saving flags
     logical :: save_for_chemistry = .false. ! Output data saving flags
     logical :: save_population = .false. ! Output data saving flags

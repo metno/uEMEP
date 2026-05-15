@@ -409,6 +409,7 @@ module uEMEP_definitions
     real, allocatable :: comp_subgrid(:, :, :, :)
     real, allocatable :: comp_EMEP_subgrid(:, :, :, :)
     real, allocatable :: orig_EMEP_subgrid(:, :, :, :)
+    real, allocatable :: orig_EMEP_emission_subgrid(:,:,:,:,:)
     real, allocatable :: x_subgrid(:, :)
     real, allocatable :: y_subgrid(:, :)
     real, allocatable :: lon_subgrid(:, :)

@@ -307,6 +307,7 @@ contains
         if (allocated(comp_subgrid)) deallocate (comp_subgrid)
         if (allocated(comp_EMEP_subgrid)) deallocate (comp_EMEP_subgrid)
         if (allocated(orig_EMEP_subgrid)) deallocate (orig_EMEP_subgrid)
+        if (allocated(orig_EMEP_emission_subgrid)) deallocate (orig_EMEP_emission_subgrid)
         if (allocated(species_EMEP_subgrid)) deallocate (species_EMEP_subgrid)
 
         !Define compound subgrid. Same as target in dimensions
@@ -322,6 +323,9 @@ contains
             allocate (orig_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_compound_index))
             orig_EMEP_subgrid=0.
         endif
+        if (.not. allocated(orig_EMEP_emission_subgrid)) then
+            allocate(orig_EMEP_emission_subgrid(subgrid_dim(x_dim_index), subgrid_dim(y_dim_index), subgrid_dim(t_dim_index), n_source_index, n_pollutant_loop))
+        end if
         if (.not.allocated(species_EMEP_subgrid).and.(save_emep_species.or.save_seasalt)) then
             allocate (species_EMEP_subgrid(subgrid_dim(x_dim_index),subgrid_dim(y_dim_index),subgrid_dim(t_dim_index),n_pmxx_sp_index,n_species_loop_index))
             species_EMEP_subgrid=0.
