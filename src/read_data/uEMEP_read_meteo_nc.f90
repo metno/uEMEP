@@ -49,7 +49,7 @@ contains
         integer n_file,n_file_start
         double precision date_num_temp
         integer date_array(6)
-        double precision scale_factor_nc
+        double precision :: scale_factor_nc, add_offset_nc
 
         logical found_file
         integer :: search_hour_step=6
@@ -340,13 +340,23 @@ contains
                 !write(*,*) temp_x_min,temp_x_max,temp_y_min,temp_y_max
 
                 status_nc = NF90_INQ_VARID (id_nc, trim(dim_name_meteo_nc(x_dim_nc_index)), var_id_nc)
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc,temp_var1d_nc_dp(1,1:2),start=(/1/),count=(/2/))
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                status_nc = NF90_GET_VAR(id_nc, var_id_nc, temp_var1d_nc_dp(1,1:2), start=[1],count=[2])
+                temp_var1d_nc_dp(1,1:2) = temp_var1d_nc_dp(1,1:2) * scale_factor_nc + add_offset_nc
                 status_nc = NF90_INQ_VARID (id_nc, trim(dim_name_meteo_nc(y_dim_nc_index)), var_id_nc)
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc,temp_var1d_nc_dp(2,1:2),start=(/1/),count=(/2/))
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                status_nc = NF90_GET_VAR(id_nc, var_id_nc, temp_var1d_nc_dp(2,1:2), start=[1], count=[2])
+                temp_var1d_nc_dp(2,1:2) = temp_var1d_nc_dp(2,1:2) * scale_factor_nc + add_offset_nc
                 status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_name_nc_temp)
                 if (trim(unit_name_nc_temp).eq.'km') then
                     write(unit_logfile,'(A)') 'Units of x y data are in kilometres. Converting to metres'
-                    temp_var1d_nc_dp=temp_var1d_nc_dp*1000.
+                    temp_var1d_nc_dp = temp_var1d_nc_dp * 1000.0
                 endif
 
                 !HERE FIX. The EMEP_grid_interpolation_size is too small when using EMEP is a different grid to the meteo grid. Need to rescale this somehow
@@ -435,7 +445,13 @@ contains
                 unit_dim_meteo_nc(i)=''
                 if (status_nc .EQ. NF90_NOERR) then
                     status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc,var1d_nc_dp(1:dim_length_meteo_nc(i)),start=(/dim_start_meteo_nc(i)/),count=(/dim_length_meteo_nc(i)/));meteo_var1d_nc(1:dim_length_meteo_nc(i),i)=real(var1d_nc_dp(1:dim_length_meteo_nc(i)))
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, var1d_nc_dp(1:dim_length_meteo_nc(i)), start=[dim_start_meteo_nc(i)], count=[dim_length_meteo_nc(i)])
+                    var1d_nc_dp(1:dim_length_meteo_nc(i)) = var1d_nc_dp(1:dim_length_meteo_nc(i)) * scale_factor_nc + add_offset_nc
+                    meteo_var1d_nc(1:dim_length_meteo_nc(i),i)=real(var1d_nc_dp(1:dim_length_meteo_nc(i)))
                     !Use the first file to give valid time stamps
                     if (i_file.eq.3.and.i.eq.time_dim_nc_index) then
                         val_dim_meteo_nc(1:dim_length_meteo_nc(i),i)=real(var1d_nc_dp(1:dim_length_meteo_nc(i)))
@@ -476,60 +492,60 @@ contains
 
                 !If a variable name is found in the file then go further
                 if (status_nc.eq.NF90_NOERR) then
-                    scale_factor_nc=1.
                     !Find the dimensions of the variable (temp_num_dims)
                     status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
-                    !write(*,*) temp_num_dims,status_nc
+
+                    ! Find scale factor and offset if present
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+
                     if (temp_num_dims.eq.2.and.i_file.eq.3) then
                         !Read latitude and longitude data into a 2d grid if available. Only lat lon is 2d?
                         if (i.eq.lat_nc_index.or.i.eq.lon_nc_index) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, var2d_nc_dp);meteo_var2d_nc(:,:,i)=real(var2d_nc_dp)
-                            write(unit_logfile,'(A,i3,A,2A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(meteo_var2d_nc(:,:,i)),maxval(meteo_var2d_nc(:,:,i))
+                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, var2d_nc_dp)
+                            var2d_nc_dp = var2d_nc_dp * scale_factor_nc + add_offset_nc
+                            meteo_var2d_nc(:,:,i)=real(var2d_nc_dp)
+                            write(unit_logfile,'(A,i3,A,2A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(meteo_var2d_nc(:,:,i)),maxval(meteo_var2d_nc(:,:,i))
                         endif
                     elseif (temp_num_dims.eq.3.and.i_file.eq.4) then
                         !Special case for z0 file as they are scaled integers and a single time file
-                        !write(*,'(6i)') dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)
-                        status_nc = nf90_get_att(id_nc, var_id_nc, "scale_factor", scale_factor_nc)
-                        if (status_nc.ne.NF90_NOERR) scale_factor_nc=1.
-                        !write(*,*) 'scale_factor=',scale_factor_nc
-                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var3d_nc(:,:,1,i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)/))
-                        meteo_var3d_nc(:,:,:,i)=real(meteo_var3d_nc(:,:,:,i)*scale_factor_nc)
-                        !write(*,*) status_nc
+                        status_nc = NF90_GET_VAR(id_nc, var_id_nc, meteo_var3d_nc(:,:,1,i), &
+                            start=[dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)], &
+                            count=[dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)])
+                        meteo_var3d_nc(:,:,1,i) = meteo_var3d_nc(:,:,1,i) * scale_factor_nc + add_offset_nc
                         write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),i)),maxval(meteo_var3d_nc(:,:,1:dim_length_meteo_nc(time_dim_nc_index),i))
                     elseif (temp_num_dims.eq.4.and.i_file.eq.3) then
-                        !write(*,*) dim_start_nc(z_dim_nc_index),dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1
-                        !write(*,*) dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)
-                        !write(*,*) dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)
-                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)-1/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(z_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)+1/))
-                        !status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,dim_start_meteo_nc(time_dim_nc_index)-1:dim_start_meteo_nc(time_dim_nc_index)+dim_length_meteo_nc(time_dim_nc_index)-1,i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)-1/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(z_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)+1/))
-                        !status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var4d_nc(:,:,1,dim_start_meteo_nc(time_dim_nc_index):dim_length_meteo_nc(time_dim_nc_index),i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),1,dim_start_meteo_nc(time_dim_nc_index)/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),1,dim_length_meteo_nc(time_dim_nc_index)/))
-                        !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                        !var4d_nc(:,val_dim_nc:,:,:,i,i_source)=real(temp_var4d_nc(:,:,:,:))
-                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i)),maxval(meteo_var4d_nc(1:dim_length_meteo_nc(x_dim_nc_index),1:dim_length_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i))
-                        !write(*,*) dim_start_meteo_nc(time_dim_nc_index)-1,dim_length_meteo_nc(time_dim_nc_index)+1,dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1
+                        status_nc = NF90_GET_VAR(id_nc, var_id_nc, meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i), &
+                            start=[dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)-1], &
+                            count=[dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(z_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)+1])
+                        meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i) = &
+                            meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i) * scale_factor_nc + add_offset_nc
+                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ', &
+                            minval(meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i)), &
+                            maxval(meteo_var4d_nc(1:dim_length_meteo_nc(x_dim_nc_index),1:dim_length_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i))
                     elseif (temp_num_dims.eq.3.and.i_file.eq.3) then
                         !NBV meteo data
-                        status_nc = nf90_get_att(id_nc, var_id_nc, "scale_factor", scale_factor_nc)
-                        if (status_nc.ne.NF90_NOERR) scale_factor_nc=1.
-                        !write(*,*) dim_start_nc(z_dim_nc_index),dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1
-                        !write(*,*) dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)
-                        !write(*,*) dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)
-                        !status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var4d_nc(:,:,1,:,i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)-1/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)+1/))
-                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var4d_nc(:,:,1,dim_start_meteo_nc(time_dim_nc_index):dim_length_meteo_nc(time_dim_nc_index),i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)/))
-                        !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                        meteo_var4d_nc(:,:,:,:,i)=real(meteo_var4d_nc(:,:,:,:,i)*scale_factor_nc)
-                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(meteo_var4d_nc(:,:,1,1:dim_length_meteo_nc(time_dim_nc_index),i)),maxval(meteo_var4d_nc(1:dim_length_meteo_nc(x_dim_nc_index),1:dim_length_meteo_nc(y_dim_nc_index),1,1:dim_length_meteo_nc(time_dim_nc_index),i))
-                        !write(*,*) dim_start_meteo_nc(time_dim_nc_index)-1,dim_length_meteo_nc(time_dim_nc_index)+1,dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1
+                        status_nc = NF90_GET_VAR(id_nc, var_id_nc, meteo_var4d_nc(:,:,1,dim_start_meteo_nc(time_dim_nc_index):dim_length_meteo_nc(time_dim_nc_index),i), &
+                            start=[dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)], &
+                            count=[dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)])
+                        meteo_var4d_nc(:,:,1,dim_start_meteo_nc(time_dim_nc_index):dim_length_meteo_nc(time_dim_nc_index),i) = &
+                            meteo_var4d_nc(:,:,1,dim_start_meteo_nc(time_dim_nc_index):dim_length_meteo_nc(time_dim_nc_index),i) * scale_factor_nc + add_offset_nc
+                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ', &
+                            minval(meteo_var4d_nc(:,:,1,1:dim_length_meteo_nc(time_dim_nc_index),i)), &
+                            maxval(meteo_var4d_nc(1:dim_length_meteo_nc(x_dim_nc_index),1:dim_length_meteo_nc(y_dim_nc_index),1,1:dim_length_meteo_nc(time_dim_nc_index),i))
                     elseif (temp_num_dims.eq.5.and.i_file.eq.3) then
                         !This is the case when there is an ensemble member in the format
-                        !write(*,*) dim_start_nc(z_dim_nc_index),dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1
-                        !write(*,*) dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)
-                        !write(*,*) dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)
-                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),1,dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)-1/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),1,dim_length_meteo_nc(z_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)+1/))
-                        !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                        !var4d_nc(:,val_dim_nc:,:,:,i,i_source)=real(temp_var4d_nc(:,:,:,:))
-                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i)),maxval(meteo_var4d_nc(1:dim_length_meteo_nc(x_dim_nc_index),1:dim_length_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i))
-                        !write(*,*) dim_start_meteo_nc(time_dim_nc_index)-1,dim_length_meteo_nc(time_dim_nc_index)+1,dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1
+                        status_nc = NF90_GET_VAR(id_nc, var_id_nc, meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i), &
+                            start=[dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),1,dim_start_meteo_nc(z_dim_nc_index),dim_start_meteo_nc(time_dim_nc_index)-1], &
+                            count=[dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),1,dim_length_meteo_nc(z_dim_nc_index),dim_length_meteo_nc(time_dim_nc_index)+1])
+                        meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i) = &
+                            meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,:,i) * scale_factor_nc + add_offset_nc
+                        write(unit_logfile,'(A,I,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ', &
+                            minval(meteo_var4d_nc(:,:,dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i)), &
+                            maxval(meteo_var4d_nc(1:dim_length_meteo_nc(x_dim_nc_index),1:dim_length_meteo_nc(y_dim_nc_index),dim_start_meteo_nc(z_dim_nc_index):dim_start_meteo_nc(z_dim_nc_index)+dim_length_meteo_nc(z_dim_nc_index)-1,1:dim_length_meteo_nc(time_dim_nc_index),i))
                     else
                         write(unit_logfile,'(8A,8A)') ' Cannot find a correct dimension for: ',trim(var_name_nc_temp)
                     endif
@@ -557,6 +573,12 @@ contains
                     var_name_nc_temp=var_name_meteo_nc(t2m_nc_index)
                     status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                     status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
+
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                    
                     if (temp_num_dims.eq.4) then
                         status_nc = NF90_GET_VAR (id_nc, var_id_nc, DMT_EMEP_grid_nc(:,:,:),start=(/dim_start_meteo_nc(x_dim_nc_index),dim_start_meteo_nc(y_dim_nc_index),1,DMT_start_time_nc_index/),count=(/dim_length_meteo_nc(x_dim_nc_index),dim_length_meteo_nc(y_dim_nc_index),1,DMT_dim_length_nc/))
                     elseif (temp_num_dims.eq.3) then
@@ -567,6 +589,8 @@ contains
                     else
                         write(unit_logfile,'(8A,8A)') ' Cannot find a correct dimension for: ',trim(var_name_nc_temp)
                     endif
+
+                    DMT_EMEP_grid_nc(:,:,:) = DMT_EMEP_grid_nc(:,:,:) * scale_factor_nc + add_offset_nc
 
                     write(unit_logfile,'(A,i,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(DMT_EMEP_grid_nc),maxval(DMT_EMEP_grid_nc)
                     DMT_EMEP_grid_nc(:,:,1)=sum(DMT_EMEP_grid_nc,3)/DMT_dim_length_nc-273.13

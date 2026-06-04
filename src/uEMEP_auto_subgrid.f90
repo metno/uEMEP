@@ -12,6 +12,8 @@ module auto_subgrid
 
     public :: uEMEP_auto_subgrid, uEMEP_region_mask, uEMEP_interpolate_auto_subgrid, uEMEP_region_mask_new
 
+    double precision :: scale_factor_nc, add_offset_nc
+
 contains
 
     subroutine uEMEP_auto_subgrid()
@@ -620,7 +622,12 @@ contains
         ! x
         status_nc = NF90_INQ_VARID (id_nc, trim(x_dim_name_regionmask), var_id_nc)
         if (status_nc == NF90_NOERR) then
-            status_nc = NF90_GET_VAR (id_nc,var_id_nc,x_values_regionmask)
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+            status_nc = NF90_GET_VAR(id_nc, var_id_nc, x_values_regionmask)
+            x_values_regionmask = x_values_regionmask * scale_factor_nc + add_offset_nc
         else
             write(unit_logfile,'(A)') 'Error while reading x values from region mask'
             stop
@@ -628,7 +635,12 @@ contains
         ! y
         status_nc = NF90_INQ_VARID (id_nc, trim(y_dim_name_regionmask), var_id_nc)
         if (status_nc == NF90_NOERR) then
-            status_nc = NF90_GET_VAR (id_nc,var_id_nc,y_values_regionmask)
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+            status_nc = NF90_GET_VAR (id_nc, var_id_nc, y_values_regionmask)
+            y_values_regionmask = y_values_regionmask * scale_factor_nc + add_offset_nc
         else
             write(unit_logfile,'(A)') 'Error while reading y values from region mask'
             stop
@@ -774,7 +786,12 @@ contains
         ! x
         status_nc = NF90_INQ_VARID (id_nc, trim(x_dim_name_regionmask), var_id_nc)
         if (status_nc == NF90_NOERR) then
-            status_nc = NF90_GET_VAR (id_nc,var_id_nc,x_values_regionmask,start=(/x_min_index/),count=(/nx_regionmask/))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+            status_nc = NF90_GET_VAR(id_nc, var_id_nc, x_values_regionmask, start=[x_min_index], count=[nx_regionmask])
+            x_values_regionmask = x_values_regionmask * scale_factor_nc + add_offset_nc
         else
             write(unit_logfile,'(A)') 'Error while reading x values from region mask'
             stop
@@ -782,7 +799,12 @@ contains
         ! y
         status_nc = NF90_INQ_VARID (id_nc, trim(y_dim_name_regionmask), var_id_nc)
         if (status_nc == NF90_NOERR) then
-            status_nc = NF90_GET_VAR (id_nc,var_id_nc,y_values_regionmask,start=(/y_min_index/),count=(/ny_regionmask/))
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+            status_nc = NF90_GET_VAR(id_nc, var_id_nc, y_values_regionmask, start=[y_min_index], count=[ny_regionmask])
+            y_values_regionmask = y_values_regionmask * scale_factor_nc + add_offset_nc
         else
             write(unit_logfile,'(A)') 'Error while reading y values from region mask'
             stop
@@ -793,7 +815,7 @@ contains
         if (status_nc == NF90_NOERR) then
             status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
             ! NB: the following line fails if the region_mask subset is bigger than ca. 1 million elements when runnning interactively, but not as a qsub job (fix by increasing 'ulimit -s', e.g. 'ulimit -s unlimited')
-            status_nc = NF90_GET_VAR (id_nc, var_id_nc, region_mask, start=(/x_min_index, y_min_index/), count=(/nx_regionmask,ny_regionmask/))
+            status_nc = NF90_GET_VAR(id_nc, var_id_nc, region_mask, start=[x_min_index,y_min_index], count=[nx_regionmask,ny_regionmask])
             write(unit_logfile,'(A,i3,A,2A,2i16)') ' Reading: ',temp_num_dims,' ',trim(varname_region_mask),' (min, max): ',minval(region_mask),maxval(region_mask)
         else
             write(unit_logfile,'(A)') 'Could not read region mask values from file'
