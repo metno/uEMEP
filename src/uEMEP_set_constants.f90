@@ -780,7 +780,6 @@ contains
             pollutant_loop_back_index(pm10_nc_index) = 3
             pollutant_loop_back_index(bap_nc_index) = 4
             pollutant_loop_back_index(c6h6_nc_index) = 5
-            extract_benzene_from_voc_emissions = .true.
         elseif (pollutant_index.eq.pm_nc_index) then
             n_emep_pollutant_loop=2
             n_pollutant_loop=3
