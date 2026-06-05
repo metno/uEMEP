@@ -1,6 +1,6 @@
 module error_handling
 
-    !! This module provides general error handling, checking, and assertion procedures
+    !! This module provides simple error handling, checking, and assertion procedures
     !!
     !! Copyright (C) 2007 Free Software Foundation.
     !! License GNU LGPL-3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -18,16 +18,7 @@ module error_handling
 
     ! Error codes
     integer, parameter, public :: no_error = 0
-    integer, parameter, public :: default_error = -1
-    integer, parameter, public :: file_not_found = -2
-    integer, parameter, public :: read_error = -3
-    integer, parameter, public :: write_error = -4
-    integer, parameter, public :: index_error = -5
-    integer, parameter, public :: allocation_error = -6
-    integer, parameter, public :: invalid_value = -7
-    integer, parameter, public :: division_error = -8
-    integer, parameter, public :: config_error = -9
-    integer, parameter, public :: not_implemented = -10
+    integer, parameter, public :: default_error = 1
 
     ! Precision tolerances
     real, parameter, public :: tol_real = 1.0e-5
@@ -39,7 +30,6 @@ module error_handling
     interface assert
         !! Asserts a condition, and raises an error if violated
         module procedure assert_true
-        module procedure assert_code
     end interface
 
     interface check_equality
@@ -78,7 +68,7 @@ contains
         real, intent(in) :: first_value
         real, intent(in) :: second_value
 
-        are_equal = (abs(second_value - first_value) <= tol_real)
+        are_equal = (abs(second_value - first_value) <= tol_real * max(1.0, abs(first_value), abs(second_value)))
     end function check_equality_real
 
     logical function check_equality_dp(first_value, second_value) result(are_equal)
@@ -86,7 +76,7 @@ contains
         real(dp), intent(in) :: first_value
         real(dp), intent(in) :: second_value
 
-        are_equal = (abs(second_value - first_value) <= tol_dp)
+        are_equal = (abs(second_value - first_value) <= tol_dp * max(1.0_dp, abs(first_value), abs(second_value)))
     end function check_equality_dp
 
     logical function is_between_integer(value, min_threshold, max_threshold) result(is_within_range)
@@ -95,7 +85,6 @@ contains
         integer, intent(in) :: min_threshold
         integer, intent(in) :: max_threshold
 
-        call assert((min_threshold <= max_threshold), "Minimum threshold cannot exceed maximum threshold")
         is_within_range = (value >= min_threshold .and. value <= max_threshold)
     end function is_between_integer
 
@@ -105,7 +94,6 @@ contains
         real, intent(in) :: min_threshold
         real, intent(in) :: max_threshold
 
-        call assert((min_threshold <= max_threshold), "Minimum threshold cannot exceed maximum threshold")
         is_within_range = (value >= min_threshold .and. value <= max_threshold)
     end function is_between_real
 
@@ -115,7 +103,6 @@ contains
         real(dp), intent(in) :: min_threshold
         real(dp), intent(in) :: max_threshold
 
-        call assert((min_threshold <= max_threshold), "Minimum threshold cannot exceed maximum threshold")
         is_within_range = (value >= min_threshold .and. value <= max_threshold)
     end function is_between_dp
 
@@ -138,32 +125,9 @@ contains
             else
                 call print_error("Assertion failed!")
             end if
+            flush(unit_logfile)
             stop error_code
         end if
     end subroutine assert_true
-
-    subroutine assert_code(code, message, no_error_code)
-        !! Asserts the error code, and terminates with an error message if different from no_error
-        integer, intent(in) :: code
-        character(len=*), intent(in), optional :: message
-        integer, intent(in), optional :: no_error_code
-
-        logical :: assert_condition
-
-        integer :: local_error_code
-        if (present(no_error_code)) then
-            local_error_code = no_error_code
-        else
-            local_error_code = no_error
-        end if
-
-        assert_condition = check_equality(code, local_error_code)
-
-        if (present(message)) then
-            call assert(assert_condition, message, code)
-        else
-            call assert(assert_condition, code=code)
-        end if
-    end subroutine assert_code
 
 end module error_handling
