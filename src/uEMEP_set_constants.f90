@@ -353,6 +353,10 @@ contains
         !                  'SURF_ug_FFIRE_BC',
         !                  'SURF_ug_FFIRE_REMPPM25']
 
+        !Update for OP variables to be saved 15.11.2024 for Daellenbach
+        species_name_nc(pm25_sp_index,sp_POM_RES_in_index)='SURF_ug_POM_F_RES'
+        species_name_nc(pmco_sp_index,sp_POM_RES_in_index)='SURF_ug_POM_C_RES'
+
         species_name_nc(pm10_sp_index,sp_BBOA_index)='pm10_EMEP_BBOA'
         species_name_nc(pm25_sp_index,sp_BBOA_index)='pm25_EMEP_BBOA'
         species_name_nc(pmco_sp_index,sp_BBOA_index)='pmco_EMEP_BBOA'

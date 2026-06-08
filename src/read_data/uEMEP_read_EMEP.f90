@@ -1107,7 +1107,7 @@ contains
                             enddo
                             do pmxx_sp_index=1,n_pmxx_sp_index
                                 !if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
-                                var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_EC_RES_in_index)
+                                var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_POM_RES_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
                                     status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
