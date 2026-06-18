@@ -104,6 +104,8 @@ contains
         var_name_nc(conc_nc_index,gp_totals_nc_index,allsource_nc_index)='gp_totals'
         var_name_nc(conc_nc_index,op_totals_nc_index,allsource_nc_index)='op_totals'
 
+        var_name_nc(conc_nc_index,cao5_nc_index,allsource_nc_index)='cao5'
+
         var_name_nc(conc_nc_index,pm25_sand_nc_index,allsource_nc_index)='pm25_sand'
         var_name_nc(conc_nc_index,pm10_sand_nc_index,allsource_nc_index)='pm10_sand'
         var_name_nc(conc_nc_index,pm25_salt_nc_index,allsource_nc_index)='pm25_salt'
@@ -769,6 +771,19 @@ contains
             pollutant_loop_back_index(nox_nc_index)=1
             pollutant_loop_back_index(pm25_nc_index)=2
             pollutant_loop_back_index(pm10_nc_index)=3
+        elseif (pollutant_index .eq. cao5_nc_index) then
+            n_emep_pollutant_loop = 5
+            n_pollutant_loop = 5
+            pollutant_loop_index(1) = nox_nc_index
+            pollutant_loop_index(2) = pm25_nc_index
+            pollutant_loop_index(3) = pm10_nc_index
+            pollutant_loop_index(4) = bap_nc_index
+            pollutant_loop_index(5) = c6h6_nc_index
+            pollutant_loop_back_index(nox_nc_index) = 1
+            pollutant_loop_back_index(pm25_nc_index) = 2
+            pollutant_loop_back_index(pm10_nc_index) = 3
+            pollutant_loop_back_index(bap_nc_index) = 4
+            pollutant_loop_back_index(c6h6_nc_index) = 5
         elseif (pollutant_index.eq.pm_nc_index) then
             n_emep_pollutant_loop=2
             n_pollutant_loop=3

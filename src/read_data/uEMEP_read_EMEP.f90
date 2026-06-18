@@ -47,7 +47,7 @@ contains
         integer n_file
         double precision date_num_temp,date_num_2000
         integer date_array(6)
-        double precision scale_factor_nc
+        double precision :: scale_factor_nc, add_offset_nc
 
         integer i_pollutant,p_loop,p_loop_index
 
@@ -339,9 +339,21 @@ contains
                 endif
 
                 status_nc = NF90_INQ_VARID (id_nc, trim(dim_name_nc(x_dim_nc_index)), var_id_nc)
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc,temp_var1d_nc_dp(1,1:2),start=(/1/),count=(/2/))
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                if (status_nc .ne. NF90_NOERR) scale_factor_nc = 1.0d0
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                if (status_nc .ne. NF90_NOERR) add_offset_nc = 0.0d0
+                status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var1d_nc_dp(1,1:2), start=[1], count=[2])
+                temp_var1d_nc_dp(1,1:2) = temp_var1d_nc_dp(1,1:2) * scale_factor_nc + add_offset_nc
+                
                 status_nc = NF90_INQ_VARID (id_nc, trim(dim_name_nc(y_dim_nc_index)), var_id_nc)
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc,temp_var1d_nc_dp(2,1:2),start=(/1/),count=(/2/))
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                if (status_nc .ne. NF90_NOERR) scale_factor_nc = 1.0d0
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                if (status_nc .ne. NF90_NOERR) add_offset_nc = 0.0d0
+                status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var1d_nc_dp(2,1:2), start=[1], count=[2])
+                temp_var1d_nc_dp(2,1:2) = temp_var1d_nc_dp(2,1:2) * scale_factor_nc + add_offset_nc
+
                 status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_name_nc_temp)
                 if (trim(unit_name_nc_temp).eq.'km') then
                     write(unit_logfile,'(A)') 'Units of x y data are in kilometres. Converting to metres'
@@ -456,20 +468,20 @@ contains
                 temp_var4d_nc=0.
             endif
 
-            !write(*,*) x_dim_nc_index,y_dim_nc_index
-            !write(*,*) shape(var1d_nc_dp)
-            !write(*,*) dim_length_nc
             !Read in the dimensions and check values of the dimensions. Not necessary but diagnostic
             do i=1,num_dims_nc
                 status_nc = NF90_INQ_VARID (id_nc, trim(dim_name_nc(i)), var_id_nc)
-                !write(*,*) id_nc, trim(dim_name_nc(i)), var_id_nc(i),dim_length_nc(i)
                 var1d_nc_dp=0.
-                !write(*,*) 'HERE',i,dim_start_nc(i),dim_length_nc(i)
                 unit_dim_nc(i)=''
                 if (status_nc .EQ. NF90_NOERR) then
                     status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_nc(i))
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc,var1d_nc_dp(1:dim_length_nc(i)),start=(/dim_start_nc(i)/),count=(/dim_length_nc(i)/));var1d_nc(1:dim_length_nc(i),i)=real(var1d_nc_dp(1:dim_length_nc(i)))
-                    !write(*,*) id_nc, trim(dim_name_nc(i)), var_id_nc,dim_length_nc(i),status_nc
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, var1d_nc_dp(1:dim_length_nc(i)), start=[dim_start_nc(i)], count=[dim_length_nc(i)])
+                    var1d_nc_dp(1:dim_length_nc(i)) = var1d_nc_dp(1:dim_length_nc(i)) * scale_factor_nc + add_offset_nc
+                    var1d_nc(1:dim_length_nc(i),i) = real(var1d_nc_dp(1:dim_length_nc(i)))
                     !Use the first file to give valid time stamps
                     if (i_file.eq.1.and.i.eq.time_dim_nc_index) then
                         val_dim_nc(1:dim_length_nc(i),i)=(var1d_nc_dp(1:dim_length_nc(i)))
@@ -478,7 +490,6 @@ contains
                         val_dim_nc(1:dim_length_nc(i),i)=(var1d_nc_dp(1:dim_length_nc(i)))
                         valid_dim_length_nc(i)=dim_length_nc(i)
                     endif
-                    !write(*,*) val_dim_nc(1:dim_length_nc(i),i),trim(unit_dim_nc(i))
                 else
                     var1d_nc(1:dim_length_nc(i),i)=0.
                     val_dim_nc(1:dim_length_nc(i),i)=0.
@@ -549,39 +560,67 @@ contains
 
                             !If a variable name is found in the file then go further
                             if (status_nc.eq.NF90_NOERR) then
-                                scale_factor_nc=1.
                                 !Find the dimensions of the variable (temp_num_dims)
                                 status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
-                                !write(*,*) temp_num_dims,status_nc
                                 if (temp_num_dims.eq.2.and.i_file.eq.1) then
                                     !Read latitude and longitude data into a 2d grid if available. Only lat lon is 2d? Only read for file 1 assuming file 2 is the same. Problem if not
                                     if (i.eq.lat_nc_index.or.i.eq.lon_nc_index) then
-                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, var2d_nc_dp);var2d_nc(:,:,i)=real(var2d_nc_dp)
+                                        status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                        if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                        status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                        if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                        status_nc = NF90_GET_VAR(id_nc, var_id_nc, var2d_nc_dp)
+                                        var2d_nc_dp = var2d_nc_dp * scale_factor_nc + add_offset_nc
+                                        var2d_nc(:,:,i) = real(var2d_nc_dp)
                                         write(unit_logfile,'(A,i3,A,2A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(var2d_nc(:,:,i)),maxval(var2d_nc(:,:,i))
                                     endif
                                 elseif (temp_num_dims.eq.3.and.i_file.eq.1.and.i.eq.emis_nc_index.and.i_pollutant.eq.pm10_nc_index.and.i_source.ne.extrasource_nc_index) then
                                     var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                                     status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                                     if (status_nc .eq. NF90_NOERR) then
-                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var3d_nc(:,:,:,i,i_source,1),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                        write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var3d_nc(:,:,:,i,i_source,1)),maxval(pm_var3d_nc(:,:,:,i,i_source,1))
-                                        write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var3d_nc(:,:,:,i,i_source,1))/(size(pm_var3d_nc,1)*size(pm_var3d_nc,2)*size(pm_var3d_nc,4))
+                                        status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                        if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                        status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                        if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                        status_nc = NF90_GET_VAR(id_nc, var_id_nc, pm_var3d_nc(:,:,:,i,i_source,1), &
+                                            start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)], &
+                                            count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                        pm_var3d_nc(:,:,:,i,i_source,1) = pm_var3d_nc(:,:,:,i,i_source,1) * scale_factor_nc + add_offset_nc
+                                        write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ', &
+                                            minval(pm_var3d_nc(:,:,:,i,i_source,1)),maxval(pm_var3d_nc(:,:,:,i,i_source,1))
+                                        write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp2), &
+                                            sum(pm_var3d_nc(:,:,:,i,i_source,1))/(size(pm_var3d_nc,1)*size(pm_var3d_nc,2)*size(pm_var3d_nc,4))
                                     end if
                                     var_name_nc_temp2=var_name_nc(i,pm25_nc_index,i_source)
                                     status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                                     if (status_nc .eq. NF90_NOERR) then
-                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var3d_nc(:,:,:,i,i_source,2),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                        write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var3d_nc(:,:,:,i,i_source,2)),maxval(pm_var3d_nc(:,:,:,i,i_source,2))
-                                        write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var3d_nc(:,:,:,i,i_source,2))/(size(pm_var3d_nc,1)*size(pm_var3d_nc,2)*size(pm_var3d_nc,4)),size(pm_var3d_nc,1),size(pm_var3d_nc,2),size(pm_var3d_nc,4)
+                                        status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                        if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                        status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                        if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                        status_nc = NF90_GET_VAR(id_nc, var_id_nc, pm_var3d_nc(:,:,:,i,i_source,2), &
+                                            start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)], &
+                                            count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                        pm_var3d_nc(:,:,:,i,i_source,2) = pm_var3d_nc(:,:,:,i,i_source,2) * scale_factor_nc + add_offset_nc
+                                        write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ', &
+                                            minval(pm_var3d_nc(:,:,:,i,i_source,2)),maxval(pm_var3d_nc(:,:,:,i,i_source,2))
+                                        write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc_temp2), &
+                                            sum(pm_var3d_nc(:,:,:,i,i_source,2))/(size(pm_var3d_nc,1)*size(pm_var3d_nc,2)*size(pm_var3d_nc,4)),size(pm_var3d_nc,1),size(pm_var3d_nc,2),size(pm_var3d_nc,4)
                                     end if
                                     var3d_nc(:,:,:,i,i_source,p_loop_index)=pm_var3d_nc(:,:,:,i,i_source,1)+pm_var3d_nc(:,:,:,i,i_source,2)
-                                    write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc(i,pm10_nc_index,i_source)),sum(var3d_nc(:,:,:,i,i_source,p_loop_index))/(size(var3d_nc,1)*size(var3d_nc,2)*size(var3d_nc,4)),size(var3d_nc,1),size(var3d_nc,2),size(var3d_nc,4)
+                                    write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc(i,pm10_nc_index,i_source)), &
+                                        sum(var3d_nc(:,:,:,i,i_source,p_loop_index))/(size(var3d_nc,1)*size(var3d_nc,2)*size(var3d_nc,4)),size(var3d_nc,1),size(var3d_nc,2),size(var3d_nc,4)
                                 elseif (temp_num_dims.eq.3.and.i_file.eq.1) then
-                                    !write(*,'(6i)') dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index,dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, var3d_nc(:,:,:,i,i_source,p_loop_index),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    !write(*,*) status_nc
-                                    write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp),' (min, max): ',minval(var3d_nc(:,:,:,i,i_source,p_loop_index)),maxval(var3d_nc(:,:,:,i,i_source,p_loop_index))
-                                    !if (i.eq.emis_nc_index) write(*,*) 'HERE',sum(var3d_nc(:,:,:,i,i_source,p_loop_index)),i_source,p_loop_index
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, var3d_nc(:,:,:,i,i_source,p_loop_index), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(time_dim_nc_index)], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    var3d_nc(:,:,:,i,i_source,p_loop_index) = var3d_nc(:,:,:,i,i_source,p_loop_index) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(var3d_nc(:,:,:,i,i_source,p_loop_index)),maxval(var3d_nc(:,:,:,i,i_source,p_loop_index))
                                 elseif (temp_num_dims.eq.4) then
                                     if (i_file.eq.2.and.i.eq.ZTOP_nc_index) then
                                         !Don't try to read
@@ -589,33 +628,52 @@ contains
                                         var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                                         if (status_nc .eq. 0) then
-                                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,1),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                            write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,1)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,1))
-                                            write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var4d_nc(:,:,1,:,i,i_source,1))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4))
+                                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,1), &
+                                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)], &
+                                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                            pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,1) = &
+                                                pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,1) * scale_factor_nc + add_offset_nc
+                                            write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp2),' (min, max): ', &
+                                                minval(pm_var4d_nc(:,:,:,:,i,i_source,1)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,1))
+                                            write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp2), &
+                                                sum(pm_var4d_nc(:,:,1,:,i,i_source,1))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4))
                                         end if
                                         var_name_nc_temp2=var_name_nc(i,pm25_nc_index,i_source)
                                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                                         if (status_nc .eq. 0) then
-                                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,2),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                            write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_var4d_nc(:,:,:,:,i,i_source,2)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,2))
-                                            write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc_temp2),sum(pm_var4d_nc(:,:,1,:,i,i_source,2))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4)),size(pm_var4d_nc,1),size(pm_var4d_nc,2),size(pm_var4d_nc,4)
+                                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,2), &
+                                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)], &
+                                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                            pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,2) = &
+                                                pm_var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,2) * scale_factor_nc + add_offset_nc
+                                            write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp2),' (min, max): ', &
+                                                minval(pm_var4d_nc(:,:,:,:,i,i_source,2)),maxval(pm_var4d_nc(:,:,:,:,i,i_source,2))
+                                            write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc_temp2), &
+                                                sum(pm_var4d_nc(:,:,1,:,i,i_source,2))/(size(pm_var4d_nc,1)*size(pm_var4d_nc,2)*size(pm_var4d_nc,4)),size(pm_var4d_nc,1),size(pm_var4d_nc,2),size(pm_var4d_nc,4)
                                         end if
                                         var4d_nc(:,:,:,:,i,i_source,p_loop_index)=pm_var4d_nc(:,:,:,:,i,i_source,1)+pm_var4d_nc(:,:,:,:,i,i_source,2)
                                         write(unit_logfile,'(2A,f16.4,3i0)') ' Average of: ',trim(var_name_nc(i,pm10_nc_index,i_source)),sum(var4d_nc(:,:,:,:,i,i_source,p_loop_index))/(size(var4d_nc,1)*size(var4d_nc,2)*size(var4d_nc,4)),size(var4d_nc,1),size(var4d_nc,2),size(var4d_nc,4)
                                     else
-                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,p_loop_index),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                        !status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var4d_nc(:,:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                        !var4d_nc(:,:,:,:,i,i_source)=real(temp_var4d_nc(:,:,:,:))
-                                        write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp),' (min, max): ',minval(var4d_nc(:,:,:,:,i,i_source,p_loop_index)),maxval(var4d_nc(:,:,:,:,i,i_source,p_loop_index))
-                                        !if (i.eq.precip_nc_index) then
-                                        !    write(*,*) maxval(var4d_nc(:,:,:,:,i,i_source,p_loop_index))
-                                        !    stop
-                                        !endif
-
+                                        status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                        if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                        status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                        if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                        status_nc = NF90_GET_VAR(id_nc, var_id_nc, var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,p_loop_index), &
+                                            start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)], &
+                                            count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                        var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,p_loop_index) = &
+                                            var4d_nc(:,:,dim_start_nc(z_dim_nc_index):dim_start_nc(z_dim_nc_index)+dim_length_nc(z_dim_nc_index)-1,:,i,i_source,p_loop_index) * scale_factor_nc + add_offset_nc
+                                        write(unit_logfile,'(A,I0,A,I0,3A,2f16.4)') ' Reading: ',temp_num_dims,' p_loop:',p_loop_index,' ',trim(var_name_nc_temp),' (min, max): ', &
+                                            minval(var4d_nc(:,:,:,:,i,i_source,p_loop_index)),maxval(var4d_nc(:,:,:,:,i,i_source,p_loop_index))
                                     endif
-                                    !write(*,*) shape(var4d_nc)
-                                    !write(*,*) dim_start_nc(z_dim_nc_index),dim_length_nc(z_dim_nc_index)
-                                    !write(*,*) maxval(var4d_nc(:,:,1,1,i,i_source)),maxval(var4d_nc(:,:,1,2,i,i_source))
                                 elseif (temp_num_dims.eq.6.and.i_file.eq.2) then
                                     !if (i.eq.frac_nc_index.and.i_pollutant.eq.pm10_nc_index) then
                                     lc_frac_nc_index=convert_frac_to_lc_frac_loop_index(i)
@@ -624,19 +682,40 @@ contains
                                         var_name_nc_temp2=var_name_nc(i,pmco_nc_index,i_source)
                                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                                         if (status_nc .eq. 0) then
-                                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1), &
+                                                start=[1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)], &
+                                                count=[dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                            pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1) = pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1) * scale_factor_nc + add_offset_nc
                                             write(unit_logfile,'(A,2I0,3A,2f16.4)') ' Reading: ',i,temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1))
                                         end if
                                         var_name_nc_temp2=var_name_nc(i,pm25_nc_index,i_source)
                                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp2), var_id_nc)
                                         if (status_nc .eq. 0) then
-                                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2), &
+                                                start=[1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)], &
+                                                count=[dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                            pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2) = pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2) * scale_factor_nc + add_offset_nc
                                             write(unit_logfile,'(A,2I0,3A,2f16.4)') ' Reading: ',i,temp_num_dims,' ',trim(var_name_nc_temp2),' (min, max): ',minval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)),maxval(pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2))
                                         end if
                                         !Not used but calculated for writing
                                         !lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index)=pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,1)+pm_lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,2)
                                     else
-                                        status_nc = NF90_GET_VAR (id_nc, var_id_nc, lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index),start=(/1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)/),count=(/dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                        status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                        if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                        status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                        if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                        status_nc = NF90_GET_VAR(id_nc, var_id_nc, lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index), &
+                                            start=[1,1,dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),dim_start_nc(time_dim_nc_index)], &
+                                            count=[dim_length_nc(xdist_dim_nc_index),dim_length_nc(ydist_dim_nc_index),dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                        lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index) = lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index) * scale_factor_nc + add_offset_nc
                                         write(unit_logfile,'(A,2I0,3A,2f16.4)') ' Reading: ',i,temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index)),maxval(lc_var4d_nc(:,:,:,:,:,:,lc_frac_nc_index,i_source,p_loop_index))
                                     endif
                                     !write(*,*) shape(lc_var4d_nc)
@@ -667,39 +746,56 @@ contains
                     status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                     !write(*,*) 'Status1: ',status_nc,id_nc,var_id_nc,trim(var_name_nc_temp)
 
-                    !If a variable name is found in the file then go further
+                    ! If a variable name is found in the file then go further
                     if (status_nc.eq.NF90_NOERR) then
 
-                        !Find the dimensions of the variable (temp_num_dims)
+                        ! Find the dimensions of the variable (temp_num_dims)
                         status_nc = NF90_INQUIRE_VARIABLE(id_nc, var_id_nc, ndims = temp_num_dims)
+
+                        ! Get scale factor and offset if present
+                        status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                        if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                        status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                        if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
 
                         if (temp_num_dims.eq.3) then
                             if (i_file.eq.1) then
-                                status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                status_nc = NF90_GET_VAR(id_nc, var_id_nc, temp_var3d_nc(:,:,:), &
+                                    start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                    count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                temp_var3d_nc(:,:,:) = temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
                                 comp_var4d_nc(:,:,surface_level_nc,:,i_conc)=temp_var3d_nc(:,:,:)*comp_scale_nc(i_conc)
-                                write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading compound file 1: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,surface_level_nc,:,i_conc)),maxval(comp_var4d_nc(:,:,surface_level_nc,:,i_conc))
-                                !write(*,*) comp_var4d_nc(:,:,1,:,i_conc)
+                                write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading compound file 1: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ', &
+                                    minval(comp_var4d_nc(:,:,surface_level_nc,:,i_conc)),maxval(comp_var4d_nc(:,:,surface_level_nc,:,i_conc))
                             elseif (i_file.eq.2) then
                                 !In case the comp data is in the uEMEP file then read it here with no vertical extent
-                                status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                status_nc = NF90_GET_VAR(id_nc, var_id_nc, temp_var3d_nc(:,:,:), &
+                                    start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                    count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                temp_var3d_nc(:,:,:) = temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
                                 comp_var4d_nc(:,:,surface_level_nc,:,i_conc)=temp_var3d_nc(:,:,:)*comp_scale_nc(i_conc)
-                                write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading compound file 2: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,surface_level_nc,:,i_conc)),maxval(comp_var4d_nc(:,:,surface_level_nc,:,i_conc))
+                                write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading compound file 2: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ', &
+                                    minval(comp_var4d_nc(:,:,surface_level_nc,:,i_conc)),maxval(comp_var4d_nc(:,:,surface_level_nc,:,i_conc))
                             endif
                         endif
                         if (temp_num_dims.eq.4) then
                             if (i_file.eq.1) then
-                                !write(*,'(4i)') dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index
-                                !write(*,'(4i)') dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)
-
-                                status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,:,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                comp_var4d_nc(:,:,:,:,i_conc)=comp_var4d_nc(:,:,:,:,i_conc)*comp_scale_nc(i_conc)
-                                write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading compound file 1: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,:,:,i_conc)),maxval(comp_var4d_nc(:,:,:,:,i_conc))
-
+                                status_nc = NF90_GET_VAR(id_nc, var_id_nc, comp_var4d_nc(:,:,:,:,i_conc), &
+                                    start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),dim_start_nc(z_dim_nc_index),temp_start_time_nc_index], &
+                                    count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(z_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                comp_var4d_nc(:,:,:,:,i_conc) = comp_var4d_nc(:,:,:,:,i_conc) * scale_factor_nc + add_offset_nc
+                                comp_var4d_nc(:,:,:,:,i_conc) = comp_var4d_nc(:,:,:,:,i_conc) * comp_scale_nc(i_conc)
+                                write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading compound file 1: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ', &
+                                    minval(comp_var4d_nc(:,:,:,:,i_conc)),maxval(comp_var4d_nc(:,:,:,:,i_conc))
                             elseif (i_file.eq.2) then
                                 !In case the comp data is in the uEMEP file then read it here with no vertical extent
-                                status_nc = NF90_GET_VAR (id_nc, var_id_nc, comp_var4d_nc(:,:,1,:,i_conc),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),1,temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index)/))
-                                comp_var4d_nc(:,:,1,:,i_conc)=comp_var4d_nc(:,:,1,:,i_conc)*comp_scale_nc(i_conc)
-                                write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading compound file 2: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ',minval(comp_var4d_nc(:,:,1,:,i_conc)),maxval(comp_var4d_nc(:,:,1,:,i_conc))
+                                status_nc = NF90_GET_VAR(id_nc, var_id_nc, comp_var4d_nc(:,:,1,:,i_conc), &
+                                    start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),1,temp_start_time_nc_index], &
+                                    count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),1,dim_length_nc(time_dim_nc_index)])
+                                comp_var4d_nc(:,:,1,:,i_conc) = comp_var4d_nc(:,:,1,:,i_conc) * scale_factor_nc + add_offset_nc
+                                comp_var4d_nc(:,:,1,:,i_conc) = comp_var4d_nc(:,:,1,:,i_conc) * comp_scale_nc(i_conc)
+                                write(unit_logfile,'(A,I0,3A,2f16.4)') ' Reading compound file 2: ',temp_num_dims,' ',trim(var_name_nc_temp),' (min, max): ', &
+                                    minval(comp_var4d_nc(:,:,1,:,i_conc)),maxval(comp_var4d_nc(:,:,1,:,i_conc))
                             endif
                         endif
 
@@ -721,8 +817,16 @@ contains
 
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, depo_var3d_nc(:,:,:,i_depo,p_loop),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading deposition velocity: ',trim(var_name_nc_temp),' (min, max): ',minval(depo_var3d_nc(:,:,:,i_depo,p_loop)),maxval(depo_var3d_nc(:,:,:,i_depo,p_loop))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, depo_var3d_nc(:,:,:,i_depo,p_loop), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            depo_var3d_nc(:,:,:,i_depo,p_loop) = depo_var3d_nc(:,:,:,i_depo,p_loop) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading deposition velocity: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(depo_var3d_nc(:,:,:,i_depo,p_loop)),maxval(depo_var3d_nc(:,:,:,i_depo,p_loop))
                             !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                         else
                             !write(unit_logfile,'(8A,8A)') ' Cannot read deposition velocity: ',trim(var_name_nc_temp)
@@ -748,27 +852,42 @@ contains
                         var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_asoa_in_index)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
-                            species_var3d_nc(:,:,:,pmxx_sp_index,sp_asoa_index)=species_temp_var3d_nc(:,:,:)
-                            species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
-                            !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                            species_var3d_nc(:,:,:,pmxx_sp_index,sp_asoa_index) = species_temp_var3d_nc(:,:,:)
+                            species_var3d_nc(:,:,:,pmxx_sp_index,i_sp) = species_temp_var3d_nc(:,:,:)
                         else
-                            write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
+                            write(unit_logfile,'(8A,8A)') ' Cannot read species: ', trim(var_name_nc_temp)
                         endif
                         var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_bsoa_in_index)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
-                            species_var3d_nc(:,:,:,pmxx_sp_index,sp_bsoa_index)=species_temp_var3d_nc(:,:,:)
-                            species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pmxx_sp_index,ii_sp)),' (min, max): ',minval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pm25_sp_index,i_sp))
-                            !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                            species_var3d_nc(:,:,:,pmxx_sp_index,sp_bsoa_index) = species_temp_var3d_nc(:,:,:)
+                            species_var3d_nc(:,:,:,pmxx_sp_index,i_sp) = species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pmxx_sp_index,ii_sp)),' (min, max): ', &
+                                minval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pm25_sp_index,i_sp))
                         else
-                            write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
+                            write(unit_logfile,'(8A,8A)') ' Cannot read species: ', trim(var_name_nc_temp)
                         endif
-                        species_var3d_nc(:,:,:,pm10_sp_index,i_sp)=species_var3d_nc(:,:,:,pm25_sp_index,i_sp)
+                        species_var3d_nc(:,:,:,pm10_sp_index,i_sp) = species_var3d_nc(:,:,:,pm25_sp_index,i_sp)
 
                     endif
 
@@ -778,10 +897,17 @@ contains
                         var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_sia_in_index)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                             species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
-                            !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                         else
                             write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                         endif
@@ -791,10 +917,17 @@ contains
                         var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_no3_index)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                             species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
-                            !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                         else
                             write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                         endif
@@ -806,10 +939,17 @@ contains
                         var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_no3_index)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                             species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
-                            !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                         else
                             write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                         endif
@@ -819,10 +959,17 @@ contains
                         var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_so4_index)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                             species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                            !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                         else
                             write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                         endif
@@ -832,10 +979,17 @@ contains
                         var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_nh4_index)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                             species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                            !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                         else
                             write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                         endif
@@ -857,8 +1011,16 @@ contains
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_dust_sah_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
@@ -866,10 +1028,19 @@ contains
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_dust_wb_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pmxx_sp_index,ii_sp)),' (min, max): ',minval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp))
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pmxx_sp_index,ii_sp)),' (min, max): ', &
+                                        minval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp))
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                                 endif
@@ -887,7 +1058,14 @@ contains
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_seasalt_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
                                     write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
                                 else
@@ -906,8 +1084,16 @@ contains
                         var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_ffire_bc_index)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                             species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
                         else
                             write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
@@ -915,10 +1101,19 @@ contains
                         var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_ffire_rem_index)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                             species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pmxx_sp_index,ii_sp)),' (min, max): ',minval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp))
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Adding species: ',trim(species_name_nc(pmxx_sp_index,ii_sp)),' (min, max): ', &
+                                minval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)),maxval(species_var3d_nc(:,:,:,pmxx_sp_index,i_sp))
                         else
                             write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                         endif
@@ -933,10 +1128,17 @@ contains
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_ppm_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
-                                    !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                                 endif
@@ -951,8 +1153,16 @@ contains
                         var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_water_in_index)
                         status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                         if (status_nc.eq.NF90_NOERR) then
-                            status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                            if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                            status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                            if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                            status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                            species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                            write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                             species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
                         else
                             write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
@@ -969,14 +1179,20 @@ contains
                             var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_pm_in_index)
                             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                             if (status_nc.eq.NF90_NOERR) then
-                                status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                    start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                    count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                    minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                 species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
-                                !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                             else
                                 write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                             endif
-                            !endif
                         enddo
 
                     endif
@@ -990,38 +1206,56 @@ contains
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_FFIRE_OM_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
-                                    !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                                 endif
-                                !endif
                             enddo
                             do pmxx_sp_index=1,n_pmxx_sp_index
-                                !if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_FFIRE_BC_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                                    !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                                 endif
-                                !endif
                             enddo
                             do pmxx_sp_index=1,n_pmxx_sp_index
                                 !if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_FFIRE_REM_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                                    !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                                 endif
@@ -1036,81 +1270,112 @@ contains
                         if (ii_sp.eq.sp_BBOA_RES_index) then
                             !Read total pm
                             do pmxx_sp_index=1,n_pmxx_sp_index
-                                !if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_POM_RES_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_temp_var3d_nc(:,:,:)
-                                    !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                                 endif
-                                !endif
                             enddo
                             do pmxx_sp_index=1,n_pmxx_sp_index
-                                !if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_EC_RES_NEW_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                                    !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                                 endif
-                                !endif
                             enddo
                             do pmxx_sp_index=1,n_pmxx_sp_index
-                                !if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_EC_RES_AGE_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                                    !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                                 endif
-                                !endif
                             enddo
                             do pmxx_sp_index=1,n_pmxx_sp_index
-                                !if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_REM_RES_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                                    !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                                 endif
-                                !endif
                             enddo
                             do pmxx_sp_index=1,n_pmxx_sp_index
-                                !if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_EC_RES_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
-                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
+                                    write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ', &
+                                        minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
-                                    !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
                                 else
                                     write(unit_logfile,'(8A,8A)') ' Cannot read species: ',trim(var_name_nc_temp)
                                 endif
-                                !endif
                             enddo
                             do pmxx_sp_index=1,n_pmxx_sp_index
                                 !if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
                                 var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_POM_RES_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
-                                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, species_temp_var3d_nc(:,:,:),start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)/))
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, species_temp_var3d_nc(:,:,:), &
+                                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),temp_start_time_nc_index], &
+                                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),dim_length_nc(time_dim_nc_index)])
+                                    species_temp_var3d_nc(:,:,:) = species_temp_var3d_nc(:,:,:) * scale_factor_nc + add_offset_nc
                                     write(unit_logfile,'(A,2A,2f16.4)') ' Reading species: ',trim(var_name_nc_temp),' (min, max): ',minval(species_temp_var3d_nc(:,:,:)),maxval(species_temp_var3d_nc(:,:,:))
                                     species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)=species_var3d_nc(:,:,:,pmxx_sp_index,i_sp)+species_temp_var3d_nc(:,:,:)
                                     !write(unit_logfile,'(2A,f16.4)') ' Average of: ',trim(var_name_nc_temp),sum(species_temp_var3d_nc(:,:,:))/(size(species_temp_var3d_nc,1)*size(species_temp_var3d_nc,2)*size(species_temp_var3d_nc,3))
@@ -1222,7 +1487,14 @@ contains
                 if (calculate_source(heating_index).and.i_file.eq.1) then
                     var_name_nc_temp=var_name_nc(t2m_nc_index,all_nc_index,allsource_nc_index)
                     status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, DMT_EMEP_grid_nc,start=(/dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),DMT_start_time_nc_index/),count=(/dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),DMT_dim_length_nc/))
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, DMT_EMEP_grid_nc, &
+                        start=[dim_start_nc(x_dim_nc_index),dim_start_nc(y_dim_nc_index),DMT_start_time_nc_index], &
+                        count=[dim_length_nc(x_dim_nc_index),dim_length_nc(y_dim_nc_index),DMT_dim_length_nc])
+                    DMT_EMEP_grid_nc = DMT_EMEP_grid_nc * scale_factor_nc + add_offset_nc
                     write(unit_logfile,'(3A,2f16.4)') ' Reading: ',trim(var_name_nc_temp),' (min, max): ',minval(DMT_EMEP_grid_nc),maxval(DMT_EMEP_grid_nc)
                     DMT_EMEP_grid_nc(:,:,1)=sum(DMT_EMEP_grid_nc,3)/DMT_dim_length_nc-273.13
                     write(unit_logfile,'(3A,2f16.4,a,i0)') ' Calculating mean: ',trim(var_name_nc_temp),' (min, max): ',minval(DMT_EMEP_grid_nc(:,:,1)),maxval(DMT_EMEP_grid_nc(:,:,1)),' over this number of time steps: ',DMT_dim_length_nc

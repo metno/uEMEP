@@ -10,6 +10,8 @@ module read_ssb_data
 
     public :: uEMEP_read_netcdf_population, uEMEP_read_SSB_data, uEMEP_read_netcdf_population_latlon
 
+    double precision :: scale_factor_nc, add_offset_nc
+
 contains
 
 !uEMEP_read_SSB_data.f90
@@ -410,12 +412,6 @@ contains
         endif
 
         !Find the projection. If no projection then in lat lon coordinates
-        !status_nc = NF90_INQ_VARID (id_nc,'projection_lambert',var_id_nc)
-        !status_nc = NF90_INQ_VARID (id_nc,'mollweide',var_id_nc_temp)
-        !if (status_nc.eq.NF90_NOERR) then
-        !    population_nc_projection_type=mollweide_projection_index
-        !    var_id_nc=var_id_nc_temp
-        !endif
         status_nc = NF90_INQ_VARID (id_nc,'transverse_mercator',var_id_nc_temp)
         if (status_nc.eq.NF90_NOERR) then
             population_nc_projection_type=UTM_projection_index
@@ -477,8 +473,12 @@ contains
             var_name_nc_temp=dim_name_population_nc(i)
             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
             if (status_nc .EQ. NF90_NOERR) then
-                !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc, var2d_nc_dp(1:dim_length_population_nc(i),i),start=(/1/),count=(/dim_length_population_nc(i)/))
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                status_nc = NF90_GET_VAR(id_nc, var_id_nc, var2d_nc_dp(1:dim_length_population_nc(i),i), start=[1], count=[dim_length_population_nc(i)])
+                var2d_nc_dp(1:dim_length_population_nc(i),i) = var2d_nc_dp(1:dim_length_population_nc(i),i) * scale_factor_nc + add_offset_nc
             else
                 write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
             endif
@@ -492,8 +492,13 @@ contains
             var_name_nc_temp=var_name_population_nc(i)
             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
             if (status_nc .EQ. NF90_NOERR) then
-                !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc, population_nc_dp(:,:,i),start=(/1,1/),count=(/dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index)/))
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                status_nc = NF90_GET_VAR (id_nc, var_id_nc, population_nc_dp(:,:,i), &
+                    start=[1,1], count=[dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index)])
+                population_nc_dp(:,:,i) = population_nc_dp(:,:,i) * scale_factor_nc + add_offset_nc
                 write(unit_logfile,'(2a,2f12.2)') 'Population variable min and max: ',trim(var_name_nc_temp),minval(population_nc_dp(:,:,i)),maxval(population_nc_dp(:,:,i))
             else
                 write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
@@ -710,8 +715,13 @@ contains
                 var_name_nc_temp=dim_name_population_nc(i)
                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                 if (status_nc .EQ. NF90_NOERR) then
-                    !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var2d_nc_dp(1:dim_length_population_nc(i),i),start=(/dim_start_population_nc(i)/),count=(/dim_length_population_nc(i)/))
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, temp_var2d_nc_dp(1:dim_length_population_nc(i),i), &
+                        start=[dim_start_population_nc(i)], count=[dim_length_population_nc(i)])
+                    temp_var2d_nc_dp(1:dim_length_population_nc(i),i) = temp_var2d_nc_dp(1:dim_length_population_nc(i),i) * scale_factor_nc + add_offset_nc
                 else
                     write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
                 endif
@@ -766,8 +776,13 @@ contains
                 var_name_nc_temp=dim_name_population_nc(i)
                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                 if (status_nc .EQ. NF90_NOERR) then
-                    !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, var2d_nc_dp(1:dim_length_population_nc(i),i),start=(/dim_start_population_nc(i)/),count=(/dim_length_population_nc(i)/))
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, var2d_nc_dp(1:dim_length_population_nc(i),i), &
+                        start=[dim_start_population_nc(i)], count=[dim_length_population_nc(i)])
+                    var2d_nc_dp(1:dim_length_population_nc(i),i) = var2d_nc_dp(1:dim_length_population_nc(i),i) * scale_factor_nc + add_offset_nc
                 else
                     write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
                 endif
@@ -786,8 +801,14 @@ contains
             var_name_nc_temp=var_name_population_nc(i)
             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
             if (status_nc .EQ. NF90_NOERR) then
-                !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc, population_nc_dp(:,:,population_nc_index),start=(/dim_start_population_nc(x_dim_nc_index),dim_start_population_nc(y_dim_nc_index)/),count=(/dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index)/))
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                status_nc = NF90_GET_VAR(id_nc, var_id_nc, population_nc_dp(:,:,population_nc_index), &
+                    start=[dim_start_population_nc(x_dim_nc_index),dim_start_population_nc(y_dim_nc_index)], &
+                    count=[dim_length_population_nc(x_dim_nc_index),dim_length_population_nc(y_dim_nc_index)])
+                population_nc_dp(:,:,population_nc_index) = population_nc_dp(:,:,population_nc_index) * scale_factor_nc + add_offset_nc
                 write(unit_logfile,'(2a,2f12.2)') 'Population variable min and max: ',trim(var_name_nc_temp),minval(population_nc_dp(:,:,population_nc_index)),maxval(population_nc_dp(:,:,population_nc_index))
             else
                 write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc

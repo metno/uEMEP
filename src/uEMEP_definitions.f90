@@ -124,6 +124,7 @@ module uEMEP_definitions
     integer, parameter :: aaqd_totals_nc_index = 28
     integer, parameter :: gp_totals_nc_index = 29
     integer, parameter :: op_totals_nc_index = 30
+    integer, parameter :: cao5_nc_index = 31
 
     ! These must be the same as the subgrid source indexes. Should probably just use the one
     integer, parameter :: allsource_nc_index = 1
@@ -156,7 +157,7 @@ module uEMEP_definitions
 
     ! Loop for all pollutants to be calculated
     integer :: pollutant_index
-    integer, parameter :: n_pollutant_nc_index = 30 ! Includes the addition naming indexes index
+    integer, parameter :: n_pollutant_nc_index = 31 ! Includes the addition naming indexes index
     integer :: n_pollutant_loop = 1
     integer :: n_emep_pollutant_loop = 1
     integer :: pollutant_loop_index(n_pollutant_nc_index)

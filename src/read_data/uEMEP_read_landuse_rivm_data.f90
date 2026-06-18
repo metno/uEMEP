@@ -26,6 +26,8 @@ module read_landuse_rivm_data
     parameter (n_corine_landuse_index=48)
     integer Corine_to_EMEP_landuse(n_corine_landuse_index)
 
+    double precision :: scale_factor_nc, add_offset_nc
+
 contains
 
 !uEMEP_read_landuse_rivm_data.f90
@@ -290,8 +292,12 @@ contains
                 var_name_nc_temp=dim_name_landuse_nc(i)
                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                 if (status_nc .EQ. NF90_NOERR) then
-                    !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, temp_var2d_nc_dp(1:dim_length_landuse_nc(i),i),start=(/dim_start_landuse_nc(i)/),count=(/dim_length_landuse_nc(i)/))
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, temp_var2d_nc_dp(1:dim_length_landuse_nc(i),i), start=[dim_start_landuse_nc(i)], count=[dim_length_landuse_nc(i)])
+                    temp_var2d_nc_dp(1:dim_length_landuse_nc(i),i) = temp_var2d_nc_dp(1:dim_length_landuse_nc(i),i) * scale_factor_nc + add_offset_nc
                 else
                     write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
                 endif
@@ -345,8 +351,12 @@ contains
                 var_name_nc_temp=dim_name_landuse_nc(i)
                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                 if (status_nc .EQ. NF90_NOERR) then
-                    !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                    status_nc = NF90_GET_VAR (id_nc, var_id_nc, var2d_nc_dp(1:dim_length_landuse_nc(i),i),start=(/dim_start_landuse_nc(i)/),count=(/dim_length_landuse_nc(i)/))
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                    if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                    status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                    if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                    status_nc = NF90_GET_VAR(id_nc, var_id_nc, var2d_nc_dp(1:dim_length_landuse_nc(i),i), start=[dim_start_landuse_nc(i)], count=[dim_length_landuse_nc(i)])
+                    var2d_nc_dp(1:dim_length_landuse_nc(i),i) = var2d_nc_dp(1:dim_length_landuse_nc(i),i) * scale_factor_nc + add_offset_nc
                 else
                     write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
                 endif
@@ -363,8 +373,14 @@ contains
             var_name_nc_temp=var_name_landuse_nc(i)
             status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
             if (status_nc .EQ. NF90_NOERR) then
-                !status_nc = nf90_get_att(id_nc, var_id_nc, "units", unit_dim_meteo_nc(i))
-                status_nc = NF90_GET_VAR (id_nc, var_id_nc, landuse_nc_dp(:,:),start=(/dim_start_landuse_nc(x_dim_nc_index),dim_start_landuse_nc(y_dim_nc_index)/),count=(/dim_length_landuse_nc(x_dim_nc_index),dim_length_landuse_nc(y_dim_nc_index)/))
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
+                if (status_nc /= nf90_noerr) scale_factor_nc = 1.0d0
+                status_nc = nf90_get_att(id_nc, var_id_nc, 'add_offset', add_offset_nc)
+                if (status_nc /= nf90_noerr) add_offset_nc = 0.0d0
+                status_nc = NF90_GET_VAR(id_nc, var_id_nc, landuse_nc_dp(:,:), &
+                    start=[dim_start_landuse_nc(x_dim_nc_index),dim_start_landuse_nc(y_dim_nc_index)], &
+                    count=[dim_length_landuse_nc(x_dim_nc_index),dim_length_landuse_nc(y_dim_nc_index)])
+                landuse_nc_dp(:,:) = landuse_nc_dp(:,:) * scale_factor_nc + add_offset_nc
                 write(unit_logfile,'(2a,2f12.2)') 'Landuse variable min and max: ',trim(var_name_nc_temp),minval(landuse_nc_dp(:,:)),maxval(landuse_nc_dp(:,:))
             else
                 write(unit_logfile,'(A,A,A,I)') 'No information available for ',trim(var_name_nc_temp),' Status: ',status_nc
