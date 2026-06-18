@@ -1364,7 +1364,8 @@ contains
                                 endif
                             enddo
                             do pmxx_sp_index=1,n_pmxx_sp_index
-                                var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_EC_RES_in_index)
+                                !if (pmxx_sp_index.eq.pm25_sp_index.or.pm10_sp_index.eq.pmxx_sp_index) then
+                                var_name_nc_temp=species_name_nc(pmxx_sp_index,sp_POM_RES_in_index)
                                 status_nc = NF90_INQ_VARID (id_nc, trim(var_name_nc_temp), var_id_nc)
                                 if (status_nc.eq.NF90_NOERR) then
                                     status_nc = nf90_get_att(id_nc, var_id_nc, 'scale_factor', scale_factor_nc)
