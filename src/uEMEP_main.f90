@@ -102,13 +102,8 @@ program uEMEP
         call uEMEP_set_subgrid_select_latlon_centre()
     end if
 
-    ! We force setting landuse if agriculture or livestock is calculated
-    if (calculate_source(agriculture_index) .or. calculate_source(livestock_index)) then
-        read_landuse_flag = .true.
-        use_landuse_as_proxy = .true.
-    end if
-
-    ! Set the landuse if required
+    ! Set the landuse if required. Agriculture and livestock can be downscaled either with a
+    ! netcdf emission proxy file or with corine landuse, so landuse is not forced on here
     if (use_landuse_as_proxy .or. read_landuse_flag) then
         call uEMEP_set_landuse_classes()
     end if
@@ -289,16 +284,6 @@ program uEMEP
                         end if
                     end if
 
-                    ! Read livestock data
-                    if (calculate_source(livestock_index)) then
-                        call initialize_livestock()
-                    end if
-
-                    ! Read agriculture data
-                    if (calculate_source(agriculture_index)) then
-                        call initialize_agriculture()
-                    end if
-
                     ! Read in population data
                     if (calculate_population_exposure_flag .or. use_population_positions_for_auto_subgrid_flag .or. save_population) then
                         ! Read and subgrid SSB population data
@@ -314,6 +299,17 @@ program uEMEP
 
                     if (use_landuse_as_proxy .or. read_landuse_flag) then
                         call uEMEP_read_netcdf_landuse_latlon()
+                    end if
+
+                    ! Read livestock and agriculture proxy emissions from netcdf. These are read
+                    ! after the landuse proxy so that a configured netcdf file takes precedence,
+                    ! leaving corine landuse as the fallback when no proxy file is given
+                    if (calculate_source(livestock_index) .and. len_trim(filename_livestock) > 0) then
+                        call initialize_livestock()
+                    end if
+
+                    if (calculate_source(agriculture_index) .and. len_trim(filename_agriculture) > 0) then
+                        call initialize_agriculture()
                     end if
 
                     ! Autogrid setting for selecting which subgrids to calculate

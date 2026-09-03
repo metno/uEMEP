@@ -349,10 +349,11 @@ contains
         sg_max(1:2) = sg_max(1:2) + b_size(1:2)
     end subroutine set_buffer_zone
 
-    subroutine set_crossref_grid(name, crossref_sg, sg_delta, sg_min, sg_dim)
+    subroutine set_crossref_grid(name, source_index, crossref_sg, sg_delta, sg_min, sg_dim)
         !! Sets up a crossreference grid to map between the emissions and proxy subgrids
-        use uemep_definitions, only: livestock_index, emission_subgrid_dim, x_emission_subgrid, y_emission_subgrid
+        use uemep_definitions, only: emission_subgrid_dim, x_emission_subgrid, y_emission_subgrid
         character(len=*), intent(in) :: name
+        integer, intent(in) :: source_index !! Emission source the proxy subgrid belongs to
         integer, allocatable, intent(inout) :: crossref_sg(:,:,:)
         real, intent(in) :: sg_delta(:)
         real, intent(in) :: sg_min(:)
@@ -368,13 +369,13 @@ contains
 
         write(unit_logfile, "(3a)") "Crossreferencing emissions to ", trim(name), " subgrid"
 
-        do j = 1, emission_subgrid_dim(y_dim_index,livestock_index)
-            do i = 1, emission_subgrid_dim(x_dim_index,livestock_index)
+        do j = 1, emission_subgrid_dim(y_dim_index,source_index)
+            do i = 1, emission_subgrid_dim(x_dim_index,source_index)
                 crossref_sg(i,j,x_dim_index) = &
-                    1 + floor((x_emission_subgrid(i,j,livestock_index) &
+                    1 + floor((x_emission_subgrid(i,j,source_index) &
                     - sg_min(x_dim_index))/sg_delta(x_dim_index))
                 crossref_sg(i,j,y_dim_index) = &
-                    1 + floor((y_emission_subgrid(i,j,livestock_index) &
+                    1 + floor((y_emission_subgrid(i,j,source_index) &
                     - sg_min(y_dim_index))/sg_delta(y_dim_index))
 
                 ! Avoid invalid values at the grid edge

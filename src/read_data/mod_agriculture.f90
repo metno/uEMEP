@@ -57,7 +57,7 @@ contains
         
         call set_subgrid_xy(sector_name, agriculture_subgrid_dim, agriculture_subgrid_min, &
             agriculture_subgrid_delta, x_agriculture_subgrid, y_agriculture_subgrid)
-        call set_crossref_grid(sector_name, crossref_emission_to_agriculture_subgrid, &
+        call set_crossref_grid(sector_name, agriculture_index, crossref_emission_to_agriculture_subgrid, &
             agriculture_subgrid_delta, agriculture_subgrid_min, agriculture_subgrid_dim)
     end subroutine setup_agriculture_arrays_and_variables
 

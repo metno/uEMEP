@@ -57,7 +57,7 @@ contains
 
         call set_subgrid_xy(sector_name, livestock_subgrid_dim, livestock_subgrid_min, &
             livestock_subgrid_delta, x_livestock_subgrid, y_livestock_subgrid)
-        call set_crossref_grid(sector_name, crossref_emission_to_livestock_subgrid, &
+        call set_crossref_grid(sector_name, livestock_index, crossref_emission_to_livestock_subgrid, &
             livestock_subgrid_delta, livestock_subgrid_min, livestock_subgrid_dim)
     end subroutine setup_livestock_arrays_and_variables
 

@@ -326,15 +326,15 @@ module uemep_configuration
     real :: save_emission_subgrid_delta(2)
 
     ! Livestock
-    character(len=256) :: filename_livestock !! Filename of livestock netcdf file
-    character(len=256) :: pathname_livestock !! Directory path to the livestock netcdf file
-    character(len=256) :: livestock_var_name !! Name of livestock variable in netcdf file
+    character(len=256) :: filename_livestock = '' !! Filename of livestock netcdf file
+    character(len=256) :: pathname_livestock = '' !! Directory path to the livestock netcdf file
+    character(len=256) :: livestock_var_name = '' !! Name of livestock variable in netcdf file
     real :: limit_livestock_delta = 250.0 !! Lower spatial resolution limit of livestock downscaling
 
     ! Agriculture
-    character(len=256) :: filename_agriculture !! Filename of agriculture netcdf file
-    character(len=256) :: pathname_agriculture !! Directory path to agriculture netcdf file
-    character(len=256) :: agriculture_var_name !! Name of agriculture variable in netcdf file
+    character(len=256) :: filename_agriculture = '' !! Filename of agriculture netcdf file
+    character(len=256) :: pathname_agriculture = '' !! Directory path to agriculture netcdf file
+    character(len=256) :: agriculture_var_name = '' !! Name of agriculture variable in netcdf file
     real :: limit_agriculture_delta = 250.0 !! Lower spatial resolution limit of agriculture downscaling
 
     double precision :: projection_attributes(10)
