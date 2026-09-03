@@ -1,4 +1,29 @@
 module mod_livestock
+    !! Downscaling of livestock (GNFR sector 11 (K)) emissions using a netcdf emission proxy
+    !!
+    !! The proxy is read onto its own subgrid and placed in `proxy_emission_subgrid`, where it acts
+    !! as a *relative weight only*. The absolute emission mass comes from EMEP and is redistributed
+    !! within each EMEP grid cell in `uEMEP_subgrid_emission_EMEP`. This requires the redistribution
+    !! downscaling approach:
+    !!
+    !!```
+    !! local_subgrid_method_flag = 3
+    !! subgrid_emission_distribution_flag = .true.
+    !!```
+    !!
+    !! With any other `local_subgrid_method_flag`, `uEMEP_convert_proxy_to_emissions` runs afterwards
+    !! and overwrites the result with `proxy * emission_factor_conversion`. No emission factor is
+    !! defined for livestock, so that product is zero and livestock emissions silently vanish.
+    !!
+    !! Set `filename_livestock` to select this proxy. If it is left empty, livestock falls back to
+    !! corine landuse weighting via `landuse_proxy_weighting` (see [[read_landuse_data]]).
+    !!
+    !! Copyright (C) 2007 Free Software Foundation.
+    !! License GNU LGPL-3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>.
+    !! This is free software: you are free to change and redistribute it.
+    !!
+    !! Developed and maintained at the Norwegian Meteorological Institute.
+    !! Contribute at: <https://github.com/metno/uEMEP>
 
     use uEMEP_definitions, only: unit_logfile, x_dim_index, y_dim_index, emission_max_subgrid_dim, livestock_index, &
         proxy_emission_subgrid, emission_subgrid_dim
@@ -41,7 +66,7 @@ contains
             livestock_subgrid_max, livestock_subgrid_dim, limit_livestock_delta)
         call set_buffer_zone(sector_name, livestock_buffer_index, livestock_buffer_size, &
             livestock_subgrid_delta, livestock_subgrid_min, livestock_subgrid_max, livestock_subgrid_dim)
-        
+
         if (allocated(livestock_subgrid)) deallocate(livestock_subgrid)
         allocate(livestock_subgrid(livestock_subgrid_dim(x_dim_index),livestock_subgrid_dim(y_dim_index)))
         livestock_subgrid = 0.0

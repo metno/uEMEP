@@ -1,4 +1,10 @@
 module set_emission_factors
+    !! Copyright (C) 2007 Free Software Foundation.
+    !! License GNU LGPL-3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>.
+    !! This is free software: you are free to change and redistribute it.
+    !!
+    !! Developed and maintained at the Norwegian Meteorological Institute.
+    !! Contribute at: <https://github.com/metno/uEMEP>
 
     use uemep_configuration
 
@@ -72,6 +78,16 @@ contains
 !uEMEP_convert_proxy_to_emissions
 
     subroutine uEMEP_convert_proxy_to_emissions
+        !! Converts proxy data to absolute emissions using `emission_factor_conversion`
+        !!
+        !! This runs after `uEMEP_subgrid_emission_EMEP` and overwrites whatever that produced, so
+        !! it is the routine that decides how a proxy is interpreted. Sources without an entry in
+        !! `emission_factor_conversion` (livestock, for one) are silently zeroed here, since the
+        !! array is initialised to 0.0.
+        !!
+        !! With `local_subgrid_method_flag = 3` it returns immediately and the EMEP redistribution
+        !! from `uEMEP_subgrid_emission_EMEP` survives, where the proxy is only a relative weight
+        !! and no emission factor is needed. See [[mod_livestock]] and [[mod_agriculture]].
 
         use uEMEP_definitions
 
@@ -250,4 +266,3 @@ contains
     end subroutine uEMEP_nox_emission_temperature
 
 end module set_emission_factors
-
