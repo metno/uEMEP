@@ -27,7 +27,7 @@ contains
     subroutine initialize_agriculture()
         write(unit_logfile, "(a)") ""
         write(unit_logfile, "(a)") "================================================================"
-        write(unit_logfile, "(a)") "Initializing agriculture emissions (GNFR sector 12 (K))"
+        write(unit_logfile, "(a)") "Initializing agriculture emissions (GNFR sector 12 (L))"
         write(unit_logfile, "(a)") "================================================================"
 
         call setup_agriculture_arrays_and_variables()

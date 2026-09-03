@@ -294,6 +294,10 @@ program uEMEP
                         call initialize_livestock()
                     end if
 
+                    ! Read agriculture data
+                    if (calculate_source(agriculture_index)) then
+                        call initialize_agriculture()
+                    end if
 
                     ! Read in population data
                     if (calculate_population_exposure_flag .or. use_population_positions_for_auto_subgrid_flag .or. save_population) then
