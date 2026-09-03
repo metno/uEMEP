@@ -1,5 +1,12 @@
 module mod_emission_utils
     !! The module contains procedures for setting up and reading data for emission proxy subgrids
+    !!
+    !! Copyright (C) 2007 Free Software Foundation.
+    !! License GNU LGPL-3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>.
+    !! This is free software: you are free to change and redistribute it.
+    !!
+    !! Developed and maintained at the Norwegian Meteorological Institute.
+    !! Contribute at: <https://github.com/metno/uEMEP>
 
     use uemep_constants, only: dp
     use uEMEP_definitions, only: unit_logfile, x_dim_index, y_dim_index, x_dim_nc_index, y_dim_nc_index
@@ -57,8 +64,8 @@ contains
         character(len=3) :: dim_names(2) = ["lon", "lat"]
         integer :: dim_length(2), dim_start(2)
         real(dp), allocatable :: lonlat(:,:), ncdata(:,:)
-        real :: delta(2), tmp_delta(2)
-        real :: x, y, lon(3), lat(3)
+        real :: delta(2)
+        real :: x, y, lon, lat
         integer :: i_nearest, j_nearest
         integer :: n_outside
 
@@ -134,29 +141,11 @@ contains
                 ! Project the center position to lon/lat
                 x = x_subgrid(i,j)
                 y = y_subgrid(i,j)
-                call proj2ll(x, y, lon(1), lat(1), projection_attributes, projection_type)
-
-                ! Project both sides to get delta x
-                x = x_subgrid(i,j) - 0.5*subgrid_delta(x_dim_index)
-                y = y_subgrid(i,j)
-                call proj2ll(x, y, lon(2), lat(2), projection_attributes, projection_type)
-                x = x_subgrid(i,j) + 0.5*subgrid_delta(x_dim_index)
-                y = y_subgrid(i,j)
-                call proj2ll(x, y, lon(3), lat(3), projection_attributes, projection_type)
-                tmp_delta(x_dim_index) = lon(3) - lon(2)
-
-                ! Again for delta y
-                x = x_subgrid(i,j)
-                y = y_subgrid(i,j) - 0.5*subgrid_delta(y_dim_index)
-                call proj2ll(x, y, lon(2), lat(2), projection_attributes, projection_type)
-                x = x_subgrid(i,j)
-                y = y_subgrid(i,j) + 0.5*subgrid_delta(y_dim_index)
-                call proj2ll(x, y, lon(3), lat(3), projection_attributes, projection_type)
-                tmp_delta(y_dim_index) = lat(3) - lat(2)
+                call proj2ll(x, y, lon, lat, projection_attributes, projection_type)
 
                 ! Find nearest neighbour and insert value in subgrid
-                i_nearest = 1 + floor((lon(1) - lonlat(1,x_dim_nc_index))/delta(1) + 0.5)
-                j_nearest = 1 + floor((lat(1) - lonlat(1,y_dim_nc_index))/delta(2) + 0.5)
+                i_nearest = 1 + floor((lon - lonlat(1,x_dim_nc_index))/delta(1) + 0.5)
+                j_nearest = 1 + floor((lat - lonlat(1,y_dim_nc_index))/delta(2) + 0.5)
 
                 ! The read domain is clipped to the extent of the input file, so a subgrid cell can
                 ! fall outside it if the file does not cover the whole target grid. Constrain the
@@ -349,7 +338,7 @@ contains
 
         ! Local variables
         real :: offset
-        
+
         if (use_buffer_zone) then
             write(unit_logfile,"(3a)") "Setting up buffer zone for the ", trim(name), " subgrid"
             if (local_subgrid_method_flag == 3) then
@@ -417,7 +406,7 @@ contains
         real, intent(in) :: sg_delta(:)
         real, allocatable, intent(inout) :: x_sg(:,:)
         real, allocatable, intent(inout) :: y_sg(:,:)
-        
+
         ! Local variables
         integer :: i, j
 
@@ -429,7 +418,7 @@ contains
             write(unit_logfile, "(3a)") "ERROR: y_", trim(name), "_subgrid is not allocated"
             stop 1
         end if
-        
+
         do j = 1, sg_dim(y_dim_index)
             do i = 1, sg_dim(x_dim_index)
                 x_sg(i,j) = sg_min(x_dim_index) + sg_delta(x_dim_index)*(i - 0.5)
