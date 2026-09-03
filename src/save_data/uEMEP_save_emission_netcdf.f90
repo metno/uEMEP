@@ -228,13 +228,16 @@ contains
                     call uEMEP_convert_proxy_to_emissions
 
                 endif
-                if (i_source.eq.agriculture_index) then
-                    !Read agriculture data
 
-                    call uEMEP_read_time_profiles
-                    call uEMEP_set_emission_factors
-                    call uEMEP_convert_proxy_to_emissions
+                if (i_source.eq.agriculture_index) then
+                    !The RIVM reader that used to fill the agriculture proxy has been removed, so
+                    !there is nothing left to convert to emissions here. Stop rather than silently
+                    !writing an empty emission field. To reinstate, call initialize_agriculture to
+                    !populate proxy_emission_subgrid before converting it to emissions
+                    write(unit_logfile,'(A)') 'ERROR: Saving emissions for EMEP is not currently supported for agriculture'
+                    stop
                 endif
+
                 if (i_source.eq.traffic_index) then
                     g_loop=1
                     !Read inthe road data
@@ -704,4 +707,3 @@ contains
     end subroutine uEMEP_save_for_EMEP_netcdf_file
 
 end module save_emission_netcdf
-
