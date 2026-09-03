@@ -60,6 +60,7 @@ contains
         real :: delta(2), tmp_delta(2)
         real :: x, y, lon(3), lat(3)
         integer :: i_nearest, j_nearest
+        integer :: n_outside
 
         write(unit_logfile, "(3a)") "Reading ", trim(data_name), " data"
 
@@ -127,6 +128,7 @@ contains
             minval(ncdata), maxval(ncdata)
 
         subgrid(:,:) = 0.0
+        n_outside = 0
         do j = 1, subgrid_dim(y_dim_nc_index)
             do i = 1, subgrid_dim(x_dim_nc_index)
                 ! Project the center position to lon/lat
@@ -156,6 +158,16 @@ contains
                 i_nearest = 1 + floor((lon(1) - lonlat(1,x_dim_nc_index))/delta(1) + 0.5)
                 j_nearest = 1 + floor((lat(1) - lonlat(1,y_dim_nc_index))/delta(2) + 0.5)
 
+                ! The read domain is clipped to the extent of the input file, so a subgrid cell can
+                ! fall outside it if the file does not cover the whole target grid. Constrain the
+                ! index to the data and count how often this happens
+                if (i_nearest < 1 .or. i_nearest > dim_length(x_dim_nc_index) .or. &
+                    j_nearest < 1 .or. j_nearest > dim_length(y_dim_nc_index)) then
+                    n_outside = n_outside + 1
+                    i_nearest = max(min(i_nearest, dim_length(x_dim_nc_index)), 1)
+                    j_nearest = max(min(j_nearest, dim_length(y_dim_nc_index)), 1)
+                end if
+
                 subgrid(i,j) = ncdata(i_nearest,j_nearest)
 
                 ! Constrain values
@@ -172,6 +184,14 @@ contains
                 end if
             end do
         end do
+        if (n_outside > 0) then
+            write(unit_logfile, "(3a)") "WARNING: The ", trim(data_name), &
+                " subgrid extends beyond the data in the input file"
+            write(unit_logfile, "(a,i0,a,f6.2,a)") "WARNING: ", n_outside, " subgrid cells (", &
+                100.0*real(n_outside)/real(subgrid_dim(x_dim_nc_index)*subgrid_dim(y_dim_nc_index)), &
+                " %) were given the nearest value at the edge of the data"
+        end if
+
         write(unit_logfile, "(5a,2f12.2)") "Data range for variable: ", trim(var_name), " in ", trim(data_name), &
             " subgrid (min/max): ", minval(subgrid), maxval(subgrid)
 
