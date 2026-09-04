@@ -103,6 +103,10 @@ contains
         emission_subgrid_delta(y_dim_index,heating_index) = max(subgrid_delta(y_dim_index), limit_heating_delta)
         emission_subgrid_delta(x_dim_index,industry_index) = max(subgrid_delta(x_dim_index), limit_industry_delta)
         emission_subgrid_delta(y_dim_index,industry_index) = max(subgrid_delta(y_dim_index), limit_industry_delta)
+        emission_subgrid_delta(x_dim_index,livestock_index) = max(subgrid_delta(x_dim_index), limit_livestock_delta)
+        emission_subgrid_delta(y_dim_index,livestock_index) = max(subgrid_delta(y_dim_index), limit_livestock_delta)
+        emission_subgrid_delta(x_dim_index,agriculture_index) = max(subgrid_delta(x_dim_index), limit_agriculture_delta)
+        emission_subgrid_delta(y_dim_index,agriculture_index) = max(subgrid_delta(y_dim_index), limit_agriculture_delta)
 
         ! Set all the emission subgrid dimensions after changes
         do i = 1, n_source_index
