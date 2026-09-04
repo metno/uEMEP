@@ -18,6 +18,10 @@ module mod_livestock
     !! Set `filename_livestock` to select this proxy. If it is left empty, livestock falls back to
     !! corine landuse weighting via `landuse_proxy_weighting` (see [[read_landuse_data]]).
     !!
+    !! `initialize_livestock` reads its grid from the global `subgrid_min`/`subgrid_max`/
+    !! `subgrid_delta` downscaling target, so it cannot be called from
+    !! `uEMEP_calculate_emissions_for_EMEP`, which works on a different, EMEP-resolution grid.
+    !!
     !! Copyright (C) 2007 Free Software Foundation.
     !! License GNU LGPL-3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>.
     !! This is free software: you are free to change and redistribute it.
