@@ -117,6 +117,7 @@ contains
         subgrid(:,:,:,emep_nonlocal_subgrid_index,:,:)=0
         comp_EMEP_subgrid(:,:,:,:)=0
         orig_EMEP_subgrid(:,:,:,:)=0
+        orig_EMEP_emission_subgrid(:,:,:,:,:)=0
         if (save_emep_species.or.save_seasalt) species_EMEP_subgrid(:,:,:,:,:)=0
 
         do i_source=1,n_source_index
@@ -179,6 +180,17 @@ contains
                                 orig_EMEP_subgrid(i,j,:,pollutant_compound_loop_index(i_pollutant,i_loop))=comp_var3d_nc(ii,jj,:,pollutant_compound_loop_index(i_pollutant,i_loop))
                             enddo
                         enddo
+
+                        if (save_emep_original_emissions) then
+                            do i_source = 1, n_source_index
+                                if (calculate_source(i_source)) then
+                                    do i_pollutant = 1, n_pollutant_loop
+                                        orig_EMEP_emission_subgrid(i,j,:,i_source,i_pollutant) = &
+                                            var3d_nc(ii,jj,:,emis_nc_index,i_source,i_pollutant)
+                                    end do
+                                end if
+                            end do
+                        end if
 
                     endif
 

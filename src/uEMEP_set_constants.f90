@@ -1192,6 +1192,9 @@ contains
             !do j=1,n_local_fraction_grids
             !    convert_fraction_to_local_loop_index(lc_fraction_nc_loop_index(j))=lc_local_nc_loop_index(j)
             !enddo
+            do j = 1, n_local_fraction_grids
+                i = i + 1; lc_drydepo_frac_nc_loop_index(j) = i
+            end do
             num_lc_var_nc=i
             write(unit_logfile,'(a,i)') 'New number of num_lc_var_nc variables with additional LF EMEP: ',num_lc_var_nc
             min_lc_frac_nc_loop_index=minval(lc_frac_nc_loop_index)
@@ -1206,6 +1209,10 @@ contains
             do j=1,n_local_fraction_grids
                 i=i+1;local_nc_loop_index(j)=i
             enddo
+            do j = 1, n_local_fraction_grids
+                i = i + 1; drydepo_frac_nc_loop_index(j) = i
+                convert_frac_to_lc_frac_loop_index(drydepo_frac_nc_loop_index(j)) = lc_drydepo_frac_nc_loop_index(j)
+            end do
             num_var_nc=i
             write(unit_logfile,'(a,i)') 'New number of num_var_nc variables with additional LF EMEP: ',num_var_nc
             min_frac_nc_loop_index=minval(frac_nc_loop_index)
@@ -1255,6 +1262,7 @@ contains
                             if (i_source.eq.allsource_nc_index) then
                                 var_name_nc(frac_nc_loop_index(j),i,allsource_nc_index)=trim(var_name_nc(conc_nc_index,i,allsource_nc_index))//trim(postfix_str)//trim(local_fraction_grid_size_str)
                             endif
+                            var_name_nc(drydepo_frac_nc_loop_index(j),i,i_source)="DDEP_"//trim(var_name_nc(frac_nc_loop_index(j),i,i_source))
                             write(unit_logfile,'(2i6,2a)') i,i_source,'  ',trim(var_name_nc(frac_nc_loop_index(j),i,i_source))
                         endif
                     enddo
