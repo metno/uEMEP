@@ -13,7 +13,8 @@ module mod_livestock
     !!
     !! With any other `local_subgrid_method_flag`, `uEMEP_convert_proxy_to_emissions` runs afterwards
     !! and overwrites the result with `proxy * emission_factor_conversion`. No emission factor is
-    !! defined for livestock, so that product is zero and livestock emissions silently vanish.
+    !! defined for livestock, so that product is zero and livestock emissions vanish (a warning is
+    !! logged in `uEMEP_convert_proxy_to_emissions`).
     !!
     !! Set `filename_livestock` to select this proxy. If it is left empty, livestock falls back to
     !! corine landuse weighting via `landuse_proxy_weighting` (see [[read_landuse_data]]).
