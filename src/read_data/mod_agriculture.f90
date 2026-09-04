@@ -12,9 +12,9 @@ module mod_agriculture
     !!```
     !!
     !! With any other `local_subgrid_method_flag`, `uEMEP_convert_proxy_to_emissions` runs afterwards
-    !! and overwrites the result with `proxy * emission_factor_conversion`. The agriculture factor
-    !! assumes the proxy is in kg/yr per grid cell, which is the old RIVM convention and may not
-    !! match a general proxy file.
+    !! and overwrites the result with `proxy * emission_factor_conversion`. No emission factor is
+    !! defined for agriculture, so that product is zero and agriculture emissions vanish (a warning is
+    !! logged in `uEMEP_convert_proxy_to_emissions`).
     !!
     !! Set `filename_agriculture` to select this proxy. If it is left empty, agriculture falls back
     !! to corine landuse weighting via `landuse_proxy_weighting` (see [[read_landuse_data]]).
