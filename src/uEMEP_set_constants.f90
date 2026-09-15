@@ -522,6 +522,7 @@ contains
         h_emis(traffic_index,:)=2.
         h_emis(shipping_index,:)=70.
         h_emis(heating_index,:)=15.
+        h_emis(livestock_index,:)=5.0
         h_emis(agriculture_index,:)=1.
         h_emis(industry_index,:)=100.
         h_emis(aviation_index,:)=10.
@@ -533,12 +534,14 @@ contains
         sig_y_00(shipping_index,:)=5.
         sig_y_00(traffic_index,:)=1.
         sig_y_00(heating_index,:)=5.
+        sig_y_00(heating_index,:)=10.0
         sig_y_00(agriculture_index,:)=5.
         sig_y_00(industry_index,:)=5.
         sig_y_00(aviation_index,:)=25.
         sig_z_00(shipping_index,:)=5.
         sig_z_00(traffic_index,:)=1.
         sig_z_00(heating_index,:)=10.
+        sig_z_00(livestock_index,:)=5.0
         sig_z_00(agriculture_index,:)=10.
         sig_z_00(industry_index,:)=10.
         sig_z_00(aviation_index,:)=10.
@@ -1192,6 +1195,9 @@ contains
             !do j=1,n_local_fraction_grids
             !    convert_fraction_to_local_loop_index(lc_fraction_nc_loop_index(j))=lc_local_nc_loop_index(j)
             !enddo
+            do j = 1, n_local_fraction_grids
+                i = i + 1; lc_drydepo_frac_nc_loop_index(j) = i
+            end do
             num_lc_var_nc=i
             write(unit_logfile,'(a,i)') 'New number of num_lc_var_nc variables with additional LF EMEP: ',num_lc_var_nc
             min_lc_frac_nc_loop_index=minval(lc_frac_nc_loop_index)
@@ -1206,6 +1212,10 @@ contains
             do j=1,n_local_fraction_grids
                 i=i+1;local_nc_loop_index(j)=i
             enddo
+            do j = 1, n_local_fraction_grids
+                i = i + 1; drydepo_frac_nc_loop_index(j) = i
+                convert_frac_to_lc_frac_loop_index(drydepo_frac_nc_loop_index(j)) = lc_drydepo_frac_nc_loop_index(j)
+            end do
             num_var_nc=i
             write(unit_logfile,'(a,i)') 'New number of num_var_nc variables with additional LF EMEP: ',num_var_nc
             min_frac_nc_loop_index=minval(frac_nc_loop_index)
@@ -1255,6 +1265,7 @@ contains
                             if (i_source.eq.allsource_nc_index) then
                                 var_name_nc(frac_nc_loop_index(j),i,allsource_nc_index)=trim(var_name_nc(conc_nc_index,i,allsource_nc_index))//trim(postfix_str)//trim(local_fraction_grid_size_str)
                             endif
+                            var_name_nc(drydepo_frac_nc_loop_index(j),i,i_source)="DDEP_"//trim(var_name_nc(frac_nc_loop_index(j),i,i_source))
                             write(unit_logfile,'(2i6,2a)') i,i_source,'  ',trim(var_name_nc(frac_nc_loop_index(j),i,i_source))
                         endif
                     enddo

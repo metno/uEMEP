@@ -432,16 +432,6 @@ contains
             filename_ship(1)=read_name_char('filename_ship(1)',filename_ship(1),unit_in,unit_logfile)
             filename_ship(2)=read_name_char('filename_ship(2)',filename_ship(2),unit_in,unit_logfile)
 
-            pathname_agriculture(1)=read_name_char('pathname_agriculture(1)',pathname_agriculture(1),unit_in,unit_logfile)
-            pathname_agriculture(2)=read_name_char('pathname_agriculture(2)',pathname_agriculture(2),unit_in,unit_logfile)
-            filename_agriculture(1)=read_name_char('filename_agriculture(1)',filename_agriculture(1),unit_in,unit_logfile)
-            filename_agriculture(2)=read_name_char('filename_agriculture(2)',filename_agriculture(2),unit_in,unit_logfile)
-
-            pathname_emission_rivm(1)=read_name_char('pathname_emission_rivm(1)',pathname_emission_rivm(1),unit_in,unit_logfile)
-            pathname_emission_rivm(2)=read_name_char('pathname_emission_rivm(2)',pathname_emission_rivm(2),unit_in,unit_logfile)
-            filename_emission_rivm(1)=read_name_char('filename_emission_rivm(1)',filename_emission_rivm(1),unit_in,unit_logfile)
-            filename_emission_rivm(2)=read_name_char('filename_emission_rivm(2)',filename_emission_rivm(2),unit_in,unit_logfile)
-
             pathname_industry(1)=read_name_char('pathname_industry(1)',pathname_industry(1),unit_in,unit_logfile)
             pathname_industry(2)=read_name_char('pathname_industry(2)',pathname_industry(2),unit_in,unit_logfile)
             filename_industry(1)=read_name_char('filename_industry(1)',filename_industry(1),unit_in,unit_logfile)
@@ -825,11 +815,7 @@ contains
             log10_step_bin_pdf=read_name_real('log10_step_bin_pdf',log10_step_bin_pdf,unit_in,unit_logfile)
 
             use_landuse_as_proxy=read_name_logical('use_landuse_as_proxy',use_landuse_as_proxy,unit_in,unit_logfile)
-            read_rivm_landuse_flag=read_name_logical('read_rivm_landuse_flag',read_rivm_landuse_flag,unit_in,unit_logfile)
             var_name_landuse_nc(num_var_landuse_nc)=read_name_char('var_name_landuse_nc',var_name_landuse_nc(num_var_landuse_nc),unit_in,unit_logfile)
-            use_rivm_agricuture_emission_data=read_name_logical('use_rivm_agricuture_emission_data',use_rivm_agricuture_emission_data,unit_in,unit_logfile)
-            read_subgrid_emission_data=read_name_logical('read_subgrid_emission_data',read_subgrid_emission_data,unit_in,unit_logfile)
-            use_rivm_subgrid_emission_format=read_name_logical('use_rivm_subgrid_emission_format',use_rivm_subgrid_emission_format,unit_in,unit_logfile)
 
             !Read landuse weighting this may take some time
             !Source input is numbered as GNFR13 in input but is placed in the uEMEP source sectors
@@ -898,6 +884,9 @@ contains
             pathname_region_mask=read_name_char('pathname_region_mask',pathname_region_mask,unit_in,unit_logfile)
             filename_region_mask=read_name_char('filename_region_mask',filename_region_mask,unit_in,unit_logfile)
             varname_region_mask=read_name_char('varname_region_mask',varname_region_mask,unit_in,unit_logfile)
+
+            call read_livestock_config()
+            call read_agriculture_config()
 
             close (unit_in)
 
@@ -1030,7 +1019,25 @@ contains
             file_tag=trim(file_tag)//'_'//trim(tile_tag)
         endif
 
+    contains
+
+        subroutine read_livestock_config()
+            pathname_livestock = read_name_char("pathname_livestock", pathname_livestock, unit_in, unit_logfile)
+            filename_livestock = read_name_char("filename_livestock", filename_livestock, unit_in, unit_logfile)
+            livestock_var_name = read_name_char("livestock_var_name", livestock_var_name, unit_in, unit_logfile)
+            limit_livestock_delta = read_name_real("limit_livestock_delta", limit_livestock_delta, unit_in, unit_logfile)
+        end subroutine read_livestock_config
+
+        subroutine read_agriculture_config()
+            pathname_agriculture = read_name_char("pathname_agriculture", pathname_agriculture, unit_in, unit_logfile)
+            filename_agriculture = read_name_char("filename_agriculture", filename_agriculture, unit_in, unit_logfile)
+            agriculture_var_name = read_name_char("agriculture_var_name", agriculture_var_name, unit_in, unit_logfile)
+            limit_agriculture_delta = read_name_real("limit_agriculture_delta", limit_agriculture_delta, unit_in, unit_logfile)
+        end subroutine read_agriculture_config
+
     end subroutine uEMEP_read_config
+
+
 
 
 !----------------------------------------------------------------------

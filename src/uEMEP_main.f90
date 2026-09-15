@@ -30,8 +30,7 @@ program uEMEP
     use read_rwc_heating_data, only: uEMEP_read_RWC_heating_data
     use save_emission_netcdf, only: uEMEP_calculate_emissions_for_EMEP
     use set_subgrids, only: uEMEP_set_subgrids, uEMEP_set_subgrid_select_latlon_centre
-    use read_landuse_rivm_data, only: uEMEP_read_landuse_rivm_data, &
-        uEMEP_set_landuse_classes, uEMEP_read_netcdf_landuse_latlon
+    use read_landuse_data, only: uEMEP_set_landuse_classes, uEMEP_read_netcdf_landuse_latlon
     use read_roadlink_data_ascii, only: read_country_bounding_box_data, &
         uEMEP_read_roadlink_data_ascii, uEMEP_change_road_data, uEMEP_read_roadlink_emission_data
     use set_filenames, only: uEMEP_set_filenames
@@ -39,8 +38,6 @@ program uEMEP
         uEMEP_grid_receptor_data
     use read_ssb_data, only: uEMEP_read_netcdf_population, uEMEP_read_SSB_data, &
         uEMEP_read_netcdf_population_latlon
-    use read_agriculture_asi_data, only: uEMEP_read_agriculture_rivm_data, &
-        uEMEP_read_emission_rivm_data
     use read_industry_data, only: uEMEP_read_industry_data
     use read_shipping_asi_data, only: uEMEP_preaggregate_shipping_asi_data, &
         uEMEP_read_netcdf_shipping_latlon, uEMEP_read_weekly_shipping_asi_data, &
@@ -65,6 +62,8 @@ program uEMEP
     use define_subgrid, only: uEMEP_define_subgrid_extent, uEMEP_define_subgrid
     use calculate_exposure, only: uEMEP_calculate_exposure
     use auto_subgrid, only: uEMEP_region_mask_new
+    use mod_livestock
+    use mod_agriculture
 
     use uemep_logger
 
@@ -103,7 +102,8 @@ program uEMEP
         call uEMEP_set_subgrid_select_latlon_centre()
     end if
 
-    ! Set the landuse if required
+    ! Set the landuse if required. Agriculture and livestock can be downscaled either with a
+    ! netcdf emission proxy file or with corine landuse, so landuse is not forced on here
     if (use_landuse_as_proxy .or. read_landuse_flag) then
         call uEMEP_set_landuse_classes()
     end if
@@ -224,7 +224,7 @@ program uEMEP
                     call uEMEP_crossreference_grids()
 
                     ! Read all road link data from ascii files
-                    if (calculate_source(traffic_index) .and. .not. read_subgrid_emission_data) then
+                    if (calculate_source(traffic_index)) then
                         ! Do this only for the first receptor grid loop
                         if (first_g_loop) then
                             call uEMEP_read_roadlink_data_ascii()
@@ -238,12 +238,12 @@ program uEMEP
                     end if
 
                     ! Read in and grid industry data
-                    if (calculate_source(industry_index) .and. .not. read_subgrid_emission_data) then
+                    if (calculate_source(industry_index)) then
                         call uEMEP_read_industry_data()
                     end if
 
                     ! Read and subgrid shipping data
-                    if (calculate_source(shipping_index) .and. .not. read_subgrid_emission_data) then
+                    if (calculate_source(shipping_index)) then
                         ! If necessary aggregate shipping data first
                         call uEMEP_preaggregate_shipping_asi_data()
                         
@@ -262,7 +262,7 @@ program uEMEP
                     end if
 
                     ! Read in proxy data for home heating. Currently dwelling density
-                    if (calculate_source(heating_index) .and. .not. read_subgrid_emission_data) then
+                    if (calculate_source(heating_index)) then
                         ! If calculating tiles then read only the dwelling data
                         if (calculate_tiling_flag .or. calculate_region_tiling_flag) then
                             use_RWC_emission_data = .false.
@@ -284,23 +284,6 @@ program uEMEP
                         end if
                     end if
 
-                    ! Read and subgrid agriculture data
-                    if (calculate_source(agriculture_index) .and. use_rivm_agricuture_emission_data .and. .not. read_subgrid_emission_data) then
-                        ! Currently only data from RIVM here
-                        call uEMEP_read_agriculture_rivm_data()
-                    end if
-                    if (read_rivm_landuse_flag) then
-                        call uEMEP_read_landuse_rivm_data()
-                    end if
-                    if (read_subgrid_emission_data) then
-                        ! Special routine for reading in RIVM point source emission data
-                        if (use_rivm_subgrid_emission_format) then
-                            call uEMEP_read_emission_rivm_data()
-                        else
-                            ! Nothing else available yet
-                        end if
-                    end if
-
                     ! Read in population data
                     if (calculate_population_exposure_flag .or. use_population_positions_for_auto_subgrid_flag .or. save_population) then
                         ! Read and subgrid SSB population data
@@ -316,6 +299,17 @@ program uEMEP
 
                     if (use_landuse_as_proxy .or. read_landuse_flag) then
                         call uEMEP_read_netcdf_landuse_latlon()
+                    end if
+
+                    ! Read livestock and agriculture proxy emissions from netcdf. These are read
+                    ! after the landuse proxy so that a configured netcdf file takes precedence,
+                    ! leaving corine landuse as the fallback when no proxy file is given
+                    if (calculate_source(livestock_index) .and. len_trim(filename_livestock) > 0) then
+                        call initialize_livestock()
+                    end if
+
+                    if (calculate_source(agriculture_index) .and. len_trim(filename_agriculture) > 0) then
+                        call initialize_agriculture()
                     end if
 
                     ! Autogrid setting for selecting which subgrids to calculate
@@ -355,9 +349,7 @@ program uEMEP
                 call uEMEP_read_time_profiles()
 
                 ! Call grid_roads again to include the time variation from NORTRIP
-                if ( .not. read_subgrid_emission_data) then
-                    call uEMEP_grid_roads()
-                end if
+                call uEMEP_grid_roads()
 
                 ! Interpolate meteo data to subgrid. Placed on the integral subgrid
                 call uEMEP_subgrid_meteo_EMEP()

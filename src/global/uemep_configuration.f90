@@ -38,12 +38,6 @@ module uemep_configuration
     character(256) :: filename_ship(2) ! File name for shipping ais files
     character(256) :: pathname_ship(2) ! Path name for shipping ais files
     character(256) :: pathfilename_ship(2) ! Combined path and file name for shipping ais files
-    character(256) :: filename_agriculture(2) ! File name for input agriculture rivm files
-    character(256) :: pathname_agriculture(2) ! Path name for input agriculture rivm files
-    character(256) :: pathfilename_agriculture(2) ! Combined path and file name for input agriculture rivm files
-    character(256) :: filename_emission_rivm(2) ! File name for input emission rivm files
-    character(256) :: pathname_emission_rivm(2) ! Path name for input emission rivm files
-    character(256) :: pathfilename_emission_rivm(2) ! Combined path and file name for input emission rivm files
     character(256) :: filename_industry(10) ! File name for input industry files
     character(256) :: pathname_industry(10) ! Path name for input industry files
     character(256) :: pathfilename_industry(10) ! Combined path and file name for input industry files
@@ -154,6 +148,7 @@ module uemep_configuration
     logical :: save_wind_vectors = .false. ! Output data saving flags
     logical :: save_other_meteo = .false. ! Output data saving flags
     logical :: save_emep_original = .true. ! Output data saving flags
+    logical :: save_emep_original_emissions = .false.
     logical :: save_emissions = .false. ! Output data saving flags
     logical :: save_for_chemistry = .false. ! Output data saving flags
     logical :: save_population = .false. ! Output data saving flags
@@ -196,10 +191,6 @@ module uemep_configuration
     logical :: use_annual_mean_pdf_chemistry_correction = .false.
     logical :: quick_annual_mean_pdf_chemistry_correction = .true.
     logical :: use_landuse_as_proxy = .false.
-    logical :: read_rivm_landuse_flag = .false.
-    logical :: use_rivm_agricuture_emission_data = .false.
-    logical :: read_subgrid_emission_data = .false.
-    logical :: use_rivm_subgrid_emission_format = .false.
     logical :: save_EMEP_somo35 = .false.
     logical :: save_EMEP_comax = .false.
     logical :: save_EMEP_o3max = .false.
@@ -334,6 +325,17 @@ module uemep_configuration
     real :: save_emission_subgrid_min(2)  !Only x and y
     real :: save_emission_subgrid_delta(2)
 
+    ! Livestock
+    character(len=256) :: filename_livestock = '' !! Filename of livestock netcdf file
+    character(len=256) :: pathname_livestock = '' !! Directory path to the livestock netcdf file
+    character(len=256) :: livestock_var_name = '' !! Name of livestock variable in netcdf file
+    real :: limit_livestock_delta = 250.0 !! Lower spatial resolution limit of livestock downscaling
+
+    ! Agriculture
+    character(len=256) :: filename_agriculture = '' !! Filename of agriculture netcdf file
+    character(len=256) :: pathname_agriculture = '' !! Directory path to agriculture netcdf file
+    character(len=256) :: agriculture_var_name = '' !! Name of agriculture variable in netcdf file
+    real :: limit_agriculture_delta = 250.0 !! Lower spatial resolution limit of agriculture downscaling
 
     double precision :: projection_attributes(10)
     double precision :: EMEP_projection_attributes(10)

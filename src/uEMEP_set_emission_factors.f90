@@ -1,4 +1,10 @@
 module set_emission_factors
+    !! Copyright (C) 2007 Free Software Foundation.
+    !! License GNU LGPL-3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>.
+    !! This is free software: you are free to change and redistribute it.
+    !!
+    !! Developed and maintained at the Norwegian Meteorological Institute.
+    !! Contribute at: <https://github.com/metno/uEMEP>
 
     use uemep_configuration
 
@@ -42,10 +48,6 @@ contains
 
         emission_factor_conversion(pmex_index,traffic_index,:)=emission_factor(pmex_index,traffic_index,:)*(1.e-3)*(1.e+6)/(3600.*24.) ![veh*m/day]*(g/km/veh)*(km/m)*(ug/g)*(day/sec)=ug/sec
 
-        emission_factor_conversion(nh3_index,agriculture_index,:)=emission_factor(nh3_index,agriculture_index,:)*(1.e+9)/(3600.*24.*365.)   ![kg/yr]*(ug/kg)*(yr/sec)=ug/sec
-        !Test for monthly data
-        !emission_factor_conversion(nh3_index,agriculture_index,:)=emission_factor_conversion(nh3_index,agriculture_index,:)*1.06
-
         if (read_shipping_from_netcdf_flag) then
             emission_factor_conversion(:,shipping_index,:)=(1.e+6)/(3600.) ![g/hr]*(ug/sec)=ug/sec.
         elseif (read_weekly_shipping_data_flag.or.read_monthly_and_daily_shipping_data_flag) then
@@ -67,17 +69,21 @@ contains
         !Converts tonne per year to ug/s/subgrid
         emission_factor_conversion(:,industry_index,:)=1.e12/(3600.*24*365.)
 
-        !In the case of RIVM data then emissions are already given in ug/s/subgrid
-        if (read_subgrid_emission_data) then
-            emission_factor_conversion(:,:,:)=1.0
-        endif
-
-
     end subroutine uEMEP_set_emission_factors
 
 !uEMEP_convert_proxy_to_emissions
 
     subroutine uEMEP_convert_proxy_to_emissions
+        !! Converts proxy data to absolute emissions using `emission_factor_conversion`
+        !!
+        !! This runs after `uEMEP_subgrid_emission_EMEP` and overwrites whatever that produced, so
+        !! it is the routine that decides how a proxy is interpreted. Sources without an entry in
+        !! `emission_factor_conversion` (the array is initialised to 0.0) are zeroed here, with a
+        !! warning logged for each affected source/pollutant combination.
+        !!
+        !! With `local_subgrid_method_flag = 3` it returns immediately and the EMEP redistribution
+        !! from `uEMEP_subgrid_emission_EMEP` survives, where the proxy is only a relative weight
+        !! and no emission factor is needed. See [[mod_livestock]] and [[mod_agriculture]].
 
         use uEMEP_definitions
 
@@ -100,12 +106,18 @@ contains
         !Set all emissions to the same constant emission value with emissions in ug/sec for all sources
         do i_source=1,n_source_index
             if (calculate_source(i_source)) then
+
                 i_subsource=1
                 do i_pollutant=1,n_pollutant_loop
                     !Do not calculate for traffic if use_NORTRIP_emission_data=.true. and  use_NORTRIP_emission_pollutant=.false.). This is done in uEMEP_grid_roads
-                    if (i_source.ne.traffic_index.or.read_subgrid_emission_data &
+                    if (i_source.ne.traffic_index &
                         .or.(i_source.eq.traffic_index.and..not.use_NORTRIP_emission_data) &
                         .or.(i_source.eq.traffic_index.and.use_NORTRIP_emission_data.and..not.use_NORTRIP_emission_pollutant(pollutant_loop_index(i_pollutant)))) then
+
+                        if (emission_factor_conversion(pollutant_loop_index(i_pollutant),i_source,i_subsource).eq.0.0) then
+                            write(unit_logfile,'(A)') 'WARNING: No emission factor set for '//trim(source_file_str(i_source))// &
+                                ' '//trim(pollutant_file_str(pollutant_loop_index(i_pollutant)))//'. Emissions will be zero'
+                        end if
 
                         do tt=1,subgrid_dim(t_dim_index)
                             emission_subgrid(:,:,tt,i_source,i_pollutant)=proxy_emission_subgrid(:,:,i_source,i_pollutant) &
@@ -256,4 +268,3 @@ contains
     end subroutine uEMEP_nox_emission_temperature
 
 end module set_emission_factors
-
