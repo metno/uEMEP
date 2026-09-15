@@ -522,6 +522,7 @@ contains
         h_emis(traffic_index,:)=2.
         h_emis(shipping_index,:)=70.
         h_emis(heating_index,:)=15.
+        h_emis(livestock_index,:)=5.0
         h_emis(agriculture_index,:)=1.
         h_emis(industry_index,:)=100.
         h_emis(aviation_index,:)=10.
@@ -533,12 +534,14 @@ contains
         sig_y_00(shipping_index,:)=5.
         sig_y_00(traffic_index,:)=1.
         sig_y_00(heating_index,:)=5.
+        sig_y_00(heating_index,:)=10.0
         sig_y_00(agriculture_index,:)=5.
         sig_y_00(industry_index,:)=5.
         sig_y_00(aviation_index,:)=25.
         sig_z_00(shipping_index,:)=5.
         sig_z_00(traffic_index,:)=1.
         sig_z_00(heating_index,:)=10.
+        sig_z_00(livestock_index,:)=5.0
         sig_z_00(agriculture_index,:)=10.
         sig_z_00(industry_index,:)=10.
         sig_z_00(aviation_index,:)=10.
