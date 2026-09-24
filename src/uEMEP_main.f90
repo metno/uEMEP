@@ -78,7 +78,7 @@ program uEMEP
     call cpu_Time(start_time_cpu)
 
         ! Set model version
-    model_version_str='7.0.8'
+    model_version_str='7.1.0'
 
     ! Check command line arguments and handle special cases that have to be printed to stdout
     call check_command_line(use_default_config)
