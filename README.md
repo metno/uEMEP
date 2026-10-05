@@ -1,7 +1,7 @@
 # uEMEP
-Air quality dispersion model for high resolution downscaling of EMEP MSC-W
+Air quality dispersion model for high resolution downscaling of EMEP MSC-W.
 
-This Github repository contains the source code for the uEMEP model.
+This repository contains the source code for the uEMEP model.
 
 ## Installation
 
@@ -10,31 +10,64 @@ Download and compile the latest version:
 ```bash
 git clone https://github.com/metno/uEMEP.git
 cd uEMEP
-mkdir -p build
-cd build
-cmake -DCMAKE_BUILD_TYPE=<build-type> ..
-make
+cmake -S . -B release
+cmake --build release -j 8
 ```
 
-> Note: uEMEP supports building source files in parallel, e.g., `make -j 4`.
+This builds an optimized version of uEMEP. Intel Fortran (`ifort`) is used by
+default.
 
-Compilation uses the Intel Fortran compiler (ifort) by default requires a compatible NetCDF installation. To use `gfortran` instead if `ifort`, the compiler can be prepended as:
+To use GNU Fortran (`gfortran`) instead, configure a separate build directory:
 
 ```bash
-FF=gfortran cmake -DCMAKE_BUILD_TYPE=<build-type> ..
+FC=gfortran cmake -S . -B release-gnu
+cmake --build release-gnu -j 8
 ```
 
-There are currently three different build types, `Release`, `Debug` and `Coverage`. See the top level `CMakeLists.txt` file for the compiler flags used. The `Coverage` build type is a special build for assessing code coverage using `gcov` and currently requires the `gfortran` compiler version >= 14.
+Building requires a Fortran compiler and a NetCDF-Fortran installation built
+with that compiler.
+
+## Build types
+
+| Build type | Purpose |
+|------------|---------|
+| `Release` | Optimized build for normal use. |
+| `Check` | Build with extra checks to help find errors when testing. |
+| `Debug` | Build for investigating problems with a debugger. |
+| `Coverage` | Build for measuring code coverage; **requires GNU Fortran 14 or newer and `gcov`**. |
+
+`Release` is selected by default. To choose another build type, add
+`-DCMAKE_BUILD_TYPE=<type>` to the configure command. For example, replace the
+Release configure command above with:
+
+```bash
+cmake -S . -B debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build debug -j 8
+```
+
+For a coverage build, use GNU Fortran and a separate build directory:
+
+```bash
+FC=gfortran cmake -S . -B coverage -DCMAKE_BUILD_TYPE=Coverage
+cmake --build coverage -j 8
+```
 
 ## Testing
 
-Tests are currently built by default when building uEMEP. 
+Unit tests are included in the build. To run them with extra error checks:
 
-To run the tests, simply run `make test` or `ctest` in the build directory after running `make`.
+```bash
+cmake -S . -B check -DCMAKE_BUILD_TYPE=Check
+cmake --build check -j 8
+cd check
+ctest --output-on-failure
+```
+
+Run the tests from inside the build directory (otherwise tests depending on relative paths will fail).
 
 ## Running
 
-For help on running uEMEP, run the following from the `build` directory:
+For help on running uEMEP, run this from the build directory:
 
 ```bash
 ./uemep --help
